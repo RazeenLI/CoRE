@@ -1,0 +1,71 @@
+info:
+  seed: 42
+  source_dir: data/Chinook/parsed
+  output_dir: data/Chinook/benchmarks/small_pipeline_ABC
+
+expected_rdb:
+  row_policy:
+    mode: first_n
+    n: 10
+  tables:
+    customer: []
+    invoice: []
+    artist: []
+    album: []
+    track: []
+    invoice_line: []
+
+steps:
+  - name: step_001_customer_profile
+    operation: remove_columns
+    source_table: customer
+    incoming_table: customer_profile
+    incoming_columns: "*"
+    incoming_row_policy:
+      mode: ratio
+      ratio: 1.0
+    delate_columns:
+      - email
+      - country
+    keys:
+      - customer_id
+
+  - name: step_002_invoice
+    operation: remove_table
+    source_table: invoice
+    incoming_table: invoice
+    incoming_columns: "*"
+    incoming_row_policy:
+      mode: all
+
+  - name: step_003_artist
+    operation: remove_table
+    source_table: artist
+    incoming_table: artist
+    incoming_columns: "*"
+    incoming_row_policy:
+      mode: all
+
+  - name: step_004_album
+    operation: remove_table
+    source_table: album
+    incoming_table: album
+    incoming_columns: "*"
+    incoming_row_policy:
+      mode: all
+
+  - name: step_005_track
+    operation: remove_table
+    source_table: track
+    incoming_table: track
+    incoming_columns: "*"
+    incoming_row_policy:
+      mode: all
+
+  - name: step_006_invoice_line
+    operation: remove_table
+    source_table: invoice_line
+    incoming_table: invoice_line
+    incoming_columns: "*"
+    incoming_row_policy:
+      mode: all

@@ -1,0 +1,128 @@
+info:
+  seed: 42
+  source_dir: data/Chinook/parsed
+  output_dir: data/Chinook/benchmarks/full_pipeline
+
+expected_rdb:
+  row_policy:
+    mode: first_n
+    n: 10
+  tables: []
+
+steps:
+  - name: step_001_customer_profile
+    operation: remove_columns
+    source_table: customer
+    incoming_table: customer_profile
+    incoming_columns: "*"
+    incoming_row_policy:
+      mode: ratio
+      ratio: 1.0
+    delate_columns:
+      - company
+      - address
+      - city
+      - state
+      - country
+      - postal_code
+      - phone
+      - fax
+      - email
+    keys:
+      - customer_id
+
+  - name: step_002_employee_profile
+    operation: remove_columns
+    source_table: employee
+    incoming_table: employee_profile
+    incoming_columns: "*"
+    incoming_row_policy:
+      mode: ratio
+      ratio: 1.0
+    delate_columns:
+      - title
+      - reports_to
+      - birth_date
+      - hire_date
+      - address
+      - city
+      - state
+      - country
+      - postal_code
+      - phone
+      - fax
+      - email
+    keys:
+      - employee_id
+
+  - name: step_003_artist
+    operation: remove_table
+    source_table: artist
+    incoming_table: artist
+    incoming_columns: "*"
+    incoming_row_policy:
+      mode: all
+
+  - name: step_004_album
+    operation: remove_table
+    source_table: album
+    incoming_table: album
+    incoming_columns: "*"
+    incoming_row_policy:
+      mode: all
+
+  - name: step_005_genre
+    operation: remove_table
+    source_table: genre
+    incoming_table: genre
+    incoming_columns: "*"
+    incoming_row_policy:
+      mode: all
+
+  - name: step_006_media_type
+    operation: remove_table
+    source_table: media_type
+    incoming_table: media_type
+    incoming_columns: "*"
+    incoming_row_policy:
+      mode: all
+
+  - name: step_007_track
+    operation: remove_table
+    source_table: track
+    incoming_table: track
+    incoming_columns: "*"
+    incoming_row_policy:
+      mode: all
+
+  - name: step_008_playlist
+    operation: remove_table
+    source_table: playlist
+    incoming_table: playlist
+    incoming_columns: "*"
+    incoming_row_policy:
+      mode: all
+
+  - name: step_009_invoice
+    operation: remove_table
+    source_table: invoice
+    incoming_table: invoice
+    incoming_columns: "*"
+    incoming_row_policy:
+      mode: all
+
+  - name: step_010_playlist_track
+    operation: remove_table
+    source_table: playlist_track
+    incoming_table: playlist_track
+    incoming_columns: "*"
+    incoming_row_policy:
+      mode: all
+
+  - name: step_011_invoice_line
+    operation: remove_table
+    source_table: invoice_line
+    incoming_table: invoice_line
+    incoming_columns: "*"
+    incoming_row_policy:
+      mode: all
