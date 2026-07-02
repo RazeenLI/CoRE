@@ -24,11 +24,29 @@ data/
 │   │   ├── schema.json
 │   │   ├── constraints.json
 │   │   ├── tables/
-│   │   │   ├── Album.json
-│   │   │   ├── Artist.json
+│   │   │   ├── Album.csv
+│   │   │   ├── Artist.csv
 │   │   │   ├── ...
-
-
+│   ├── benchmarks/
+│   │   ├── case/
+│   │   │   ├── existing/
+│   │   │   │   ├── schema.json
+│   │   │   │   ├── constraints.json
+│   │   │   │   ├── tables/
+│   │   │   │   │   ├── Album.csv
+│   │   │   │   │   ├── Artist.csv
+│   │   │   │   │   ├── ...
+│   │   │   ├── expected/
+│   │   │   │   ├── schema.json
+│   │   │   │   ├── table.csv
+│   │   │   │   ├── expected_decision.json
+│   │   │   ├── expected/
+│   │   │   │   ├── schema.json
+│   │   │   │   ├── constraints.json
+│   │   │   │   ├── tables/
+│   │   │   │   │   ├── Album.csv
+│   │   │   │   │   ├── Artist.csv
+│   │   │   │   │   ├── ...
 ```
 
 给我一个python file

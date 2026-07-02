@@ -10,6 +10,9 @@ from typing import Any, Dict, List, Set, Tuple
 """
 python data/visualize_rdb.py data/Chinook/parsed
 
+python data/visualize_rdb.py data/Chinook/benchmarks/small_case_A_remove_columns/existing
+python data/visualize_rdb.py save/example
+
 python data/visualize_rdb.py data/Chinook/benchmarks/small_pipeline_ABC/existing
 python data/visualize_rdb.py data/Chinook/benchmarks/small_pipeline_ABC/expected
 python data/visualize_rdb.py data/Chinook/benchmarks/small_case_C_remove_relationship_table/expected

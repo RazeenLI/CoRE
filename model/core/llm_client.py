@@ -1,5 +1,3 @@
-# core/llm_client.py
-
 """
 HFLLMClient: Lightweight Hugging Face LLM Wrapper
 HFLLMClient：轻量级 Hugging Face 大语言模型封装器
