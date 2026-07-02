@@ -1,5 +1,3 @@
-# core/schema.py
-
 """
 示例占位
 
@@ -8,20 +6,136 @@ TODO: 根据 agent 开发 完成 result 的结构和格式
 
 from typing import Any, Literal, Optional, TypedDict
 
+TableRole = Literal[
+    "entity_table",
+    "transaction_table",
+    "lookup_table",
+    "relationship_table",
+    "unknown",
+]
+
+SemanticType = Literal[
+    "identifier",
+    "foreign_key_candidate",
+    "person_name",
+    "organization_name",
+    "email",
+    "phone",
+    "address",
+    "country",
+    "city",
+    "date",
+    "timestamp",
+    "money",
+    "quantity",
+    "category",
+    "status",
+    "description",
+    "code",
+    "boolean",
+    "unknown",
+]
+
+
+class TableProfile(TypedDict, total=False):
+    # original incoming table name
+    name: str 
+
+    # LLM-generated short description of what this table represents
+    summary: str
+    # LLM-generated main business entity, e.g. "customer", "invoice", "artist"
+    entity: str
+    # LLM-generated table role
+    role: TableRole
+    # LLM-generated alternative names for matching
+    aliases: list[str]
+
+    # column_count: int
+
+
+# class ColumnSymbolicProfile(TypedDict, total=False):
+#     # inferred from sample values or provided stats
+#     inferred_dtype: str
+
+#     # sample-level statistics
+#     null_count_in_sample: int
+#     null_ratio_in_sample: float
+#     distinct_count_in_sample: int
+#     distinct_ratio_in_sample: float
+
+#     # rule-based value pattern labels
+#     value_patterns: list[str]
+
+#     # rule-based structural signals
+#     looks_like_id: bool
+#     looks_like_fk: bool
+#     looks_like_email: bool
+#     looks_like_date: bool
+#     looks_like_code: bool
+
+# class ColumnSemanticProfile(TypedDict, total=False):
+#     # LLM-generated explanation of the column meaning
+#     meaning: str
+
+#     # LLM-generated semantic type
+#     semantic_type: SemanticType
+
+#     # LLM-generated business concept, e.g. "customer identifier"
+#     business_concept: str
+
+#     # LLM-generated aliases for matching
+#     aliases: list[str]
 
 class ColumnProfile(TypedDict, total=False):
-    column_name: str
-    inferred_type: str
-    nullable: bool
-    sample_values: list[Any]
-    description: str
+    # original incoming column name
+    name: str
 
+    # # optional; include only if you want SourceProfile to be self-contained
+    # sample_values: list[Any]
+
+    # # deterministic / rule-based / statistic-based profile
+    # symbolic: ColumnSymbolicProfile
+
+    # inferred from sample values or provided stats
+    dtype: str
+    # rule-based value pattern labels
+    value_patterns: list[str]
+
+
+    # # LLM-generated semantic profile
+    # semantic: ColumnSemanticProfile
+
+    # LLM-generated explanation of the column meaning
+    meaning: str
+
+    # LLM-generated semantic type
+    semantic_type: SemanticType
+
+    # LLM-generated business concept, e.g. "customer identifier"
+    business_concept: str
+
+    # LLM-generated aliases for matching
+    aliases: list[str]
 
 class SourceProfile(TypedDict, total=False):
-    table_name: str
-    row_count: int
-    columns: list[ColumnProfile]
-    description: str
+    table: TableProfile
+
+    # key = original column name
+    columns: dict[str, ColumnProfile]
+
+# class ColumnProfile(TypedDict, total=False):
+#     column_name: str
+#     inferred_type: str
+#     nullable: bool
+#     sample_values: list[Any]
+#     description: str
+
+
+# class SourceProfile(TypedDict, total=False):
+#     table_name: str
+#     row_count: int
+#     columns: list[ColumnProfile]
+#     description: str
 
 
 class ColumnMapping(TypedDict, total=False):

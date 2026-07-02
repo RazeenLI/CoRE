@@ -1,5 +1,3 @@
-# core/state.py
-
 """
 State: Shared Pipeline State Objects
 State：共享 Pipeline 状态对象
@@ -150,8 +148,9 @@ ROUTING_REASONS = {
 
 RUN_STEPS = {
     "initialized",
-    "add_task",
-    "run_task",
+    "start_task",
+    "run_task", # recent not used
+    "finish_task",
     "update_existing_rdb",
     "finish_run",
 }
@@ -428,7 +427,7 @@ class RunState:
         # Lightweight run-level history
         self.trace: list[dict[str, Any]] = []
 
-    def add_task(
+    def start_task(
         self,
         incoming_table: dict[str, Any],
         task_id: str | None = None,
@@ -448,12 +447,12 @@ class RunState:
         self.task_order.append(task.id)
         self.current_task_id = task.id
 
-        self.current_step = "add_task"
+        self.current_step = "start_task"
         self.status = "running"
 
         self._record_event(
-            event="add_task",
-            message=f"Added task {task.id}.",
+            event="start_task",
+            message=f"Started task {task.id}.",
             data={
                 "task_id": task.id,
                 "incoming_path": task.incoming_path,
@@ -461,6 +460,31 @@ class RunState:
         )
 
         return task
+    
+    def finish_task(
+        self,
+        task_id: str | None = None,
+        status: str = "succeeded",
+        message: str = "",
+    ) -> None:
+        finished_task_id = task_id or self.current_task_id
+
+        if finished_task_id is None:
+            raise ValueError("No task_id provided and no current task is active.")
+
+        self.current_task_id = finished_task_id
+        self.current_step = "finish_task"
+        self.status = status
+
+        self._record_event(
+            event="finish_task",
+            message=message or f"Finished task {finished_task_id}.",
+            data={
+                "task_id": finished_task_id,
+                "task_status": self.tasks[finished_task_id].status,
+                "task_current_step": self.tasks[finished_task_id].current_step,
+            },
+        )
 
     def get_task(self, task_id: str) -> TaskState:
         return self.tasks[task_id]
