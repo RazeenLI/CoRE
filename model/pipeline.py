@@ -1,19 +1,21 @@
 # run_pipeline.py
-
+import torch
 import argparse
 from pathlib import Path
 
 import pandas as pd
 import yaml
 
-from model.utils.io import load_rdb, save_rdb, load_table
+from model.utils.io import load_rdb, save_rdb, load_table, terminal_massage
 
 # from core.orchestrator import Orchestrator
 # from core.task import IngestionTask
 # from core.io import , save_run_state
 
 from model.core.llm_client import HFLLMClient
+from model.core.orchestrator import Orchestrator
 
+from model.agents.base_agent import BaseAgent
 from model.agents.profiler_agent import ProfilerAgent
 # from agents.matcher import MatcherAgent
 # from agents.evolution import EvolutionAgent
@@ -59,17 +61,17 @@ def create_agents(llm_client):
     Later, you can pass llm_client, embedding_model, prompts, etc.
     """
     profiler_agent = ProfilerAgent(llm_client)
-    # matcher_agent = MatcherAgent(config=config)
-    # evolution_agent = EvolutionAgent(config=config)
-    # validator_agent = ValidatorAgent(config=config)
-    # decision_agent = DecisionAgent(config=config)
+    matcher_agent = BaseAgent(llm_client) # MatcherAgent(config=config)
+    evolution_agent = BaseAgent(llm_client) # EvolutionAgent(config=config)
+    validator_agent = BaseAgent(llm_client) # ValidatorAgent(config=config)
+    decision_agent = BaseAgent(llm_client) # DecisionAgent(config=config)
 
     return {
         "profiler": profiler_agent,
-        # "matcher": matcher_agent,
-        # "evolution": evolution_agent,
-        # "validator": validator_agent,
-        # "decision": decision_agent,
+        "matcher": matcher_agent,
+        "evolution": evolution_agent,
+        "validator": validator_agent,
+        "decision": decision_agent,
     }
 
 
@@ -97,54 +99,53 @@ def run_pipeline(
         sample_num=data_config["existing_rdb"]["sample_num"],
     )
 
-    print(f"[Successed] Load existing relational database with keys: {existing_rdb.keys()}.")
-
-    save_path = save_rdb(existing_rdb, save_root_path, folder_name="example")
-
-    print(f"[Successed] relational database is saved at {save_path}.")
+    terminal_massage("success", f"Load existing relational database with keys: {existing_rdb.keys()}.")
 
     # 2. Create LLM Client
     llm_client = HFLLMClient(model_name=agent_config["LLMs"]["name"])
+
+    # print("CUDA available:", torch.cuda.is_available())
+    # print("Device map:", getattr(llm_client.model, "hf_device_map", None))
     
     # 3. Create agents
     agents = create_agents(llm_client)
 
-    # # 3. Create orchestrator
-    # orchestrator = Orchestrator(
-    #     profiler_agent=agents["profiler"],
-    #     matcher_agent=agents["matcher"],
-    #     evolution_agent=agents["evolution"],
-    #     validator_agent=agents["validator"],
-    #     decision_agent=agents["decision"],
-    #     existing_rdb=existing_rdb,
-    #     config=config,
-    # )
+    terminal_massage("success", f"LLM Client and Agents are created.")
+
+    # 3. Create orchestrator
+    orchestrator = Orchestrator(
+        profiler_agent=agents["profiler"],
+        matcher_agent=agents["matcher"],
+        evolution_agent=agents["evolution"],
+        validator_agent=agents["validator"],
+        decision_agent=agents["decision"],
+        existing_rdb=existing_rdb,
+        config=agent_config,
+    )
+
+    terminal_massage("success", f"Orchestrator is created.")
 
     # 4. Loop over incoming tasks
     for step_index, step_config in enumerate(data_config["steps"], start=1):
+
+        task_id = step_config.get("task_id", f"step_{step_index:02d}")
+
         incoming_table = load_table(
             table_path=step_config["path"],
             sample_num=step_config.get("sample_num", 0),
         )
 
-        task_id = step_config.get("task_id", f"step_{step_index:02d}")
-        print(f"[Successed] Task {task_id} load incoming table with keys: {incoming_table.keys()}.")
+        terminal_massage("success", f"Task {task_id} load incoming table with keys: {incoming_table.keys()}.")
 
-        # task = {
-        #     "task_id": task_id,
-        #     "step_index": step_index,
-        #     "incoming_path": step_config["path"],
-        # }
+        existing_rdb = orchestrator.run_task(task_id, incoming_table)
 
-        # existing_rdb = orchestrator.run_task(
-        #     task=task,
-        #     incoming_table=incoming_table,
-        # )
-        # task = load_incoming_task(step_config)
-        # orchestrator.run_task(task)
+        terminal_massage("success", f"Task {task_id} running finished")
 
-    # # 5. Finish run
+    # 5. Finish run
     # orchestrator.run_state.finish_run()
+    orchestrator.save_state(Path(save_root_path) / "run_state.json")
+
+    terminal_massage("success", f"Run state is saved at {Path(save_root_path) / 'run_state.json'}.")
 
     # # 6. Save final run state / updated RDB / task results
     # output_dir = Path(config["output_dir"])
@@ -154,3 +155,7 @@ def run_pipeline(
     #     run_state=orchestrator.run_state,
     #     output_dir=output_dir,
     # )
+
+    save_path = save_rdb(existing_rdb, save_root_path, folder_name="example")
+
+    terminal_massage("success", f"Relational database is saved at {save_path}.")

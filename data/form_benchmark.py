@@ -171,8 +171,8 @@ def make_schema_subset(
 ) -> Dict[str, Any]:
     schema = {
         "database": source_schema.get("database", "database") + database_suffix,
-        "dialect": source_schema.get("dialect", "postgresql"),
-        "version": source_schema.get("version", "v1"),
+        # "dialect": source_schema.get("dialect", "postgresql"),
+        # "version": source_schema.get("version", "v1"),
         "tables": {},
     }
 
@@ -199,8 +199,8 @@ def make_single_table_schema(
 
     return {
         "database": "incoming",
-        "dialect": source_schema.get("dialect", "postgresql"),
-        "version": source_schema.get("version", "v1"),
+        # "dialect": source_schema.get("dialect", "postgresql"),
+        # "version": source_schema.get("version", "v1"),
         "tables": {
             incoming_table: {
                 "columns": {
@@ -246,8 +246,8 @@ def filter_constraints(
     src = source_constraints.get("constraints", {})
     out = {
         "database": schema.get("database", source_constraints.get("database", "database")),
-        "dialect": source_constraints.get("dialect", "postgresql"),
-        "version": source_constraints.get("version", "v1"),
+        # "dialect": source_constraints.get("dialect", "postgresql"),
+        # "version": source_constraints.get("version", "v1"),
         "constraints": {
             "primary_keys": [],
             "foreign_keys": [],
@@ -307,6 +307,100 @@ def fks_for_table_to_current_rdb(
 
 
 # -----------------------------
+# Profile filtering
+# -----------------------------
+
+def load_source_profiles(source_dir: Path) -> Dict[str, Any]:
+    profile_path = source_dir / "profiles.json"
+
+    if not profile_path.exists():
+        return {
+            "database": "unknown",
+            # "profile_version": "v1",
+            "tables": {},
+        }
+
+    return read_json(profile_path)
+
+
+def filter_profiles_by_schema(
+    source_profiles: Dict[str, Any],
+    schema: Dict[str, Any],
+) -> Dict[str, Any]:
+    """
+    Keep only profiles for tables/columns that exist in schema.
+    Used for existing/expected RDB profile splitting.
+    """
+    source_tables = source_profiles.get("tables", {})
+
+    out: Dict[str, Any] = {
+        "database": schema.get("database", source_profiles.get("database", "database")),
+        # "profile_version": source_profiles.get("profile_version", "v1"),
+        "tables": {},
+    }
+
+    for table, table_schema in schema["tables"].items():
+        if table not in source_tables:
+            continue
+
+        table_profile = copy.deepcopy(source_tables[table])
+        keep_columns = set(table_schema.get("column_order", []))
+
+        table_profile["columns"] = {
+            col: profile
+            for col, profile in table_profile.get("columns", {}).items()
+            if col in keep_columns
+        }
+
+        if "table" in table_profile:
+            table_profile["table"]["name"] = table
+            table_profile["table"]["column_count"] = len(keep_columns)
+
+        out["tables"][table] = table_profile
+
+    return out
+
+
+def make_incoming_profile_for_step(
+    source_profiles: Dict[str, Any],
+    source_table: str,
+    incoming_table: str,
+    columns: List[str],
+) -> Dict[str, Any]:
+    """
+    Build one-table profile for a step.
+    Source profile key is source_table, but output table name should be incoming_table.
+    """
+    source_tables = source_profiles.get("tables", {})
+
+    out: Dict[str, Any] = {
+        "database": "incoming",
+        # "profile_version": source_profiles.get("profile_version", "v1"),
+        "tables": {},
+    }
+
+    if source_table not in source_tables:
+        return out
+
+    table_profile = copy.deepcopy(source_tables[source_table])
+    keep_columns = set(columns)
+
+    table_profile["columns"] = {
+        col: profile
+        for col, profile in table_profile.get("columns", {}).items()
+        if col in keep_columns
+    }
+
+    if "table" in table_profile:
+        table_profile["table"]["name"] = incoming_table
+        table_profile["table"]["column_count"] = len(columns)
+
+    out["tables"][incoming_table] = table_profile
+
+    return out
+
+
+# -----------------------------
 # RDB write
 # -----------------------------
 
@@ -315,9 +409,13 @@ def write_rdb(
     schema: Dict[str, Any],
     constraints: Dict[str, Any],
     table_rows: Dict[str, List[Dict[str, Any]]],
+    profiles: Dict[str, Any] | None = None,
 ) -> None:
     write_json(out_dir / "schema.json", schema)
     write_json(out_dir / "constraints.json", constraints)
+
+    if profiles is not None:
+        write_json(out_dir / "profiles.json", profiles)
 
     tables_dir = out_dir / "tables"
     tables_dir.mkdir(parents=True, exist_ok=True)
@@ -326,6 +424,46 @@ def write_rdb(
         columns = table_schema["column_order"]
         write_csv(tables_dir / f"{table}.csv", table_rows.get(table, []), columns)
 
+
+def write_run_config(
+    output_dir: Path,
+    steps: List[Dict[str, Any]],
+    sample_num: int,
+) -> None:
+    """
+    Generate config.yaml for running the benchmark pipeline.
+
+    Output:
+      output_dir/config.yaml
+    """
+    run_config = {
+        "existing_rdb": {
+            "path": str(output_dir / "existing"),
+            "sample_num": sample_num,
+        },
+        "steps": [],
+    }
+
+    for idx, step in enumerate(steps, start=1):
+        step_name = stable_step_name(
+            raw_name=step.get("name"),
+            idx=idx,
+            incoming_table=step["incoming_table"],
+        )
+
+        safe_step_name = re.sub(r"[^A-Za-z0-9_.-]+", "_", step_name).strip("_")
+
+        run_config["steps"].append({
+            "task_id": safe_step_name,
+            "path": str(output_dir / "steps" / safe_step_name),
+            "sample_num": sample_num,
+        })
+
+    config_path = output_dir / "config.yaml"
+    config_path.write_text(
+        yaml.safe_dump(run_config, sort_keys=False, allow_unicode=True),
+        encoding="utf-8",
+    )
 
 # -----------------------------
 # Benchmark construction
@@ -435,6 +573,7 @@ def write_step(
     seed: int,
     source_schema: Dict[str, Any],
     source_constraints: Dict[str, Any],
+    source_profiles: Dict[str, Any],
     expected_rows: Dict[str, List[Dict[str, Any]]],
     expected_table_cols: Dict[str, List[str]],
     current_schema: Dict[str, Any],
@@ -455,6 +594,13 @@ def write_step(
 
     incoming_schema = make_single_table_schema(
         source_schema=source_schema,
+        source_table=source_table,
+        incoming_table=incoming_table,
+        columns=columns,
+    )
+
+    incoming_profiles = make_incoming_profile_for_step(
+        source_profiles=source_profiles,
         source_table=source_table,
         incoming_table=incoming_table,
         columns=columns,
@@ -496,6 +642,7 @@ def write_step(
 
     write_csv(step_dir / "table.csv", incoming_rows, columns)
     write_json(step_dir / "schema.json", incoming_schema)
+    write_json(step_dir / "profiles.json", incoming_profiles)
     write_json(step_dir / "expected_decision.json", decision)
 
     return decision
@@ -537,8 +684,10 @@ def build_benchmark(yaml_path: Path) -> None:
     seed = int(cfg["info"].get("seed", 42))
     source_dir = Path(cfg["info"]["source_dir"])
     output_dir = Path(cfg["info"]["output_dir"])
+    sample_num = int(cfg["info"].get("sample_num", 0))
 
     source_schema, source_constraints, source_rows = load_source(source_dir)
+    source_profiles = load_source_profiles(source_dir)
 
     expected_schema, expected_constraints, expected_rows, expected_table_cols = build_expected(
         cfg=cfg,
@@ -557,8 +706,31 @@ def build_benchmark(yaml_path: Path) -> None:
     if output_dir.exists():
         shutil.rmtree(output_dir)
 
-    write_rdb(output_dir / "existing", existing_schema, existing_constraints, existing_rows)
-    write_rdb(output_dir / "expected", expected_schema, expected_constraints, expected_rows)
+    expected_profiles = filter_profiles_by_schema(
+        source_profiles=source_profiles,
+        schema=expected_schema,
+    )
+
+    existing_profiles = filter_profiles_by_schema(
+        source_profiles=source_profiles,
+        schema=existing_schema,
+    )
+
+    write_rdb(
+        output_dir / "existing",
+        existing_schema,
+        existing_constraints,
+        existing_rows,
+        existing_profiles,
+    )
+
+    write_rdb(
+        output_dir / "expected",
+        expected_schema,
+        expected_constraints,
+        expected_rows,
+        expected_profiles,
+    )
 
     steps_dir = output_dir / "steps"
     steps_dir.mkdir(parents=True, exist_ok=True)
@@ -583,6 +755,7 @@ def build_benchmark(yaml_path: Path) -> None:
             seed=seed,
             source_schema=source_schema,
             source_constraints=source_constraints,
+            source_profiles=source_profiles,
             expected_rows=expected_rows,
             expected_table_cols=expected_table_cols,
             current_schema=current_schema,
@@ -594,10 +767,17 @@ def build_benchmark(yaml_path: Path) -> None:
             step=step,
         )
 
+        write_run_config(
+            output_dir=output_dir,
+            steps=cfg.get("steps", []),
+            sample_num=sample_num,
+        )
+
     print(f"Generated benchmark: {output_dir}")
     print(f"existing: {output_dir / 'existing'}")
     print(f"steps:    {output_dir / 'steps'}")
     print(f"expected: {output_dir / 'expected'}")
+    print(f"config:   {output_dir / 'config.yaml'}")
 
 
 def main() -> None:

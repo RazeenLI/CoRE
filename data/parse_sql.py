@@ -649,15 +649,15 @@ def parse_postgres_sql(
 
     schema: Dict[str, Any] = {
         "database": fallback_database_name,
-        "dialect": "postgresql",
-        "version": "v1",
+        # "dialect": "postgresql",
+        # "version": "v1",
         "tables": {}
     }
 
     constraints: Dict[str, Any] = {
         "database": fallback_database_name,
-        "dialect": "postgresql",
-        "version": "v1",
+        # "dialect": "postgresql",
+        # "version": "v1",
         "constraints": {
             "primary_keys": [],
             "foreign_keys": [],
