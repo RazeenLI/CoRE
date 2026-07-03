@@ -45,6 +45,9 @@ Example:
 """
 
 import torch
+import json
+import re
+from typing import Any
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 
@@ -130,3 +133,51 @@ class HFLLMClient:
             generated_ids,
             skip_special_tokens=True,
         ).strip()
+    
+    def generate_json(
+        self,
+        prompt: str,
+        max_new_tokens: int = 2048,
+        temperature: float = 0.0,
+    ) -> dict[str, Any]:
+        messages = [
+            {
+                "role": "user",
+                "content": prompt,
+            }
+        ]
+
+        text = self.generate(
+            messages=messages,
+            max_new_tokens=max_new_tokens,
+            temperature=temperature,
+        )
+
+        return extract_json_object(text)
+    
+
+def extract_json_object(text: str) -> dict[str, Any]:
+    text = text.strip()
+
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+
+    code_block_match = re.search(
+        r"```(?:json)?\s*(\{.*\})\s*```",
+        text,
+        flags=re.DOTALL,
+    )
+
+    if code_block_match:
+        return json.loads(code_block_match.group(1))
+
+    start = text.find("{")
+    end = text.rfind("}")
+
+    if start != -1 and end != -1 and start < end:
+        json_text = text[start : end + 1]
+        return json.loads(json_text)
+
+    raise ValueError(f"Could not extract JSON object from LLM output:\n{text}")

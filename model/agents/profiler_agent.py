@@ -4,11 +4,13 @@ import json
 import re
 from typing import Any
 
+from model.utils.io import terminal_massage
 from model.core.schemas import ColumnProfile, SourceProfile, TableProfile
 from model.core.prompts import PromptBuilder, profiler_prompt
+from model.agents.base_agent import BaseAgent
 
 
-class ProfilerAgent:
+class ProfilerAgent(BaseAgent):
     """
     Build a SourceProfile for one incoming table.
 
@@ -52,6 +54,9 @@ class ProfilerAgent:
             "column_order",
             list(columns_schema.keys()),
         )
+
+        terminal_massage("info", f"Profiling incoming table '{table_name}' with {len(incoming_values)} sample rows.", "\t")
+        terminal_massage("info", f"Columns: {list(columns_schema.keys())}", "\t")
 
         table_profile: TableProfile = {
             "name": table_name,
@@ -99,12 +104,17 @@ class ProfilerAgent:
             )
 
             prompt = self.prompt_builder(llm_input)
+            
             llm_output = self._generate_json(prompt)
 
             apply_llm_output(
                 source_profile=source_profile,
                 llm_output=llm_output,
             )
+
+        terminal_massage("success", f"ProfilerAgent completed for table '{table_name}' with result: {list(source_profile.keys())}.", "\t")
+
+        print(source_profile)
 
         return source_profile
 
@@ -136,15 +146,18 @@ class ProfilerAgent:
         If your client returns a JSON string instead of a dict, this method
         also accepts that and parses it.
         """
-        result = self.llm_client.generate_json(prompt)
+        return self.llm_client.generate_json(prompt)
+        # result = self.llm_client.generate_json(prompt)
 
-        if isinstance(result, dict):
-            return result
+        # print(f"LLM output: \n{result}\n")
 
-        if isinstance(result, str):
-            return json.loads(result)
+        # if isinstance(result, dict):
+        #     return result
 
-        raise TypeError("llm_client.generate_json(prompt) must return dict or JSON str.")
+        # if isinstance(result, str):
+        #     return json.loads(result)
+
+        # raise TypeError("llm_client.generate_json(prompt) must return dict or JSON str.")
     
 def get_column_values(
     rows: list[dict[str, Any]],

@@ -189,6 +189,7 @@ class TaskState:
 
         self.existing_path: str = existing_rdb["path"]
         self.existing_schema: dict[str, Any] = existing_rdb["schema"]
+        self.existing_profiles: dict[str, Any] = existing_rdb["profiles"]
         self.existing_values: Any = existing_rdb["sample_values"]
         self.constraints: dict[str, Any] = existing_rdb["constraints"]
 
@@ -360,6 +361,7 @@ class TaskState:
             "existing_rdb": {
                 "path": self.existing_path,
                 "schema": self.existing_schema,
+                "profiles": self.existing_profiles,
                 "constraints": self.constraints,
                 "sample_values": self.existing_values,
             },
@@ -519,28 +521,30 @@ class RunState:
 
     def update_existing_rdb(
         self,
-        existing_rdb: dict[str, Any],
-        source_task_id: str | None = None,
-        message: str = "",
+        # existing_rdb: dict[str, Any],
+        # source_task_id: str | None = None,
+        # message: str = "",
     ) -> None:
         """
         Update the run-level current existing RDB.
 
         This should be called after a task final decision is accepted
         and the existing RDB has been updated.
+        TODO: not load a existing rdb outside, just update the changed rdb
         """
-        self.current_existing_rdb = deepcopy(existing_rdb)
-        self.current_step = "update_existing_rdb"
-        self.status = "succeeded"
+        # self.current_existing_rdb = deepcopy(existing_rdb)
+        # self.current_step = "update_existing_rdb"
+        # self.status = "succeeded"
 
-        self._record_event(
-            event="update_existing_rdb",
-            message=message or "Current existing RDB updated.",
-            data={
-                "source_task_id": source_task_id,
-                "existing_path": self.current_existing_rdb.get("path"),
-            },
-        )
+        # self._record_event(
+        #     event="update_existing_rdb",
+        #     message=message or "Current existing RDB updated.",
+        #     data={
+        #         "source_task_id": source_task_id,
+        #         "existing_path": self.current_existing_rdb.get("path"),
+        #     },
+        # )
+        pass
 
     def update_status(
         self,

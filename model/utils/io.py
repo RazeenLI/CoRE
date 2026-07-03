@@ -44,6 +44,7 @@ def load_rdb(
 
     schema_path = rdb_path / "schema.json"
     constraints_path = rdb_path / "constraints.json"
+    profiles_path = rdb_path / "profiles.json"
     tables_dir = rdb_path / "tables"
 
     if not rdb_path.exists():
@@ -61,6 +62,15 @@ def load_rdb(
     schema = load_json(schema_path)
     constraints = load_json(constraints_path)
 
+    if profiles_path.exists():
+        profiles = load_json(profiles_path)
+    else:
+        profiles = {
+            "database": schema.get("database", "database"),
+            "profile_version": "v1",
+            "tables": {},
+        }
+
     tables = schema.get("tables")
     if not isinstance(tables, dict):
         raise ValueError("schema.json must contain a dict field: 'tables'")
@@ -74,10 +84,13 @@ def load_rdb(
     existing_rdb: dict[str, Any] = {
         "schema": schema,
         "constraints": constraints,
+        "profiles": profiles,
         "sample_values": sample_values,
+        "path": rdb_path,
     }
 
     return existing_rdb
+
 
 def load_table(
     table_path: str | Path,
@@ -95,6 +108,7 @@ def load_table(
     return {
         "schema": schema,
         "sample_values": rows,
+        "path": table_path,
     }
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -105,6 +119,26 @@ def load_json(path: Path) -> dict[str, Any]:
         raise ValueError(f"JSON file must contain an object: {path}")
 
     return data
+
+def _json_default(obj: Any) -> Any:
+    if isinstance(obj, Path):
+        return str(obj)
+
+    raise TypeError(f"Object of type {obj.__class__.__name__} is not JSON serializable")
+
+
+def save_json(data: dict[str, Any], path: str | Path) -> None:
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    with path.open("w", encoding="utf-8") as f:
+        json.dump(
+            data,
+            f,
+            indent=2,
+            ensure_ascii=False,
+            default=_json_default,
+        )
 
 def load_csv_sample(
     path: Path, 
@@ -133,11 +167,8 @@ def save_rdb(
 
     tables_dir.mkdir(parents=True, exist_ok=True)
 
-    with (save_path / "schema.json").open("w", encoding="utf-8") as f:
-        json.dump(existing_rdb["schema"], f, indent=2, ensure_ascii=False)
-
-    with (save_path / "constraints.json").open("w", encoding="utf-8") as f:
-        json.dump(existing_rdb["constraints"], f, indent=2, ensure_ascii=False)
+    save_json(existing_rdb["schema"], save_path / "schema.json")
+    save_json(existing_rdb["constraints"], save_path / "constraints.json")
 
     for table_name, rows in existing_rdb["sample_values"].items():
         csv_path = tables_dir / f"{table_name}.csv"
@@ -160,3 +191,18 @@ def _save_table_csv(
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
+
+def terminal_massage(
+    sign: str,
+    message: str,
+    front: str = "",
+    end: str = "",
+) -> None:
+    if sign == "success":
+        print(f"{front}\033[0;32m[Success]\033[0m {message}{end}")
+    elif sign == "error":
+        print(f"{front}\033[0;31m[Error]\033[0m {message}{end}")
+    elif sign == "warning":
+        print(f"{front}\033[0;33m[Warning]\033[0m {message}{end}")
+    else:
+        print(f"{front}\033[0;34m[Info]\033[0m {message}{end}")
