@@ -226,6 +226,7 @@ def normalize_type(type_raw: str) -> Dict[str, Any]:
     lower = s.lower()
 
     out: Dict[str, Any] = {"type_raw": s}
+    # out: Dict[str, Any] = dict()
 
     varchar_m = re.match(r"^(varchar|character varying|char|character)\s*\((\d+)\)$", lower)
     numeric_m = re.match(r"^(numeric|decimal)\s*\((\d+)\s*,\s*(\d+)\)$", lower)
@@ -374,7 +375,7 @@ def parse_create_table(stmt: str, schema: Dict[str, Any], constraints: Dict[str,
 
     schema["tables"].setdefault(table, {
         "columns": {},
-        "column_order": []
+        # "column_order": []
     })
 
     for item in split_top_level_commas(body):
@@ -451,7 +452,7 @@ def parse_create_table(stmt: str, schema: Dict[str, Any], constraints: Dict[str,
             col_info["default"] = default_m.group(1).strip()
 
         schema["tables"][table]["columns"][col] = col_info
-        schema["tables"][table]["column_order"].append(col)
+        # schema["tables"][table]["column_order"].append(col)
 
         if re.search(r"\bPRIMARY\s+KEY\b", attrs, flags=re.IGNORECASE):
             col_info["nullable"] = False
@@ -711,7 +712,7 @@ def parse_postgres_sql(
 
 def choose_csv_columns(table: str, schema: Dict[str, Any], rows: List[Dict[str, Any]]) -> List[str]:
     if table in schema["tables"]:
-        return list(schema["tables"][table].get("column_order", []))
+        return list(schema["tables"][table].get("columns", {}).keys())
 
     columns = []
     seen = set()

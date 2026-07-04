@@ -1,6 +1,6 @@
 # `matchers/`
 
-The `matchers/` directory contains reusable matching algorithms used by the Matcher Agent.
+The `matchers/` directory contains reusable matching algorithms used by the Matcher Agent, but is not used recently.
 
 ## `lexical_matcher.py`
 

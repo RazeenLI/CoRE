@@ -29,7 +29,18 @@ Example:
     from agents.matcher_agent import MatcherAgent
     from agents.evolution_agent import EvolutionAgent
 
-    llm = HFLLMClient(model_name="Qwen/Qwen3-8B")
+    llm = HFLLMClient(
+        model_name="Qwen/Qwen3-8B",
+        default_mode="non_thinking",
+        debug=False,
+    )
+
+    llm = HFLLMClient(
+        model_name="Qwen/Qwen3-8B",
+        default_mode="thinking",
+        debug=False,
+    )
+
 
     profiler = ProfilerAgent(llm_client=llm)
     matcher = MatcherAgent(llm_client=llm)
@@ -41,14 +52,90 @@ Example:
     ]
 
     output = llm.generate(messages, max_new_tokens=512, temperature=0.0)
+    result = llm.generate_json(
+        prompt,
+        mode="thinking",
+        strip_thinking=True,
+    )
     print(output)
 """
 
-import torch
 import json
 import re
-from typing import Any
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from dataclasses import dataclass
+from typing import Any, Literal
+
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+
+GenerationMode = Literal["thinking", "non_thinking"]
+
+
+@dataclass(frozen=True)
+class DecodingConfig:
+    do_sample: bool
+    temperature: float | None = None
+    top_p: float | None = None
+    top_k: int | None = None
+    min_p: float | None = None
+
+
+@dataclass(frozen=True)
+class ModelPreset:
+    family: str
+    supports_thinking: bool
+    thinking: DecodingConfig
+    non_thinking: DecodingConfig
+
+
+DEFAULT_PRESET = ModelPreset(
+    family="default",
+    supports_thinking=False,
+    thinking=DecodingConfig(
+        do_sample=True,
+        temperature=0.7,
+        top_p=0.9,
+        top_k=50,
+        min_p=None,
+    ),
+    non_thinking=DecodingConfig(
+        do_sample=True,
+        temperature=0.7,
+        top_p=0.9,
+        top_k=50,
+        min_p=None,
+    ),
+)
+
+
+QWEN3_PRESET = ModelPreset(
+    family="qwen3",
+    supports_thinking=True,
+    thinking=DecodingConfig(
+        do_sample=True,
+        temperature=0.6,
+        top_p=0.95,
+        top_k=20,
+        min_p=0.0,
+    ),
+    non_thinking=DecodingConfig(
+        do_sample=True,
+        temperature=0.7,
+        top_p=0.8,
+        top_k=20,
+        min_p=0.0,
+    ),
+)
+
+
+def infer_model_preset(model_name: str) -> ModelPreset:
+    name = model_name.lower()
+
+    if "qwen3" in name:
+        return QWEN3_PRESET
+
+    return DEFAULT_PRESET
 
 
 class HFLLMClient:
@@ -57,8 +144,13 @@ class HFLLMClient:
         model_name: str,
         device_map: str = "auto",
         trust_remote_code: bool = True,
-    ):
+        default_mode: GenerationMode = "non_thinking",
+        debug: bool = False,
+    ) -> None:
         self.model_name = model_name
+        self.default_mode = default_mode
+        self.debug = debug
+        self.preset = infer_model_preset(model_name)
 
         self.tokenizer = AutoTokenizer.from_pretrained(
             model_name,
@@ -79,46 +171,88 @@ class HFLLMClient:
         if self.tokenizer.pad_token_id is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
 
-    def _infer_dtype(self):
+    def _infer_dtype(self) -> torch.dtype:
         if torch.cuda.is_available() and torch.cuda.is_bf16_supported():
             return torch.bfloat16
         if torch.cuda.is_available():
             return torch.float16
         return torch.float32
 
+    def _input_device(self) -> torch.device:
+        return self.model.get_input_embeddings().weight.device
+
+    def _get_decoding_config(
+        self,
+        mode: GenerationMode,
+    ) -> DecodingConfig:
+        if mode == "thinking":
+            return self.preset.thinking
+
+        if mode == "non_thinking":
+            return self.preset.non_thinking
+
+        raise ValueError(f"Unsupported generation mode: {mode}")
+
+    def _build_prompt(
+        self,
+        messages: list[dict[str, str]],
+        mode: GenerationMode,
+    ) -> str:
+        kwargs: dict[str, Any] = {
+            "tokenize": False,
+            "add_generation_prompt": True,
+        }
+
+        if self.preset.supports_thinking:
+            kwargs["enable_thinking"] = mode == "thinking"
+
+        return self.tokenizer.apply_chat_template(
+            messages,
+            **kwargs,
+        )
+
     def generate(
         self,
-        messages,
-        max_new_tokens: int = 512,
-        temperature: float = 0.0,
+        messages: list[dict[str, str]],
+        max_new_tokens: int = 2048,
+        mode: GenerationMode | None = None,
+        strip_thinking: bool = True,
     ) -> str:
-        prompt = self.tokenizer.apply_chat_template(
-            messages,
-            tokenize=False,
-            add_generation_prompt=True,
-        )
+        mode = mode or self.default_mode
+
+        if mode == "thinking" and not self.preset.supports_thinking:
+            raise ValueError(
+                f"Model preset '{self.preset.family}' does not support thinking mode."
+            )
+
+        prompt = self._build_prompt(messages, mode)
 
         inputs = self.tokenizer(
             prompt,
             return_tensors="pt",
             add_special_tokens=False,
-        ).to(self.model.device)
+        ).to(self._input_device())
 
-        generation_kwargs = {
+        decoding = self._get_decoding_config(mode)
+
+        generation_kwargs: dict[str, Any] = {
             "max_new_tokens": max_new_tokens,
             "pad_token_id": self.tokenizer.pad_token_id,
             "eos_token_id": self.tokenizer.eos_token_id,
+            "do_sample": decoding.do_sample,
         }
 
-        if temperature > 0:
-            generation_kwargs.update({
-                "do_sample": True,
-                "temperature": temperature,
-            })
-        else:
-            generation_kwargs.update({
-                "do_sample": False,
-            })
+        if decoding.temperature is not None:
+            generation_kwargs["temperature"] = decoding.temperature
+
+        if decoding.top_p is not None:
+            generation_kwargs["top_p"] = decoding.top_p
+
+        if decoding.top_k is not None:
+            generation_kwargs["top_k"] = decoding.top_k
+
+        if decoding.min_p is not None:
+            generation_kwargs["min_p"] = decoding.min_p
 
         with torch.inference_mode():
             outputs = self.model.generate(
@@ -129,16 +263,27 @@ class HFLLMClient:
         input_len = inputs["input_ids"].shape[-1]
         generated_ids = outputs[0][input_len:]
 
-        return self.tokenizer.decode(
+        text = self.tokenizer.decode(
             generated_ids,
             skip_special_tokens=True,
         ).strip()
-    
+
+        if strip_thinking:
+            text = strip_qwen_thinking(text)
+
+        if self.debug:
+            print("RAW LLM OUTPUT:")
+            print(text)
+            print("=" * 80)
+
+        return text
+
     def generate_json(
         self,
         prompt: str,
-        max_new_tokens: int = 2048,
-        temperature: float = 0.0,
+        max_new_tokens: int = 4096,
+        mode: GenerationMode | None = None,
+        strip_thinking: bool = True,
     ) -> dict[str, Any]:
         messages = [
             {
@@ -150,11 +295,22 @@ class HFLLMClient:
         text = self.generate(
             messages=messages,
             max_new_tokens=max_new_tokens,
-            temperature=temperature,
+            mode=mode,
+            strip_thinking=strip_thinking,
         )
 
         return extract_json_object(text)
-    
+
+
+def strip_qwen_thinking(text: str) -> str:
+    text = text.strip()
+
+    return re.sub(
+        r"(?s)<think>.*?</think>",
+        "",
+        text,
+    ).strip()
+
 
 def extract_json_object(text: str) -> dict[str, Any]:
     text = text.strip()

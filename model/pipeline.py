@@ -6,7 +6,7 @@ from pathlib import Path
 import pandas as pd
 import yaml
 
-from model.utils.io import load_rdb, save_rdb, load_table, terminal_massage
+from model.utils.io import load_rdb, save_rdb, load_table, terminal_message
 
 # from core.orchestrator import Orchestrator
 # from core.task import IngestionTask
@@ -17,6 +17,7 @@ from model.core.orchestrator import Orchestrator
 
 from model.agents.base_agent import BaseAgent
 from model.agents.profiler_agent import ProfilerAgent
+from model.agents.matcher_agent import MatcherAgent
 # from agents.matcher import MatcherAgent
 # from agents.evolution import EvolutionAgent
 # from agents.validator import ValidatorAgent
@@ -61,7 +62,7 @@ def create_agents(llm_client):
     Later, you can pass llm_client, embedding_model, prompts, etc.
     """
     profiler_agent = ProfilerAgent(llm_client)
-    matcher_agent = BaseAgent(llm_client) # MatcherAgent(config=config)
+    matcher_agent = MatcherAgent(llm_client) # MatcherAgent(config=config)
     evolution_agent = BaseAgent(llm_client) # EvolutionAgent(config=config)
     validator_agent = BaseAgent(llm_client) # ValidatorAgent(config=config)
     decision_agent = BaseAgent(llm_client) # DecisionAgent(config=config)
@@ -99,10 +100,14 @@ def run_pipeline(
         sample_num=data_config["existing_rdb"]["sample_num"],
     )
 
-    terminal_massage("success", f"Load existing relational database with keys: {existing_rdb.keys()}.")
+    terminal_message("success", f"Load existing relational database with keys: {existing_rdb.keys()}.")
 
     # 2. Create LLM Client
-    llm_client = HFLLMClient(model_name=agent_config["LLMs"]["name"])
+    llm_client = HFLLMClient(
+        model_name=agent_config["LLMs"]["name"],
+        default_mode=agent_config["LLMs"]["default_mode"],
+        debug=False,
+    )
 
     # print("CUDA available:", torch.cuda.is_available())
     # print("Device map:", getattr(llm_client.model, "hf_device_map", None))
@@ -110,7 +115,7 @@ def run_pipeline(
     # 3. Create agents
     agents = create_agents(llm_client)
 
-    terminal_massage("success", f"LLM Client and Agents are created.")
+    terminal_message("success", f"LLM Client and Agents are created.")
 
     # 3. Create orchestrator
     orchestrator = Orchestrator(
@@ -123,7 +128,7 @@ def run_pipeline(
         config=agent_config,
     )
 
-    terminal_massage("success", f"Orchestrator is created.")
+    terminal_message("success", f"Orchestrator is created.")
 
     # 4. Loop over incoming tasks
     for step_index, step_config in enumerate(data_config["steps"], start=1):
@@ -135,17 +140,17 @@ def run_pipeline(
             sample_num=step_config.get("sample_num", 0),
         )
 
-        terminal_massage("success", f"Task {task_id} load incoming table with keys: {incoming_table.keys()}.")
+        terminal_message("success", f"Task {task_id} load incoming table with keys: {incoming_table.keys()}.")
 
         existing_rdb = orchestrator.run_task(task_id, incoming_table)
 
-        terminal_massage("success", f"Task {task_id} running finished")
+        terminal_message("success", f"Task {task_id} running finished")
 
     # 5. Finish run
     # orchestrator.run_state.finish_run()
     orchestrator.save_state(Path(save_root_path) / "run_state.json")
 
-    terminal_massage("success", f"Run state is saved at {Path(save_root_path) / 'run_state.json'}.")
+    terminal_message("success", f"Run state is saved at {Path(save_root_path) / 'run_state.json'}.")
 
     # # 6. Save final run state / updated RDB / task results
     # output_dir = Path(config["output_dir"])
@@ -158,4 +163,4 @@ def run_pipeline(
 
     save_path = save_rdb(existing_rdb, save_root_path, folder_name="example")
 
-    terminal_massage("success", f"Relational database is saved at {save_path}.")
+    terminal_message("success", f"Relational database is saved at {save_path}.")

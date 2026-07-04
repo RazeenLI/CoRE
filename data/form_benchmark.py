@@ -20,6 +20,7 @@ except ImportError as e:
 python data/form_benchmark.py data/Chinook/benchmarks/configs/small_case_A_remove_columns.yaml
 python data/form_benchmark.py data/Chinook/benchmarks/configs/small_case_B_remove_table.yaml
 python data/form_benchmark.py data/Chinook/benchmarks/configs/small_case_C_remove_relationship_table.yaml
+python data/form_benchmark.py data/Chinook/benchmarks/configs/small_case_D_project_columns.yaml
 python data/form_benchmark.py data/Chinook/benchmarks/configs/small_pipeline_ABC.yaml
 """
 # -----------------------------
@@ -100,9 +101,151 @@ def select_rows(
     raise ValueError(f"Unsupported row_policy mode: {mode}")
 
 
+
 def project_rows(rows: List[Dict[str, Any]], columns: List[str]) -> List[Dict[str, Any]]:
     return [{col: row.get(col, "") for col in columns} for row in rows]
 
+def normalize_column_mapping(
+    step: Dict[str, Any],
+    expected_table_cols: Dict[str, List[str]],
+) -> Dict[str, str]:
+    """
+    Return mapping:
+        source_column -> incoming_column
+
+    Supported YAML:
+      1. column_mapping:
+           source_col: incoming_col
+
+      2. incoming_columns:
+           - col1
+           - col2
+
+      3. incoming_columns: "*"
+    """
+    source_table = step["source_table"]
+
+    if "column_mapping" in step:
+        mapping = step["column_mapping"]
+
+        if not isinstance(mapping, dict):
+            raise ValueError("column_mapping must be a dict: source_col -> incoming_col")
+
+        return dict(mapping)
+
+    incoming_cols = step.get("incoming_columns", "*")
+
+    if incoming_cols == "*":
+        return {
+            col: col
+            for col in expected_table_cols[source_table]
+        }
+
+    return {
+        col: col
+        for col in incoming_cols
+    }
+
+
+def project_rows_with_mapping(
+    rows: List[Dict[str, Any]],
+    column_mapping: Dict[str, str],
+) -> List[Dict[str, Any]]:
+    """
+    Project source rows into incoming rows with optional column renaming.
+
+    column_mapping:
+        source_column -> incoming_column
+    """
+    projected = []
+
+    for row in rows:
+        new_row = {}
+
+        for source_col, incoming_col in column_mapping.items():
+            new_row[incoming_col] = row.get(source_col, "")
+
+        projected.append(new_row)
+
+    return projected
+
+
+def make_single_table_schema_with_mapping(
+    source_schema: Dict[str, Any],
+    source_table: str,
+    incoming_table: str,
+    column_mapping: Dict[str, str],
+) -> Dict[str, Any]:
+    """
+    Build incoming schema from source table with optional column renaming.
+
+    column_mapping:
+        source_column -> incoming_column
+    """
+    source_table_schema = source_schema["tables"][source_table]
+
+    incoming_columns = {}
+
+    for source_col, incoming_col in column_mapping.items():
+        incoming_columns[incoming_col] = copy.deepcopy(
+            source_table_schema["columns"][source_col]
+        )
+
+    return {
+        "database": "incoming",
+        "tables": {
+            incoming_table: {
+                "columns": incoming_columns,
+                "column_order": list(column_mapping.values()),
+            }
+        },
+    }
+
+def make_incoming_profile_for_step_with_mapping(
+    source_profiles: Dict[str, Any],
+    source_table: str,
+    incoming_table: str,
+    column_mapping: Dict[str, str],
+) -> Dict[str, Any]:
+    """
+    Build one-table profile for a step with optional table/column renaming.
+
+    column_mapping:
+        source_column -> incoming_column
+    """
+    source_tables = source_profiles.get("tables", {})
+
+    out: Dict[str, Any] = {
+        "database": "incoming",
+        "tables": {},
+    }
+
+    if source_table not in source_tables:
+        return out
+
+    table_profile = copy.deepcopy(source_tables[source_table])
+
+    renamed_columns = {}
+
+    for source_col, incoming_col in column_mapping.items():
+        source_col_profile = table_profile.get("columns", {}).get(source_col)
+
+        if source_col_profile is None:
+            continue
+
+        incoming_col_profile = copy.deepcopy(source_col_profile)
+        incoming_col_profile["name"] = incoming_col
+        renamed_columns[incoming_col] = incoming_col_profile
+
+    table_profile["columns"] = renamed_columns
+
+    if "table" in table_profile:
+        table_profile["table"]["name"] = incoming_table
+        table_profile["table"]["column_count"] = len(column_mapping)
+
+    out["tables"][incoming_table] = table_profile
+
+    return out
 
 def unique_keep_order(items: List[str]) -> List[str]:
     seen = set()
@@ -125,7 +268,7 @@ def all_source_tables(source_schema: Dict[str, Any]) -> List[str]:
 
 
 def table_column_order(source_schema: Dict[str, Any], table: str) -> List[str]:
-    return list(source_schema["tables"][table]["column_order"])
+    return list(source_schema["tables"][table]["columns"].keys())
 
 
 def resolve_expected_tables(spec: Any, source_schema: Dict[str, Any]) -> Dict[str, List[str]]:
@@ -538,6 +681,11 @@ def build_existing(
                 for col in del_cols:
                     row.pop(col, None)
 
+        elif operation == "project_columns":
+            # No change to existing schema/rows/constraints.
+            # This operation only creates an incoming projected table.
+            pass
+
         else:
             raise ValueError(f"Unsupported step operation: {operation}")
 
@@ -562,6 +710,10 @@ def incoming_columns_for_step(
         keys = step.get("keys", [])
         del_cols = step.get("delate_columns", step.get("delete_columns", []))
         return unique_keep_order(list(keys) + list(del_cols))
+    
+    if step["operation"] == "project_columns":
+        column_mapping = normalize_column_mapping(step, expected_table_cols)
+        return list(column_mapping.values())
 
     raise ValueError(f"Unsupported step operation: {step['operation']}")
 
@@ -589,22 +741,56 @@ def write_step(
 
     row_policy = step.get("incoming_row_policy", {"mode": "all"})
     base_rows = expected_rows[source_table]
-    incoming_rows = select_rows(base_rows, row_policy, seed + idx)
-    incoming_rows = project_rows(incoming_rows, columns)
+    selected_rows = select_rows(base_rows, row_policy, seed + idx)
 
-    incoming_schema = make_single_table_schema(
-        source_schema=source_schema,
-        source_table=source_table,
-        incoming_table=incoming_table,
-        columns=columns,
-    )
+    if operation == "project_columns":
+        column_mapping = normalize_column_mapping(step, expected_table_cols)
 
-    incoming_profiles = make_incoming_profile_for_step(
-        source_profiles=source_profiles,
-        source_table=source_table,
-        incoming_table=incoming_table,
-        columns=columns,
-    )
+        for source_col in column_mapping.keys():
+            check_column(source_schema, source_table, source_col)
+
+        columns = list(column_mapping.values())
+
+        incoming_rows = project_rows_with_mapping(
+            rows=selected_rows,
+            column_mapping=column_mapping,
+        )
+
+        incoming_schema = make_single_table_schema_with_mapping(
+            source_schema=source_schema,
+            source_table=source_table,
+            incoming_table=incoming_table,
+            column_mapping=column_mapping,
+        )
+
+        incoming_profiles = make_incoming_profile_for_step_with_mapping(
+            source_profiles=source_profiles,
+            source_table=source_table,
+            incoming_table=incoming_table,
+            column_mapping=column_mapping,
+        )
+
+    else:
+        columns = incoming_columns_for_step(step, expected_table_cols)
+
+        for col in columns:
+            check_column(source_schema, source_table, col)
+
+        incoming_rows = project_rows(selected_rows, columns)
+
+        incoming_schema = make_single_table_schema(
+            source_schema=source_schema,
+            source_table=source_table,
+            incoming_table=incoming_table,
+            columns=columns,
+        )
+
+        incoming_profiles = make_incoming_profile_for_step(
+            source_profiles=source_profiles,
+            source_table=source_table,
+            incoming_table=incoming_table,
+            columns=columns,
+        )
 
     if operation == "remove_columns":
         decision = {
@@ -635,6 +821,24 @@ def write_step(
             "target_table": source_table,
             "create_new_table": True,
             "expected_foreign_keys": expected_fks,
+        }
+
+    elif operation == "project_columns":
+        source_to_incoming = normalize_column_mapping(step, expected_table_cols)
+        incoming_to_target = {
+            incoming_col: source_col
+            for source_col, incoming_col in source_to_incoming.items()
+        }
+        
+        decision = {
+            "operation": "map_existing_table",
+            "incoming_table": incoming_table,
+            "target_table": source_table,
+            "source_to_incoming_columns": source_to_incoming,
+            "incoming_to_target_columns": incoming_to_target,
+            "keys": step.get("keys", []),
+            "create_new_table": False,
+            "schema_change": False,
         }
 
     else:
@@ -674,6 +878,9 @@ def apply_step_to_current_expected_state(
             col for col in expected_schema["tables"][source_table]["column_order"]
             if col in current_schema["tables"][source_table]["columns"]
         ]
+
+    elif operation == "project_columns":
+        pass
 
     return current_schema
 
