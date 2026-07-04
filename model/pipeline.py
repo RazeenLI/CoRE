@@ -18,8 +18,9 @@ from model.core.orchestrator import Orchestrator
 from model.agents.base_agent import BaseAgent
 from model.agents.profiler_agent import ProfilerAgent
 from model.agents.matcher_agent import MatcherAgent
+from model.agents.evolutor_agent import EvolutorAgent
 # from agents.matcher import MatcherAgent
-# from agents.evolution import EvolutionAgent
+# from agents.evolutor import evolutorAgent
 # from agents.validator import ValidatorAgent
 # from agents.decision import DecisionAgent
 
@@ -62,15 +63,15 @@ def create_agents(llm_client):
     Later, you can pass llm_client, embedding_model, prompts, etc.
     """
     profiler_agent = ProfilerAgent(llm_client)
-    matcher_agent = MatcherAgent(llm_client) # MatcherAgent(config=config)
-    evolution_agent = BaseAgent(llm_client) # EvolutionAgent(config=config)
-    validator_agent = BaseAgent(llm_client) # ValidatorAgent(config=config)
-    decision_agent = BaseAgent(llm_client) # DecisionAgent(config=config)
+    matcher_agent = MatcherAgent(llm_client)
+    evolutor_agent = EvolutorAgent(llm_client)
+    validator_agent = BaseAgent(llm_client)
+    decision_agent = BaseAgent(llm_client)
 
     return {
         "profiler": profiler_agent,
         "matcher": matcher_agent,
-        "evolution": evolution_agent,
+        "evolutor": evolutor_agent,
         "validator": validator_agent,
         "decision": decision_agent,
     }
@@ -121,7 +122,7 @@ def run_pipeline(
     orchestrator = Orchestrator(
         profiler_agent=agents["profiler"],
         matcher_agent=agents["matcher"],
-        evolution_agent=agents["evolution"],
+        evolutor_agent=agents["evolutor"],
         validator_agent=agents["validator"],
         decision_agent=agents["decision"],
         existing_rdb=existing_rdb,

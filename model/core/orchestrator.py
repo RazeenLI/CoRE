@@ -6,6 +6,7 @@ from model.core.state import RunState, TaskState
 from model.agents.base_agent import BaseAgent
 from model.agents.profiler_agent import ProfilerAgent
 from model.agents.matcher_agent import MatcherAgent
+from model.agents.evolutor_agent import EvolutorAgent
 
 
 class Orchestrator:
@@ -25,7 +26,7 @@ class Orchestrator:
         self,
         profiler_agent: ProfilerAgent,
         matcher_agent: MatcherAgent,
-        evolution_agent: BaseAgent,
+        evolutor_agent: EvolutorAgent,
         validator_agent: BaseAgent,
         decision_agent: BaseAgent,
         existing_rdb,
@@ -33,7 +34,7 @@ class Orchestrator:
     ) -> None:
         self.profiler = profiler_agent
         self.matcher = matcher_agent
-        self.evolution = evolution_agent
+        self.evolutor = evolutor_agent
         self.validator = validator_agent
         self.decision = decision_agent
 
@@ -64,7 +65,7 @@ class Orchestrator:
             elif next_step == "mapping":
                 self._build_mapping_proposal(task_state)
 
-            elif next_step == "evolution":
+            elif next_step == "evolutor":
                 self._run_evolutor(task_state)
 
             elif next_step == "validator":
@@ -99,7 +100,6 @@ class Orchestrator:
         
     
     def _run_profiler(self, task_state: TaskState):
-        # TODO: Profiler for incomming table profiler
         profiler_result = self.profiler(
             incoming_schema=task_state.incoming_schema,
             incoming_values=task_state.incoming_values,
@@ -117,16 +117,7 @@ class Orchestrator:
         )
 
     def _run_matcher(self, task_state: TaskState):
-        # TODO: Matcher for matching incoming table with tables in existing rdb
-
-        # TODO: Deside routing based on the confidence from Matcher
-        # can return routing result
-        # task_state.set_routing(
-        #     next_step="mapping",
-        #     reason="just test",
-        #     source_step=None,
-        # )
-        matching_result = self.matcher(
+        matcher_result = self.matcher(
             incoming_schema=task_state.incoming_schema,
             incoming_values=task_state.incoming_values,
             incoming_profile=task_state.results["profiler"][-1],
@@ -136,12 +127,12 @@ class Orchestrator:
         )
         task_state.save_result(
             agent="matcher",
-            result=matching_result,
+            result=matcher_result,
             status="success",
             message="Matcher completed successfully.",
         )
 
-        confidence = matching_result["table_matches"][0].get("confidence", 0.0)
+        confidence = matcher_result["table_matches"][0].get("confidence", 0.0)
 
         if confidence >= self.threshold:
             task_state.set_routing(
@@ -151,7 +142,7 @@ class Orchestrator:
             )
         else:
             task_state.set_routing(
-                next_step="evolution",
+                next_step="evolutor",
                 reason=f"Matcher confidence {confidence} < threshold {self.threshold}.",
                 source_step="matcher",
             )
@@ -160,8 +151,9 @@ class Orchestrator:
     def _build_mapping_proposal(self, task_state: TaskState):
         # TODO: Build mapping proposal 
         # 1. only mapping
-        # 2. if evolution happens
+        # 2. if evolutor happens
         # terminal_message("info", f"Building mapping proposal for task '{task_state.task_id}'.", "\t")
+
         task_state.set_routing(
             next_step="finish_task",
             reason=f"Example reason.",
@@ -172,11 +164,26 @@ class Orchestrator:
     def _run_evolutor(self, task_state: TaskState):
         # TODO: Evolutor for evolute tables in existing rdb for incoming table
 
-        # TODO: Deside routing based on the confidence from Evolutor (Currently mush return to Matcher) only allow 5 times in loop
+        evolutor_result = self.evolutor(
+            incoming_schema=task_state.incoming_schema,
+            incoming_values=task_state.incoming_values,
+            incoming_profile=task_state.results["profiler"][-1],
+            matcher_result=task_state.results["matcher"][-1],
+            existing_schema=task_state.existing_schema,
+            existing_values=task_state.existing_values,
+            existing_profiles=task_state.existing_profiles,
+            existing_constraints=task_state.constraints,
+        )
+        task_state.save_result(
+            agent="evolutor",
+            result=evolutor_result,
+            status="success",
+            message="Evolutor completed successfully.",
+        )
         task_state.set_routing(
-            next_step="finish_task",
-            reason=f"Example reason.",
-            source_step="evolution",
+            next_step="validator",
+            reason=f"Evolutor completed successfully.",
+            source_step="evolutor",
         )
         pass
     
@@ -212,7 +219,7 @@ class Orchestrator:
         state_path: str | Path,
         profiler_agent: Any,
         matcher_agent: Any,
-        evolution_agent: Any,
+        evolutor_agent: Any,
         validator_agent: Any,
         decision_agent: Any,
         config: dict[str, Any],
@@ -231,7 +238,7 @@ class Orchestrator:
         orchestrator = cls(
             profiler_agent=profiler_agent,
             matcher_agent=matcher_agent,
-            evolution_agent=evolution_agent,
+            evolutor_agent=evolutor_agent,
             validator_agent=validator_agent,
             decision_agent=decision_agent,
             existing_rdb=run_state.current_existing_rdb,

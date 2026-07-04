@@ -356,6 +356,58 @@ def parse_foreign_key_body(
     )
     return True
 
+def compact_constraints(raw_constraints: Dict[str, Any]) -> Dict[str, Any]:
+    raw = raw_constraints.get("constraints", {})
+
+    compact: Dict[str, Any] = {
+        "database": raw_constraints.get("database", "database"),
+        "constraints": {
+            "primary_keys": {},
+            "foreign_keys": {},
+            "unique_constraints": {},
+            "check_constraints": {},
+            "indexes": {},
+            "inferred_constraints": {},
+        },
+    }
+
+    for pk in raw.get("primary_keys", []):
+        table = pk["table"]
+        compact["constraints"]["primary_keys"][table] = list(pk["columns"])
+
+    for fk in raw.get("foreign_keys", []):
+        table = fk["table"]
+        compact["constraints"]["foreign_keys"].setdefault(table, []).append({
+            "columns": list(fk["columns"]),
+            "referenced_table": fk["referenced_table"],
+            "referenced_columns": list(fk["referenced_columns"]),
+        })
+
+    for uq in raw.get("unique_constraints", []):
+        table = uq["table"]
+        compact["constraints"]["unique_constraints"].setdefault(table, []).append(
+            list(uq["columns"])
+        )
+
+    for idx in raw.get("indexes", []):
+        table = idx["table"]
+        compact["constraints"]["indexes"].setdefault(table, []).append(
+            list(idx["columns"])
+        )
+
+    for ck in raw.get("check_constraints", []):
+        table = ck["table"]
+        compact["constraints"]["check_constraints"].setdefault(table, []).append(
+            ck["expression"]
+        )
+
+    for item in raw.get("inferred_constraints", []):
+        table = item.get("table", "unknown")
+        compact["constraints"]["inferred_constraints"].setdefault(table, []).append(
+            copy.deepcopy(item)
+        )
+
+    return compact
 
 # -----------------------------
 # DDL parsers
@@ -743,6 +795,7 @@ def write_outputs(
         encoding="utf-8"
     )
 
+    constraints = compact_constraints(constraints)
     (output_dir / "constraints.json").write_text(
         json.dumps(constraints, indent=2, ensure_ascii=False),
         encoding="utf-8"
