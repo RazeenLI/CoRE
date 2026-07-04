@@ -4,15 +4,16 @@ import json
 import re
 from typing import Any
 
-from model.utils.io import terminal_massage
-from model.core.schemas import ColumnProfile, SourceProfile, TableProfile
-from model.core.prompts import PromptBuilder, profiler_prompt
 from model.agents.base_agent import BaseAgent
+from model.core.schemas import ProfilerResult, ColumnProfile, TableProfile
+from model.core.prompts import PromptBuilder, profiler_prompt
+from model.utils.io import terminal_message
+from model.utils.structure import get_column_values
 
 
 class ProfilerAgent(BaseAgent):
     """
-    Build a SourceProfile for one incoming table.
+    Build a ProfilerResult for one incoming table.
 
     Input:
         incoming_schema:
@@ -22,7 +23,7 @@ class ProfilerAgent(BaseAgent):
             sampled rows for that incoming table.
 
     Output:
-        SourceProfile
+        ProfilerResult
 
     This agent does not:
         - read files
@@ -46,17 +47,16 @@ class ProfilerAgent(BaseAgent):
         self,
         incoming_schema: dict[str, Any],
         incoming_values: list[dict[str, Any]],
-    ) -> SourceProfile:
+    ) -> ProfilerResult:
         table_name, table_schema = self._extract_single_table(incoming_schema) # not necessary
 
         columns_schema: dict[str, Any] = table_schema.get("columns", {})
-        column_order: list[str] = table_schema.get(
-            "column_order",
-            list(columns_schema.keys()),
-        )
+        # column_order: list[str] = table_schema.get("column_order", list(columns_schema.keys()),)
+        column_order: list[str] = list(columns_schema.keys())
 
-        terminal_massage("info", f"Profiling incoming table '{table_name}' with {len(incoming_values)} sample rows.", "\t")
-        terminal_massage("info", f"Columns: {list(columns_schema.keys())}", "\t")
+        terminal_message("info", f"Profiling incoming table '{table_name}' with {len(incoming_values)} sample rows.", "\t")
+        terminal_message("info", f"Columns: {list(columns_schema.keys())}", "\t\t")
+        # print(json.dumps(table_schema, indent=2))
 
         table_profile: TableProfile = {
             "name": table_name,
@@ -88,7 +88,7 @@ class ProfilerAgent(BaseAgent):
 
             column_profiles[column_name] = column_profile
 
-        source_profile: SourceProfile = {
+        profiler_result: ProfilerResult = {
             "table": table_profile,
             "columns": column_profiles,
         }
@@ -100,7 +100,7 @@ class ProfilerAgent(BaseAgent):
                 table_name=table_name,
                 table_schema=table_schema,
                 incoming_values=incoming_values,
-                source_profile=source_profile,
+                profiler_result=profiler_result,
             )
 
             prompt = self.prompt_builder(llm_input)
@@ -108,75 +108,28 @@ class ProfilerAgent(BaseAgent):
             llm_output = self._generate_json(prompt)
 
             apply_llm_output(
-                source_profile=source_profile,
+                profiler_result=profiler_result,
                 llm_output=llm_output,
             )
 
-        terminal_massage("success", f"ProfilerAgent completed for table '{table_name}' with result: {list(source_profile.keys())}.", "\t")
+        terminal_message("success", f"ProfilerAgent completed for table '{table_name}' with result: {list(profiler_result.keys())}.", "\t")
 
-        print(source_profile)
+        # print(json.dumps(profiler_result, indent=2, ensure_ascii=False))
 
-        return source_profile
-
-    def _extract_single_table(
-        self,
-        incoming_schema: dict[str, Any],
-    ) -> tuple[str, dict[str, Any]]:
-        tables = incoming_schema.get("tables", {})
-
-        if not tables:
-            raise ValueError("incoming_schema must contain at least one table.")
-
-        if len(tables) > 1:
-            raise ValueError(
-                "ProfilerAgent currently expects one incoming table per task."
-            )
-
-        table_name = next(iter(tables))
-        table_schema = tables[table_name]
-
-        return table_name, table_schema
-
-    def _generate_json(self, prompt: str) -> dict[str, Any]:
-        """
-        Expected llm_client interface:
-
-            llm_client.generate_json(prompt: str) -> dict[str, Any]
-
-        If your client returns a JSON string instead of a dict, this method
-        also accepts that and parses it.
-        """
-        return self.llm_client.generate_json(prompt)
-        # result = self.llm_client.generate_json(prompt)
-
-        # print(f"LLM output: \n{result}\n")
-
-        # if isinstance(result, dict):
-        #     return result
-
-        # if isinstance(result, str):
-        #     return json.loads(result)
-
-        # raise TypeError("llm_client.generate_json(prompt) must return dict or JSON str.")
-    
-def get_column_values(
-    rows: list[dict[str, Any]],
-    column_name: str,
-) -> list[Any]:
-    return [row.get(column_name) for row in rows]
+        return profiler_result
 
 
 def build_llm_input(
     table_name: str,
     table_schema: dict[str, Any],
     incoming_values: list[dict[str, Any]],
-    source_profile: SourceProfile,
+    profiler_result: ProfilerResult,
 ) -> dict[str, Any]:
     columns_schema = table_schema.get("columns", {})
 
     columns_input: dict[str, Any] = {}
 
-    for column_name, column_profile in source_profile["columns"].items():
+    for column_name, column_profile in profiler_result["columns"].items():
         columns_input[column_name] = {
             "schema": columns_schema.get(column_name, {}),
             "dtype": column_profile.get("dtype", "unknown"),
@@ -194,13 +147,13 @@ def build_llm_input(
 
 
 def apply_llm_output(
-    source_profile: SourceProfile,
+    profiler_result: ProfilerResult,
     llm_output: dict[str, Any],
 ) -> None:
     """
-    Mutates source_profile in place.
+    Mutates profiler_result in place.
 
-    The base SourceProfile already contains:
+    The base ProfilerResult already contains:
         - table.name
         - table.column_count
         - columns.<col>.name
@@ -211,14 +164,14 @@ def apply_llm_output(
     """
     table_output = llm_output.get("table", {})
 
-    source_profile["table"]["summary"] = table_output.get("summary", "")
-    source_profile["table"]["entity"] = table_output.get("entity", "unknown")
-    source_profile["table"]["role"] = table_output.get("role", "unknown")
-    source_profile["table"]["aliases"] = table_output.get("aliases", [])
+    profiler_result["table"]["summary"] = table_output.get("summary", "")
+    profiler_result["table"]["entity"] = table_output.get("entity", "unknown")
+    profiler_result["table"]["role"] = table_output.get("role", "unknown")
+    profiler_result["table"]["aliases"] = table_output.get("aliases", [])
 
     column_outputs = llm_output.get("columns", {})
 
-    for column_name, column_profile in source_profile["columns"].items():
+    for column_name, column_profile in profiler_result["columns"].items():
         column_output = column_outputs.get(column_name, {})
 
         column_profile["meaning"] = column_output.get("meaning", "")

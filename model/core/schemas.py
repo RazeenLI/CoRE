@@ -2,6 +2,17 @@
 示例占位
 
 TODO: 根据 agent 开发 完成 result 的结构和格式
+
+column matches这个地方我有一个问题，是一个column只能有一个配对吗？有时候不是会有好几个潜在的选项吗？
+这个地方我的想法是
+"column_matches": [
+"source_column_1": [
+{
+target_column: "target_column_1"
+confidence: 0.8
+reason: ""
+}
+]
 """
 
 from typing import Any, Literal, Optional, TypedDict
@@ -36,6 +47,26 @@ SemanticType = Literal[
     "unknown",
 ]
 
+
+MatchStatus = Literal[
+    "full_match",
+    "partial_match",
+    "ambiguous_match",
+    "poor_match",
+]
+
+
+# MatchType = Literal[
+#     "direct",
+#     "semantic_equivalent",
+#     "possible_identifier",
+#     "possible_fk",
+#     "transform_needed",
+# ]
+
+# -----------------------------
+# Profile
+# -----------------------------
 
 class TableProfile(TypedDict, total=False):
     # original incoming table name
@@ -117,7 +148,7 @@ class ColumnProfile(TypedDict, total=False):
     # LLM-generated aliases for matching
     aliases: list[str]
 
-class SourceProfile(TypedDict, total=False):
+class ProfilerResult(TypedDict, total=False):
     table: TableProfile
 
     # key = original column name
@@ -138,25 +169,60 @@ class SourceProfile(TypedDict, total=False):
 #     description: str
 
 
-class ColumnMapping(TypedDict, total=False):
-    source_column: str
-    target_table: str
+# -----------------------------
+# Matcher
+# -----------------------------
+
+class ColumnMatch(TypedDict, total=False):
     target_column: str
     confidence: float
+    # match_type: MatchType
+    # requires_transform: bool
     reason: str
 
 
-class MatchingResult(TypedDict, total=False):
-    decision: Literal[
-        "high_confidence_match",
-        "partial_match",
-        "no_match",
-    ]
-    matched_target_table: Optional[str]
+class TableMatch(TypedDict, total=False):
+    target_table: str
     confidence: float
-    column_mappings: list[ColumnMapping]
+    match_status: MatchStatus
+
+    # Key: source column name
+    # Value: candidate target columns for this source column
+    column_matches: dict[str, list[ColumnMatch]]
+
+    # Computed after LLM output normalization.
     unmatched_source_columns: list[str]
+
+    # Computed after LLM output normalization.
+    ambiguous_source_columns: list[str]
+
     reason: str
+
+
+class MatcherResult(TypedDict, total=False):
+    # Must be sorted by confidence descending.
+    # The best match is table_matches[0] if the list is not empty.
+    table_matches: list[TableMatch]
+
+# class ColumnMapping(TypedDict, total=False):
+#     source_column: str
+#     target_table: str
+#     target_column: str
+#     confidence: float
+#     reason: str
+
+
+# class MatcherResult(TypedDict, total=False):
+#     decision: Literal[
+#         "high_confidence_match",
+#         "partial_match",
+#         "no_match",
+#     ]
+#     matched_target_table: Optional[str]
+#     confidence: float
+#     column_mappings: list[ColumnMapping]
+#     unmatched_source_columns: list[str]
+#     reason: str
 
 
 class EvolutionProposal(TypedDict, total=False):

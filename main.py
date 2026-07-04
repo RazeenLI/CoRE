@@ -4,7 +4,9 @@ from pathlib import Path
 from model.pipeline import run_pipeline
 
 """
+python main.py --data-config "data/Chinook/benchmarks/small_case_D_project_columns/config.yaml" --agent-config "configs/single_llm.yaml"
 python main.py --data-config "data/Chinook/benchmarks/small_case_A_remove_columns/config.yaml" --agent-config "configs/single_llm.yaml"
+nohup python main.py --data-config "data/Chinook/benchmarks/small_case_A_remove_columns/config.yaml" --agent-config "configs/single_llm.yaml"  > logs/output.log 2>&1 &
 """
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(

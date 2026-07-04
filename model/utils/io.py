@@ -192,7 +192,7 @@ def _save_table_csv(
         writer.writeheader()
         writer.writerows(rows)
 
-def terminal_massage(
+def terminal_message(
     sign: str,
     message: str,
     front: str = "",

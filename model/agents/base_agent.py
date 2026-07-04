@@ -4,7 +4,7 @@ import json
 
 from typing import Any
 
-from model.utils.io import terminal_massage
+from model.utils.io import terminal_message
 from model.core.prompts import PromptBuilder
 
 
@@ -50,13 +50,33 @@ class BaseAgent:
         If your client returns a JSON string instead of a dict, this method
         also accepts that and parses it.
         """
-        result = self.llm_client.generate_json(prompt)
+        return self.llm_client.generate_json(prompt)
+        # result = self.llm_client.generate_json(prompt)
 
-        if isinstance(result, dict):
-            return result
+        # if isinstance(result, dict):
+        #     return result
 
-        if isinstance(result, str):
-            return json.loads(result)
+        # if isinstance(result, str):
+        #     return json.loads(result)
 
-        raise TypeError("llm_client.generate_json(prompt) must return dict or JSON str.")
+        # raise TypeError("llm_client.generate_json(prompt) must return dict or JSON str.")
+
+    def _extract_single_table(
+        self,
+        incoming_schema: dict[str, Any],
+    ) -> tuple[str, dict[str, Any]]:
+        tables = incoming_schema.get("tables", {})
+
+        if not tables:
+            raise ValueError("incoming_schema must contain at least one table.")
+
+        if len(tables) > 1:
+            raise ValueError(
+                "ProfilerAgent currently expects one incoming table per task."
+            )
+
+        table_name = next(iter(tables))
+        table_schema = tables[table_name]
+
+        return table_name, table_schema
     

@@ -16,6 +16,15 @@ save_csv
 list_files
 ```
 
+## `structure.py`
+
+Assemble the data into a suitable structure for the pipeline.
+
+Examples:
+
+```
+```
+
 ## `sql_utils.py`
 
 Contains utilities for benchmark preprocessing from SQL or SQLite sources.
