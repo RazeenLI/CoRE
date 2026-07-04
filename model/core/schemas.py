@@ -2,17 +2,6 @@
 示例占位
 
 TODO: 根据 agent 开发 完成 result 的结构和格式
-
-column matches这个地方我有一个问题，是一个column只能有一个配对吗？有时候不是会有好几个潜在的选项吗？
-这个地方我的想法是
-"column_matches": [
-"source_column_1": [
-{
-target_column: "target_column_1"
-confidence: 0.8
-reason: ""
-}
-]
 """
 
 from typing import Any, Literal, Optional, TypedDict
@@ -241,6 +230,7 @@ EvolutionDecisionType = Literal[
     "reject_source",
     "defer_decision",
 ]
+# insert_table
 
 
 ConstraintSignalType = Literal[

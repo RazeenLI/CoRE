@@ -2,6 +2,7 @@
 
 import argparse
 import csv
+import copy
 import json
 import re
 from pathlib import Path
