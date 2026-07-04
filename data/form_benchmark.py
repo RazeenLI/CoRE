@@ -816,7 +816,7 @@ def write_step(
 
     if operation == "remove_columns":
         decision = {
-            "operation": "extend_existing_table",
+            "operation": "extend_table",
             "incoming_table": incoming_table,
             "target_table": source_table,
             "keys": step.get("keys", []),
@@ -834,7 +834,7 @@ def write_step(
         decision_operation = (
             "create_relationship_table"
             if len(expected_fks) >= 2
-            else "create_new_table"
+            else "create_entity_table"
         )
 
         decision = {
@@ -853,7 +853,7 @@ def write_step(
         }
         
         decision = {
-            "operation": "map_existing_table",
+            "operation": "insert_table",
             "incoming_table": incoming_table,
             "target_table": source_table,
             "source_to_incoming_columns": source_to_incoming,
