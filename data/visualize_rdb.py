@@ -87,28 +87,61 @@ def markdown_escape(x: Any) -> str:
 # Constraint helpers
 # -----------------------------
 
+def is_compact_constraints(constraints: Dict[str, Any]) -> bool:
+    """
+    Compact format:
+      constraints.primary_keys: dict[table, list[column]]
+      constraints.foreign_keys: dict[table, list[fk]]
+    """
+    c = constraints.get("constraints", {})
+    return isinstance(c.get("primary_keys", {}), dict)
+
+
 def get_primary_key_map(constraints: Dict[str, Any]) -> Dict[str, Set[str]]:
     pk_map: Dict[str, Set[str]] = {}
+    primary_keys = constraints.get("constraints", {}).get("primary_keys", {})
 
-    for pk in constraints.get("constraints", {}).get("primary_keys", []):
-        table = pk["table"]
-        pk_map.setdefault(table, set()).update(pk.get("columns", []))
-
+    for table, columns in primary_keys.items():
+        pk_map.setdefault(table, set()).update(columns)
     return pk_map
-
 
 def get_foreign_key_column_map(constraints: Dict[str, Any]) -> Dict[str, Set[str]]:
     fk_col_map: Dict[str, Set[str]] = {}
+    foreign_keys = constraints.get("constraints", {}).get("foreign_keys", {})
 
-    for fk in constraints.get("constraints", {}).get("foreign_keys", []):
-        table = fk["table"]
-        fk_col_map.setdefault(table, set()).update(fk.get("columns", []))
-
+    for table, fks in foreign_keys.items():
+        for fk in fks:
+            fk_col_map.setdefault(table, set()).update(fk.get("columns", []))
     return fk_col_map
 
 
 def get_foreign_keys(constraints: Dict[str, Any]) -> List[Dict[str, Any]]:
-    return constraints.get("constraints", {}).get("foreign_keys", [])
+    """
+    Return normalized foreign keys as list[dict].
+
+    Normalized output:
+      [
+        {
+          "table": "invoice",
+          "columns": ["customer_id"],
+          "referenced_table": "customer",
+          "referenced_columns": ["customer_id"]
+        }
+      ]
+
+    This keeps the rest of visualize_rdb.py unchanged.
+    """
+    foreign_keys = constraints.get("constraints", {}).get("foreign_keys", {})
+
+    out: List[Dict[str, Any]] = []
+
+    for table, fks in foreign_keys.items():
+        for fk in fks:
+            normalized_fk = dict(fk)
+            normalized_fk["table"] = table
+            out.append(normalized_fk)
+
+    return out
 
 
 # -----------------------------

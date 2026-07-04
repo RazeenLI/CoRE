@@ -1,6 +1,6 @@
 import json
 from typing import Any, Callable, get_args
-from model.core.schemas import TableRole, SemanticType, MatchStatus
+from model.core.schemas import TableRole, SemanticType, MatchStatus, EvolutionDecisionType, ConstraintSignalType
 
 PromptBuilder = Callable[[dict[str, Any]], str]
 
@@ -159,6 +159,97 @@ Output rules:
 - Keep evidence concise and specific.
 - Return exactly one JSON object.
 - Do not include reasoning, analysis, explanations, or examples.
+- Do not wrap the JSON in markdown code fences.
+- Return JSON only.
+""".strip()
+
+
+def evolutor_prompt(llm_input: dict[str, Any]) -> str:
+    return f"""
+You are a database schema evolution agent.
+
+Given one incoming table, matcher evidence, and selected existing RDB context, infer the schema evolution signal needed for the incoming table.
+
+The Evolutor does not build the final proposal.
+It only decides:
+1. the table-level evolution type
+2. where each incoming column should be placed
+3. possible constraint signals
+
+Input:
+{json.dumps(llm_input, indent=2, ensure_ascii=False)}
+
+Output Format:
+Return only valid JSON with this exact structure:
+
+{{
+  "decision": {{
+    "decision_type": "{literal_to_prompt_options(EvolutionDecisionType)}",
+    "target_table": "<table_name>",
+    "related_tables": ["<existing_related_table_name>"],
+    "reason": "..."
+  }},
+  "column_placements": {{
+    "<incoming_column_name>": {{
+      "source_column": "<incoming_column_name>",
+      "target_table": "<table_name>",
+      "target_column": "<column_name>",
+      "reason": "..."
+    }}
+  }},
+  "constraint_signals": [
+    {{
+      "constraint_type": "{literal_to_prompt_options(ConstraintSignalType)}",
+      "table": "<table_name>",
+      "columns": ["<column_name>"],
+      "referenced_table": "<referenced_table_name>",
+      "referenced_columns": ["<referenced_column_name>"],
+      "reason": "..."
+    }}
+  ],
+  "reason": "..."
+}}
+
+Decision rules:
+- "extend_table": incoming table mainly describes an existing table but has missing columns.
+- "create_entity_table": incoming table describes a new independent entity.
+- "create_association_table": incoming table represents a relationship between existing tables.
+- "create_child_table": incoming table represents repeated child records of one parent table.
+- "reject_source": incoming table is outside the current RDB domain.
+- "defer_decision": evidence is insufficient.
+
+Placement rules:
+- Every incoming column must appear exactly once in column_placements.
+- Use original incoming column names as keys.
+- source_column must equal the original incoming column name.
+- target_table is where the source column should be placed.
+- target_column is the column name that should store the source column.
+- If mapping to an existing concept, use the existing RDB column name.
+- If creating a new concept, use a concise database-style column name.
+
+Constraint rules:
+- Use "primary_key" for identifying columns of a new table.
+- Use "foreign_key" when columns should reference an existing table.
+- For foreign_key, include referenced_table and referenced_columns.
+- For non-foreign-key constraints, omit referenced_table and referenced_columns.
+
+Matcher evidence rules:
+- Use matcher_evidence as evidence, not as a final decision.
+- Do not blindly choose the highest-confidence matcher table.
+- Strong identifier matches may indicate foreign keys or relationships, not direct table matches.
+- Ambiguous matcher candidates are not confirmed mappings.
+
+Schema evolution rules:
+- Preserve the incoming table grain.
+- If columns identify two or more existing entities, consider create_association_table.
+- If the table has its own identifier and attributes, consider create_entity_table.
+- If the table is anchored to one existing entity and has missing attributes, consider extend_table.
+
+Output rules:
+- Do not invent existing tables or existing columns.
+- New table and column names are allowed only when needed by the decision.
+- Keep reasons concise.
+- Return exactly one JSON object.
 - Do not wrap the JSON in markdown code fences.
 - Return JSON only.
 """.strip()

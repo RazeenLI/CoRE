@@ -387,42 +387,60 @@ def filter_constraints(
     schema: Dict[str, Any],
 ) -> Dict[str, Any]:
     src = source_constraints.get("constraints", {})
-    out = {
+
+    out: Dict[str, Any] = {
         "database": schema.get("database", source_constraints.get("database", "database")),
-        # "dialect": source_constraints.get("dialect", "postgresql"),
-        # "version": source_constraints.get("version", "v1"),
         "constraints": {
-            "primary_keys": [],
-            "foreign_keys": [],
-            "unique_constraints": [],
-            "check_constraints": [],
-            "indexes": [],
-            "inferred_constraints": [],
+            "primary_keys": {},
+            "foreign_keys": {},
+            "unique_constraints": {},
+            "check_constraints": {},
+            "indexes": {},
+            "inferred_constraints": {},
         },
     }
 
-    for pk in src.get("primary_keys", []):
-        if columns_exist(schema, pk["table"], pk["columns"]):
-            out["constraints"]["primary_keys"].append(copy.deepcopy(pk))
+    # primary keys
+    for table, columns in src.get("primary_keys", {}).items():
+        if columns_exist(schema, table, columns):
+            out["constraints"]["primary_keys"][table] = copy.deepcopy(columns)
 
-    for uq in src.get("unique_constraints", []):
-        if columns_exist(schema, uq["table"], uq["columns"]):
-            out["constraints"]["unique_constraints"].append(copy.deepcopy(uq))
+    # foreign keys
+    for table, fks in src.get("foreign_keys", {}).items():
+        for fk in fks:
+            if (
+                columns_exist(schema, table, fk["columns"])
+                and columns_exist(schema, fk["referenced_table"], fk["referenced_columns"])
+            ):
+                out["constraints"]["foreign_keys"].setdefault(table, []).append(
+                    copy.deepcopy(fk)
+                )
 
-    for ck in src.get("check_constraints", []):
-        if table_exists(schema, ck["table"]):
-            out["constraints"]["check_constraints"].append(copy.deepcopy(ck))
+    # unique constraints
+    for table, unique_groups in src.get("unique_constraints", {}).items():
+        for columns in unique_groups:
+            if columns_exist(schema, table, columns):
+                out["constraints"]["unique_constraints"].setdefault(table, []).append(
+                    copy.deepcopy(columns)
+                )
 
-    for idx in src.get("indexes", []):
-        if columns_exist(schema, idx["table"], idx["columns"]):
-            out["constraints"]["indexes"].append(copy.deepcopy(idx))
+    # indexes
+    for table, index_groups in src.get("indexes", {}).items():
+        for columns in index_groups:
+            if columns_exist(schema, table, columns):
+                out["constraints"]["indexes"].setdefault(table, []).append(
+                    copy.deepcopy(columns)
+                )
 
-    for fk in src.get("foreign_keys", []):
-        if (
-            columns_exist(schema, fk["table"], fk["columns"])
-            and columns_exist(schema, fk["referenced_table"], fk["referenced_columns"])
-        ):
-            out["constraints"]["foreign_keys"].append(copy.deepcopy(fk))
+    # check constraints
+    for table, expressions in src.get("check_constraints", {}).items():
+        if table_exists(schema, table):
+            out["constraints"]["check_constraints"][table] = copy.deepcopy(expressions)
+
+    # inferred constraints
+    for table, inferred_items in src.get("inferred_constraints", {}).items():
+        if table_exists(schema, table):
+            out["constraints"]["inferred_constraints"][table] = copy.deepcopy(inferred_items)
 
     return out
 
@@ -434,13 +452,17 @@ def fks_for_table_to_current_rdb(
 ) -> List[Dict[str, Any]]:
     fks = []
 
-    for fk in source_constraints.get("constraints", {}).get("foreign_keys", []):
-        if fk["table"] != source_table:
-            continue
+    table_fks = (
+        source_constraints
+        .get("constraints", {})
+        .get("foreign_keys", {})
+        .get(source_table, [])
+    )
 
+    for fk in table_fks:
         if table_exists(current_schema, fk["referenced_table"]):
             fks.append({
-                "table": fk["table"],
+                "table": source_table,
                 "columns": fk["columns"],
                 "referenced_table": fk["referenced_table"],
                 "referenced_columns": fk["referenced_columns"],

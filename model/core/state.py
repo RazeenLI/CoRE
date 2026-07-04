@@ -116,7 +116,7 @@ TASK_STEPS = {
     "profiler",
     "matcher",
     "mapping",
-    "evolution",
+    "evolutor",
     "validator",
     "decision",
     "controller",
@@ -314,7 +314,7 @@ class TaskState:
         return self.latest_result("proposal")
 
     @property
-    def evolution_result(self) -> dict[str, Any] | None:
+    def evolutor_result(self) -> dict[str, Any] | None:
         return self.latest_result("evolutor")
 
     @property
