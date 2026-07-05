@@ -19,9 +19,8 @@ from model.agents.base_agent import BaseAgent
 from model.agents.profiler_agent import ProfilerAgent
 from model.agents.matcher_agent import MatcherAgent
 from model.agents.evolutor_agent import EvolutorAgent
-# from agents.matcher import MatcherAgent
-# from agents.evolutor import evolutorAgent
-# from agents.validator import ValidatorAgent
+from model.agents.validator_agent import ValidatorAgent
+
 # from agents.decision import DecisionAgent
 
 
@@ -65,7 +64,7 @@ def create_agents(llm_client):
     profiler_agent = ProfilerAgent(llm_client)
     matcher_agent = MatcherAgent(llm_client)
     evolutor_agent = EvolutorAgent(llm_client)
-    validator_agent = BaseAgent(llm_client)
+    validator_agent = ValidatorAgent(llm_client)
     decision_agent = BaseAgent(llm_client)
 
     return {
@@ -162,6 +161,6 @@ def run_pipeline(
     #     output_dir=output_dir,
     # )
 
-    save_path = save_rdb(existing_rdb, save_root_path, folder_name="zd")
+    save_path = save_rdb(existing_rdb, save_root_path, folder_name="database")
 
     terminal_message("success", f"Relational database is saved at {save_path}.")
