@@ -403,7 +403,7 @@ def empty_matcher_summary(table_name: str) -> dict[str, Any]:
 
 def apply_llm_output(
     llm_output: dict[str, Any],
-) -> EvolutionResult:
+) -> EvolutorResult:
     return {
         "decision": normalize_decision(llm_output["decision"]),
         "column_placements": normalize_column_placements(
