@@ -198,9 +198,9 @@ class TaskState:
         self.results: dict[str, list[dict[str, Any]]] = {
             "profiler": [],
             "matcher": [],
+            "evolutor": [],
             "proposal": [],
             "preview": [],
-            "evolutor": [],
             "validator": [],
             "decision": [],
         }

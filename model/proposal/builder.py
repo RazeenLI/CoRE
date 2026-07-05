@@ -192,7 +192,7 @@ def _build_from_evolutor_result(
         "create_entity_table",
         "create_association_table",
     }:
-        terminal_message("success", f"Matching proposal builded by decision '{decision_type}'.", "\t")
+        terminal_message("success", f"Evolution proposal builded by decision '{decision_type}'.", "\t")
         return _build_standard_evolution_proposal(
             existing_schema=existing_schema,
             evolutor_result=evolutor_result,

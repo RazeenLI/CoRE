@@ -1,6 +1,6 @@
 import json
 from typing import Any, Callable, get_args
-from model.core.schemas import TableRole, SemanticType, MatchStatus, EvolutionDecisionType, ConstraintSignalType
+from model.core.schemas import TableRole, SemanticType, MatchStatus, EvolutionDecisionType, ConstraintSignalType, ValidationRoute
 
 PromptBuilder = Callable[[dict[str, Any]], str]
 
@@ -249,6 +249,55 @@ Output rules:
 - Do not invent existing tables or existing columns.
 - New table and column names are allowed only when needed by the decision.
 - Keep reasons concise.
+- Return exactly one JSON object.
+- Do not wrap the JSON in markdown code fences.
+- Return JSON only.
+""".strip()
+
+def validator_prompt(llm_input: dict[str, Any]) -> str:
+    return f"""
+You are a relational database validation agent.
+
+Given a proposal, a BEFORE partial RDB, and an AFTER partial RDB, judge whether the AFTER partial RDB is a reasonable generated database result.
+
+Input:
+{json.dumps(llm_input, indent=2, ensure_ascii=False)}
+
+Output Format:
+Return only valid JSON with this exact structure:
+
+{{
+  "route": "{literal_to_prompt_options(ValidationRoute)}",
+  "score": 0.0,
+  "issues": [
+    "short issue phrase"
+  ],
+  "summary": "..."
+}}
+
+Judgment focus:
+- Whether the AFTER partial RDB is a coherent relational database design.
+- Whether the BEFORE-to-AFTER change is reasonably explained by the proposal.
+- Whether tables, columns, and constraints in the AFTER partial RDB are designed appropriately.
+- Whether the AFTER partial RDB introduces obvious redundancy, information loss, broken entity boundaries, or unreasonable constraints.
+
+Routing rules:
+- Use "final_decision" if the AFTER partial RDB is reasonable.
+- Use "matcher" if the proposal source_decision is "insert" and the generated RDB should be revised.
+- Use "evolutor" if the proposal source_decision is not "insert" and the generated RDB should be revised.
+
+Scoring rules:
+- 0.90-1.00: clearly reasonable and ready for final decision.
+- 0.75-0.89: acceptable with minor concerns.
+- 0.50-0.74: questionable with significant design risks.
+- 0.00-0.49: unreasonable or poor generated RDB result.
+
+Issue rules:
+- issues must be a list of short phrases.
+- Use an empty list if there are no issues.
+
+Output rules:
+- summary must be one concise sentence.
 - Return exactly one JSON object.
 - Do not wrap the JSON in markdown code fences.
 - Return JSON only.

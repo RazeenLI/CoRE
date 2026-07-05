@@ -10,7 +10,7 @@ from model.agents.base_agent import BaseAgent
 from model.agents.profiler_agent import ProfilerAgent
 from model.agents.matcher_agent import MatcherAgent
 from model.agents.evolutor_agent import EvolutorAgent
-
+from model.agents.validator_agent import ValidatorAgent
 
 class Orchestrator:
     """
@@ -30,7 +30,7 @@ class Orchestrator:
         profiler_agent: ProfilerAgent,
         matcher_agent: MatcherAgent,
         evolutor_agent: EvolutorAgent,
-        validator_agent: BaseAgent,
+        validator_agent: ValidatorAgent,
         decision_agent: BaseAgent,
         existing_rdb,
         config,
@@ -42,6 +42,7 @@ class Orchestrator:
         self.decision = decision_agent
 
         self.threshold = config.get("high_confidence_threshold", 0.8)
+        self.max_runs = config.get("max_validator_runs", 3)
         self.config = config
 
         self.run_state = RunState(existing_rdb=existing_rdb)
@@ -243,20 +244,50 @@ class Orchestrator:
         )
     
     def _run_validator(self, task_state: TaskState):
-        # TODO: Validator recent result
-        # Deside routing 
-        # 1. Profiler Problem: back to Profiler
-        # 2. Matcher Problem
-        # 3. Evolutor Problem
+        validator_run_count = len(task_state.results.get("validator", []))
+
+        if validator_run_count >= self.max_runs:
+            task_state.save_result(
+                agent="validator",
+                result={
+                    "route": "error",
+                    "score": 0.0,
+                    "rule_checks": {},
+                    "issues": ["validator exceeded maximum retry limit"],
+                    "summary": "Validator exceeded maximum retry limit.",
+                },
+                status="failed",
+                message="Validator exceeded maximum retry limit.",
+            )
+
+            task_state.set_routing(
+                next_step="error",
+                reason="Validator exceeded maximum retry limit.",
+                source_step="validator",
+            )
+            return
+        validator_result = self.validator(
+            proposal=task_state.results["proposal"][-1],
+            before=task_state.results["preview"][-1]["before"],
+            after=task_state.results["preview"][-1]["after"],
+        )
+
+        task_state.save_result(
+            agent="validator",
+            result=validator_result,
+            status="success",
+            message=f"Validator finish dicesion: go to {validator_result['route']}",
+        )
+
         task_state.set_routing(
-            next_step="finish_task",
-            reason=f"Example reason.",
+            next_step=validator_result["route"],
+            reason=validator_result["summary"],
             source_step="validator",
         )
-        pass
 
     def _finalize_decision(self, task_state: TaskState):
         # TODO: Human in the loop
+
         task_state.set_routing(
             next_step="finish_task",
             reason=f"Example reason.",
@@ -266,6 +297,11 @@ class Orchestrator:
 
     def _apply_final_decision(self, task_state: TaskState):
         # TODO: Auto apply after dedesided
+        task_state.set_routing(
+            next_step="finish_task",
+            reason=f"Example reason.",
+            source_step="finial_decision",
+        )
         pass
     
     @classmethod
