@@ -142,7 +142,7 @@ Table confidence rules:
 - If the existing table does not directly explain the incoming table, do not give high confidence.
 
 Match status rules:
-- full_match means the existing table can reliably explain all incoming columns.
+- full_match means every incoming column has a reliable target column match in the existing table. The existing table may contain additional columns that are not present in the incoming table.
 - partial_match means the existing table can explain some incoming columns, but at least one incoming column has no reliable match.
 - poor_match means this existing table does not meaningfully explain the incoming table as a direct destination table.
 - ambiguous_match means one or more incoming columns have multiple plausible target columns with similar confidence.

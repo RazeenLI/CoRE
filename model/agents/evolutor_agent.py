@@ -80,8 +80,7 @@ class EvolutorAgent(BaseAgent):
 
         evolution_result = apply_llm_output(llm_output)
 
-        terminal_message(
-            "success", f"EvolutorAgent completed for table '{table_name}' with decision: {evolution_result['decision']['decision_type']}.", "\t")
+        terminal_message("success", f"EvolutorAgent completed for table '{table_name}' with decision: {evolution_result['decision']['decision_type']}.", "\t")
 
         return evolution_result
 
