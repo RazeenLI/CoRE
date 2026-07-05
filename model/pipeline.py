@@ -162,6 +162,6 @@ def run_pipeline(
     #     output_dir=output_dir,
     # )
 
-    save_path = save_rdb(existing_rdb, save_root_path, folder_name="example")
+    save_path = save_rdb(existing_rdb, save_root_path, folder_name="zd")
 
     terminal_message("success", f"Relational database is saved at {save_path}.")

@@ -3,6 +3,9 @@ from pathlib import Path
 from model.utils.io import terminal_message, load_json, save_json
 from model.core.state import RunState, TaskState
 
+from model.proposal.builder import build_proposal
+from model.proposal.applier import apply_proposal
+
 from model.agents.base_agent import BaseAgent
 from model.agents.profiler_agent import ProfilerAgent
 from model.agents.matcher_agent import MatcherAgent
@@ -62,11 +65,14 @@ class Orchestrator:
             elif next_step == "matcher":
                 self._run_matcher(task_state)
 
-            elif next_step == "mapping":
-                self._build_mapping_proposal(task_state)
-
             elif next_step == "evolutor":
                 self._run_evolutor(task_state)
+
+            elif next_step == "proposal":
+                self._build_mapping_proposal(task_state)
+
+            elif next_step == "preview":
+                self._apply_mapping_proposal(task_state)
 
             elif next_step == "validator":
                 self._run_validator(task_state)
@@ -136,7 +142,7 @@ class Orchestrator:
 
         if confidence >= self.threshold:
             task_state.set_routing(
-                next_step="mapping",
+                next_step="proposal",
                 reason=f"Matcher confidence {confidence} >= threshold {self.threshold}.",
                 source_step="matcher",
             )
@@ -146,24 +152,8 @@ class Orchestrator:
                 reason=f"Matcher confidence {confidence} < threshold {self.threshold}.",
                 source_step="matcher",
             )
-        pass
-
-    def _build_mapping_proposal(self, task_state: TaskState):
-        # TODO: Build mapping proposal 
-        # 1. only mapping
-        # 2. if evolutor happens
-        # terminal_message("info", f"Building mapping proposal for task '{task_state.task_id}'.", "\t")
-
-        task_state.set_routing(
-            next_step="finish_task",
-            reason=f"Example reason.",
-            source_step="mapping",
-        )
-        pass
 
     def _run_evolutor(self, task_state: TaskState):
-        # TODO: Evolutor for evolute tables in existing rdb for incoming table
-
         evolutor_result = self.evolutor(
             incoming_schema=task_state.incoming_schema,
             incoming_values=task_state.incoming_values,
@@ -180,12 +170,77 @@ class Orchestrator:
             status="success",
             message="Evolutor completed successfully.",
         )
+
         task_state.set_routing(
-            next_step="validator",
+            next_step="proposal",
             reason=f"Evolutor completed successfully.",
             source_step="evolutor",
         )
-        pass
+
+    def _build_mapping_proposal(self, task_state: TaskState):
+        if task_state.routing["source_step"] == "matcher":
+            proposal_result = build_proposal(
+                incoming_schema=task_state.incoming_schema,
+                incoming_values=task_state.incoming_values,
+                existing_schema=task_state.existing_schema,
+                existing_values=task_state.existing_values,
+                existing_constraints=task_state.constraints,
+                result={
+                    "source":"matcher",
+                    "payload": task_state.results["matcher"][-1],
+                },
+            )
+        elif task_state.routing["source_step"] == "evolutor":
+            proposal_result = build_proposal(
+                incoming_schema=task_state.incoming_schema,
+                incoming_values=task_state.incoming_values,
+                existing_schema=task_state.existing_schema,
+                existing_values=task_state.existing_values,
+                existing_constraints=task_state.constraints,
+                result={
+                    "source":"evolutor",
+                    "payload": task_state.results["evolutor"][-1],
+                },
+            )
+        
+        else:
+            raise ValueError(f"Unsupported source_step: {task_state.routing['source_step']}")
+
+        task_state.save_result(
+            agent="proposal",
+            result=proposal_result,
+            status="success",
+            message=f"{task_state.routing['source_step'].capitalize()} proposal is builded",
+        )
+
+        task_state.set_routing(
+            next_step="preview",
+            reason=f"Proposal is builded.",
+            source_step="proposal",
+        )
+
+    def _apply_mapping_proposal(self, task_state: TaskState):
+        
+        preview_result = apply_proposal(
+            incoming_schema=task_state.incoming_schema,
+            existing_schema=task_state.existing_schema,
+            existing_constraints=task_state.constraints,
+            proposal=task_state.results["proposal"][-1],
+            
+        )
+
+        task_state.save_result(
+            agent="preview",
+            result=preview_result,
+            status="success",
+            message=f"Proposal is applied",
+        )
+
+        task_state.set_routing(
+            next_step="validator",
+            reason=f"Proposal is applied.",
+            source_step="preview",
+        )
     
     def _run_validator(self, task_state: TaskState):
         # TODO: Validator recent result

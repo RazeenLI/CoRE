@@ -226,6 +226,7 @@ EvolutionDecisionType = Literal[
     "create_association_table",
 
     # reserved for future
+    "transform_table", # transform column structure, e.g. split, merge
     "create_child_table",
     "reject_source",
     "defer_decision",
@@ -379,6 +380,167 @@ class EvolutorResult(TypedDict, total=False):
 #     added_columns: list[ColumnProfile]
 #     reason: str
 
+
+# -----------------------------
+# Proposal
+# -----------------------------
+
+ProposalDecisionType = EvolutionDecisionType | Literal[
+    "insert_table",
+]
+
+
+TableActionType = Literal[
+    # Use an existing table as the target.
+    "map",
+
+    # Create a new table.
+    "create",
+]
+
+
+ColumnActionType = Literal[
+    # source column maps to existing target column.
+    "map",
+
+    # source column becomes a new target column.
+    "create",
+
+    # existing target column is removed or migrated out.
+    "drop",
+
+    # one source column is split into multiple target columns.
+    "split",
+
+    # multiple source columns are merged into one target column.
+    "merge",
+
+    # target column is derived from source/existing data.
+    "derive",
+]
+
+
+ConstraintActionType = Literal[
+    "add_primary_key",
+    "add_foreign_key",
+    "add_unique_constraint",
+    "add_index",
+]
+
+
+class ColumnAction(TypedDict, total=False):
+    """
+    Column-level integration action.
+
+    This is not only schema-level.
+    It represents how incoming columns are placed into the target table.
+
+    action:
+        - map:
+            source_columns -> existing target_columns
+
+        - create:
+            source_columns -> newly created target_columns
+
+        - drop:
+            remove target_columns from an existing table
+
+        - split:
+            one source column -> multiple target columns
+
+        - merge:
+            multiple source columns -> one target column
+
+        - derive:
+            target column is derived from source/existing data
+
+    Because split / merge exist, both source_columns and target_columns
+    are always lists.
+    """
+
+    action: ColumnActionType
+
+    # Incoming/source columns.
+    # For drop, this can be absent or empty.
+    source_columns: list[str]
+
+    # Target columns in the table of the parent TableAction.
+    target_columns: list[str]
+
+
+class TableAction(TypedDict, total=False):
+    """
+    Table-level integration action.
+
+    action:
+        - map:
+            Use an existing table.
+
+        - create:
+            Create a new table.
+
+    table:
+        - if action == "map":
+            existing table name
+
+        - if action == "create":
+            new table name
+
+    column_actions:
+        Column placement / transformation actions inside this table.
+    """
+
+    action: TableActionType
+
+    table: str
+
+    column_actions: list[ColumnAction]
+
+
+class ConstraintAction(TypedDict, total=False):
+    """
+    Constraint-level integration action.
+
+    Constraints are independent from table / column placement.
+    Usually created when a new table is created.
+    """
+
+    action: ConstraintActionType
+
+    table: str
+    columns: list[str]
+
+    # Only for add_foreign_key.
+    referenced_table: str
+    referenced_columns: list[str]
+
+
+class IntegrationProposal(TypedDict, total=False):
+    """
+    ProposalBuilder output.
+
+    This is only a structural integration plan.
+
+    It does NOT contain:
+        - incoming_schema
+        - incoming_values
+        - existing_schema
+        - existing_values
+        - existing_constraints
+        - generated RDB
+        - validation status
+        - LLM reasons
+
+    The proposal only contains:
+        - table / column integration actions
+        - constraint actions
+    """
+
+    source_decision: ProposalDecisionType
+
+    table_actions: list[TableAction]
+
+    constraint_actions: list[ConstraintAction]
 
 class ValidationReport(TypedDict, total=False):
     is_valid: bool
