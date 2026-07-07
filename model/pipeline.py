@@ -65,14 +65,14 @@ def create_agents(llm_client):
     matcher_agent = MatcherAgent(llm_client)
     evolutor_agent = EvolutorAgent(llm_client)
     validator_agent = ValidatorAgent(llm_client)
-    decision_agent = BaseAgent(llm_client)
+    # decision_agent = BaseAgent(llm_client)
 
     return {
         "profiler": profiler_agent,
         "matcher": matcher_agent,
         "evolutor": evolutor_agent,
         "validator": validator_agent,
-        "decision": decision_agent,
+        # "decision": decision_agent,
     }
 
 
@@ -123,9 +123,10 @@ def run_pipeline(
         matcher_agent=agents["matcher"],
         evolutor_agent=agents["evolutor"],
         validator_agent=agents["validator"],
-        decision_agent=agents["decision"],
+        # decision_agent=agents["decision"],
         existing_rdb=existing_rdb,
-        config=agent_config,
+        save_path=save_root_path,
+        config=agent_config["orchestrator"],
     )
 
     terminal_message("success", f"Orchestrator is created.")

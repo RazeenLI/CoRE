@@ -4,9 +4,11 @@ from pathlib import Path
 from model.pipeline import run_pipeline
 
 """
-python main.py --output "save/small_case_D_project_columns" --data-config "data/Chinook/benchmarks/small_case_D_project_columns/config.yaml" --agent-config "configs/single_llm.yaml"
-python main.py --output "save/small_case_A_remove_columns" --data-config "data/Chinook/benchmarks/small_case_A_remove_columns/config.yaml" --agent-config "configs/single_llm.yaml"
-nohup python main.py --data-config "data/Chinook/benchmarks/small_case_A_remove_columns/config.yaml" --agent-config "configs/single_llm.yaml"  > logs/output.log 2>&1 &
+python main.py --output "save/small_case_D_project_columns" --data-config "data/Chinook/benchmarks/small_case_D_project_columns/config.yaml" --agent-config "configs/qwen3.5_9B.yaml"
+python main.py --output "save/small_case_C_remove_relationship_table" --data-config "data/Chinook/benchmarks/small_case_C_remove_relationship_table/config.yaml" --agent-config "configs/qwen3.5_9B.yaml"
+python main.py --output "save/small_case_B_remove_table" --data-config "data/Chinook/benchmarks/small_case_B_remove_table/config.yaml" --agent-config "configs/qwen3.5_9B.yaml"
+python main.py --output "save/small_case_A_remove_columns" --data-config "data/Chinook/benchmarks/small_case_A_remove_columns/config.yaml" --agent-config "configs/qwen3.5_9B.yaml"
+nohup python main.py --data-config "data/Chinook/benchmarks/small_case_A_remove_columns/config.yaml" --agent-config "configs/qwen3.5_9B.yaml"  > logs/output.log 2>&1 &
 """
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
