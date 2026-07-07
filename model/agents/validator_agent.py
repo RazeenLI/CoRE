@@ -20,7 +20,7 @@ class ValidatorAgent(BaseAgent):
 
     Output:
     {
-        "route": "final_decision" | "matcher" | "evolutor",
+        "route": "decision" | "matcher" | "evolutor",
         "score": float,
         "issues": list[str],
         "summary": str
@@ -43,11 +43,7 @@ class ValidatorAgent(BaseAgent):
     ) -> dict[str, Any]:
         source_decision = proposal["source_decision"]
 
-        terminal_message(
-            "info",
-            f"Validating generated partial RDB from decision: {source_decision}.",
-            "\t",
-        )
+        terminal_message("info", f"Validating generated partial RDB from decision: {source_decision}.", "\t")
 
         llm_input = build_llm_input(
             proposal=proposal,
@@ -63,9 +59,7 @@ class ValidatorAgent(BaseAgent):
             source_decision=source_decision,
         )
 
-        terminal_message(
-            "success", f"ValidatorAgent completed with \route={result['route']} score={result['score']}.","\t",
-        )
+        terminal_message("success", f"ValidatorAgent completed with route={result['route']} score={result['score']}.","\t",)
 
         return result
 
@@ -113,9 +107,9 @@ def allowed_routes_from_source_decision(
     source_decision: str,
 ) -> list[str]:
     if source_decision == "insert":
-        return ["final_decision", "matcher"]
+        return ["decision", "matcher"]
 
-    return ["final_decision", "evolutor"]
+    return ["decision", "evolutor"]
 
 
 def fallback_route(

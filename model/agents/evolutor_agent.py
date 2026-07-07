@@ -408,6 +408,9 @@ def apply_llm_output(
         "column_placements": normalize_column_placements(
             llm_output["column_placements"]
         ),
+        "constraint_signals": normalize_constraint_signals(
+            llm_output["constraint_signals"]
+        ),
         "reason": llm_output["reason"],
     }
 
@@ -438,6 +441,26 @@ def normalize_column_placements(
 
     return column_placements
 
+def normalize_constraint_signals(
+    raw_constraint_signals: list[dict[str, Any]],
+) -> list[ConstraintSignal]:
+    constraint_signals: list[ConstraintSignal] = []
+
+    for raw_signal in raw_constraint_signals:
+        signal: ConstraintSignal = {
+            "constraint_type": raw_signal["constraint_type"],
+            "table": raw_signal["table"],
+            "columns": raw_signal["columns"],
+            "reason": raw_signal["reason"],
+        }
+
+        if raw_signal["constraint_type"] == "foreign_key":
+            signal["referenced_table"] = raw_signal["referenced_table"]
+            signal["referenced_columns"] = raw_signal["referenced_columns"]
+
+        constraint_signals.append(signal)
+
+    return constraint_signals
 
 def get_profiles_by_table(existing_profiles: dict[str, Any]) -> dict[str, Any]:
     tables = existing_profiles.get("tables")

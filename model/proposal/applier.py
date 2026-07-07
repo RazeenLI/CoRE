@@ -151,6 +151,11 @@ def _apply_table_actions(
 
         else:
             raise ValueError(f"Unsupported table action: {action}")
+
+        table = table_action["table"]
+        _normalize_column_order(
+            table_schema=working_schema["tables"][table],
+        )
         
 
 def _apply_map_table_action(
@@ -160,6 +165,12 @@ def _apply_map_table_action(
     table_action: dict[str, Any],
 ) -> None:
     table = table_action["table"]
+
+    working_schema["tables"][table].setdefault("columns", {})
+    working_schema["tables"][table].setdefault(
+        "column_order",
+        list(working_schema["tables"][table]["columns"].keys()),
+    )
 
     for column_action in table_action.get("column_actions", []):
         _apply_column_action(
@@ -180,8 +191,12 @@ def _apply_create_table_action(
 
     if table not in working_schema["tables"]:
         working_schema["tables"][table] = {
-            "columns": {}
+            "columns": {},
+            "column_order": [],
         }
+
+    working_schema["tables"][table].setdefault("columns", {})
+    working_schema["tables"][table].setdefault("column_order", [])
 
     for column_action in table_action.get("column_actions", []):
         _apply_column_action(
@@ -239,15 +254,20 @@ def _apply_create_column_action(
     source_columns = column_action["source_columns"]
     target_columns = column_action["target_columns"]
 
+    table_schema = working_schema["tables"][table]
+    table_schema.setdefault("columns", {})
+    table_schema.setdefault("column_order", list(table_schema["columns"].keys()))
+
     for source_column, target_column in zip(source_columns, target_columns):
         source_column_schema = _get_source_column_schema(
             incoming_schema=incoming_schema,
             source_column=source_column,
         )
 
-        working_schema["tables"][table]["columns"][target_column] = deepcopy(
-            source_column_schema
-        )
+        table_schema["columns"][target_column] = deepcopy(source_column_schema)
+
+        if target_column not in table_schema["column_order"]:
+            table_schema["column_order"].append(target_column)
 
 
 def _apply_drop_column_action(
@@ -256,8 +276,15 @@ def _apply_drop_column_action(
     table: str,
     column_action: dict[str, Any],
 ) -> None:
+    table_schema = working_schema["tables"][table]
+    table_schema.setdefault("columns", {})
+    table_schema.setdefault("column_order", list(table_schema["columns"].keys()))
+
     for target_column in column_action["target_columns"]:
-        working_schema["tables"][table]["columns"].pop(target_column, None)
+        table_schema["columns"].pop(target_column, None)
+
+        if target_column in table_schema["column_order"]:
+            table_schema["column_order"].remove(target_column)
 
 
 def _apply_constraint_actions(
@@ -360,3 +387,22 @@ def _extract_related_constraints(
             result["indexes"][table] = deepcopy(indexes)
 
     return result
+
+def _normalize_column_order(
+    *,
+    table_schema: dict[str, Any],
+) -> None:
+    columns = table_schema.setdefault("columns", {})
+    column_order = table_schema.setdefault("column_order", [])
+
+    # Remove columns that no longer exist.
+    column_order[:] = [
+        column
+        for column in column_order
+        if column in columns
+    ]
+
+    # Append columns that exist but are missing from column_order.
+    for column in columns:
+        if column not in column_order:
+            column_order.append(column)

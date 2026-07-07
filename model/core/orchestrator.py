@@ -5,12 +5,14 @@ from model.core.state import RunState, TaskState
 
 from model.proposal.builder import build_proposal
 from model.proposal.applier import apply_proposal
+from model.proposal.updater import apply_update_plan_to_existing_parts
 
 from model.agents.base_agent import BaseAgent
 from model.agents.profiler_agent import ProfilerAgent
 from model.agents.matcher_agent import MatcherAgent
 from model.agents.evolutor_agent import EvolutorAgent
 from model.agents.validator_agent import ValidatorAgent
+from model.core.decision import build_decision
 
 class Orchestrator:
     """
@@ -31,19 +33,22 @@ class Orchestrator:
         matcher_agent: MatcherAgent,
         evolutor_agent: EvolutorAgent,
         validator_agent: ValidatorAgent,
-        decision_agent: BaseAgent,
+        # decision_agent: BaseAgent,
         existing_rdb,
+        save_path: str | Path,
         config,
     ) -> None:
         self.profiler = profiler_agent
         self.matcher = matcher_agent
         self.evolutor = evolutor_agent
         self.validator = validator_agent
-        self.decision = decision_agent
+        self.decision = build_decision(config.get("decision_auto", False))
 
         self.threshold = config.get("high_confidence_threshold", 0.8)
-        self.max_runs = config.get("max_validator_runs", 3)
+        self.max_validator_runs = config.get("max_validator_runs", 3)
+        self.max_decision_runs = config.get("max_decision_runs", 3)
         self.config = config
+        self.save_path = save_path
 
         self.run_state = RunState(existing_rdb=existing_rdb)
 
@@ -141,7 +146,15 @@ class Orchestrator:
 
         confidence = matcher_result["table_matches"][0].get("confidence", 0.0)
 
-        if confidence >= self.threshold:
+        selected_match = matcher_result["table_matches"][0]
+        confidence = selected_match["confidence"]
+
+        has_empty_column_candidates = any(
+            not candidates
+            for candidates in selected_match.get("column_matches", {}).values()
+        )
+
+        if confidence >= self.threshold and not has_empty_column_candidates:
             task_state.set_routing(
                 next_step="proposal",
                 reason=f"Matcher confidence {confidence} >= threshold {self.threshold}.",
@@ -246,7 +259,8 @@ class Orchestrator:
     def _run_validator(self, task_state: TaskState):
         validator_run_count = len(task_state.results.get("validator", []))
 
-        if validator_run_count >= self.max_runs:
+        if validator_run_count >= self.max_validator_runs:
+            terminal_message("error", f"Validator ran more than the maximum allowed number of runs.", "\t")
             task_state.save_result(
                 agent="validator",
                 result={
@@ -287,19 +301,86 @@ class Orchestrator:
 
     def _finalize_decision(self, task_state: TaskState):
         # TODO: Human in the loop
+        decision_run_count = len(task_state.results.get("decision", []))
 
-        task_state.set_routing(
-            next_step="finish_task",
-            reason=f"Example reason.",
-            source_step="finial_decision",
+        if decision_run_count >= self.max_decision_runs:
+            terminal_message("error", f"Decision ran more than the maximum allowed number of runs.", "\t")
+            task_state.save_result(
+                agent="decision",
+                result={
+                    "approved": False,
+                    "summary": "Decision exceeded maximum retry limit."
+                },
+                status="failed",
+                message="Decision exceeded maximum retry limit.",
+            )
+
+            task_state.set_routing(
+                next_step="error",
+                reason="Decision exceeded maximum retry limit.",
+                source_step="decision",
+            )
+            return
+        # terminal input
+
+        decision_result = self.decision(
+            task_id=task_state.id,
+            incoming_schema=task_state.incoming_schema,
+            incoming_values=task_state.incoming_values,
+            existing_schema=task_state.existing_schema,
+            constraints=task_state.constraints,
+            existing_values=task_state.existing_values,
+            existing_profiles=task_state.existing_profiles,
+            results=task_state.results,
+            trace=task_state.trace,
+            save_path=self.save_path + "/visualization",
         )
+
+        if decision_result["approved"]:
+            task_state.save_result(
+                agent="decision",
+                result=decision_result,
+                status="success",
+                message="Decision is approved.",
+            )
+
+            task_state.set_routing(
+                next_step="apply_decision",
+                reason=f"Decision is approved.",
+                source_step="decision",
+            )
+        else:
+            task_state.save_result(
+                agent="decision",
+                result=decision_result,
+                status="success",
+                message="Decision is rejected.",
+            )
+
+            task_state.set_routing(
+                next_step="profiler",
+                reason=f"Decision is rejected.",
+                source_step="decision",
+            )
         pass
 
     def _apply_final_decision(self, task_state: TaskState):
         # TODO: Auto apply after dedesided
+
+        updated_schema, updated_constraints, updated_profiles = apply_update_plan_to_existing_parts(
+            schema=task_state.existing_schema,
+            constraints=task_state.constraints,
+            profiles=task_state.existing_profiles,
+            update_plan=task_state.results["preview"][-1],
+        )
+
+        task_state.existing_schema = updated_schema
+        task_state.existing_profiles = updated_profiles
+        task_state.constraints = updated_constraints
+        
         task_state.set_routing(
             next_step="finish_task",
-            reason=f"Example reason.",
+            reason=f"Finish and Updated.",
             source_step="finial_decision",
         )
         pass

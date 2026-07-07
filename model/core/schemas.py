@@ -630,12 +630,4 @@ class ValidationReport(TypedDict, total=False):
 
 
 class FinalDecision(TypedDict, total=False):
-    action: Literal[
-        "apply_mapping",
-        "apply_schema_evolution",
-        "reject",
-        "manual_review",
-    ]
     approved: bool
-    target_table: Optional[str]
-    reason: str

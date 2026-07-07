@@ -210,47 +210,81 @@ Return only valid JSON with this exact structure:
   "reason": "..."
 }}
 
-Decision rules:
-- "extend_table": incoming table mainly describes an existing table but has missing columns.
-- "create_entity_table": incoming table describes a new independent entity.
-- "create_association_table": incoming table represents a relationship between existing tables.
-- "create_child_table": incoming table represents repeated child records of one parent table.
-- "reject_source": incoming table is outside the current RDB domain.
-- "defer_decision": evidence is insufficient.
+Decision type rules:
+- Use "extend_table" when the incoming table has the same row grain as one existing candidate table and the remaining columns are attributes of that same table.
+- Use "create_entity_table" when the incoming table has its own entity, event, transaction, or record identity.
+- Use "create_entity_table" when the incoming table contains one existing entity identifier plus additional event-specific, transaction-specific, or record-specific attributes.
+- Use "create_association_table" when the incoming table is mainly identified by references to two or more existing candidate tables and describes their relationship.
+- Use "create_child_table" when the incoming table contains repeated child records under one existing parent table.
+- Use "reject_source" when the incoming table belongs to a different business domain from the current RDB.
+- Use "defer_decision" when multiple incompatible interpretations remain equally plausible from the provided evidence.
 
-Placement rules:
-- Every incoming column must appear exactly once in column_placements.
-- Use original incoming column names as keys.
-- source_column must equal the original incoming column name.
-- target_table is where the source column should be placed.
+Grain rules:
+- First infer the incoming table row grain.
+- Prefer the decision that explains all incoming columns under one consistent row grain.
+- A reference to an existing entity is evidence of relationship, not automatically evidence of same-table extension.
+- An existing entity identifier such as customer_id can indicate a foreign-key reference to that entity.
+- A reference column alone is weaker than event-specific, transaction-specific, or entity-specific attributes for deciding row grain.
+- Date, amount, status, total, quantity, billing, shipping, payment, order, invoice, line, and transaction fields usually indicate event or transaction grain.
+- Name, email, phone, address, demographic, profile, and descriptive fields usually indicate entity/profile grain when they belong to the same entity.
+- If the incoming table name and non-key attributes indicate an event or transaction, choose create_entity_table for that event or transaction table.
+- If the incoming table contains customer_id plus invoice_date, billing fields, or total, interpret customer_id as a reference and choose an invoice-like target_table.
+- If the incoming table contains only attributes of one existing entity and shares that entity grain, choose extend_table.
+- If the incoming table mixes columns from multiple grains, choose the decision that best explains the primary row grain and explain the mixed evidence in reason.
+
+Target table rules:
+- target_table is the main table affected by the decision.
+- For "extend_table", target_table is the existing candidate table with the same row grain as the incoming table.
+- For "create_entity_table", target_table is the new entity, event, transaction, or record table to create.
+- For "create_association_table", target_table is the new association table to create.
+- For "create_child_table", target_table is the new child table to create.
+- For new tables, use a concise database-style table name based on the incoming table meaning.
+- related_tables contains existing candidate tables referenced by or connected to target_table.
+- For "create_association_table", related_tables contains the existing entity tables connected by the new association table.
+- For "create_child_table", related_tables contains the existing parent table.
+- For "create_entity_table", related_tables may contain existing tables referenced by identifier columns.
+- For "extend_table", related_tables can be an empty list unless another existing table is needed to explain the relationship.
+
+Column placement rules:
+- Every incoming column appears exactly once in column_placements.
+- Each key in column_placements is the original incoming column name.
+- source_column equals the original incoming column name.
+- target_table is the table where the source column should land.
 - target_column is the column name that should store the source column.
-- If mapping to an existing concept, use the existing RDB column name.
-- If creating a new concept, use a concise database-style column name.
-
-Constraint rules:
-- Use "primary_key" for identifying columns of a new table.
-- Use "foreign_key" when columns should reference an existing table.
-- For foreign_key, include referenced_table and referenced_columns.
-- For non-foreign-key constraints, omit referenced_table and referenced_columns.
+- Place each incoming column into the table that matches the incoming row grain.
+- For "extend_table", place columns into the selected existing target_table when they are attributes of that table's row grain.
+- For "create_entity_table", place all entity/event/transaction attributes into the new target_table.
+- For "create_entity_table", place reference columns such as customer_id into the new target_table, because they are foreign-key-like columns stored on the new table.
+- For "create_association_table", place all relationship key columns and relationship attributes into the new association target_table.
+- For "create_child_table", place the parent reference column and child attributes into the new child target_table.
+- When the source column corresponds to an existing concept in the selected target table, use the existing target column name.
+- When the source column represents a new concept, use a concise database-style column name.
+- Column placement only describes where the data should land. ProposalBuilder will decide whether the target column already exists or should be created.
 
 Matcher evidence rules:
-- Use matcher_evidence as evidence, not as a final decision.
-- Do not blindly choose the highest-confidence matcher table.
-- Strong identifier matches may indicate foreign keys or relationships, not direct table matches.
-- Ambiguous matcher candidates are not confirmed mappings.
+- Use each candidate table's matcher summary as evidence.
+- Treat table confidence as evidence for whether the candidate table can directly explain the incoming table.
+- Treat column confidence as evidence for local column correspondence or possible references.
+- Treat strong identifier matches as evidence for table identity, foreign-key reference, or association-table structure depending on row grain.
+- Treat ambiguous source columns as columns requiring evolution-level interpretation.
+- Prefer the decision that best explains the whole incoming table grain.
+- Prefer an existing table as target_table only when the table-level match and row grain both support it.
+- Prefer a new table when the strongest evidence is a reference to an existing table plus new event/entity attributes.
 
 Schema evolution rules:
 - Preserve the incoming table grain.
-- If columns identify two or more existing entities, consider create_association_table.
-- If the table has its own identifier and attributes, consider create_entity_table.
-- If the table is anchored to one existing entity and has missing attributes, consider extend_table.
+- Prefer "extend_table" when the incoming rows describe the same entity grain as one existing table.
+- Prefer "create_entity_table" when the incoming rows describe a new entity, event, transaction, or record with its own identifier and attributes.
+- Prefer "create_association_table" when the incoming rows are identified by references to two or more existing entities.
+- Prefer "create_child_table" when multiple incoming rows can belong to one existing parent entity.
+- Prefer "defer_decision" when the evidence supports multiple incompatible interpretations.
 
 Output rules:
-- Do not invent existing tables or existing columns.
-- New table and column names are allowed only when needed by the decision.
-- Keep reasons concise.
+- Use existing table names exactly as shown in candidate_tables when referring to existing tables.
+- Use existing column names exactly as shown in candidate_tables when mapping to existing concepts.
+- Use new table and column names only for schema elements created by the selected decision.
+- Keep reasons concise and evidence-based.
 - Return exactly one JSON object.
-- Do not wrap the JSON in markdown code fences.
 - Return JSON only.
 """.strip()
 
@@ -282,7 +316,7 @@ Judgment focus:
 - Whether the AFTER partial RDB introduces obvious redundancy, information loss, broken entity boundaries, or unreasonable constraints.
 
 Routing rules:
-- Use "final_decision" if the AFTER partial RDB is reasonable.
+- Use "decision" if the AFTER partial RDB is reasonable.
 - Use "matcher" if the proposal source_decision is "insert" and the generated RDB should be revised.
 - Use "evolutor" if the proposal source_decision is not "insert" and the generated RDB should be revised.
 
