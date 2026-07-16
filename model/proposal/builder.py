@@ -189,8 +189,7 @@ def _build_from_evolutor_result(
 
     if decision_type in {
         "extend_table",
-        "create_entity_table",
-        "create_association_table",
+        "create_table",
     }:
         terminal_message("success", f"Evolution proposal builded by decision '{decision_type}'.", "\t")
         return _build_standard_evolution_proposal(
@@ -198,22 +197,22 @@ def _build_from_evolutor_result(
             evolutor_result=evolutor_result,
         )
 
-    if decision_type == "create_child_table":
-        raise NotImplementedError("create_child_table proposal builder is not implemented yet.")
+    # if decision_type == "create_child_table":
+    #     raise NotImplementedError("create_child_table proposal builder is not implemented yet.")
 
-    if decision_type == "reject_source":
-        return {
-            "source_decision": "reject_source",
-            "table_actions": [],
-            "constraint_actions": [],
-        }
+    # if decision_type == "reject_source":
+    #     return {
+    #         "source_decision": "reject_source",
+    #         "table_actions": [],
+    #         "constraint_actions": [],
+    #     }
 
-    if decision_type == "defer_decision":
-        return {
-            "source_decision": "defer_decision",
-            "table_actions": [],
-            "constraint_actions": [],
-        }
+    # if decision_type == "defer_decision":
+    #     return {
+    #         "source_decision": "defer_decision",
+    #         "table_actions": [],
+    #         "constraint_actions": [],
+    #     }
 
     raise ValueError(f"Unsupported evolutor decision_type: {decision_type}")
 

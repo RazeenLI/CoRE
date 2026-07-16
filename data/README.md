@@ -36,15 +36,13 @@ data/
 │   │   │   │   │   ├── Album.csv
 │   │   │   │   │   ├── Artist.csv
 │   │   │   │   │   ├── ...
-│   │   │   ├── steps/
-│   │   │   │   ├── step/
-│   │   │   │   │   ├──schema.json
-│   │   │   │   │   ├── table.csv
-│   │   │   │   │   ├── expected_decision.json
-│   │   │   │   ├── .../
+│   │   │   ├── incoming/
+│   │   │   │   ├──schema.json
+│   │   │   │   ├── table.csv
 │   │   │   ├── expected/
 │   │   │   │   ├── schema.json
 │   │   │   │   ├── constraints.json
+│   │   │   │   ├── proposal.json
 │   │   │   │   ├── tables/
 │   │   │   │   │   ├── Album.csv
 │   │   │   │   │   ├── Artist.csv

@@ -8,7 +8,7 @@ import random
 import re
 import shutil
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Set
 
 
 try:
@@ -17,11 +17,9 @@ except ImportError as e:
     raise SystemExit("Missing dependency: pip install pyyaml") from e
 
 """
-python data/form_benchmark.py data/Chinook/benchmarks/configs/small_case_A_remove_columns.yaml
-python data/form_benchmark.py data/Chinook/benchmarks/configs/small_case_B_remove_table.yaml
-python data/form_benchmark.py data/Chinook/benchmarks/configs/small_case_C_remove_relationship_table.yaml
-python data/form_benchmark.py data/Chinook/benchmarks/configs/small_case_D_project_columns.yaml
-python data/form_benchmark.py data/Chinook/benchmarks/configs/small_pipeline_ABC.yaml
+python data/form_benchmark.py data/Chinook/configs/small.yaml
+python data/form_benchmark.py data/Chinook/configs/medium.yaml
+python data/form_benchmark.py data/Chinook/configs/large.yaml
 """
 # -----------------------------
 # IO
@@ -630,388 +628,970 @@ def write_run_config(
         encoding="utf-8",
     )
 
+
 # -----------------------------
-# Benchmark construction
+# Benchmark construction: config-driven local cases
 # -----------------------------
 
-def load_source(source_dir: Path) -> Tuple[Dict[str, Any], Dict[str, Any], Dict[str, List[Dict[str, str]]]]:
-    schema = read_json(source_dir / "schema.json")
-    constraints = read_json(source_dir / "constraints.json")
+def load_source_from_config(cfg: Dict[str, Any]) -> Tuple[
+    Dict[str, Any],
+    Dict[str, Any],
+    Dict[str, Any],
+    Dict[str, List[Dict[str, str]]],
+]:
+    """Load full parsed RDB from the new benchmark config."""
+    source_cfg = Path(cfg["benchmark"]["source_path"])
+    schema = read_json(source_cfg / "schema.json")
+    constraints = read_json(source_cfg / "constraints.json")
+    profiles = read_json(source_cfg / "profiles.json")
 
-    rows = {}
+    tables_dir = source_cfg / "tables"
+    rows: Dict[str, List[Dict[str, str]]] = {}
+
     for table in schema["tables"]:
-        rows[table] = read_csv(source_dir / "tables" / f"{table}.csv")
+        rows[table] = read_csv(tables_dir / f"{table}.csv")
 
-    return schema, constraints, rows
+    return schema, constraints, profiles, rows
 
 
-def build_expected(
+def resolve_output_dir(cfg: Dict[str, Any]) -> Path:
+    """
+    Resolve benchmark output directory.
+
+    Preferred YAML:
+        output_dir: data/Chinook/benchmarks/Chinook_small
+
+    Backward-compatible YAML:
+        benchmark:
+          output_dir: data/Chinook/benchmarks/Chinook_small
+    """
+    if "output_dir" in cfg:
+        return Path(cfg["output_dir"])
+
+    benchmark_cfg = cfg.get("benchmark", {})
+    if "output_dir" in benchmark_cfg:
+        return Path(benchmark_cfg["output_dir"])
+
+    raise KeyError("Missing output_dir. Use top-level output_dir or benchmark.output_dir.")
+
+
+def resolve_sample_num(cfg: Dict[str, Any]) -> int:
+    """
+    Resolve sample_num for generated run config.yaml.
+
+    Preferred YAML:
+        sample_num: 3
+
+    Backward-compatible YAML:
+        benchmark:
+          sample_num: 3
+    """
+
+    return int(cfg.get("benchmark", {}).get("sample_num", 3))
+
+
+def get_pk(source_constraints: Dict[str, Any], table: str) -> List[str]:
+    return list(
+        source_constraints
+        .get("constraints", {})
+        .get("primary_keys", {})
+        .get(table, [])
+    )
+
+
+def outgoing_fks(source_constraints: Dict[str, Any], table: str) -> List[Dict[str, Any]]:
+    return list(
+        source_constraints
+        .get("constraints", {})
+        .get("foreign_keys", {})
+        .get(table, [])
+    )
+
+
+def incoming_fks(source_constraints: Dict[str, Any], table: str) -> List[Dict[str, Any]]:
+    out = []
+    all_fks = source_constraints.get("constraints", {}).get("foreign_keys", {})
+
+    for src_table, fks in all_fks.items():
+        for fk in fks:
+            if fk.get("referenced_table") == table:
+                item = copy.deepcopy(fk)
+                item["table"] = src_table
+                out.append(item)
+
+    return out
+
+
+def fk_neighbor_tables(source_constraints: Dict[str, Any], table: str) -> Set[str]:
+    neighbors: Set[str] = set()
+
+    for fk in outgoing_fks(source_constraints, table):
+        ref_table = fk.get("referenced_table")
+        if ref_table:
+            neighbors.add(ref_table)
+
+    for fk in incoming_fks(source_constraints, table):
+        src_table = fk.get("table")
+        if src_table:
+            neighbors.add(src_table)
+
+    neighbors.discard(table)
+    return neighbors
+
+
+def build_fk_graph(
+    source_schema: Dict[str, Any],
+    source_constraints: Dict[str, Any],
+) -> Dict[str, Set[str]]:
+    graph: Dict[str, Set[str]] = {table: set() for table in source_schema["tables"]}
+
+    all_fks = source_constraints.get("constraints", {}).get("foreign_keys", {})
+    for src_table, fks in all_fks.items():
+        if src_table not in graph:
+            continue
+
+        for fk in fks:
+            dst_table = fk.get("referenced_table")
+            if dst_table not in graph:
+                continue
+            graph[src_table].add(dst_table)
+            graph[dst_table].add(src_table)
+
+    return graph
+
+
+def graph_distances(graph: Dict[str, Set[str]], seed: str, max_depth: int) -> Dict[str, int]:
+    distances = {seed: 0}
+    frontier = [seed]
+
+    while frontier:
+        current = frontier.pop(0)
+        current_depth = distances[current]
+
+        if current_depth >= max_depth:
+            continue
+
+        for neighbor in sorted(graph.get(current, set())):
+            if neighbor in distances:
+                continue
+            distances[neighbor] = current_depth + 1
+            frontier.append(neighbor)
+
+    return distances
+
+
+def has_sample_rows(source_rows: Dict[str, List[Dict[str, str]]], table: str) -> bool:
+    return bool(source_rows.get(table))
+
+
+def is_pure_association_table(
+    source_schema: Dict[str, Any],
+    source_constraints: Dict[str, Any],
+    table: str,
+) -> bool:
+    """A conservative heuristic used only when the config asks to exclude association-like tables."""
+    fks = outgoing_fks(source_constraints, table)
+    if len(fks) < 2:
+        return False
+
+    columns = set(table_column_order(source_schema, table))
+    fk_columns = set()
+    for fk in fks:
+        fk_columns.update(fk.get("columns", []))
+
+    pk_columns = set(get_pk(source_constraints, table))
+    structural_columns = fk_columns | pk_columns
+    non_structural_columns = columns - structural_columns
+
+    return len(non_structural_columns) <= 1
+
+
+def passes_common_table_filters(
+    table: str,
+    cfg: Dict[str, Any],
+    source_schema: Dict[str, Any],
+    source_rows: Dict[str, List[Dict[str, str]]],
+) -> bool:
+    filters = cfg.get("after_context", {}).get("seed_table_filters", {})
+
+    if table in set(filters.get("exclude_tables", [])):
+        return False
+
+    if filters.get("require_sample_rows", True) and not has_sample_rows(source_rows, table):
+        return False
+
+    min_total_columns = int(filters.get("min_total_columns", 1))
+    if len(table_column_order(source_schema, table)) < min_total_columns:
+        return False
+
+    return True
+
+
+def source_candidates_for_decision(
+    decision: str,
+    after_tables: List[str],
     cfg: Dict[str, Any],
     source_schema: Dict[str, Any],
     source_constraints: Dict[str, Any],
     source_rows: Dict[str, List[Dict[str, str]]],
-) -> Tuple[Dict[str, Any], Dict[str, Any], Dict[str, List[Dict[str, Any]]], Dict[str, List[str]]]:
-    expected_cfg = cfg["expected_rdb"]
-    seed = int(cfg["info"].get("seed", 42))
+) -> List[str]:
+    rules = cfg["case_rules"][decision]
+    filters = rules.get("source_table_filters", {})
+    candidates = []
 
-    table_cols = resolve_expected_tables(expected_cfg["tables"], source_schema)
-    schema = make_schema_subset(source_schema, table_cols)
-    constraints = filter_constraints(source_constraints, schema)
+    for table in after_tables:
+        if not passes_common_table_filters(table, cfg, source_schema, source_rows):
+            continue
 
-    row_policy = expected_cfg.get("row_policy", {"mode": "all"})
-    rows = {}
+        columns = table_column_order(source_schema, table)
+        pk = get_pk(source_constraints, table)
+        non_key_cols = [col for col in columns if col not in set(pk)]
 
-    for table, columns in table_cols.items():
-        selected = select_rows(source_rows[table], row_policy, seed)
-        rows[table] = project_rows(selected, columns)
+        if filters.get("require_primary_key", False) and not pk:
+            continue
 
-    return schema, constraints, rows, table_cols
+        if decision == "extend_table":
+            min_hideable = int(filters.get("min_hideable_non_key_columns", 1))
+            if len(non_key_cols) < min_hideable:
+                continue
+            if filters.get("exclude_pure_association_tables", False):
+                if is_pure_association_table(source_schema, source_constraints, table):
+                    continue
 
+        elif decision == "create_table":
+            min_columns = int(filters.get("min_columns", 1))
+            if len(columns) < min_columns:
+                continue
+            if filters.get("require_fk_connection_to_remaining_after", False):
+                remaining = set(after_tables) - {table}
+                fk_neighbors = fk_neighbor_tables(source_constraints, table)
+                if not (fk_neighbors & remaining):
+                    continue
 
-def build_existing(
-    expected_schema: Dict[str, Any],
-    source_constraints: Dict[str, Any],
-    expected_rows: Dict[str, List[Dict[str, Any]]],
-    steps: List[Dict[str, Any]],
-) -> Tuple[Dict[str, Any], Dict[str, Any], Dict[str, List[Dict[str, Any]]]]:
-    schema = copy.deepcopy(expected_schema)
-    rows = copy.deepcopy(expected_rows)
-
-    for step in steps:
-        operation = step["operation"]
-        source_table = step["source_table"]
-
-        if operation == "remove_table":
-            schema["tables"].pop(source_table, None)
-            rows.pop(source_table, None)
-
-        elif operation == "remove_columns":
-            del_cols = step.get("delate_columns", step.get("delete_columns", []))
-
-            if source_table not in schema["tables"]:
-                raise ValueError(f"Cannot remove columns from missing table: {source_table}")
-
-            for col in del_cols:
-                schema["tables"][source_table]["columns"].pop(col, None)
-
-            schema["tables"][source_table]["column_order"] = [
-                col for col in schema["tables"][source_table]["column_order"]
-                if col not in del_cols
-            ]
-
-            for row in rows[source_table]:
-                for col in del_cols:
-                    row.pop(col, None)
-
-        elif operation == "project_columns":
-            # No change to existing schema/rows/constraints.
-            # This operation only creates an incoming projected table.
-            pass
+        elif decision == "insert_table":
+            min_projectable = int(filters.get("min_projectable_columns", 1))
+            if len(columns) < min_projectable:
+                continue
 
         else:
-            raise ValueError(f"Unsupported step operation: {operation}")
+            raise ValueError(f"Unsupported decision: {decision}")
 
-    constraints = filter_constraints(source_constraints, schema)
-    return schema, constraints, rows
+        candidates.append(table)
+
+    return candidates
 
 
-def incoming_columns_for_step(
-    step: Dict[str, Any],
-    expected_table_cols: Dict[str, List[str]],
+def sample_after_tables(
+    cfg: Dict[str, Any],
+    rng: random.Random,
+    source_schema: Dict[str, Any],
+    source_constraints: Dict[str, Any],
+    source_rows: Dict[str, List[Dict[str, str]]],
+    graph: Dict[str, Set[str]],
 ) -> List[str]:
-    source_table = step["source_table"]
-    incoming_cols = step.get("incoming_columns", "*")
+    size_cfg = cfg["size"]["after_table_count"]
+    min_tables = int(size_cfg["min"])
+    max_tables = int(size_cfg["max"])
+    target_count = rng.randint(min_tables, max_tables)
 
-    if incoming_cols != "*":
-        return list(incoming_cols)
+    max_depth = int(cfg.get("after_context", {}).get("max_fk_depth", 2))
+    seed_candidates = [
+        table for table in all_source_tables(source_schema)
+        if passes_common_table_filters(table, cfg, source_schema, source_rows)
+    ]
 
-    if step["operation"] == "remove_table":
-        return list(expected_table_cols[source_table])
+    if not seed_candidates:
+        raise ValueError("No valid seed tables for after-context generation.")
 
-    if step["operation"] == "remove_columns":
-        keys = step.get("keys", [])
-        del_cols = step.get("delate_columns", step.get("delete_columns", []))
-        return unique_keep_order(list(keys) + list(del_cols))
-    
-    if step["operation"] == "project_columns":
-        column_mapping = normalize_column_mapping(step, expected_table_cols)
-        return list(column_mapping.values())
+    rng.shuffle(seed_candidates)
 
-    raise ValueError(f"Unsupported step operation: {step['operation']}")
+    for seed_table in seed_candidates:
+        distances = graph_distances(graph, seed_table, max_depth)
+        reachable = sorted(distances.keys(), key=lambda t: (distances[t], t))
+
+        if len(reachable) < min_tables:
+            continue
+
+        selected = [seed_table]
+        remaining = [table for table in reachable if table != seed_table]
+        rng.shuffle(remaining)
+
+        for table in remaining:
+            if len(selected) >= target_count:
+                break
+            selected.append(table)
+
+        if len(selected) < min_tables:
+            continue
+
+        # Optional distractor: a connected table in the same FK neighborhood that is not already selected.
+        distractor_cfg = cfg.get("after_context", {}).get("distractor_table_count", {})
+        if cfg.get("after_context", {}).get("allow_distractor_tables", False):
+            max_distractors = int(distractor_cfg.get("max", 0))
+            min_distractors = int(distractor_cfg.get("min", 0))
+            if max_distractors > 0 and len(selected) < max_tables:
+                n_distractors = rng.randint(min_distractors, max_distractors)
+                extra_pool = [table for table in reachable if table not in set(selected)]
+                rng.shuffle(extra_pool)
+                for table in extra_pool[:n_distractors]:
+                    if len(selected) >= max_tables:
+                        break
+                    selected.append(table)
+
+        return unique_keep_order(selected[:max_tables])
+
+    raise ValueError(
+        "Cannot sample a connected local after-RDB under the configured size constraints."
+    )
 
 
-def write_step(
-    step_dir: Path,
-    step: Dict[str, Any],
-    idx: int,
-    seed: int,
+def random_column_subset(
+    columns: List[str],
+    min_n: int,
+    max_n: int,
+    rng: random.Random,
+) -> List[str]:
+    if not columns:
+        return []
+
+    max_n = min(max_n, len(columns))
+    min_n = min(min_n, max_n)
+    n = rng.randint(min_n, max_n)
+    selected = rng.sample(columns, n)
+    return [col for col in columns if col in set(selected)]
+
+
+def sample_rows_count(
+    rows: List[Dict[str, str]],
+    cfg: Dict[str, Any],
+    rng: random.Random,
+) -> List[Dict[str, str]]:
+    row_cfg = cfg["size"].get("sample_row_count", {})
+    min_rows = int(row_cfg.get("min", 0))
+    max_rows = int(row_cfg.get("max", len(rows)))
+
+    if not rows:
+        return []
+
+    n = rng.randint(min_rows, max_rows)
+    n = min(n, len(rows))
+
+    if n <= 0:
+        return []
+
+    indices = sorted(rng.sample(range(len(rows)), n))
+    return copy.deepcopy([rows[i] for i in indices])
+
+
+def subset_rows_for_schema(
+    source_rows: Dict[str, List[Dict[str, str]]],
+    schema: Dict[str, Any],
+    cfg: Dict[str, Any],
+    rng: random.Random,
+) -> Dict[str, List[Dict[str, Any]]]:
+    out = {}
+    for table, table_schema in schema["tables"].items():
+        columns = table_schema["column_order"]
+        selected_rows = sample_rows_count(source_rows.get(table, []), cfg, rng)
+        out[table] = project_rows(selected_rows, columns)
+    return out
+
+
+def remove_columns_from_schema_and_rows(
+    schema: Dict[str, Any],
+    rows: Dict[str, List[Dict[str, Any]]],
+    table: str,
+    columns: List[str],
+) -> Tuple[Dict[str, Any], Dict[str, List[Dict[str, Any]]]]:
+    schema = copy.deepcopy(schema)
+    rows = copy.deepcopy(rows)
+
+    for col in columns:
+        schema["tables"][table]["columns"].pop(col, None)
+
+    schema["tables"][table]["column_order"] = [
+        col for col in schema["tables"][table]["column_order"]
+        if col not in set(columns)
+    ]
+
+    for row in rows.get(table, []):
+        for col in columns:
+            row.pop(col, None)
+
+    return schema, rows
+
+
+def remove_table_from_schema_and_rows(
+    schema: Dict[str, Any],
+    rows: Dict[str, List[Dict[str, Any]]],
+    table: str,
+) -> Tuple[Dict[str, Any], Dict[str, List[Dict[str, Any]]]]:
+    schema = copy.deepcopy(schema)
+    rows = copy.deepcopy(rows)
+    schema["tables"].pop(table, None)
+    rows.pop(table, None)
+    return schema, rows
+
+
+def get_alias_candidates(obj: Dict[str, Any]) -> List[str]:
+    keys = ["aliases", "alias", "alternative_names", "name_aliases", "semantic_aliases"]
+
+    for key in keys:
+        value = obj.get(key)
+        if value is None:
+            continue
+        if isinstance(value, str):
+            return [value]
+        if isinstance(value, list):
+            return [str(x) for x in value if str(x)]
+
+    return []
+
+
+def choose_table_alias(
+    source_profiles: Dict[str, Any],
+    table: str,
+    rng: random.Random,
+) -> str:
+    table_profile = source_profiles.get("tables", {}).get(table, {})
+    candidates = []
+
+    if isinstance(table_profile.get("table"), dict):
+        candidates.extend(get_alias_candidates(table_profile["table"]))
+
+    candidates.extend(get_alias_candidates(table_profile))
+    candidates = [x for x in unique_keep_order(candidates) if x != table]
+
+    if candidates:
+        return rng.choice(candidates)
+
+    return f"{to_snake_case(table)}_incoming"
+
+
+def choose_column_alias(
+    source_profiles: Dict[str, Any],
+    table: str,
+    column: str,
+    rng: random.Random,
+) -> str:
+    col_profile = (
+        source_profiles
+        .get("tables", {})
+        .get(table, {})
+        .get("columns", {})
+        .get(column, {})
+    )
+    candidates = [x for x in get_alias_candidates(col_profile) if x != column]
+
+    if candidates:
+        return rng.choice(candidates)
+
+    return f"{to_snake_case(column)}_alias"
+
+
+def to_snake_case(name: str) -> str:
+    s = re.sub(r"(.)([A-Z][a-z]+)", r"\1_\2", name)
+    s = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", s)
+    s = re.sub(r"[^A-Za-z0-9]+", "_", s)
+    return s.strip("_").lower()
+
+
+def maybe_apply_perturbation(
+    cfg: Dict[str, Any],
+    rng: random.Random,
+    source_profiles: Dict[str, Any],
+    source_table: str,
+    incoming_table: str,
+    source_columns: List[str],
+) -> Tuple[str, Dict[str, str], List[str]]:
+    """
+    Return:
+      incoming_table_name,
+      source_col -> incoming_col mapping,
+      perturbation tags
+    """
+    mapping = {col: col for col in source_columns}
+    tags: List[str] = []
+
+    pert_cfg = cfg.get("perturbation", {})
+    if not pert_cfg.get("enabled", False):
+        return incoming_table, mapping, tags
+
+    clean_ratio = float(pert_cfg.get("clean_ratio", 1.0))
+    if rng.random() < clean_ratio:
+        return incoming_table, mapping, tags
+
+    apply_to = pert_cfg.get("apply_to", {})
+    probs = pert_cfg.get("probabilities", {})
+    use_aliases = bool(pert_cfg.get("use_profile_aliases", True))
+
+    if apply_to.get("incoming_table_name", False):
+        if rng.random() < float(probs.get("table_name_rename", 0.0)):
+            incoming_table = choose_table_alias(source_profiles, source_table, rng) if use_aliases else f"{incoming_table}_alias"
+            tags.append("table_name_rename")
+
+    if apply_to.get("incoming_column_names", False):
+        if rng.random() < float(probs.get("column_name_rename", 0.0)):
+            new_mapping = {}
+            for source_col in source_columns:
+                if use_aliases:
+                    new_mapping[source_col] = choose_column_alias(source_profiles, source_table, source_col, rng)
+                else:
+                    new_mapping[source_col] = f"{source_col}_alias"
+            mapping = make_unique_mapping_values(new_mapping)
+            tags.append("column_name_rename")
+
+    if apply_to.get("incoming_column_names", False):
+        if rng.random() < float(probs.get("low_name_overlap", 0.0)):
+            # Apply aliases to all columns if possible. This is stricter than ordinary column rename.
+            new_mapping = {}
+            for source_col in source_columns:
+                new_mapping[source_col] = choose_column_alias(source_profiles, source_table, source_col, rng)
+            mapping = make_unique_mapping_values(new_mapping)
+            tags.append("low_name_overlap")
+
+    if apply_to.get("incoming_column_order", False):
+        if rng.random() < float(probs.get("column_order_shuffle", 0.0)):
+            tags.append("column_order_shuffle")
+
+    return incoming_table, mapping, unique_keep_order(tags)
+
+
+def make_unique_mapping_values(mapping: Dict[str, str]) -> Dict[str, str]:
+    used: Dict[str, int] = {}
+    out = {}
+
+    for source_col, incoming_col in mapping.items():
+        base = incoming_col
+        if base not in used:
+            used[base] = 1
+            out[source_col] = base
+        else:
+            used[base] += 1
+            out[source_col] = f"{base}_{used[base]}"
+
+    return out
+
+
+def maybe_shuffle_mapping_order(
+    mapping: Dict[str, str],
+    perturbation_tags: List[str],
+    rng: random.Random,
+) -> Dict[str, str]:
+    if "column_order_shuffle" not in perturbation_tags:
+        return mapping
+
+    items = list(mapping.items())
+    rng.shuffle(items)
+    return dict(items)
+
+
+def pk_fact(source_constraints: Dict[str, Any], table: str) -> List[Dict[str, Any]]:
+    pk = get_pk(source_constraints, table)
+    if not pk:
+        return []
+    return [{"table": table, "columns": pk}]
+
+
+def fks_involving_created_table(
+    source_constraints: Dict[str, Any],
+    created_table: str,
+    before_schema: Dict[str, Any],
+) -> List[Dict[str, Any]]:
+    fks = []
+
+    # created table -> existing table
+    for fk in outgoing_fks(source_constraints, created_table):
+        if table_exists(before_schema, fk.get("referenced_table", "")):
+            fks.append({
+                "source_table": created_table,
+                "source_columns": copy.deepcopy(fk.get("columns", [])),
+                "target_table": fk.get("referenced_table"),
+                "target_columns": copy.deepcopy(fk.get("referenced_columns", [])),
+            })
+
+    # existing table -> created table
+    for fk in incoming_fks(source_constraints, created_table):
+        src_table = fk.get("table")
+        if table_exists(before_schema, src_table):
+            fks.append({
+                "source_table": src_table,
+                "source_columns": copy.deepcopy(fk.get("columns", [])),
+                "target_table": created_table,
+                "target_columns": copy.deepcopy(fk.get("referenced_columns", [])),
+            })
+
+    return fks
+
+
+def build_proposal(
+    decision: str,
+    incoming_table: str,
+    source_table: str,
+    before_schema: Dict[str, Any],
+    after_schema: Dict[str, Any],
+    source_constraints: Dict[str, Any],
+    source_to_incoming: Dict[str, str],
+    hidden_columns: List[str] | None = None,
+) -> Dict[str, Any]:
+    hidden_columns = hidden_columns or []
+
+    column_placements = {
+        incoming_col: f"{source_table}.{source_col}"
+        for source_col, incoming_col in source_to_incoming.items()
+    }
+
+    if decision == "extend_table":
+        affected_tables = [source_table]
+        protected_tables = [t for t in before_schema["tables"] if t != source_table]
+        return {
+            "decision": "extend_table",
+            "incoming_table": incoming_table,
+            "target_table": source_table,
+            "created_table": None,
+            "added_columns": {source_table: list(hidden_columns)},
+            "column_placements": column_placements,
+            "proposed_primary_keys": [],
+            "proposed_foreign_keys": [],
+            "affected_tables": affected_tables,
+            "protected_tables": protected_tables,
+        }
+
+    if decision == "create_table":
+        return {
+            "decision": "create_table",
+            "incoming_table": incoming_table,
+            "target_table": None,
+            "created_table": source_table,
+            "added_columns": {},
+            "column_placements": column_placements,
+            "proposed_primary_keys": pk_fact(source_constraints, source_table),
+            "proposed_foreign_keys": fks_involving_created_table(
+                source_constraints=source_constraints,
+                created_table=source_table,
+                before_schema=before_schema,
+            ),
+            "affected_tables": [source_table],
+            "protected_tables": list(before_schema["tables"].keys()),
+        }
+
+    if decision == "insert_table":
+        return {
+            "decision": "insert_table",
+            "incoming_table": incoming_table,
+            "target_table": source_table,
+            "created_table": None,
+            "added_columns": {},
+            "column_placements": column_placements,
+            "proposed_primary_keys": [],
+            "proposed_foreign_keys": [],
+            "affected_tables": [],
+            "protected_tables": list(before_schema["tables"].keys()),
+        }
+
+    raise ValueError(f"Unsupported decision: {decision}")
+
+
+def write_incoming(
+    incoming_dir: Path,
+    incoming_schema: Dict[str, Any],
+    incoming_profile: Dict[str, Any],
+    incoming_rows: List[Dict[str, Any]],
+    incoming_columns: List[str],
+) -> None:
+    write_json(incoming_dir / "schema.json", incoming_schema)
+    write_json(incoming_dir / "profile.json", incoming_profile)
+    write_csv(incoming_dir / "table.csv", incoming_rows, incoming_columns)
+
+
+def generate_case(
+    case_dir: Path,
+    case_index: int,
+    decision: str,
+    cfg: Dict[str, Any],
+    rng: random.Random,
     source_schema: Dict[str, Any],
     source_constraints: Dict[str, Any],
     source_profiles: Dict[str, Any],
-    expected_rows: Dict[str, List[Dict[str, Any]]],
-    expected_table_cols: Dict[str, List[str]],
-    current_schema: Dict[str, Any],
-) -> Dict[str, Any]:
-    source_table = step["source_table"]
-    incoming_table = step["incoming_table"]
-    operation = step["operation"]
+    source_rows: Dict[str, List[Dict[str, str]]],
+    graph: Dict[str, Set[str]],
+) -> None:
+    max_attempts = 500
 
-    columns = incoming_columns_for_step(step, expected_table_cols)
-
-    for col in columns:
-        check_column(source_schema, source_table, col)
-
-    row_policy = step.get("incoming_row_policy", {"mode": "all"})
-    base_rows = expected_rows[source_table]
-    selected_rows = select_rows(base_rows, row_policy, seed + idx)
-
-    if operation == "project_columns":
-        column_mapping = normalize_column_mapping(step, expected_table_cols)
-
-        for source_col in column_mapping.keys():
-            check_column(source_schema, source_table, source_col)
-
-        columns = list(column_mapping.values())
-
-        incoming_rows = project_rows_with_mapping(
-            rows=selected_rows,
-            column_mapping=column_mapping,
+    for _attempt in range(max_attempts):
+        after_tables = sample_after_tables(
+            cfg=cfg,
+            rng=rng,
+            source_schema=source_schema,
+            source_constraints=source_constraints,
+            source_rows=source_rows,
+            graph=graph,
         )
 
+        source_candidates = source_candidates_for_decision(
+            decision=decision,
+            after_tables=after_tables,
+            cfg=cfg,
+            source_schema=source_schema,
+            source_constraints=source_constraints,
+            source_rows=source_rows,
+        )
+
+        if not source_candidates:
+            continue
+
+        source_table = rng.choice(source_candidates)
+        after_table_cols = {table: table_column_order(source_schema, table) for table in after_tables}
+        after_schema = make_schema_subset(source_schema, after_table_cols)
+        after_constraints = filter_constraints(source_constraints, after_schema)
+        after_rows = subset_rows_for_schema(source_rows, after_schema, cfg, rng)
+        after_profiles = filter_profiles_by_schema(source_profiles, after_schema)
+
+        if decision == "extend_table":
+            pk = get_pk(source_constraints, source_table)
+            all_cols = table_column_order(source_schema, source_table)
+            non_key_cols = [col for col in all_cols if col not in set(pk)]
+            hidden_rule = cfg["case_rules"]["extend_table"]["hidden_columns"]
+            min_remaining = int(
+                cfg["case_rules"]["extend_table"]
+                .get("source_table_filters", {})
+                .get("min_remaining_columns_after_hide", 2)
+            )
+
+            max_hide_by_remaining = max(0, len(all_cols) - min_remaining)
+
+            max_hide = min(
+                int(hidden_rule.get("max", 1)),
+                max_hide_by_remaining,
+                len(non_key_cols),
+            )
+
+            min_hide = int(hidden_rule.get("min", 1))
+
+            if max_hide < min_hide:
+                continue
+
+            hidden_columns = random_column_subset(
+                non_key_cols,
+                min_hide,
+                max_hide,
+                rng,
+            )
+
+            source_columns = unique_keep_order(pk + hidden_columns)
+            incoming_table = source_table
+
+            before_schema, before_rows = remove_columns_from_schema_and_rows(
+                after_schema,
+                after_rows,
+                source_table,
+                hidden_columns,
+            )
+
+        elif decision == "create_table":
+            hidden_columns = []
+            source_columns = table_column_order(source_schema, source_table)
+            incoming_table = source_table
+            before_schema, before_rows = remove_table_from_schema_and_rows(
+                after_schema,
+                after_rows,
+                source_table,
+            )
+
+        elif decision == "insert_table":
+            pk = get_pk(source_constraints, source_table)
+            all_cols = table_column_order(source_schema, source_table)
+            non_key_cols = [col for col in all_cols if col not in set(pk)]
+            projection_rule = cfg["case_rules"]["insert_table"]["incoming"].get("projection_columns", {})
+            min_cols = int(projection_rule.get("min", 3))
+            max_cols = int(projection_rule.get("max", 8))
+            remaining_needed_min = max(0, min_cols - len(pk))
+            remaining_max = max(0, max_cols - len(pk))
+            projected_non_key_cols = random_column_subset(
+                non_key_cols,
+                remaining_needed_min,
+                remaining_max,
+                rng,
+            )
+            source_columns = unique_keep_order(pk + projected_non_key_cols)
+            hidden_columns = []
+            incoming_table = source_table
+            before_schema = copy.deepcopy(after_schema)
+            before_rows = copy.deepcopy(after_rows)
+
+        else:
+            raise ValueError(f"Unsupported decision: {decision}")
+
+        if not source_columns:
+            continue
+
+        before_constraints = filter_constraints(source_constraints, before_schema)
+        before_profiles = filter_profiles_by_schema(source_profiles, before_schema)
+
+        incoming_table, source_to_incoming, tags = maybe_apply_perturbation(
+            cfg=cfg,
+            rng=rng,
+            source_profiles=source_profiles,
+            source_table=source_table,
+            incoming_table=incoming_table,
+            source_columns=source_columns,
+        )
+        source_to_incoming = maybe_shuffle_mapping_order(source_to_incoming, tags, rng)
+        incoming_columns = list(source_to_incoming.values())
+
+        base_rows = sample_rows_count(source_rows[source_table], cfg, rng)
+        incoming_rows = project_rows_with_mapping(base_rows, source_to_incoming)
         incoming_schema = make_single_table_schema_with_mapping(
             source_schema=source_schema,
             source_table=source_table,
             incoming_table=incoming_table,
-            column_mapping=column_mapping,
+            column_mapping=source_to_incoming,
         )
-
-        incoming_profiles = make_incoming_profile_for_step_with_mapping(
+        incoming_profile = make_incoming_profile_for_step_with_mapping(
             source_profiles=source_profiles,
             source_table=source_table,
             incoming_table=incoming_table,
-            column_mapping=column_mapping,
+            column_mapping=source_to_incoming,
         )
 
-    else:
-        columns = incoming_columns_for_step(step, expected_table_cols)
-
-        for col in columns:
-            check_column(source_schema, source_table, col)
-
-        incoming_rows = project_rows(selected_rows, columns)
-
-        incoming_schema = make_single_table_schema(
-            source_schema=source_schema,
-            source_table=source_table,
+        proposal = build_proposal(
+            decision=decision,
             incoming_table=incoming_table,
-            columns=columns,
-        )
-
-        incoming_profiles = make_incoming_profile_for_step(
-            source_profiles=source_profiles,
             source_table=source_table,
-            incoming_table=incoming_table,
-            columns=columns,
-        )
-
-    if operation == "remove_columns":
-        decision = {
-            "operation": "extend_table",
-            "incoming_table": incoming_table,
-            "target_table": source_table,
-            "keys": step.get("keys", []),
-            "add_columns": step.get("delete_columns", []),
-            "create_new_table": False,
-        }
-
-    elif operation == "remove_table":
-        expected_fks = fks_for_table_to_current_rdb(
+            before_schema=before_schema,
+            after_schema=after_schema,
             source_constraints=source_constraints,
-            source_table=source_table,
-            current_schema=current_schema,
+            source_to_incoming=source_to_incoming,
+            hidden_columns=hidden_columns,
         )
+        if tags:
+            proposal["perturbations"] = tags
 
-        decision_operation = (
-            "create_relationship_table"
-            if len(expected_fks) >= 2
-            else "create_entity_table"
+        if case_dir.exists():
+            shutil.rmtree(case_dir)
+        case_dir.mkdir(parents=True, exist_ok=True)
+
+        write_rdb(
+            case_dir / "existing",
+            before_schema,
+            before_constraints,
+            before_rows,
+            before_profiles,
         )
-
-        decision = {
-            "operation": decision_operation,
-            "incoming_table": incoming_table,
-            "target_table": source_table,
-            "create_new_table": True,
-            "expected_foreign_keys": expected_fks,
-        }
-
-    elif operation == "project_columns":
-        source_to_incoming = normalize_column_mapping(step, expected_table_cols)
-        incoming_to_target = {
-            incoming_col: source_col
-            for source_col, incoming_col in source_to_incoming.items()
-        }
-        
-        decision = {
-            "operation": "insert_table",
-            "incoming_table": incoming_table,
-            "target_table": source_table,
-            "source_to_incoming_columns": source_to_incoming,
-            "incoming_to_target_columns": incoming_to_target,
-            "keys": step.get("keys", []),
-            "create_new_table": False,
-            "schema_change": False,
-        }
-
-    else:
-        raise ValueError(f"Unsupported step operation: {operation}")
-
-    write_csv(step_dir / "table.csv", incoming_rows, columns)
-    write_json(step_dir / "schema.json", incoming_schema)
-    write_json(step_dir / "profiles.json", incoming_profiles)
-    write_json(step_dir / "expected_decision.json", decision)
-
-    return decision
-
-
-def apply_step_to_current_expected_state(
-    current_schema: Dict[str, Any],
-    expected_schema: Dict[str, Any],
-    step: Dict[str, Any],
-) -> Dict[str, Any]:
-    current_schema = copy.deepcopy(current_schema)
-    operation = step["operation"]
-    source_table = step["source_table"]
-
-    if operation == "remove_table":
-        current_schema["tables"][source_table] = copy.deepcopy(
-            expected_schema["tables"][source_table]
+        write_incoming(
+            case_dir / "incoming",
+            incoming_schema,
+            incoming_profile,
+            incoming_rows,
+            incoming_columns,
         )
+        write_rdb(
+            case_dir / "expected",
+            after_schema,
+            after_constraints,
+            after_rows,
+            after_profiles,
+        )
+        write_json(case_dir / "expected" / "proposal.json", proposal)
+        return
 
-    elif operation == "remove_columns":
-        del_cols = step.get("delate_columns", step.get("delete_columns", []))
+    raise RuntimeError(
+        f"Failed to generate case {case_index} for decision={decision} after {max_attempts} attempts."
+    )
 
-        for col in del_cols:
-            current_schema["tables"][source_table]["columns"][col] = copy.deepcopy(
-                expected_schema["tables"][source_table]["columns"][col]
-            )
 
-        current_schema["tables"][source_table]["column_order"] = [
-            col for col in expected_schema["tables"][source_table]["column_order"]
-            if col in current_schema["tables"][source_table]["columns"]
-        ]
+def copy_benchmark_config(yaml_path: Path, output_dir: Path) -> None:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(yaml_path, output_dir / "benchmark_config.yaml")
 
-    elif operation == "project_columns":
-        pass
 
-    return current_schema
+def write_case_run_config(case_dir: Path, sample_num: int) -> None:
+    """
+    Generate the runtime config consumed by the pipeline for one benchmark case.
+
+    Output:
+        case_dir/config.yaml
+
+    Layout used by the config:
+        existing_rdb.path -> case_dir/existing
+        steps[0].path     -> case_dir/incoming
+    """
+    proposal_path = case_dir / "expected" / "proposal.json"
+    proposal = read_json(proposal_path) if proposal_path.exists() else {}
+
+    incoming_table = proposal.get("incoming_table", "incoming")
+    task_id = f"step_001_{to_snake_case(str(incoming_table))}"
+
+    run_config = {
+        "existing_rdb": {
+            "path": str(case_dir / "existing"),
+            "sample_num": sample_num,
+        },
+        "steps": [
+            {
+                "task_id": task_id,
+                "path": str(case_dir / "incoming"),
+                "sample_num": sample_num,
+            }
+        ],
+    }
+
+    config_path = case_dir / "config.yaml"
+    config_path.write_text(
+        yaml.safe_dump(run_config, sort_keys=False, allow_unicode=True),
+        encoding="utf-8",
+    )
 
 
 def build_benchmark(yaml_path: Path) -> None:
     cfg = read_yaml(yaml_path)
 
-    seed = int(cfg["info"].get("seed", 42))
-    source_dir = Path(cfg["info"]["source_dir"])
-    output_dir = Path(cfg["info"]["output_dir"])
-    sample_num = int(cfg["info"].get("sample_num", 0))
-
-    source_schema, source_constraints, source_rows = load_source(source_dir)
-    source_profiles = load_source_profiles(source_dir)
-
-    expected_schema, expected_constraints, expected_rows, expected_table_cols = build_expected(
-        cfg=cfg,
-        source_schema=source_schema,
-        source_constraints=source_constraints,
-        source_rows=source_rows,
-    )
-
-    existing_schema, existing_constraints, existing_rows = build_existing(
-        expected_schema=expected_schema,
-        source_constraints=source_constraints,
-        expected_rows=expected_rows,
-        steps=cfg.get("steps", []),
-    )
+    benchmark_cfg = cfg.get("benchmark", {})
+    seed = int(benchmark_cfg.get("random_seed", cfg.get("random_seed", 42)))
+    sample_num = resolve_sample_num(cfg)
+    rng = random.Random(seed)
+    output_dir = resolve_output_dir(cfg)
 
     if output_dir.exists():
         shutil.rmtree(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
-    expected_profiles = filter_profiles_by_schema(
-        source_profiles=source_profiles,
-        schema=expected_schema,
-    )
+    # Keep a copy of the generation config for reproducibility.
+    # The pipeline runtime config is generated separately as case_XXXX/config.yaml.
+    copy_benchmark_config(yaml_path, output_dir)
 
-    existing_profiles = filter_profiles_by_schema(
-        source_profiles=source_profiles,
-        schema=existing_schema,
-    )
+    source_schema, source_constraints, source_profiles, source_rows = load_source_from_config(cfg)
+    graph = build_fk_graph(source_schema, source_constraints)
 
-    write_rdb(
-        output_dir / "existing",
-        existing_schema,
-        existing_constraints,
-        existing_rows,
-        existing_profiles,
-    )
-
-    write_rdb(
-        output_dir / "expected",
-        expected_schema,
-        expected_constraints,
-        expected_rows,
-        expected_profiles,
-    )
-
-    steps_dir = output_dir / "steps"
-    steps_dir.mkdir(parents=True, exist_ok=True)
-
-    current_schema = copy.deepcopy(existing_schema)
-
-    for idx, step in enumerate(cfg.get("steps", []), start=1):
-        step_name = stable_step_name(
-            raw_name=step.get("name"),
-            idx=idx,
-            incoming_table=step["incoming_table"],
-        )
-
-        safe_step_name = re.sub(r"[^A-Za-z0-9_.-]+", "_", step_name).strip("_")
-        step_dir = steps_dir / safe_step_name
-        step_dir.mkdir(parents=True, exist_ok=True)
-
-        write_step(
-            step_dir=step_dir,
-            step=step,
-            idx=idx,
-            seed=seed,
-            source_schema=source_schema,
-            source_constraints=source_constraints,
-            source_profiles=source_profiles,
-            expected_rows=expected_rows,
-            expected_table_cols=expected_table_cols,
-            current_schema=current_schema,
-        )
-
-        current_schema = apply_step_to_current_expected_state(
-            current_schema=current_schema,
-            expected_schema=expected_schema,
-            step=step,
-        )
-
-        write_run_config(
-            output_dir=output_dir,
-            steps=cfg.get("steps", []),
-            sample_num=sample_num,
-        )
+    case_index = 1
+    for decision in ["extend_table", "create_table", "insert_table"]:
+        count = int(cfg.get("case_counts", {}).get(decision, 0))
+        for _ in range(count):
+            case_dir = output_dir / f"case_{case_index:04d}"
+            generate_case(
+                case_dir=case_dir,
+                case_index=case_index,
+                decision=decision,
+                cfg=cfg,
+                rng=rng,
+                source_schema=source_schema,
+                source_constraints=source_constraints,
+                source_profiles=source_profiles,
+                source_rows=source_rows,
+                graph=graph,
+            )
+            write_case_run_config(case_dir=case_dir, sample_num=sample_num)
+            case_index += 1
 
     print(f"Generated benchmark: {output_dir}")
-    print(f"existing: {output_dir / 'existing'}")
-    print(f"steps:    {output_dir / 'steps'}")
-    print(f"expected: {output_dir / 'expected'}")
-    print(f"config:   {output_dir / 'config.yaml'}")
+    print(f"cases: {case_index - 1}")
+    print(f"generation config copy: {output_dir / 'benchmark_config.yaml'}")
+    print("runtime config: each case has its own config.yaml")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Build RDB schema-evolution benchmark from one YAML spec."
+        description="Build local RDB schema-evolution benchmark cases from the new YAML config."
     )
     parser.add_argument("yaml_path", type=Path, help="Path to benchmark YAML file")
     args = parser.parse_args()

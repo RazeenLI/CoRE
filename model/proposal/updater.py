@@ -17,9 +17,12 @@ CONSTRAINT_SECTIONS = [
 def apply_update_plan_to_existing_parts(
     schema: dict[str, Any],
     constraints: dict[str, Any],
-    profiles: dict[str, Any] | None,
+    profiles: dict[str, Any],
+    sample_values: dict[str, list[dict[str, Any]]],
+    incoming_values: list[dict[str, Any]],
+    proposal: dict[str, Any],
     update_plan: dict[str, Any],
-) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any] | None]:
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any] | None, dict[str, list[dict[str, Any]]] | None]:
     """
     Apply a partial update plan to separated existing RDB parts.
 
@@ -71,7 +74,104 @@ def apply_update_plan_to_existing_parts(
         removed_tables=removed_tables,
     )
 
-    return updated_schema, updated_constraints, updated_profiles
+    updated_values = update_sample_values(
+        sample_values=sample_values,
+        incoming_values=incoming_values,
+        proposal=proposal,
+    )
+
+    return updated_schema, updated_constraints, updated_profiles, updated_values
+
+
+def update_sample_values(
+    sample_values: dict[str, list[dict[str, Any]]],
+    incoming_values: list[dict[str, Any]],
+    proposal: dict[str, Any],
+) -> dict[str, list[dict[str, Any]]]:
+    updated_values = deepcopy(sample_values)
+
+    for table_action in proposal.get("table_actions", []):
+        table_name = table_action["table"]
+        table_action_type = table_action["action"]
+
+        transformed_rows = _transform_incoming_rows(
+            incoming_values=incoming_values,
+            column_actions=table_action.get(
+                "column_actions",
+                [],
+            ),
+        )
+
+        if table_action_type == "create":
+            updated_values[table_name] = transformed_rows
+
+        elif table_action_type == "map":
+            updated_values.setdefault(
+                table_name,
+                [],
+            )
+
+            # Sample values 不是完整数据库，
+            # 当前先追加 incoming 的转换结果。
+            updated_values[table_name].extend(
+                transformed_rows
+            )
+
+    return updated_values
+
+
+def _transform_incoming_rows(
+    incoming_values: list[dict[str, Any]],
+    column_actions: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    transformed_rows: list[dict[str, Any]] = []
+
+    for incoming_row in incoming_values:
+        target_row: dict[str, Any] = {}
+
+        for column_action in column_actions:
+            action = column_action.get("action")
+
+            source_columns = column_action.get(
+                "source_columns",
+                [],
+            )
+            target_columns = column_action.get(
+                "target_columns",
+                [],
+            )
+
+            if action in {"map", "create"}:
+                for source_column, target_column in zip(
+                    source_columns,
+                    target_columns,
+                ):
+                    target_row[target_column] = (
+                        incoming_row.get(source_column)
+                    )
+
+            elif action == "split":
+                # 当前没有 transformation specification，
+                # 暂时不能可靠生成 split values。
+                for target_column in target_columns:
+                    target_row[target_column] = None
+
+            elif action == "merge":
+                # 当前没有 merge expression，
+                # 暂时不能可靠生成 merge value。
+                if target_columns:
+                    target_row[target_columns[0]] = None
+
+            elif action == "derive":
+                for target_column in target_columns:
+                    target_row[target_column] = None
+
+            elif action == "drop":
+                continue
+
+        transformed_rows.append(target_row)
+
+    return transformed_rows
 
 
 def _get_partial_schema_tables(partial_rdb: dict[str, Any]) -> dict[str, Any]:

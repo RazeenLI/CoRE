@@ -220,14 +220,14 @@ class MatcherResult(TypedDict, total=False):
 EvolutionDecisionType = Literal[
     # v1 implemented
     "extend_table",
-    "create_entity_table",
-    "create_association_table",
+    "create_table",
+    # "create_association_table",
 
-    # reserved for future
-    "transform_table", # transform column structure, e.g. split, merge
-    "create_child_table",
-    "reject_source",
-    "defer_decision",
+    # # reserved for future
+    # "transform_table", # transform column structure, e.g. split, merge
+    # "create_child_table",
+    # "reject_source",
+    # "defer_decision",
 ]
 # insert_table
 
