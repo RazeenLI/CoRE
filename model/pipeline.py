@@ -6,7 +6,7 @@ from pathlib import Path
 import pandas as pd
 import yaml
 
-from model.utils.io import load_rdb, save_rdb, load_table, terminal_message
+from model.utils.io import load_rdb, save_rdb, load_table, terminal_message, save_json
 
 # from core.orchestrator import Orchestrator
 # from core.task import IngestionTask
@@ -143,7 +143,7 @@ def run_pipeline(
 
         terminal_message("success", f"Task {task_id} load incoming table with keys: {incoming_table.keys()}.")
 
-        existing_rdb = orchestrator.run_task(task_id, incoming_table)
+        existing_rdb, proposal = orchestrator.run_task(task_id, incoming_table)
 
         terminal_message("success", f"Task {task_id} running finished")
 
@@ -152,6 +152,8 @@ def run_pipeline(
     orchestrator.save_state(Path(save_root_path) / "run_state.json")
 
     terminal_message("success", f"Run state is saved at {Path(save_root_path) / 'run_state.json'}.")
+
+    save_json(proposal, Path(save_root_path) / "proposal.json")
 
     # # 6. Save final run state / updated RDB / task results
     # output_dir = Path(config["output_dir"])

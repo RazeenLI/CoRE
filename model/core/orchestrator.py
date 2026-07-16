@@ -108,7 +108,7 @@ class Orchestrator:
 
             # self.save_state(self.config["state_path"])
 
-        return self.run_state.current_existing_rdb
+        return self.run_state.current_existing_rdb, task_state.results["proposal"][-1]
         
     
     def _run_profiler(self, task_state: TaskState):
@@ -300,7 +300,6 @@ class Orchestrator:
         )
 
     def _finalize_decision(self, task_state: TaskState):
-        # TODO: Human in the loop
         decision_run_count = len(task_state.results.get("decision", []))
 
         if decision_run_count >= self.max_decision_runs:
@@ -365,25 +364,27 @@ class Orchestrator:
         pass
 
     def _apply_final_decision(self, task_state: TaskState):
-        # TODO: Auto apply after dedesided
 
-        updated_schema, updated_constraints, updated_profiles = apply_update_plan_to_existing_parts(
+        updated_schema, updated_constraints, updated_profiles, updated_values = apply_update_plan_to_existing_parts(
             schema=task_state.existing_schema,
             constraints=task_state.constraints,
             profiles=task_state.existing_profiles,
+            sample_values=task_state.existing_values,
+            incoming_values=task_state.incoming_values,
+            proposal=task_state.results["proposal"][-1],
             update_plan=task_state.results["preview"][-1],
         )
 
         task_state.existing_schema = updated_schema
         task_state.existing_profiles = updated_profiles
         task_state.constraints = updated_constraints
+        task_state.existing_values = updated_values
         
         task_state.set_routing(
             next_step="finish_task",
             reason=f"Finish and Updated.",
             source_step="finial_decision",
         )
-        pass
     
     @classmethod
     def from_state_json(

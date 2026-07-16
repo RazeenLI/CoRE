@@ -476,6 +476,12 @@ class RunState:
         if finished_task_id is None:
             raise ValueError("No task_id provided and no current task is active.")
 
+        task_state: TaskState = self.tasks[finished_task_id]
+        self.current_existing_rdb["schema"] = deepcopy(task_state.existing_schema)
+        self.current_existing_rdb["profiles"] = deepcopy(task_state.existing_profiles)
+        self.current_existing_rdb["sample_values"] = deepcopy(task_state.existing_values)
+        self.current_existing_rdb["constraints"] = deepcopy(task_state.constraints)
+
         self.current_task_id = finished_task_id
         self.current_step = "finish_task"
         self.status = status
