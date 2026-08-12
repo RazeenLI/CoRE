@@ -1,25 +1,25 @@
 import argparse
-from pathlib import Path
+from importlib import import_module
+from typing import Callable
 
-from model.pipeline import run_pipeline
 
-"""
-python main.py --output "save/small_case_D_project_columns" --data-config "data/Chinook/benchmarks/small_case_D_project_columns/config.yaml" --agent-config "configs/qwen3.5_9B.yaml"
-python main.py --output "save/small_case_C_remove_relationship_table" --data-config "data/Chinook/benchmarks/small_case_C_remove_relationship_table/config.yaml" --agent-config "configs/qwen3.5_9B.yaml"
-python main.py --output "save/small_case_B_remove_table" --data-config "data/Chinook/benchmarks/small_case_B_remove_table/config.yaml" --agent-config "configs/qwen3.5_9B.yaml"
-python main.py --output "save/small_case_A_remove_columns" --data-config "data/Chinook/benchmarks/small_case_A_remove_columns/config.yaml" --agent-config "configs/qwen3.5_9B.yaml"
-nohup python main.py --data-config "data/Chinook/benchmarks/small_case_A_remove_columns/config.yaml" --agent-config "configs/qwen3.5_9B.yaml"  > logs/output.log 2>&1 &
-"""
+PIPELINE_MODULES = {
+    "standard": "model.pipeline",
+    "oneshot": "baselines.oneshot.pipeline",
+}
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Run the pipeline over ordered incoming tables."
+        description="Run an RDB integration pipeline over ordered incoming tables."
     )
 
-    # parser.add_argument(
-    #     "--existing-rdb",
-    #     required=True,
-    #     help="Path to the initial existing RDB folder or schema files.",
-    # )
+    parser.add_argument(
+        "--model",
+        default="standard",
+        choices=PIPELINE_MODULES.keys(),
+        help="Pipeline model to run.",
+    )
 
     parser.add_argument(
         "--output",
@@ -27,40 +27,47 @@ def parse_args() -> argparse.Namespace:
         help="Path to save the final updated RDB and run outputs.",
     )
 
-    # parser.add_argument(
-    #     "--tasks",
-    #     required=True,
-    #     help="Path to the task manifest YAML/JSON file.",
-    # )
-
     parser.add_argument(
         "--agent-config",
-        default=None,
-        help="Optional path to agent configuration file.",
+        required=True,
+        help="Path to the agent configuration YAML file.",
     )
 
     parser.add_argument(
         "--data-config",
-        default=None,
-        help="Optional path to data configuration file.",
+        required=True,
+        help="Path to the dataset configuration YAML file.",
     )
 
-    # parser.add_argument(
-    #     "--save-after-each-task",
-    #     action="store_true",
-    #     help="Save current existing RDB after each task.",
-    # )
-
     return parser.parse_args()
+
+
+def get_run_pipeline(model_name: str) -> Callable:
+    """
+    Load the run_pipeline function corresponding to the selected model.
+    """
+    module_path = PIPELINE_MODULES[model_name]
+    pipeline_module = import_module(module_path)
+
+    run_pipeline = getattr(pipeline_module, "run_pipeline", None)
+
+    if run_pipeline is None or not callable(run_pipeline):
+        raise ImportError(
+            f"Module '{module_path}' does not define a callable run_pipeline function."
+        )
+
+    return run_pipeline
 
 
 def main() -> None:
     args = parse_args()
 
+    run_pipeline = get_run_pipeline(args.model)
+
     run_pipeline(
         data_config_path=args.data_config,
         agent_config_path=args.agent_config,
-        save_root_path=args.output
+        save_root_path=args.output,
     )
 
 

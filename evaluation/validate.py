@@ -7,8 +7,6 @@ from typing import Any
 PROPOSAL_DECISION_TYPES = {
     "extend_table",
     "create_table",
-    "no_schema_change",
-    "review",
     "insert_table",
 }
 
@@ -1030,7 +1028,7 @@ def check_proposal_validity(
             },
         )
 
-    if source_decision == "no_schema_change":
+    if source_decision == "insert_table":
         schema_change_actions = {
             "create",
             "drop",
@@ -1052,7 +1050,7 @@ def check_proposal_validity(
                     "object": "source_decision",
                     "decision": source_decision,
                     "reason": (
-                        "no_schema_change_contains_"
+                        "insert_table_contains_"
                         "schema_change_actions"
                     ),
                 },

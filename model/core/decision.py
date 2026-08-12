@@ -65,18 +65,18 @@ def auto_approve_decision(
     trace: list[dict[str, Any]],
     save_path: str | Path,
 ) -> dict[str, Any]:
-    save_task_state_visualization(
-        task_id=task_id,
-        incoming_schema=incoming_schema,
-        incoming_values=incoming_values,
-        existing_schema=existing_schema,
-        constraints=constraints,
-        existing_values=existing_values,
-        existing_profiles=existing_profiles,
-        results=results,
-        trace=trace,
-        save_path=save_path,
-    )
+    # save_task_state_visualization(
+    #     task_id=task_id,
+    #     incoming_schema=incoming_schema,
+    #     incoming_values=incoming_values,
+    #     existing_schema=existing_schema,
+    #     constraints=constraints,
+    #     existing_values=existing_values,
+    #     existing_profiles=existing_profiles,
+    #     results=results,
+    #     trace=trace,
+    #     save_path=save_path,
+    # )
     return {
         "approved": True,
         "summary": "Auto-approved.",

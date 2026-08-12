@@ -278,8 +278,8 @@ Judgment focus:
 
 Routing rules:
 - Use "decision" if the AFTER partial RDB is reasonable.
-- Use "matcher" if the proposal source_decision is "insert" and the generated RDB should be revised.
-- Use "evolutor" if the proposal source_decision is not "insert" and the generated RDB should be revised.
+- Use "matcher" if the proposal source_decision is "insert_table" and the generated RDB should be revised.
+- Use "evolutor" if the proposal source_decision is not "insert_table" and the generated RDB should be revised.
 
 Scoring rules:
 - 0.90-1.00: clearly reasonable and ready for final decision.

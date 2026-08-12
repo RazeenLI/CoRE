@@ -930,7 +930,10 @@ def _constraints_mermaid(constraints: dict[str, Any]) -> str:
         for fk in fks:
             columns = ", ".join(map(str, fk.get("columns", [])))
             ref_table = fk.get("referenced_table", "")
-            ref_columns = ", ".join(map(str, fk.get("referenced_columns", [])))
+            # ref_columns = ", ".join(map(str, fk.get("referenced_columns", [])))
+            ref_columns = ", ".join(
+                map(str, fk.get("referenced_columns") or [])
+            )
 
             if not ref_table:
                 continue
