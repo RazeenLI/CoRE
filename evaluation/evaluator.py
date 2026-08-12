@@ -236,7 +236,7 @@ def evaluate_benchmark(
 
         reference_decision = expected_proposal["decision"]
 
-        target_table_applicable = reference_decision in {"extend_table", "no_schema_change"}
+        target_table_applicable = reference_decision in {"extend_table", "insert_table"}
 
         predicted_target_tables = [
             table_action["table"]
@@ -440,13 +440,13 @@ def evaluate_benchmark(
 def main() -> None:
     evaluate_benchmark(
         benchmark_dir=(
-            "data/Chinook/benchmarks/small"
+            "data/Chinook/benchmarks/medium"
         ),
         result_dir=(
-            "save/small"
+            "save/Chinook/oneshot/medium"
         ),
         output_csv_path=(
-            "outputs/small_results.csv"
+            "outputs/Chinook/oneshot/medium.csv"
         ),
         sample_num=0,
     )

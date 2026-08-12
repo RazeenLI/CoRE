@@ -190,6 +190,7 @@ def _build_from_evolutor_result(
     if decision_type in {
         "extend_table",
         "create_table",
+        "insert_table",
     }:
         terminal_message("success", f"Evolution proposal builded by decision '{decision_type}'.", "\t")
         return _build_standard_evolution_proposal(

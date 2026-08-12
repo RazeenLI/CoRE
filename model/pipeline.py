@@ -8,10 +8,6 @@ import yaml
 
 from model.utils.io import load_rdb, save_rdb, load_table, terminal_message, save_json
 
-# from core.orchestrator import Orchestrator
-# from core.task import IngestionTask
-# from core.io import , save_run_state
-
 from model.core.llm_client import HFLLMClient
 from model.core.orchestrator import Orchestrator
 
@@ -27,32 +23,6 @@ from model.agents.validator_agent import ValidatorAgent
 def load_config(config_path: str) -> dict:
     with open(config_path, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
-
-
-# def load_incoming_task(step_config: dict) -> IngestionTask:
-#     """
-#     Load one incoming table and convert it into an IngestionTask.
-#     """
-
-#     task_id = step_config["task_id"]
-#     table_name = step_config["table_name"]
-#     table_path = step_config["table_path"]
-
-#     incoming_table = pd.read_csv(table_path)
-
-#     schema = None
-#     if "schema_path" in step_config and step_config["schema_path"]:
-#         with open(step_config["schema_path"], "r", encoding="utf-8") as f:
-#             schema = yaml.safe_load(f)
-
-#     return IngestionTask(
-#         task_id=task_id,
-#         table_name=table_name,
-#         table=incoming_table,
-#         schema=schema,
-#         source_path=table_path,
-#     )
-
 
 def create_agents(llm_client):
     """
@@ -72,7 +42,6 @@ def create_agents(llm_client):
         "matcher": matcher_agent,
         "evolutor": evolutor_agent,
         "validator": validator_agent,
-        # "decision": decision_agent,
     }
 
 
@@ -108,9 +77,6 @@ def run_pipeline(
         default_mode=agent_config["LLMs"]["default_mode"],
         debug=False,
     )
-
-    # print("CUDA available:", torch.cuda.is_available())
-    # print("Device map:", getattr(llm_client.model, "hf_device_map", None))
     
     # 3. Create agents
     agents = create_agents(llm_client)
@@ -123,46 +89,47 @@ def run_pipeline(
         matcher_agent=agents["matcher"],
         evolutor_agent=agents["evolutor"],
         validator_agent=agents["validator"],
-        # decision_agent=agents["decision"],
-        existing_rdb=existing_rdb,
         save_path=save_root_path,
         config=agent_config["orchestrator"],
     )
 
     terminal_message("success", f"Orchestrator is created.")
 
-    # 4. Loop over incoming tasks
-    for step_index, step_config in enumerate(data_config["steps"], start=1):
+    # only one incoming table new
 
-        task_id = step_config.get("task_id", f"step_{step_index:02d}")
+    steps = data_config["steps"]
+    if len(steps) != 1:
+        raise ValueError(f"Exactly one incoming table is required, got {len(steps)}.")
 
-        incoming_table = load_table(
-            table_path=step_config["path"],
-            sample_num=step_config.get("sample_num", 0),
-        )
+    step_config = steps[0]
+    task_id = step_config.get("task_id", "task_01")
 
-        terminal_message("success", f"Task {task_id} load incoming table with keys: {incoming_table.keys()}.")
 
-        existing_rdb, proposal = orchestrator.run_task(task_id, incoming_table)
+    incoming_table = load_table(
+        table_path=step_config["path"],
+        sample_num=step_config.get("sample_num", 0),
+    )
 
-        terminal_message("success", f"Task {task_id} running finished")
+    terminal_message("success", f"Task {task_id} load incoming table with keys: {incoming_table.keys()}.")
 
-    # 5. Finish run
-    # orchestrator.run_state.finish_run()
-    orchestrator.save_state(Path(save_root_path) / "run_state.json")
+    task_state, proposal = orchestrator.run_task(
+        task_id=task_id,
+        existing_rdb=existing_rdb,
+        incoming_table=incoming_table,
+    )
 
-    terminal_message("success", f"Run state is saved at {Path(save_root_path) / 'run_state.json'}.")
+    existing_rdb = task_state.existing_rdb  # Update existing RDB for the next task
+
+    terminal_message("success", f"Task {task_id} running finished")
+
+    # 5. Finish run, save state and proposal
+    save_json(task_state.to_dict(), Path(save_root_path) / "task_state.json",)
+
+    terminal_message("success", f"Task state is saved at {Path(save_root_path) / 'task_state.json'}.")
 
     save_json(proposal, Path(save_root_path) / "proposal.json")
 
-    # # 6. Save final run state / updated RDB / task results
-    # output_dir = Path(config["output_dir"])
-    # output_dir.mkdir(parents=True, exist_ok=True)
-
-    # save_run_state(
-    #     run_state=orchestrator.run_state,
-    #     output_dir=output_dir,
-    # )
+    terminal_message("success", f"Proposal is saved at {Path(save_root_path) / 'proposal.json'}.")
 
     save_path = save_rdb(existing_rdb, save_root_path, folder_name="database")
 

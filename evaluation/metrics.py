@@ -34,8 +34,8 @@ def compute_decision_metrics(
         }
     """
     return {
-        # "predicted": predicted_decision,
-        # "reference": reference_decision,
+        "predicted": predicted_decision,
+        "reference": reference_decision,
         "correct": predicted_decision == reference_decision,
     }
 
@@ -70,11 +70,11 @@ def compute_target_table_metrics(
 
     return {
         "applicable": applicable,
-        # "predicted": predicted_target_table,
-        # "reference": reference_target_table,
+        "predicted": predicted_target_table,
+        "reference": reference_target_table,
         "correct": correct,
-        # "predicted_table_count": len(predicted_target_tables),
-        # "predicted_tables": predicted_target_tables,
+        "predicted_table_count": len(predicted_target_tables),
+        "predicted_tables": predicted_target_tables,
     }
 
 
@@ -143,17 +143,17 @@ def compute_column_placement_metrics(
         )
 
     return {
-        # "true_positive": true_positive,
-        # "false_positive": false_positive,
-        # "false_negative": false_negative,
+        "true_positive": true_positive,
+        "false_positive": false_positive,
+        "false_negative": false_negative,
         "precision": precision,
         "recall": recall,
         "f1": f1,
-        # "predicted_count": len(predicted_placements),
-        # "reference_count": len(reference_placements),
-        # "true_positive_items": sorted(true_positive_items),
-        # "false_positive_items": sorted(false_positive_items),
-        # "false_negative_items": sorted(false_negative_items),
+        "predicted_count": len(predicted_placements),
+        "reference_count": len(reference_placements),
+        "true_positive_items": sorted(true_positive_items),
+        "false_positive_items": sorted(false_positive_items),
+        "false_negative_items": sorted(false_negative_items),
     }
 
 def compute_proposal_fact_metrics(
@@ -208,17 +208,17 @@ def compute_proposal_fact_metrics(
     )
 
     return {
-        # "true_positive": true_positive,
-        # "false_positive": false_positive,
-        # "false_negative": false_negative,
+        "true_positive": true_positive,
+        "false_positive": false_positive,
+        "false_negative": false_negative,
         "precision": precision,
         "recall": recall,
         "f1": f1,
-        # "predicted_count": len(predicted_facts),
-        # "reference_count": len(reference_facts),
-        # "true_positive_items": sorted(true_positive_items, key=repr),
-        # "false_positive_items": sorted(false_positive_items, key=repr),
-        # "false_negative_items": sorted(false_negative_items, key=repr),
+        "predicted_count": len(predicted_facts),
+        "reference_count": len(reference_facts),
+        "true_positive_items": sorted(true_positive_items, key=repr),
+        "false_positive_items": sorted(false_positive_items, key=repr),
+        "false_negative_items": sorted(false_negative_items, key=repr),
     }
 
 def compute_required_column_coverage(
@@ -255,8 +255,8 @@ def compute_required_column_coverage(
     )
 
     return {
-        # "required_count": required_count,
-        # "covered_count": covered_count,
+        "required_count": required_count,
+        "covered_count": covered_count,
         "coverage": coverage,
         "full_coverage": (covered_count == required_count),
         # "covered_columns": sorted(covered_required_columns),
@@ -630,10 +630,10 @@ def compute_non_target_preservation_metrics(
         "unexpected_column_modification_count": (unexpected_column_modification_count),
         "unexpected_column_modification_rate": (unexpected_column_modification_rate),
         "unexpected_fk_attachment_count": len(unexpected_fk_attachments),
-        # "modified_tables": modified_tables,
-        # "modified_columns": modified_columns,
-        # "missing_protected_facts": sorted(missing_protected_facts, key=repr),
-        # "unexpected_added_facts": sorted(unexpected_added_facts, key=repr),
-        # "unexpected_fk_attachments": sorted(unexpected_fk_attachments, key=repr),
-        # "unknown_protected_tables": (unknown_protected_tables),
+        "modified_tables": modified_tables,
+        "modified_columns": modified_columns,
+        "missing_protected_facts": sorted(missing_protected_facts, key=repr),
+        "unexpected_added_facts": sorted(unexpected_added_facts, key=repr),
+        "unexpected_fk_attachments": sorted(unexpected_fk_attachments, key=repr),
+        "unknown_protected_tables": (unknown_protected_tables),
     }

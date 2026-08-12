@@ -106,7 +106,7 @@ def normalize_route(
 def allowed_routes_from_source_decision(
     source_decision: str,
 ) -> list[str]:
-    if source_decision == "insert":
+    if source_decision == "insert_table":
         return ["decision", "matcher"]
 
     return ["decision", "evolutor"]
@@ -115,7 +115,7 @@ def allowed_routes_from_source_decision(
 def fallback_route(
     source_decision: str,
 ) -> str:
-    if source_decision == "insert":
+    if source_decision == "insert_table":
         return "matcher"
 
     return "evolutor"

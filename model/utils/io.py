@@ -165,14 +165,56 @@ def save_rdb(
     save_path = Path(save_root_path) / folder_name
     tables_dir = save_path / "tables"
 
-    tables_dir.mkdir(parents=True, exist_ok=True)
+    tables_dir.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
 
-    save_json(existing_rdb["schema"], save_path / "schema.json")
-    save_json(existing_rdb["constraints"], save_path / "constraints.json")
+    schema = existing_rdb["schema"]
+    profiles = existing_rdb["profiles"]
+    constraints = existing_rdb["constraints"]
+    sample_values = existing_rdb["sample_values"]
 
-    for table_name, rows in existing_rdb["sample_values"].items():
+    save_json(
+        schema,
+        save_path / "schema.json",
+    )
+
+    save_json(
+        profiles,
+        save_path / "profiles.json",
+    )
+
+    save_json(
+        constraints,
+        save_path / "constraints.json",
+    )
+
+    # 按 schema 遍历，而不是按 sample_values 遍历。
+    # 这样即使某个新表没有 sample rows，也会生成 CSV。
+    for table_name, table_schema in schema["tables"].items():
         csv_path = tables_dir / f"{table_name}.csv"
-        _save_table_csv(csv_path, rows)
+
+        rows = sample_values.get(
+            table_name,
+            [],
+        )
+
+        fieldnames = table_schema.get(
+            "column_order",
+            list(
+                table_schema.get(
+                    "columns",
+                    {},
+                ).keys()
+            ),
+        )
+
+        _save_table_csv(
+            csv_path=csv_path,
+            rows=rows,
+            fieldnames=fieldnames,
+        )
 
     return save_path
 
@@ -180,17 +222,27 @@ def save_rdb(
 def _save_table_csv(
     csv_path: Path,
     rows: list[dict[str, Any]],
+    fieldnames: list[str],
 ) -> None:
-    if not rows:
-        csv_path.write_text("", encoding="utf-8")
-        return
+    csv_path.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
 
-    fieldnames = list(rows[0].keys())
+    with csv_path.open(
+        "w",
+        encoding="utf-8",
+        newline="",
+    ) as f:
+        writer = csv.DictWriter(
+            f,
+            fieldnames=fieldnames,
+            restval="",
+        )
 
-    with csv_path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
+    
 
 def terminal_message(
     sign: str,
