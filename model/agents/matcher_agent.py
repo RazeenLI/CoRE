@@ -54,6 +54,7 @@ class MatcherAgent(BaseAgent):
         existing_schema: dict[str, Any],
         existing_profiles: dict[str, Any],
         existing_values: dict[str, list[dict[str, Any]]],
+        validation_feedback: dict[str, Any] | None = None,
     ) -> MatcherResult:
         table_name, table_schema = self._extract_single_table(incoming_schema)
 
@@ -88,6 +89,7 @@ class MatcherAgent(BaseAgent):
                 target_table_schema=target_table_schema,
                 target_values=existing_values.get(target_table_name, []),
                 target_profile=existing_profiles_by_table.get(target_table_name, {}),
+                validation_feedback=validation_feedback,
             )
             # print(json.dumps(llm_input, indent=2, ensure_ascii=False))
 
@@ -122,8 +124,9 @@ def build_llm_input(
     target_table_schema: dict[str, Any],
     target_values: list[dict[str, Any]],
     target_profile: dict[str, Any],
+    validation_feedback: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    return {
+    llm_input: dict[str, Any] =  {
         "incoming_table": build_table_context(
             table_name=incoming_table_name,
             table_schema=incoming_table_schema,
@@ -137,6 +140,11 @@ def build_llm_input(
             profile=target_profile,
         ),
     }
+
+    if validation_feedback is not None:
+        llm_input["validation_feedback"] = validation_feedback
+
+    return llm_input
 
 
 def build_table_context(

@@ -48,6 +48,7 @@ class EvolutorAgent(BaseAgent):
         existing_profiles: dict[str, Any],
         existing_values: dict[str, list[dict[str, Any]]],
         existing_constraints: dict[str, Any],
+        validation_feedback: dict[str, Any] | None = None,
     ) -> EvolutorResult:
         table_name, table_schema = self._extract_single_table(incoming_schema)
 
@@ -71,6 +72,7 @@ class EvolutorAgent(BaseAgent):
             existing_profiles=existing_profiles,
             existing_values=existing_values,
             existing_constraints=existing_constraints,
+            validation_feedback=validation_feedback,
         )
 
         # save_json(llm_input, f"evolutor_input.json")
@@ -95,8 +97,9 @@ def build_llm_input(
     existing_profiles: dict[str, Any],
     existing_values: dict[str, list[dict[str, Any]]],
     existing_constraints: dict[str, Any],
+    validation_feedback: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    return {
+    llm_input: dict[str, Any] = {
         "incoming_table": build_table_context(
             table_name=incoming_table_name,
             table_schema=incoming_table_schema,
@@ -112,6 +115,11 @@ def build_llm_input(
             existing_constraints=existing_constraints,
         ),
     }
+
+    if validation_feedback is not None:
+        llm_input["validation_feedback"] = validation_feedback
+
+    return llm_input
 
 
 def build_table_context(

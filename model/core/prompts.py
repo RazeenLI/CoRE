@@ -58,11 +58,19 @@ Rules:
 - Return JSON only.
 """.strip()
 
+
 def matcher_prompt(llm_input: dict[str, Any]) -> str:
+    feedback_rules = validation_feedback_prompt(
+        llm_input=llm_input,
+        agent_name="matcher",
+    )
+
     return f"""
 You are a database table matching agent.
 
 Given one incoming table and one existing table, infer whether the existing table is a direct schema match for the incoming table and how their columns correspond.
+
+{feedback_rules}
 
 Important:
 Table matching means the existing table can directly explain, absorb, or represent the incoming table.
@@ -165,10 +173,17 @@ Output rules:
 
 
 def evolutor_prompt(llm_input: dict[str, Any]) -> str:
+    feedback_rules = validation_feedback_prompt(
+        llm_input=llm_input,
+        agent_name="evolutor",
+    )
+
     return f"""
 You are a database schema evolution agent.
 
 Given one incoming table, matcher evidence, and selected existing RDB context, infer the schema evolution signal needed for the incoming table.
+
+{feedback_rules}
 
 The Evolutor does not build the final proposal.
 It only decides:
@@ -288,12 +303,49 @@ Scoring rules:
 - 0.00-0.49: unreasonable or poor generated RDB result.
 
 Issue rules:
-- issues must be a list of short phrases.
-- Use an empty list if there are no issues.
+- issues must be short, concrete, and actionable.
+- Name the affected table or column whenever possible.
+- If route is matcher or evolutor, provide at least one issue.
+- Use an empty list only when route is decision.
 
 Output rules:
 - summary must be one concise sentence.
+- If revision is required, summary must briefly state what the next agent should reconsider.
 - Return exactly one JSON object.
 - Do not wrap the JSON in markdown code fences.
 - Return JSON only.
+""".strip()
+
+
+def validation_feedback_prompt(
+    llm_input: dict[str, Any],
+    agent_name: str,
+) -> str:
+    feedback = llm_input.get("validation_feedback")
+
+    if not feedback:
+        return ""
+
+    if agent_name == "matcher":
+        revision_scope = (
+            "Reconsider the target-table and column-matching "
+            "results related to the feedback."
+        )
+    elif agent_name == "evolutor":
+        revision_scope = (
+            "Reconsider the decision, column placements, and "
+            "constraint signals related to the feedback."
+        )
+    else:
+        raise ValueError(
+            f"Unsupported feedback agent: {agent_name}"
+        )
+
+    return f"""
+Previous validation feedback is included in the input.
+
+{revision_scope}
+
+Use the feedback as revision guidance.
+Do not repeat a rejected result without clear supporting evidence.
 """.strip()

@@ -141,6 +141,23 @@ class Orchestrator:
             source_step=TaskStep.PROFILING,
         )
 
+    def _get_validation_feedback(
+        self,
+        task_state: TaskState,
+    ) -> dict[str, Any] | None:
+        if task_state.routing.get("source_step") != TaskStep.VALIDATING:
+            return None
+
+        validation_result = task_state.validation_result
+
+        if validation_result is None:
+            return None
+
+        return {
+            "issues": validation_result.get("issues", []),
+            "summary": validation_result.get("summary", ""),
+        }
+
     def _run_matcher(self, task_state: TaskState):
         matcher_result = self.matcher(
             incoming_schema=task_state.incoming_schema,
@@ -149,6 +166,7 @@ class Orchestrator:
             existing_schema=task_state.existing_schema,
             existing_values=task_state.existing_values,
             existing_profiles=task_state.existing_profiles,
+            validation_feedback=self._get_validation_feedback(task_state),
         )
         task_state.save_result(
             step=TaskStep.MATCHING,
@@ -190,6 +208,7 @@ class Orchestrator:
             existing_values=task_state.existing_values,
             existing_profiles=task_state.existing_profiles,
             existing_constraints=task_state.constraints,
+            validation_feedback=self._get_validation_feedback(task_state),
         )
         task_state.save_result(
             step=TaskStep.EVOLVING,
