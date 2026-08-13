@@ -55,40 +55,6 @@ class TableProfile(TypedDict, total=False):
 
     # column_count: int
 
-
-# class ColumnSymbolicProfile(TypedDict, total=False):
-#     # inferred from sample values or provided stats
-#     inferred_dtype: str
-
-#     # sample-level statistics
-#     null_count_in_sample: int
-#     null_ratio_in_sample: float
-#     distinct_count_in_sample: int
-#     distinct_ratio_in_sample: float
-
-#     # rule-based value pattern labels
-#     value_patterns: list[str]
-
-#     # rule-based structural signals
-#     looks_like_id: bool
-#     looks_like_fk: bool
-#     looks_like_email: bool
-#     looks_like_date: bool
-#     looks_like_code: bool
-
-# class ColumnSemanticProfile(TypedDict, total=False):
-#     # LLM-generated explanation of the column meaning
-#     meaning: str
-
-#     # LLM-generated semantic type
-#     semantic_type: SemanticType
-
-#     # LLM-generated business concept, e.g. "customer identifier"
-#     business_concept: str
-
-#     # LLM-generated aliases for matching
-#     aliases: list[str]
-
 class ColumnProfile(TypedDict, total=False):
     # original incoming column name
     name: str
@@ -125,20 +91,6 @@ class ProfilerResult(TypedDict, total=False):
 
     # key = original column name
     columns: dict[str, ColumnProfile]
-
-# class ColumnProfile(TypedDict, total=False):
-#     column_name: str
-#     inferred_type: str
-#     nullable: bool
-#     sample_values: list[Any]
-#     description: str
-
-
-# class SourceProfile(TypedDict, total=False):
-#     table_name: str
-#     row_count: int
-#     columns: list[ColumnProfile]
-#     description: str
 
 
 # -----------------------------
@@ -191,26 +143,6 @@ class MatcherResult(TypedDict, total=False):
     # Must be sorted by confidence descending.
     # The best match is table_matches[0] if the list is not empty.
     table_matches: list[TableMatch]
-
-# class ColumnMapping(TypedDict, total=False):
-#     source_column: str
-#     target_table: str
-#     target_column: str
-#     confidence: float
-#     reason: str
-
-
-# class MatcherResult(TypedDict, total=False):
-#     decision: Literal[
-#         "high_confidence_match",
-#         "partial_match",
-#         "no_match",
-#     ]
-#     matched_target_table: Optional[str]
-#     confidence: float
-#     column_mappings: list[ColumnMapping]
-#     unmatched_source_columns: list[str]
-#     reason: str
 
 
 # -----------------------------
@@ -363,20 +295,6 @@ class EvolutorResult(TypedDict, total=False):
     constraint_signals: list[ConstraintSignal]
 
     reason: str
-
-
-# class EvolutionProposal(TypedDict, total=False):
-#     action: Literal[
-#         "extend_existing_table",
-#         "create_new_table",
-#         "create_multiple_tables",
-#         "reject",
-#         "needs_review",
-#     ]
-#     target_table: Optional[str]
-#     new_table_name: Optional[str]
-#     added_columns: list[ColumnProfile]
-#     reason: str
 
 
 # -----------------------------
