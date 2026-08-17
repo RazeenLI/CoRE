@@ -7,7 +7,7 @@ set -uo pipefail
 # ============================================================
 
 PYTHON_BIN="${PYTHON_BIN:-python}"
-MODEL="${MODEL:-standard}" # standard oneshot
+MODEL="${MODEL:-standard}" # standard oneshot magneto jl coma
 DATASET="${DATASET:-Chinook}"
 DATASIZE="${DATASIZE:-medium}"
 

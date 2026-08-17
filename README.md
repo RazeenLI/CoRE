@@ -37,7 +37,7 @@ configs/qwen3.5_9B.yaml
 ### Standard
 
 ```bash
-CUDA_VISIBLE_DEVICES=0,1,3,4 \
+CUDA_VISIBLE_DEVICES=0,1,2,4,5 \
 python -u main.py \
   --model standard \
   --output save/Chinook/standard/medium/case_0001 \
@@ -73,7 +73,7 @@ DATASIZE=medium \
 运行 One-shot baseline：
 
 ```bash
-GPU_IDS=0,1,3,4 \
+GPU_IDS=1,2,4,5 \
 MODEL=oneshot \
 DATASET=Chinook \
 DATASIZE=medium \
@@ -90,8 +90,8 @@ MODEL=standard DATASIZE=medium \
 后台运行：
 
 ```bash
-GPU_IDS=0,1,2,5 MODEL=standard DATASIZE=small \
-nohup ./run_cases.sh > logs/nohup_standard_small.log 2>&1 &
+GPU_IDS=0,1,2,4 MODEL=magneto DATASIZE=large \
+nohup ./run_cases.sh > logs/nohup_magneto_large.log 2>&1 &
 ```
 
 可选环境变量：
