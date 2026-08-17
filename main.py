@@ -6,6 +6,9 @@ from typing import Callable
 PIPELINE_MODULES = {
     "standard": "model.pipeline",
     "oneshot": "baselines.oneshot.pipeline",
+    "magneto": "baselines.magneto.pipeline",
+    "jl": "baselines.jl.pipeline",
+    "coma": "baselines.coma.pipeline",
 }
 
 

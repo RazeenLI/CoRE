@@ -51,7 +51,7 @@ Example:
         {"role": "user", "content": "Match incoming columns to the existing schema."}
     ]
 
-    output = llm.generate(messages, max_new_tokens=512, temperature=0.0)
+    output = llm.generate(messages, max_new_tokens=512)
     result = llm.generate_json(
         prompt,
         mode="thinking",
@@ -74,68 +74,15 @@ GenerationMode = Literal["thinking", "non_thinking"]
 
 @dataclass(frozen=True)
 class DecodingConfig:
-    do_sample: bool
-    temperature: float | None = None
-    top_p: float | None = None
-    top_k: int | None = None
-    min_p: float | None = None
+    do_sample: bool = False
+    temperature: float = 0.0
 
 
-@dataclass(frozen=True)
-class ModelPreset:
-    family: str
-    supports_thinking: bool
-    thinking: DecodingConfig
-    non_thinking: DecodingConfig
+DETERMINISTIC_DECODING = DecodingConfig()
 
 
-DEFAULT_PRESET = ModelPreset(
-    family="default",
-    supports_thinking=False,
-    thinking=DecodingConfig(
-        do_sample=True,
-        temperature=0.7,
-        top_p=0.9,
-        top_k=50,
-        min_p=None,
-    ),
-    non_thinking=DecodingConfig(
-        do_sample=True,
-        temperature=0.7,
-        top_p=0.9,
-        top_k=50,
-        min_p=None,
-    ),
-)
-
-
-QWEN3_PRESET = ModelPreset(
-    family="qwen3",
-    supports_thinking=True,
-    thinking=DecodingConfig(
-        do_sample=True,
-        temperature=0.6,
-        top_p=0.95,
-        top_k=20,
-        min_p=0.0,
-    ),
-    non_thinking=DecodingConfig(
-        do_sample=True,
-        temperature=0.7,
-        top_p=0.8,
-        top_k=20,
-        min_p=0.0,
-    ),
-)
-
-
-def infer_model_preset(model_name: str) -> ModelPreset:
-    name = model_name.lower()
-
-    if "qwen3" in name:
-        return QWEN3_PRESET
-
-    return DEFAULT_PRESET
+def supports_thinking(model_name: str) -> bool:
+    return "qwen3" in model_name.lower()
 
 
 class HFLLMClient:
@@ -150,7 +97,7 @@ class HFLLMClient:
         self.model_name = model_name
         self.default_mode = default_mode
         self.debug = debug
-        self.preset = infer_model_preset(model_name)
+        self.supports_thinking = supports_thinking(model_name)
 
         self.tokenizer = AutoTokenizer.from_pretrained(
             model_name,
@@ -161,7 +108,7 @@ class HFLLMClient:
 
         self.model = AutoModelForCausalLM.from_pretrained(
             model_name,
-            torch_dtype=dtype,
+            dtype=dtype,
             device_map=device_map,
             trust_remote_code=trust_remote_code,
         )
@@ -185,13 +132,10 @@ class HFLLMClient:
         self,
         mode: GenerationMode,
     ) -> DecodingConfig:
-        if mode == "thinking":
-            return self.preset.thinking
+        if mode not in {"thinking", "non_thinking"}:
+            raise ValueError(f"Unsupported generation mode: {mode}")
 
-        if mode == "non_thinking":
-            return self.preset.non_thinking
-
-        raise ValueError(f"Unsupported generation mode: {mode}")
+        return DETERMINISTIC_DECODING
 
     def _build_prompt(
         self,
@@ -203,7 +147,7 @@ class HFLLMClient:
             "add_generation_prompt": True,
         }
 
-        if self.preset.supports_thinking:
+        if self.supports_thinking:
             kwargs["enable_thinking"] = mode == "thinking"
 
         return self.tokenizer.apply_chat_template(
@@ -220,9 +164,9 @@ class HFLLMClient:
     ) -> str:
         mode = mode or self.default_mode
 
-        if mode == "thinking" and not self.preset.supports_thinking:
+        if mode == "thinking" and not self.supports_thinking:
             raise ValueError(
-                f"Model preset '{self.preset.family}' does not support thinking mode."
+                f"Model '{self.model_name}' does not support thinking mode."
             )
 
         prompt = self._build_prompt(messages, mode)
@@ -242,17 +186,10 @@ class HFLLMClient:
             "do_sample": decoding.do_sample,
         }
 
-        if decoding.temperature is not None:
+        # In Transformers, temperature=0 is represented by greedy decoding.
+        # Do not pass temperature when sampling is disabled.
+        if decoding.do_sample:
             generation_kwargs["temperature"] = decoding.temperature
-
-        if decoding.top_p is not None:
-            generation_kwargs["top_p"] = decoding.top_p
-
-        if decoding.top_k is not None:
-            generation_kwargs["top_k"] = decoding.top_k
-
-        if decoding.min_p is not None:
-            generation_kwargs["min_p"] = decoding.min_p
 
         with torch.inference_mode():
             outputs = self.model.generate(
