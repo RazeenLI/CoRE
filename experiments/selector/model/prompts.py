@@ -108,6 +108,9 @@ Constraint signal rules:
 Output rules:
 - Return exactly one JSON object.
 - decision_type must be one of: "insert_table", "extend_table", "create_table".
-- Keep reason concise and evidence-based.
+- Every reason must be one short phrase with at most 12 words.
+- Do not use quotation marks, line breaks, braces, or brackets inside a reason.
+- Do not repeat schemas, samples, candidate evidence, or rules in a reason.
+- Do not add fields outside the required JSON structure.
 - Return JSON only.
 """.strip()
