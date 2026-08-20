@@ -4,8 +4,8 @@ from pathlib import Path
 
 import yaml
 
-from baselines.no_selector.model.evolutor_agent import EvolutorAgent
 from baselines.no_selector.model.orchestrator import Orchestrator
+from baselines.no_selector.model.evolutor_agent import EvolutorAgent
 from model.agents.profiler_agent import ProfilerAgent
 from model.agents.validator_agent import ValidatorAgent
 from model.core.llm_client import HFLLMClient

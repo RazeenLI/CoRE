@@ -2,8 +2,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 import yaml
-from baselines.no_profiler.model.evolutor_agent import EvolutorAgent
 from baselines.no_profiler.model.orchestrator import Orchestrator, Selector
+from model.agents.evolutor_agent import EvolutorAgent
 from model.agents.validator_agent import ValidatorAgent
 from model.core.llm_client import HFLLMClient
 from model.utils.io import load_rdb, load_table, save_json, save_rdb, terminal_message

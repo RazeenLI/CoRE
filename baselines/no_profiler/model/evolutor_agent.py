@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Any
-from baselines.oneshot.model.agent import (
+from model.agents.evolutor_agent import (
     apply_llm_output,
     build_existing_tables_context,
     build_table_context,
@@ -55,7 +55,7 @@ class EvolutorAgent(BaseAgent):
                 "version": existing_schema.get("version"),
                 "tables": build_existing_tables_context(
                     existing_schema=selected_schema,
-                    existing_profiles=existing_profiles,
+                    existing_profiles=None,
                     existing_values=existing_values,
                 ),
                 "constraints": existing_constraints.get(

@@ -1,7 +1,7 @@
 from __future__ import annotations
 import yaml
-from baselines.no_profiler.model.selector import CandidateSelector
 from baselines.no_profiler.model.pipeline import run_selector_pipeline
+from model.agents.selector_agent import CandidateSelectorAgent
 def run_pipeline(
     data_config_path: str,
     agent_config_path: str,
@@ -9,8 +9,8 @@ def run_pipeline(
 ) -> None:
     with open(agent_config_path, "r", encoding="utf-8") as file:
         agent_config = yaml.safe_load(file)
-    config = agent_config.get("selector_no_profiler", {})
-    selector = CandidateSelector(
+    config = agent_config.get("no_profiler", {})
+    selector = CandidateSelectorAgent(
         embedding_model_name=config.get(
             "embedding_model",
             "sentence-transformers/all-mpnet-base-v2",

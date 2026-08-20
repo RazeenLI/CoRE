@@ -13,7 +13,6 @@ from model.proposal.updater import apply_update_plan_to_existing_parts
 
 from baselines.no_selector.model.evolutor_agent import EvolutorAgent
 
-
 class Orchestrator:
     """Independent Profiler -> Evolutor -> Validator workflow."""
 

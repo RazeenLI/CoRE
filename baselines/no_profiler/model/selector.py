@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections import defaultdict
 from typing import Any
 
-from baselines.magneto.model.matcher import (
+from model.core.embedding_retrieval import (
     DEFAULT_EMBEDDING_MODEL,
     load_embedding_model,
     retrieve_column_candidates,
