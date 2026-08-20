@@ -25,7 +25,7 @@ data_actions是数据的操作，这个是单独的，和schema无关
 """
 from typing import Any
 
-from model.core.schemas import ColumnAction, TableAction, ConstraintAction, IntegrationProposal, ProposalDecisionType, TableActionType, ColumnActionType, ConstraintActionType
+from model.core.schemas import ColumnAction, TableAction, ConstraintAction, IntegrationProposal
 from model.utils.io import terminal_message
 
 SUPPORTED_RESULT_SOURCES = {"matcher", "evolutor"}

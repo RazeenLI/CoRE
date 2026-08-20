@@ -12,6 +12,7 @@ PIPELINE_MODULES = {
     "magneto": "baselines.magneto.pipeline",
     "jl": "baselines.jl.pipeline",
     "coma": "baselines.coma.pipeline",
+    "llm_matcher": "baselines.llm_matcher.pipeline",
 }
 
 

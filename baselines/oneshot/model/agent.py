@@ -5,12 +5,14 @@ from typing import Any
 from model.agents.base_agent import BaseAgent
 
 from model.core.prompts import PromptBuilder
-from model.core.schemas import (
-    ColumnPlacement,
-    ConstraintSignal,
-)
+
 from model.utils.io import terminal_message
-from model.utils.structure import get_column_values
+
+from model.agents.evolutor_agent import (
+    apply_llm_output,
+    build_existing_tables_context,
+    build_table_context,
+)
 
 from baselines.oneshot.model.prompts import evolutor_prompt
 
@@ -108,141 +110,3 @@ def build_llm_input(
         },
     }
 
-
-def build_existing_tables_context(
-    existing_schema: dict[str, Any],
-    existing_profiles: dict[str, Any] | None,
-    existing_values: dict[str, list[dict[str, Any]]],
-) -> dict[str, dict[str, Any]]:
-    """Build context for every existing table, with no candidate filtering."""
-
-    profiles_by_table = get_profiles_by_table(existing_profiles)
-    tables_context: dict[str, dict[str, Any]] = {}
-
-    for table_name, table_schema in existing_schema.get("tables", {}).items():
-        tables_context[table_name] = build_table_context(
-            table_name=table_name,
-            table_schema=table_schema,
-            rows=existing_values.get(table_name, []),
-            profile=profiles_by_table.get(table_name),
-        )
-
-    return tables_context
-
-
-def build_table_context(
-    table_name: str,
-    table_schema: dict[str, Any],
-    rows: list[dict[str, Any]],
-    profile: dict[str, Any] | None,
-) -> dict[str, Any]:
-    """Combine schema, samples, and profiles into one table-level context."""
-
-    profile = profile or {}
-    table_profile = profile.get("table", {})
-    column_profiles = profile.get("columns", {})
-
-    columns: dict[str, Any] = {}
-
-    for column_name, column_schema in table_schema.get("columns", {}).items():
-        columns[column_name] = {
-            "schema": column_schema,
-            "sample_values": get_column_values(
-                rows=rows,
-                column_name=column_name,
-            ),
-            "profile": column_profiles.get(column_name, {}),
-        }
-
-    table_schema_metadata = {
-        key: value
-        for key, value in table_schema.items()
-        if key != "columns"
-    }
-
-    return {
-        "name": table_name,
-        "schema": table_schema_metadata,
-        "profile": table_profile,
-        "columns": columns,
-    }
-
-
-def apply_llm_output(
-    llm_output: dict[str, Any],
-) -> dict[str, Any]:
-    return {
-        "decision": normalize_decision(llm_output["decision"]),
-        "column_placements": normalize_column_placements(
-            llm_output["column_placements"]
-        ),
-        "constraint_signals": normalize_constraint_signals(
-            llm_output["constraint_signals"]
-        ),
-        "reason": llm_output["reason"],
-    }
-
-
-def normalize_decision(
-    raw_decision: dict[str, Any],
-) -> dict[str, Any]:
-    return {
-        "decision_type": raw_decision["decision_type"],
-        "target_table": raw_decision["target_table"],
-        "related_tables": raw_decision["related_tables"],
-        "reason": raw_decision["reason"],
-    }
-
-
-def normalize_column_placements(
-    raw_column_placements: dict[str, Any],
-) -> dict[str, ColumnPlacement]:
-    column_placements: dict[str, ColumnPlacement] = {}
-
-    for source_column, raw_placement in raw_column_placements.items():
-        column_placements[source_column] = {
-            "source_column": raw_placement["source_column"],
-            "target_table": raw_placement["target_table"],
-            "target_column": raw_placement["target_column"],
-            "reason": raw_placement["reason"],
-        }
-
-    return column_placements
-
-
-def normalize_constraint_signals(
-    raw_constraint_signals: list[dict[str, Any]],
-) -> list[ConstraintSignal]:
-    constraint_signals: list[ConstraintSignal] = []
-
-    for raw_signal in raw_constraint_signals:
-        signal: ConstraintSignal = {
-            "constraint_type": raw_signal["constraint_type"],
-            "table": raw_signal["table"],
-            "columns": raw_signal["columns"],
-            "reason": raw_signal["reason"],
-        }
-
-        if raw_signal["constraint_type"] == "foreign_key":
-            signal["referenced_table"] = raw_signal["referenced_table"]
-            signal["referenced_columns"] = raw_signal[
-                "referenced_columns"
-            ]
-
-        constraint_signals.append(signal)
-
-    return constraint_signals
-
-
-def get_profiles_by_table(
-    existing_profiles: dict[str, Any] | None,
-) -> dict[str, Any]:
-    if not existing_profiles:
-        return {}
-
-    tables = existing_profiles.get("tables")
-
-    if isinstance(tables, dict):
-        return tables
-
-    return existing_profiles

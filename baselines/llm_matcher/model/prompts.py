@@ -1,9 +1,9 @@
 import json
 from typing import Any, Callable, get_args
-from model.core.schemas import EvolutionDecisionType, ConstraintSignalType
+from model.core.schemas import ConstraintSignalType
 from model.core.prompts import validation_feedback_prompt
 
-from baselines.llm_matcher.model.schemas import MatchStatus
+from baselines.llm_matcher.model.schemas import MatchStatus, MatcherEvolutionDecisionType
 
 PromptBuilder = Callable[[dict[str, Any]], str]
 
@@ -150,7 +150,7 @@ Return only valid JSON with this exact structure:
 
 {{
   "decision": {{
-    "decision_type": "{literal_to_prompt_options(EvolutionDecisionType)}",
+    "decision_type": "{literal_to_prompt_options(MatcherEvolutionDecisionType)}",
     "target_table": "<table_name>",
     "related_tables": ["<existing_related_table_name>"],
     "reason": "..."
