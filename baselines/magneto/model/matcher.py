@@ -6,7 +6,6 @@ from typing import Any
 import torch
 
 from model.agents.base_agent import BaseAgent
-from model.agents.matcher_agent import clamp01
 from model.utils.io import terminal_message
 from model.utils.structure import get_column_values
 
@@ -315,3 +314,17 @@ def normalize_reranker_output(
         )
     )
     return {"table_matches": table_matches}
+
+def clamp01(value: Any) -> float:
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return 0.0
+
+    if number < 0.0:
+        return 0.0
+
+    if number > 1.0:
+        return 1.0
+
+    return number

@@ -13,7 +13,8 @@ from model.core.orchestrator import Orchestrator
 
 from model.agents.base_agent import BaseAgent
 from model.agents.profiler_agent import ProfilerAgent
-from model.agents.matcher_agent import MatcherAgent
+# from model.agents.matcher_agent import MatcherAgent
+from model.agents.selector_agent import CandidateSelectorAgent
 from model.agents.evolutor_agent import EvolutorAgent
 from model.agents.validator_agent import ValidatorAgent
 
@@ -32,14 +33,14 @@ def create_agents(llm_client):
     Later, you can pass llm_client, embedding_model, prompts, etc.
     """
     profiler_agent = ProfilerAgent(llm_client)
-    matcher_agent = MatcherAgent(llm_client)
+    # matcher_agent = MatcherAgent(llm_client)
     evolutor_agent = EvolutorAgent(llm_client)
     validator_agent = ValidatorAgent(llm_client)
     # decision_agent = BaseAgent(llm_client)
 
     return {
         "profiler": profiler_agent,
-        "matcher": matcher_agent,
+        # "selector": selector_agent,
         "evolutor": evolutor_agent,
         "validator": validator_agent,
     }
@@ -81,12 +82,22 @@ def run_pipeline(
     # 3. Create agents
     agents = create_agents(llm_client)
 
+    selector_config = agent_config.get("standard", {})
+    selector_agent = CandidateSelectorAgent(
+        embedding_model_name=selector_config.get(
+            "embedding_model",
+            "sentence-transformers/all-mpnet-base-v2",
+        ),
+        column_top_k=selector_config.get("column_top_k", 20),
+        table_top_k=selector_config.get("table_top_k", 5),
+    )
+
     terminal_message("success", f"LLM Client and Agents are created.")
 
     # 3. Create orchestrator
     orchestrator = Orchestrator(
         profiler_agent=agents["profiler"],
-        matcher_agent=agents["matcher"],
+        selector_agent=selector_agent,
         evolutor_agent=agents["evolutor"],
         validator_agent=agents["validator"],
         save_path=save_root_path,

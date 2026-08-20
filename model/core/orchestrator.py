@@ -9,14 +9,15 @@ from model.proposal.updater import apply_update_plan_to_existing_parts
 
 from model.agents.base_agent import BaseAgent
 from model.agents.profiler_agent import ProfilerAgent
-from model.agents.matcher_agent import MatcherAgent
+# from model.agents.matcher_agent import MatcherAgent
+from model.agents.selector_agent import CandidateSelectorAgent
 from model.agents.evolutor_agent import EvolutorAgent
 from model.agents.validator_agent import ValidatorAgent
 from model.core.decision import build_decision
 
 VALIDATOR_ROUTE_TO_STEP = {
     "decision": TaskStep.AWAITING_DECISION,
-    "matcher": TaskStep.MATCHING,
+    "matcher": TaskStep.EVOLVING,
     "evolutor": TaskStep.EVOLVING,
     "error": TaskStep.ERROR,
 }
@@ -37,14 +38,14 @@ class Orchestrator:
     def __init__(
         self,
         profiler_agent: ProfilerAgent,
-        matcher_agent: MatcherAgent,
+        selector_agent: CandidateSelectorAgent,
         evolutor_agent: EvolutorAgent,
         validator_agent: ValidatorAgent,
         save_path: str | Path,
         config,
     ) -> None:
         self.profiler = profiler_agent
-        self.matcher = matcher_agent
+        self.selector = selector_agent
         self.evolutor = evolutor_agent
         self.validator = validator_agent
         self.decision = build_decision(config.get("decision_auto", False))
@@ -66,7 +67,7 @@ class Orchestrator:
                 self._run_profiler(task_state)
 
             elif next_step == TaskStep.MATCHING:
-                self._run_matcher(task_state)
+                self._run_selector(task_state)
 
             elif next_step == TaskStep.EVOLVING:
                 self._run_evolutor(task_state)
@@ -141,10 +142,68 @@ class Orchestrator:
             source_step=TaskStep.PROFILING,
         )
 
-    def _get_validation_feedback(
-        self,
-        task_state: TaskState,
-    ) -> dict[str, Any] | None:
+    def _run_selector(self, state: TaskState) -> None:
+        result = self.selector(
+            incoming_schema=state.incoming_schema,
+            incoming_values=state.incoming_values,
+            existing_schema=state.existing_schema,
+            existing_values=state.existing_values,
+        )
+        state.save_result(
+            TaskStep.MATCHING, 
+            result, 
+            "Candidate selection completed."
+        )
+
+        state.set_routing(
+            TaskStep.EVOLVING, 
+            "Candidate selection completed.", 
+            TaskStep.MATCHING
+        )
+    
+
+    # def _run_matcher(self, task_state: TaskState):
+    #     matcher_result = self.matcher(
+    #         incoming_schema=task_state.incoming_schema,
+    #         incoming_values=task_state.incoming_values,
+    #         incoming_profile=task_state.profile_result,
+    #         existing_schema=task_state.existing_schema,
+    #         existing_values=task_state.existing_values,
+    #         existing_profiles=task_state.existing_profiles,
+    #         validation_feedback=self._get_validation_feedback(task_state),
+    #     )
+    #     task_state.save_result(
+    #         step=TaskStep.MATCHING,
+    #         result=matcher_result,
+    #         # status="success",
+    #         message="Matcher completed successfully.",
+    #     )
+
+    #     confidence = matcher_result["table_matches"][0].get("confidence", 0.0)
+
+    #     selected_match = matcher_result["table_matches"][0]
+    #     confidence = selected_match["confidence"]
+
+    #     has_empty_column_candidates = any(
+    #         not candidates
+    #         for candidates in selected_match.get("column_matches", {}).values()
+    #     )
+
+    #     if confidence >= self.threshold and not has_empty_column_candidates:
+    #         task_state.set_routing(
+    #             next_step=TaskStep.BUILDING_PROPOSAL,
+    #             reason=f"Matcher confidence {confidence} >= threshold {self.threshold}.",
+    #             source_step=TaskStep.MATCHING,
+    #         )
+    #     else:
+    #         task_state.set_routing(
+    #             next_step=TaskStep.EVOLVING,
+    #             reason=f"Matcher confidence {confidence} < threshold {self.threshold}.",
+    #             source_step=TaskStep.MATCHING,
+    #         )
+
+    def _get_validation_feedback(self, task_state: TaskState,) -> dict[str, Any] | None:
+
         if task_state.routing.get("source_step") != TaskStep.VALIDATING:
             return None
 
@@ -158,56 +217,16 @@ class Orchestrator:
             "summary": validation_result.get("summary", ""),
         }
 
-    def _run_matcher(self, task_state: TaskState):
-        matcher_result = self.matcher(
-            incoming_schema=task_state.incoming_schema,
-            incoming_values=task_state.incoming_values,
-            incoming_profile=task_state.profile_result,
-            existing_schema=task_state.existing_schema,
-            existing_values=task_state.existing_values,
-            existing_profiles=task_state.existing_profiles,
-            validation_feedback=self._get_validation_feedback(task_state),
-        )
-        task_state.save_result(
-            step=TaskStep.MATCHING,
-            result=matcher_result,
-            # status="success",
-            message="Matcher completed successfully.",
-        )
-
-        confidence = matcher_result["table_matches"][0].get("confidence", 0.0)
-
-        selected_match = matcher_result["table_matches"][0]
-        confidence = selected_match["confidence"]
-
-        has_empty_column_candidates = any(
-            not candidates
-            for candidates in selected_match.get("column_matches", {}).values()
-        )
-
-        if confidence >= self.threshold and not has_empty_column_candidates:
-            task_state.set_routing(
-                next_step=TaskStep.BUILDING_PROPOSAL,
-                reason=f"Matcher confidence {confidence} >= threshold {self.threshold}.",
-                source_step=TaskStep.MATCHING,
-            )
-        else:
-            task_state.set_routing(
-                next_step=TaskStep.EVOLVING,
-                reason=f"Matcher confidence {confidence} < threshold {self.threshold}.",
-                source_step=TaskStep.MATCHING,
-            )
-
     def _run_evolutor(self, task_state: TaskState):
         evolutor_result = self.evolutor(
             incoming_schema=task_state.incoming_schema,
             incoming_values=task_state.incoming_values,
             incoming_profile=task_state.profile_result,
-            matcher_result=task_state.match_result,
             existing_schema=task_state.existing_schema,
             existing_values=task_state.existing_values,
             existing_profiles=task_state.existing_profiles,
             existing_constraints=task_state.constraints,
+            selection_result=task_state.match_result,
             validation_feedback=self._get_validation_feedback(task_state),
         )
         task_state.save_result(
@@ -222,35 +241,36 @@ class Orchestrator:
             reason=f"Evolutor completed successfully.",
             source_step=TaskStep.EVOLVING,
         )
+        
 
     def _build_mapping_proposal(self, task_state: TaskState):
-        if task_state.routing["source_step"] == TaskStep.MATCHING:
-            proposal_result = build_proposal(
-                incoming_schema=task_state.incoming_schema,
-                incoming_values=task_state.incoming_values,
-                existing_schema=task_state.existing_schema,
-                existing_values=task_state.existing_values,
-                existing_constraints=task_state.constraints,
-                result={
-                    "source": Agents.MATCHER,
-                    "payload": task_state.match_result,
-                },
-            )
-        elif task_state.routing["source_step"] == TaskStep.EVOLVING:
-            proposal_result = build_proposal(
-                incoming_schema=task_state.incoming_schema,
-                incoming_values=task_state.incoming_values,
-                existing_schema=task_state.existing_schema,
-                existing_values=task_state.existing_values,
-                existing_constraints=task_state.constraints,
-                result={
-                    "source": Agents.EVOLUTOR,
-                    "payload": task_state.evolutor_result,
-                },
-            )
+        # if task_state.routing["source_step"] == TaskStep.MATCHING:
+        #     proposal_result = build_proposal(
+        #         incoming_schema=task_state.incoming_schema,
+        #         incoming_values=task_state.incoming_values,
+        #         existing_schema=task_state.existing_schema,
+        #         existing_values=task_state.existing_values,
+        #         existing_constraints=task_state.constraints,
+        #         result={
+        #             "source": Agents.MATCHER,
+        #             "payload": task_state.match_result,
+        #         },
+        #     )
+        # elif task_state.routing["source_step"] == TaskStep.EVOLVING:
+        proposal_result = build_proposal(
+            incoming_schema=task_state.incoming_schema,
+            incoming_values=task_state.incoming_values,
+            existing_schema=task_state.existing_schema,
+            existing_values=task_state.existing_values,
+            existing_constraints=task_state.constraints,
+            result={
+                "source": Agents.EVOLUTOR,
+                "payload": task_state.evolutor_result,
+            },
+        )
         
-        else:
-            raise ValueError(f"Unsupported source_step: {task_state.routing['source_step']}")
+        # else:
+        #     raise ValueError(f"Unsupported source_step: {task_state.routing['source_step']}")
 
         task_state.save_result(
             step=TaskStep.BUILDING_PROPOSAL,

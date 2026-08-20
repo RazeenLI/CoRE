@@ -6,9 +6,15 @@ TODO: 根据 agent 开发 完成 result 的结构和格式
 
 from typing import Literal, TypedDict
 
+
 # -----------------------------
 # Matcher
 # -----------------------------
+
+MatcherEvolutionDecisionType = Literal[
+    "extend_table",
+    "create_table",
+]
 
 MatchStatus = Literal[
     "full_match",
