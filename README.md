@@ -8,16 +8,16 @@ All models use the same case input, output layout, runner, and evaluation code.
 
 | `MODEL` | Type | Pipeline |
 |---|---|---|
-| `standard` | Proposed method | Profiler → Qwen Matcher → Evolutor when needed → Validator → Decision |
+| `standard` | Proposed method | Profiler → MPNet Candidate Selector → Evolutor → Validator → Decision |
+| `llm_matcher` | LLM baseline | Profiler → Qwen Matcher → Evolutor when needed → Validator → Decision |
+| `no_profiler` | Profiler ablation | MPNet Candidate Selector → Evolutor → Validator → Decision |
+| `no_selector` | Selector ablation | Profiler → Evolutor with the full RDB → Validator → Decision |
 | `oneshot` | LLM baseline | One-shot Evolutor → Decision |
 | `magneto` | Retrieval + LLM baseline | MPNet retrieval → Qwen reranking → rule decision |
 | `jl` | Rule baseline | Jaccard–Levenshtein matching → rule decision |
 | `coma` | Rule baseline | COMA matching → rule decision |
-| `no_matcher` | Ablation experiment | Profiler → One-shot-style Evolutor → Validator → Decision |
-| `selector` | Selector experiment | Profiler → MPNet Candidate Selector → One-shot-style Evolutor → Validator → Decision |
-| `selector_no_profiler` | Profiler ablation | MPNet Candidate Selector → One-shot-style Evolutor → Validator → Decision |
 
-`selector_no_profiler` is an independent copy of `selector` with only the incoming Profiler stage removed. It retains the same Selector, Evolutor prompt, existing profiles, Validator, and Top-K settings.
+The current `standard` promotes the former Selector experiment. `llm_matcher` preserves the former Matcher-based Standard. `no_profiler` and `no_selector` are single-component ablations of the current Standard.
 
 ## 2. Environment
 
@@ -94,27 +94,27 @@ python -u main.py \
 Replace `<model>` with one of:
 
 ```text
-standard  oneshot  magneto  jl  coma  no_matcher  selector  selector_no_profiler
+standard  llm_matcher  no_profiler  no_selector  oneshot  magneto  jl  coma
 ```
 
-Example for No Matcher:
+Example for No Selector:
 
 ```bash
 CUDA_VISIBLE_DEVICES=0,1,2,4 \
 python -u main.py \
-  --model no_matcher \
-  --output save/Chinook/no_matcher/large/case_0001 \
+  --model no_selector \
+  --output save/Chinook/no_selector/large/case_0001 \
   --agent-config configs/qwen3.5_9B.yaml \
   --data-config data/Chinook/benchmarks/large/case_0001/config.yaml
 ```
 
-Example for Selector:
+Example for the LLM Matcher baseline:
 
 ```bash
 CUDA_VISIBLE_DEVICES=0,1,2,4 \
 python -u main.py \
-  --model selector \
-  --output save/Chinook/selector/large/case_0001 \
+  --model llm_matcher \
+  --output save/Chinook/llm_matcher/large/case_0001 \
   --agent-config configs/qwen3.5_9B.yaml \
   --data-config data/Chinook/benchmarks/large/case_0001/config.yaml
 ```
@@ -147,15 +147,15 @@ GPU_IDS=0,1,2,4 MODEL=standard DATASIZE=large \
 ./run_cases.sh case_0001 case_0003 case_0010
 ```
 
-### LLM models and experiments
+### LLM models and ablations
 
 ```bash
 GPU_IDS=0,1,2,4 MODEL=standard DATASIZE=large ./run_cases.sh
+GPU_IDS=0,1,2,4 MODEL=llm_matcher DATASIZE=large ./run_cases.sh
+GPU_IDS=0,1,2,4 MODEL=no_profiler DATASIZE=large ./run_cases.sh
+GPU_IDS=0,1,2,4 MODEL=no_selector DATASIZE=large ./run_cases.sh
 GPU_IDS=0,1,2,4 MODEL=oneshot DATASIZE=large ./run_cases.sh
 GPU_IDS=0,1,2,4 MODEL=magneto DATASIZE=large ./run_cases.sh
-GPU_IDS=0,1,2,4 MODEL=no_matcher DATASIZE=large ./run_cases.sh
-GPU_IDS=0,1,2,4 MODEL=selector DATASIZE=large ./run_cases.sh
-GPU_IDS=0,1,2,4 MODEL=selector_no_profiler DATASIZE=large ./run_cases.sh
 ```
 
 ### Rule baselines
@@ -172,22 +172,22 @@ MODEL=coma DATASIZE=large ./run_cases.sh
 Use a distinct log for every model:
 
 ```bash
-GPU_IDS=0,1,2,4 MODEL=no_matcher DATASIZE=large \
-nohup ./run_cases.sh > logs/nohup_no_matcher_large.log 2>&1 &
+GPU_IDS=0,1,2,4 MODEL=standard DATASIZE=large \
+nohup ./run_cases.sh > logs/nohup_standard_large.log 2>&1 &
 
-GPU_IDS=0,1,2,4 MODEL=selector DATASIZE=large \
-nohup ./run_cases.sh > logs/nohup_selector_large.log 2>&1 &
+GPU_IDS=0,1,2,4 MODEL=no_selector DATASIZE=large \
+nohup ./run_cases.sh > logs/nohup_no_selector_large.log 2>&1 &
 
-GPU_IDS=0,1,2,4 MODEL=selector_no_profiler DATASIZE=large \
-nohup ./run_cases.sh > logs/nohup_selector_no_profiler_large.log 2>&1 &
+GPU_IDS=0,1,2,4 MODEL=no_profiler DATASIZE=large \
+nohup ./run_cases.sh > logs/nohup_no_profiler_large.log 2>&1 &
 ```
 
 Monitor progress:
 
 ```bash
-tail -f logs/nohup_no_matcher_large.log
-tail -f logs/nohup_selector_large.log
-tail -f logs/nohup_selector_no_profiler_large.log
+tail -f logs/nohup_standard_large.log
+tail -f logs/nohup_no_selector_large.log
+tail -f logs/nohup_no_profiler_large.log
 ```
 
 ### Retry failed cases
@@ -195,9 +195,9 @@ tail -f logs/nohup_selector_no_profiler_large.log
 Pass only the failed case names; completed cases do not need to run again:
 
 ```bash
-GPU_IDS=0,1,2,4 MODEL=selector DATASIZE=large \
+GPU_IDS=0,1,2,4 MODEL=standard DATASIZE=large \
 nohup ./run_cases.sh case_0029 case_0034 \
-  > logs/nohup_selector_large_retry.log 2>&1 &
+  > logs/nohup_standard_large_retry.log 2>&1 &
 ```
 
 ### Runner variables
@@ -221,7 +221,12 @@ magneto:
   embedding_model: sentence-transformers/all-mpnet-base-v2
   retrieval_top_k: 20
 
-selector:
+standard:
+  embedding_model: sentence-transformers/all-mpnet-base-v2
+  column_top_k: 20
+  table_top_k: 5
+
+no_profiler:
   embedding_model: sentence-transformers/all-mpnet-base-v2
   column_top_k: 20
   table_top_k: 5
@@ -233,7 +238,7 @@ traditional:
 ```
 
 - Magneto retrieves Top-20 target columns and asks Qwen to return at most Top-10 reliable matches per incoming column.
-- Selector retrieves Top-20 columns, ranks tables, and gives the Top-5 tables to the Evolutor. It does not make the final match or operation decision.
+- Standard and No-Profiler retrieve Top-20 columns, rank tables, and give the Top-5 tables to the Evolutor. The Selector does not make the final match or operation decision.
 - JL/COMA thresholds must be tuned only on development data.
 
 ## 7. Output
@@ -274,8 +279,8 @@ Set the benchmark, result, and output paths in `evaluation/evaluator.py` before 
 ```python
 evaluate_benchmark(
     benchmark_dir="data/Chinook/benchmarks/large",
-    result_dir="save/Chinook/selector/large",
-    output_csv_path="outputs/Chinook/selector/large.csv",
+    result_dir="save/Chinook/standard/large",
+    output_csv_path="outputs/Chinook/standard/large.csv",
     sample_num=0,
 )
 ```
@@ -286,13 +291,14 @@ See [Evaluation usage](evaluation/README.md) for case-level metrics and aggregat
 
 - `main.py`: model registry and CLI entry.
 - `run_cases.sh`: batch discovery, execution, logging, and retries.
-- `model/pipeline.py`: Standard pipeline.
+- `model/pipeline.py`: Selector-based Standard pipeline.
+- `baselines/llm_matcher/pipeline.py`: former Matcher-based Standard baseline.
+- `baselines/no_profiler/pipeline.py`: Standard without the Profiler.
+- `baselines/no_selector/pipeline.py`: Standard without the Candidate Selector.
 - `baselines/oneshot/pipeline.py`: One-shot baseline.
 - `baselines/magneto/pipeline.py`: Magneto baseline.
 - `baselines/jl/pipeline.py`: JL baseline.
 - `baselines/coma/pipeline.py`: COMA baseline.
-- `experiments/no_matcher/pipeline.py`: No-Matcher experiment.
-- `experiments/selector/pipeline.py`: Candidate-Selector experiment.
 - `evaluation/evaluator.py`: case-level evaluation.
 - `evaluation/aggregate_result.py`: aggregate metrics.
 
@@ -300,5 +306,4 @@ Additional details:
 
 - [Magneto](baselines/magneto/README.md)
 - [JL and COMA](baselines/traditional/README.md)
-- [Experimental variants](experiments/README.md)
 - [Evaluation](evaluation/README.md)

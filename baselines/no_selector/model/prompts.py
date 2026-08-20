@@ -1,22 +1,16 @@
 from __future__ import annotations
 
 import json
-from typing import Any, Literal
+from typing import Any
 
 from model.core.prompts import literal_to_prompt_options
-from model.core.schemas import ConstraintSignalType
-
-
-DecisionType = Literal["insert_table", "extend_table", "create_table"]
+from model.core.schemas import ConstraintSignalType, EvolutionDecisionType
 
 
 def evolutor_prompt(llm_input: dict[str, Any]) -> str:
     feedback_note = (
-        """
-Previous validation feedback is included in the input. Reconsider the decision,
-column placements, and constraint signals related to that feedback. Do not
-repeat a rejected result without clear supporting evidence.
-""".strip()
+        "Previous validation feedback is provided. Revise the decision, placements, "
+        "or constraints that caused those issues."
         if "validation_feedback" in llm_input
         else ""
     )
@@ -41,7 +35,7 @@ Return only valid JSON with this exact structure:
 
 {{
   "decision": {{
-    "decision_type": "{literal_to_prompt_options(DecisionType)}",
+    "decision_type": "{literal_to_prompt_options(EvolutionDecisionType)}",
     "target_table": "<table_name>",
     "related_tables": ["<existing_related_table_name>"],
     "reason": "..."
@@ -105,6 +99,9 @@ Constraint signal rules:
 Output rules:
 - Return exactly one JSON object.
 - decision_type must be one of: "insert_table", "extend_table", "create_table".
-- Keep reason concise and evidence-based.
+- Every reason must be one short phrase with at most 12 words.
+- Do not use quotation marks, line breaks, braces, or brackets inside a reason.
+- Do not repeat schemas, samples, candidate evidence, or rules in a reason.
+- Do not add fields outside the required JSON structure.
 - Return JSON only.
 """.strip()

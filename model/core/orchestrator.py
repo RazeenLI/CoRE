@@ -160,47 +160,6 @@ class Orchestrator:
             "Candidate selection completed.", 
             TaskStep.MATCHING
         )
-    
-
-    # def _run_matcher(self, task_state: TaskState):
-    #     matcher_result = self.matcher(
-    #         incoming_schema=task_state.incoming_schema,
-    #         incoming_values=task_state.incoming_values,
-    #         incoming_profile=task_state.profile_result,
-    #         existing_schema=task_state.existing_schema,
-    #         existing_values=task_state.existing_values,
-    #         existing_profiles=task_state.existing_profiles,
-    #         validation_feedback=self._get_validation_feedback(task_state),
-    #     )
-    #     task_state.save_result(
-    #         step=TaskStep.MATCHING,
-    #         result=matcher_result,
-    #         # status="success",
-    #         message="Matcher completed successfully.",
-    #     )
-
-    #     confidence = matcher_result["table_matches"][0].get("confidence", 0.0)
-
-    #     selected_match = matcher_result["table_matches"][0]
-    #     confidence = selected_match["confidence"]
-
-    #     has_empty_column_candidates = any(
-    #         not candidates
-    #         for candidates in selected_match.get("column_matches", {}).values()
-    #     )
-
-    #     if confidence >= self.threshold and not has_empty_column_candidates:
-    #         task_state.set_routing(
-    #             next_step=TaskStep.BUILDING_PROPOSAL,
-    #             reason=f"Matcher confidence {confidence} >= threshold {self.threshold}.",
-    #             source_step=TaskStep.MATCHING,
-    #         )
-    #     else:
-    #         task_state.set_routing(
-    #             next_step=TaskStep.EVOLVING,
-    #             reason=f"Matcher confidence {confidence} < threshold {self.threshold}.",
-    #             source_step=TaskStep.MATCHING,
-    #         )
 
     def _get_validation_feedback(self, task_state: TaskState,) -> dict[str, Any] | None:
 
@@ -244,19 +203,6 @@ class Orchestrator:
         
 
     def _build_mapping_proposal(self, task_state: TaskState):
-        # if task_state.routing["source_step"] == TaskStep.MATCHING:
-        #     proposal_result = build_proposal(
-        #         incoming_schema=task_state.incoming_schema,
-        #         incoming_values=task_state.incoming_values,
-        #         existing_schema=task_state.existing_schema,
-        #         existing_values=task_state.existing_values,
-        #         existing_constraints=task_state.constraints,
-        #         result={
-        #             "source": Agents.MATCHER,
-        #             "payload": task_state.match_result,
-        #         },
-        #     )
-        # elif task_state.routing["source_step"] == TaskStep.EVOLVING:
         proposal_result = build_proposal(
             incoming_schema=task_state.incoming_schema,
             incoming_values=task_state.incoming_values,
@@ -268,9 +214,6 @@ class Orchestrator:
                 "payload": task_state.evolutor_result,
             },
         )
-        
-        # else:
-        #     raise ValueError(f"Unsupported source_step: {task_state.routing['source_step']}")
 
         task_state.save_result(
             step=TaskStep.BUILDING_PROPOSAL,
@@ -446,44 +389,4 @@ class Orchestrator:
             reason=f"Finish and Updated.",
             source_step=TaskStep.APPLYING_DECISION,
         )
-    
-    # @classmethod
-    # def from_state_json(
-    #     cls,
-    #     state_path: str | Path,
-    #     profiler_agent: Any,
-    #     matcher_agent: Any,
-    #     evolutor_agent: Any,
-    #     validator_agent: Any,
-    #     config: dict[str, Any],
-    # ) -> "Orchestrator":
-    #     """
-    #     Resume an Orchestrator from a saved RunState JSON file.
-
-    #     Agents are recreated outside and passed in.
-    #     RunState is restored from JSON.
-    #     """
-
-    #     state_path = Path(state_path)
-    #     state_data = load_json(state_path)
-    #     run_state = TaskState.from_dict(state_data)
-
-    #     orchestrator = cls(
-    #         profiler_agent=profiler_agent,
-    #         matcher_agent=matcher_agent,
-    #         evolutor_agent=evolutor_agent,
-    #         validator_agent=validator_agent,
-    #         config=config,
-    #     )
-
-    #     orchestrator.run_state = run_state
-
-    #     return orchestrator
-    
-    # def save_state(self, state_path: str | Path) -> None:
-    #     """
-    #     Save current RunState to a JSON file.
-    #     """
-
-    #     state_path = Path(state_path)
-    #     save_json(self.run_state.to_dict(), state_path)
+  

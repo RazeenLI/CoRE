@@ -2,13 +2,13 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Protocol
 from model.agents.validator_agent import ValidatorAgent
+from model.agents.evolutor_agent import EvolutorAgent
 from model.core.decision import build_decision
 from model.core.state import Agents, TaskState, TaskStatus, TaskStep
 from model.proposal.applier import apply_proposal
 from model.proposal.builder import build_proposal
 from model.proposal.updater import apply_update_plan_to_existing_parts
 from model.utils.io import terminal_message
-from baselines.no_profiler.model.evolutor_agent import EvolutorAgent
 class Selector(Protocol):
     def __call__(self, **kwargs: Any) -> dict[str, Any]: ...
 class Orchestrator:
@@ -83,9 +83,10 @@ class Orchestrator:
         result = self.evolutor(
             incoming_schema=state.incoming_schema,
             incoming_values=state.incoming_values,
+            incoming_profile=None,
             existing_schema=state.existing_schema,
             existing_values=state.existing_values,
-            existing_profiles=state.existing_profiles,
+            existing_profiles=None,
             existing_constraints=state.constraints,
             selection_result=state.match_result,
             validation_feedback=self._validation_feedback(state),
