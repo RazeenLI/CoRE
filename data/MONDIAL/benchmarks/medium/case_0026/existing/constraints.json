@@ -1,0 +1,85 @@
+{
+  "database": "MONDIAL",
+  "constraints": {
+    "primary_keys": {
+      "country": [
+        "code"
+      ],
+      "spoken": [
+        "country",
+        "language"
+      ],
+      "citylocalname": [
+        "country",
+        "province",
+        "city"
+      ],
+      "ismember": [
+        "country",
+        "organization"
+      ],
+      "river": [
+        "name"
+      ],
+      "geo_source": [
+        "province",
+        "country",
+        "river"
+      ]
+    },
+    "foreign_keys": {
+      "spoken": [
+        {
+          "columns": [
+            "country"
+          ],
+          "referenced_table": "country",
+          "referenced_columns": [
+            "code"
+          ]
+        }
+      ],
+      "ismember": [
+        {
+          "columns": [
+            "country"
+          ],
+          "referenced_table": "country",
+          "referenced_columns": [
+            "code"
+          ]
+        }
+      ],
+      "river": [
+        {
+          "columns": [
+            "river"
+          ],
+          "referenced_table": "river",
+          "referenced_columns": [
+            "name"
+          ]
+        }
+      ],
+      "geo_source": [
+        {
+          "columns": [
+            "river"
+          ],
+          "referenced_table": "river",
+          "referenced_columns": [
+            "name"
+          ]
+        }
+      ]
+    },
+    "unique_constraints": {},
+    "check_constraints": {
+      "river": [
+        "(River IS NULL AND Lake IS NULL)\n            OR (River IS NULL AND Sea IS NULL)\n            OR (Lake IS NULL AND Sea is NULL)"
+      ]
+    },
+    "indexes": {},
+    "inferred_constraints": {}
+  }
+}

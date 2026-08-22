@@ -1,0 +1,664 @@
+{
+  "database": "MONDIAL",
+  "tables": {
+    "politics": {
+      "table": {
+        "name": "politics",
+        "column_count": 5,
+        "summary": "The table contains information about political entities, including their independence dates, dependencies, and government types.",
+        "entity": "Political Entity",
+        "role": "entity_table",
+        "aliases": [
+          "political_entities",
+          "country_info"
+        ]
+      },
+      "columns": {
+        "country": {
+          "name": "country",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short code representing a country or region.",
+          "semantic_type": "code",
+          "business_concept": "Country Code",
+          "aliases": [
+            "country_code",
+            "region_code"
+          ]
+        },
+        "independence": {
+          "name": "independence",
+          "dtype": "date",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The date when the country or region achieved independence.",
+          "semantic_type": "date",
+          "business_concept": "Independence Date",
+          "aliases": [
+            "independence_date",
+            "date_of_independence"
+          ]
+        },
+        "wasdependent": {
+          "name": "wasdependent",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The former governing entity or dependency of the country or region.",
+          "semantic_type": "description",
+          "business_concept": "Former Dependency",
+          "aliases": [
+            "previous_dependency",
+            "former_governing_entity"
+          ]
+        },
+        "dependent": {
+          "name": "dependent",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The current dependency or governing entity of the country or region.",
+          "semantic_type": "code",
+          "business_concept": "Current Dependency",
+          "aliases": [
+            "current_dependency",
+            "governing_entity_code"
+          ]
+        },
+        "government": {
+          "name": "government",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The type of government system in place for the country or region.",
+          "semantic_type": "description",
+          "business_concept": "Government Type",
+          "aliases": [
+            "gov_type",
+            "government_system"
+          ]
+        }
+      }
+    },
+    "geo_island": {
+      "table": {
+        "name": "geo_island",
+        "column_count": 3,
+        "summary": "A table containing information about islands and their associated countries and provinces.",
+        "entity": "island",
+        "role": "entity_table",
+        "aliases": [
+          "geographic_island_table",
+          "island_data"
+        ]
+      },
+      "columns": {
+        "island": {
+          "name": "island",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The name of the island.",
+          "semantic_type": "identifier",
+          "business_concept": "Geographic Location",
+          "aliases": [
+            "island_name",
+            "geo_island_name"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country associated with the island.",
+          "semantic_type": "code",
+          "business_concept": "Country",
+          "aliases": [
+            "country_code",
+            "iso_country_code"
+          ]
+        },
+        "province": {
+          "name": "province",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The province or territory associated with the island.",
+          "semantic_type": "code",
+          "business_concept": "Administrative Region",
+          "aliases": [
+            "province_code",
+            "territory_code"
+          ]
+        }
+      }
+    },
+    "borders": {
+      "table": {
+        "name": "borders",
+        "column_count": 3,
+        "summary": "The table represents borders between countries, with information on the countries involved and the length of the border.",
+        "entity": "Border",
+        "role": "relationship_table",
+        "aliases": [
+          "country_boundaries",
+          "border_relations"
+        ]
+      },
+      "columns": {
+        "country1": {
+          "name": "country1",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A country involved in the border relationship",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Country",
+          "aliases": [
+            "country_a",
+            "first_country",
+            "country_code1"
+          ]
+        },
+        "country2": {
+          "name": "country2",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The second country involved in the border relationship",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Country",
+          "aliases": [
+            "country_b",
+            "second_country",
+            "country_code2"
+          ]
+        },
+        "length": {
+          "name": "length",
+          "dtype": "decimal",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The length of the border between the two countries",
+          "semantic_type": "quantity",
+          "business_concept": "Geographic Measurement",
+          "aliases": [
+            "border_length",
+            "length_km",
+            "border_distance"
+          ]
+        }
+      }
+    },
+    "provinceothername": {
+      "table": {
+        "name": "provinceothername",
+        "column_count": 3,
+        "summary": "This table contains information about provinces and their alternative names, along with the country they belong to.",
+        "entity": "province",
+        "role": "lookup_table",
+        "aliases": [
+          "province_alternative_names",
+          "province_other_names"
+        ]
+      },
+      "columns": {
+        "province": {
+          "name": "province",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The official name of a province.",
+          "semantic_type": "identifier",
+          "business_concept": "geographic_region",
+          "aliases": [
+            "official_province_name",
+            "province_name"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country to which the province belongs.",
+          "semantic_type": "code",
+          "business_concept": "country",
+          "aliases": [
+            "country_code",
+            "nation"
+          ]
+        },
+        "othername": {
+          "name": "othername",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Alternative or common name for the province.",
+          "semantic_type": "description",
+          "business_concept": "geographic_region",
+          "aliases": [
+            "alternative_province_name",
+            "province_alias"
+          ]
+        }
+      }
+    },
+    "provincelocalname": {
+      "table": {
+        "name": "provincelocalname",
+        "column_count": 3,
+        "summary": "The table contains information about provinces, including their names and associated country codes. It appears to be a list of administrative regions with their local names and country identifiers.",
+        "entity": "province",
+        "role": "entity_table",
+        "aliases": [
+          "province_data",
+          "province_local_names"
+        ]
+      },
+      "columns": {
+        "province": {
+          "name": "province",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The official name of the province in Greek, including regional descriptions.",
+          "semantic_type": "description",
+          "business_concept": "administrative_region",
+          "aliases": [
+            "official_province_name",
+            "province_name"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The two-letter country code associated with the province.",
+          "semantic_type": "code",
+          "business_concept": "country",
+          "aliases": [
+            "country_code",
+            "nation_code"
+          ]
+        },
+        "localname": {
+          "name": "localname",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The local or commonly used name of the province in Greek.",
+          "semantic_type": "description",
+          "business_concept": "administrative_region",
+          "aliases": [
+            "local_province_name",
+            "province_alias"
+          ]
+        }
+      }
+    },
+    "mountainonisland": {
+      "table": {
+        "name": "mountainonisland",
+        "column_count": 2,
+        "summary": "A table that lists mountains and their corresponding islands, likely indicating which islands are also considered mountains.",
+        "entity": "Geographical Feature",
+        "role": "entity_table",
+        "aliases": [
+          "mountain_island_mapping",
+          "geographical_entities"
+        ]
+      },
+      "columns": {
+        "mountain": {
+          "name": "mountain",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A mountain's name",
+          "semantic_type": "identifier",
+          "business_concept": "Geographical Location",
+          "aliases": [
+            "mountain_name",
+            "geo_mountain"
+          ]
+        },
+        "island": {
+          "name": "island",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "An island's name",
+          "semantic_type": "identifier",
+          "business_concept": "Geographical Location",
+          "aliases": [
+            "island_name",
+            "geo_island"
+          ]
+        }
+      }
+    },
+    "countrypops": {
+      "table": {
+        "name": "countrypops",
+        "column_count": 3,
+        "summary": "A table that records population data for different countries over time.",
+        "entity": "Country",
+        "role": "entity_table",
+        "aliases": [
+          "country_populations",
+          "country_population_data"
+        ]
+      },
+      "columns": {
+        "country": {
+          "name": "country",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short code representing a country.",
+          "semantic_type": "code",
+          "business_concept": "Country Identifier",
+          "aliases": [
+            "country_code",
+            "ctry"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "decimal",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The year for which population data is recorded.",
+          "semantic_type": "date",
+          "business_concept": "Time Period",
+          "aliases": [
+            "yr",
+            "year_of_data"
+          ]
+        },
+        "population": {
+          "name": "population",
+          "dtype": "decimal",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The population count for a country in a specific year.",
+          "semantic_type": "quantity",
+          "business_concept": "Demographic Data",
+          "aliases": [
+            "pop",
+            "population_count"
+          ]
+        }
+      }
+    },
+    "mountain": {
+      "table": {
+        "name": "mountain",
+        "column_count": 5,
+        "summary": "A table containing information about mountains, including their names, elevation, type, and coordinates.",
+        "entity": "mountain",
+        "role": "entity_table",
+        "aliases": [
+          "mountains_table",
+          "geographical_features"
+        ]
+      },
+      "columns": {
+        "name": {
+          "name": "name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The name of the mountain.",
+          "semantic_type": "identifier",
+          "business_concept": "mountain_name",
+          "aliases": [
+            "mountain_name",
+            "mountain_title"
+          ]
+        },
+        "mountains": {
+          "name": "mountains",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "This column appears to be empty or redundant, possibly a placeholder or mislabeled column.",
+          "semantic_type": "unknown",
+          "business_concept": "unknown",
+          "aliases": [
+            "mountains_list",
+            "mountain_list"
+          ]
+        },
+        "elevation": {
+          "name": "elevation",
+          "dtype": "decimal",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The height of the mountain above sea level.",
+          "semantic_type": "quantity",
+          "business_concept": "mountain_elevation",
+          "aliases": [
+            "height",
+            "elevation_meters"
+          ]
+        },
+        "type": {
+          "name": "type",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The type or category of the mountain, such as volcanic or volcano.",
+          "semantic_type": "category",
+          "business_concept": "mountain_type",
+          "aliases": [
+            "mountain_category",
+            "mountain_classification"
+          ]
+        },
+        "coordinates": {
+          "name": "coordinates",
+          "dtype": "geocoord",
+          "value_patterns": [],
+          "meaning": "The geographic coordinates (latitude and longitude) of the mountain.",
+          "semantic_type": "unknown",
+          "business_concept": "mountain_location",
+          "aliases": [
+            "location",
+            "geographic_position"
+          ]
+        }
+      }
+    },
+    "spoken": {
+      "table": {
+        "name": "spoken",
+        "column_count": 3,
+        "summary": "The table contains data related to spoken languages and their distribution, likely by country. It includes information about the country, the language spoken, and the percentage of speakers.",
+        "entity": "Language Distribution",
+        "role": "entity_table",
+        "aliases": [
+          "language_distribution",
+          "spoken_languages"
+        ]
+      },
+      "columns": {
+        "country": {
+          "name": "country",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A two-letter country code representing the country associated with the language data.",
+          "semantic_type": "code",
+          "business_concept": "Country Identifier",
+          "aliases": [
+            "country_code",
+            "ctry"
+          ]
+        },
+        "language": {
+          "name": "language",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The name of the language spoken in the associated country.",
+          "semantic_type": "description",
+          "business_concept": "Language",
+          "aliases": [
+            "lang",
+            "language_name"
+          ]
+        },
+        "percentage": {
+          "name": "percentage",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The percentage of the population that speaks the language in the associated country.",
+          "semantic_type": "quantity",
+          "business_concept": "Language Usage Percentage",
+          "aliases": [
+            "lang_percentage",
+            "percentage_spoken"
+          ]
+        }
+      }
+    },
+    "islandin": {
+      "table": {
+        "name": "islandin",
+        "column_count": 4,
+        "summary": "The table contains information about islands and their associated bodies of water, such as seas, lakes, and rivers. It appears to be a geographical dataset focusing on islands and their surrounding features.",
+        "entity": "island",
+        "role": "entity_table",
+        "aliases": [
+          "island_data",
+          "geographical_island_info"
+        ]
+      },
+      "columns": {
+        "island": {
+          "name": "island",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The name of the island.",
+          "semantic_type": "identifier",
+          "business_concept": "geographical_location",
+          "aliases": [
+            "island_name",
+            "island_identifier"
+          ]
+        },
+        "sea": {
+          "name": "sea",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The body of water adjacent to the island.",
+          "semantic_type": "description",
+          "business_concept": "geographical_feature",
+          "aliases": [
+            "adjacent_sea",
+            "body_of_water"
+          ]
+        },
+        "lake": {
+          "name": "lake",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The lake associated with the island.",
+          "semantic_type": "description",
+          "business_concept": "geographical_feature",
+          "aliases": [
+            "associated_lake",
+            "lake_name"
+          ]
+        },
+        "river": {
+          "name": "river",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The river associated with the island.",
+          "semantic_type": "description",
+          "business_concept": "geographical_feature",
+          "aliases": [
+            "associated_river",
+            "river_name"
+          ]
+        }
+      }
+    },
+    "geo_lake": {
+      "table": {
+        "name": "geo_lake",
+        "column_count": 3,
+        "summary": "A table containing information about lakes, including their names, associated countries, and provinces.",
+        "entity": "Lake",
+        "role": "entity_table",
+        "aliases": [
+          "geographic_lakes",
+          "lake_data"
+        ]
+      },
+      "columns": {
+        "lake": {
+          "name": "lake",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Name of the lake",
+          "semantic_type": "identifier",
+          "business_concept": "Geographic Feature",
+          "aliases": [
+            "lake_name",
+            "geo_lake_name"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Country code associated with the lake",
+          "semantic_type": "code",
+          "business_concept": "Geographic Region",
+          "aliases": [
+            "country_code",
+            "geo_country_code"
+          ]
+        },
+        "province": {
+          "name": "province",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Province or region within the country where the lake is located",
+          "semantic_type": "identifier",
+          "business_concept": "Geographic Region",
+          "aliases": [
+            "province_name",
+            "geo_province"
+          ]
+        }
+      }
+    }
+  }
+}

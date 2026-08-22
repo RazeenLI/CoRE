@@ -9,6 +9,8 @@ All models use the same case input, output layout, runner, and evaluation code.
 | `MODEL` | Type | Pipeline |
 |---|---|---|
 | `standard` | Proposed method | Profiler → MPNet Candidate Selector → Evolutor → Validator → Decision |
+| `grain_profiler` | Profiler experiment | Grain Profiler → MPNet Candidate Selector → Evolutor → Validator → Decision |
+| `constraint_filter` | Constraint experiment | Standard with constraints filtered to the Top-k table subgraph |
 | `llm_matcher` | LLM baseline | Profiler → Qwen Matcher → Evolutor when needed → Validator → Decision |
 | `no_profiler` | Profiler ablation | MPNet Candidate Selector → Evolutor → Validator → Decision |
 | `no_selector` | Selector ablation | Profiler → Evolutor with the full RDB → Validator → Decision |
@@ -94,7 +96,7 @@ python -u main.py \
 Replace `<model>` with one of:
 
 ```text
-standard  llm_matcher  no_profiler  no_selector  oneshot  magneto  jl  coma
+standard  grain_profiler  constraint_filter  llm_matcher  no_profiler  no_selector  oneshot  magneto  jl  coma
 ```
 
 Example for No Selector:
@@ -151,6 +153,8 @@ GPU_IDS=0,1,2,4 MODEL=standard DATASIZE=large \
 
 ```bash
 GPU_IDS=0,1,2,4 MODEL=standard DATASIZE=large ./run_cases.sh
+GPU_IDS=0,1,2,4 MODEL=grain_profiler DATASIZE=large ./run_cases.sh
+GPU_IDS=0,1,2,4 MODEL=constraint_filter DATASIZE=medium ./run_cases.sh
 GPU_IDS=0,1,2,4 MODEL=llm_matcher DATASIZE=large ./run_cases.sh
 GPU_IDS=0,1,2,4 MODEL=no_profiler DATASIZE=large ./run_cases.sh
 GPU_IDS=0,1,2,4 MODEL=no_selector DATASIZE=large ./run_cases.sh

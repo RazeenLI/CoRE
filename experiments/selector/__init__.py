@@ -1,1 +1,0 @@
-"""SLM candidate-selector experiment."""

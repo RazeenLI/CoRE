@@ -1,0 +1,661 @@
+{
+  "database": "MONDIAL",
+  "tables": {
+    "lake": {
+      "table": {
+        "name": "lake",
+        "column_count": 8,
+        "summary": "The table contains information about lakes, including their names, associated rivers, geographical measurements, and coordinates.",
+        "entity": "lake",
+        "role": "entity_table",
+        "aliases": [
+          "lake_data",
+          "lakes_info"
+        ]
+      },
+      "columns": {
+        "name": {
+          "name": "name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The name of the lake.",
+          "semantic_type": "identifier",
+          "business_concept": "lake_name",
+          "aliases": [
+            "lake_name",
+            "lake_identifier"
+          ]
+        },
+        "river": {
+          "name": "river",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The river associated with the lake.",
+          "semantic_type": "description",
+          "business_concept": "associated_river",
+          "aliases": [
+            "associated_river",
+            "river_name"
+          ]
+        },
+        "area": {
+          "name": "area",
+          "dtype": "decimal",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The surface area of the lake in square kilometers.",
+          "semantic_type": "quantity",
+          "business_concept": "lake_area",
+          "aliases": [
+            "lake_area",
+            "surface_area"
+          ]
+        },
+        "elevation": {
+          "name": "elevation",
+          "dtype": "decimal",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The elevation of the lake's surface above sea level in meters.",
+          "semantic_type": "quantity",
+          "business_concept": "lake_elevation",
+          "aliases": [
+            "lake_elevation",
+            "surface_elevation"
+          ]
+        },
+        "depth": {
+          "name": "depth",
+          "dtype": "decimal",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The maximum depth of the lake in meters.",
+          "semantic_type": "quantity",
+          "business_concept": "lake_depth",
+          "aliases": [
+            "lake_depth",
+            "max_depth"
+          ]
+        },
+        "height": {
+          "name": "height",
+          "dtype": "decimal",
+          "value_patterns": [],
+          "meaning": "The height of the lake (possibly referring to a specific measurement or feature, but unclear).",
+          "semantic_type": "unknown",
+          "business_concept": "unknown",
+          "aliases": [
+            "lake_height",
+            "height_measurement"
+          ]
+        },
+        "type": {
+          "name": "type",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The type or classification of the lake (e.g., glacial, tectonic, etc.).",
+          "semantic_type": "category",
+          "business_concept": "lake_type",
+          "aliases": [
+            "lake_category",
+            "lake_classification"
+          ]
+        },
+        "coordinates": {
+          "name": "coordinates",
+          "dtype": "geocoord",
+          "value_patterns": [],
+          "meaning": "The geographic coordinates of the lake's location.",
+          "semantic_type": "unknown",
+          "business_concept": "geographic_location",
+          "aliases": [
+            "lake_coordinates",
+            "location"
+          ]
+        }
+      }
+    },
+    "mergeswith": {
+      "table": {
+        "name": "mergeswith",
+        "column_count": 2,
+        "summary": "The table represents a relationship between two bodies of water, indicating that they are connected or merge with each other.",
+        "entity": "Water Bodies",
+        "role": "relationship_table",
+        "aliases": [
+          "water_bodies_relationship",
+          "ocean_connections"
+        ]
+      },
+      "columns": {
+        "sea1": {
+          "name": "sea1",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The first body of water in a merging relationship",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Body of Water",
+          "aliases": [
+            "first_sea",
+            "primary_sea"
+          ]
+        },
+        "sea2": {
+          "name": "sea2",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The second body of water in a merging relationship",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Body of Water",
+          "aliases": [
+            "second_sea",
+            "secondary_sea"
+          ]
+        }
+      }
+    },
+    "provinceothername": {
+      "table": {
+        "name": "provinceothername",
+        "column_count": 3,
+        "summary": "This table contains information about provinces and their alternative names, along with the country they belong to.",
+        "entity": "province",
+        "role": "lookup_table",
+        "aliases": [
+          "province_alternative_names",
+          "province_other_names"
+        ]
+      },
+      "columns": {
+        "province": {
+          "name": "province",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The official name of a province.",
+          "semantic_type": "identifier",
+          "business_concept": "geographic_region",
+          "aliases": [
+            "official_province_name",
+            "province_name"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country to which the province belongs.",
+          "semantic_type": "code",
+          "business_concept": "country",
+          "aliases": [
+            "country_code",
+            "nation"
+          ]
+        },
+        "othername": {
+          "name": "othername",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Alternative or common name for the province.",
+          "semantic_type": "description",
+          "business_concept": "geographic_region",
+          "aliases": [
+            "alternative_province_name",
+            "province_alias"
+          ]
+        }
+      }
+    },
+    "geo_source": {
+      "table": {
+        "name": "geo_source",
+        "column_count": 3,
+        "summary": "The table contains information about rivers and their associated country and province of origin.",
+        "entity": "River",
+        "role": "entity_table",
+        "aliases": [
+          "geographic_sources",
+          "river_data"
+        ]
+      },
+      "columns": {
+        "river": {
+          "name": "river",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The name of a river.",
+          "semantic_type": "identifier",
+          "business_concept": "Geographic Feature",
+          "aliases": [
+            "river_name",
+            "watercourse"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The two-letter country code representing the country of the river's origin.",
+          "semantic_type": "code",
+          "business_concept": "Geographic Location",
+          "aliases": [
+            "country_code",
+            "nation_code"
+          ]
+        },
+        "province": {
+          "name": "province",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The administrative region or state where the river originates.",
+          "semantic_type": "identifier",
+          "business_concept": "Geographic Location",
+          "aliases": [
+            "region",
+            "administrative_area"
+          ]
+        }
+      }
+    },
+    "locatedon": {
+      "table": {
+        "name": "locatedon",
+        "column_count": 4,
+        "summary": "The table represents locations and their geographical relationships, likely indicating which cities, provinces, islands, and countries are associated with each other.",
+        "entity": "Location",
+        "role": "relationship_table",
+        "aliases": [
+          "geographic_relationships",
+          "location_connections"
+        ]
+      },
+      "columns": {
+        "city": {
+          "name": "city",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A city or town name",
+          "semantic_type": "city",
+          "business_concept": "Geographical Location",
+          "aliases": [
+            "city_name",
+            "location_city"
+          ]
+        },
+        "province": {
+          "name": "province",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A provincial administrative region",
+          "semantic_type": "category",
+          "business_concept": "Geographical Region",
+          "aliases": [
+            "province_name",
+            "administrative_region"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A two-letter country code",
+          "semantic_type": "code",
+          "business_concept": "Geographical Country",
+          "aliases": [
+            "country_code",
+            "location_country"
+          ]
+        },
+        "island": {
+          "name": "island",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "An island name",
+          "semantic_type": "city",
+          "business_concept": "Geographical Location",
+          "aliases": [
+            "island_name",
+            "location_island"
+          ]
+        }
+      }
+    },
+    "islandin": {
+      "table": {
+        "name": "islandin",
+        "column_count": 4,
+        "summary": "The table contains information about islands and their associated bodies of water, such as seas, lakes, and rivers. It appears to be a geographical dataset focusing on islands and their surrounding features.",
+        "entity": "island",
+        "role": "entity_table",
+        "aliases": [
+          "island_data",
+          "geographical_island_info"
+        ]
+      },
+      "columns": {
+        "island": {
+          "name": "island",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The name of the island.",
+          "semantic_type": "identifier",
+          "business_concept": "geographical_location",
+          "aliases": [
+            "island_name",
+            "island_identifier"
+          ]
+        },
+        "sea": {
+          "name": "sea",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The body of water adjacent to the island.",
+          "semantic_type": "description",
+          "business_concept": "geographical_feature",
+          "aliases": [
+            "adjacent_sea",
+            "body_of_water"
+          ]
+        },
+        "lake": {
+          "name": "lake",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The lake associated with the island.",
+          "semantic_type": "description",
+          "business_concept": "geographical_feature",
+          "aliases": [
+            "associated_lake",
+            "lake_name"
+          ]
+        },
+        "river": {
+          "name": "river",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The river associated with the island.",
+          "semantic_type": "description",
+          "business_concept": "geographical_feature",
+          "aliases": [
+            "associated_river",
+            "river_name"
+          ]
+        }
+      }
+    },
+    "geo_mountain": {
+      "table": {
+        "name": "geo_mountain",
+        "column_count": 3,
+        "summary": "A table containing information about mountains, including their names, associated countries, and provinces.",
+        "entity": "Mountain",
+        "role": "entity_table",
+        "aliases": [
+          "mountain_data",
+          "geo_mountain_info"
+        ]
+      },
+      "columns": {
+        "mountain": {
+          "name": "mountain",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The name of the mountain.",
+          "semantic_type": "identifier",
+          "business_concept": "Mountain Name",
+          "aliases": [
+            "mountain_name",
+            "geo_name"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country where the mountain is located.",
+          "semantic_type": "country",
+          "business_concept": "Country Code",
+          "aliases": [
+            "country_code",
+            "location_country"
+          ]
+        },
+        "province": {
+          "name": "province",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The province or region where the mountain is located.",
+          "semantic_type": "description",
+          "business_concept": "Province Name",
+          "aliases": [
+            "province_name",
+            "location_province"
+          ]
+        }
+      }
+    },
+    "geo_river": {
+      "table": {
+        "name": "geo_river",
+        "column_count": 3,
+        "summary": "A table containing information about rivers, including their names, associated countries, and provinces.",
+        "entity": "River",
+        "role": "entity_table",
+        "aliases": [
+          "geographic_river_data",
+          "rivers_by_country"
+        ]
+      },
+      "columns": {
+        "river": {
+          "name": "river",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The name of the river.",
+          "semantic_type": "identifier",
+          "business_concept": "River Name",
+          "aliases": [
+            "river_name",
+            "river_identifier"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country where the river is located.",
+          "semantic_type": "country",
+          "business_concept": "Country Code",
+          "aliases": [
+            "country_code",
+            "location_country"
+          ]
+        },
+        "province": {
+          "name": "province",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The administrative or geographical province associated with the river.",
+          "semantic_type": "description",
+          "business_concept": "Administrative Region",
+          "aliases": [
+            "region",
+            "province_name"
+          ]
+        }
+      }
+    },
+    "airport": {
+      "table": {
+        "name": "airport",
+        "column_count": 10,
+        "summary": "The table represents airports with details such as their identifiers, names, locations, and geographical coordinates.",
+        "entity": "Airport",
+        "role": "entity_table",
+        "aliases": [
+          "airports",
+          "airport_data"
+        ]
+      },
+      "columns": {
+        "iatacode": {
+          "name": "iatacode",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the airport in the form of a three-letter code.",
+          "semantic_type": "code",
+          "business_concept": "Airport Identifier",
+          "aliases": [
+            "airport_code",
+            "iata_code"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Full name or official name of the airport.",
+          "semantic_type": "description",
+          "business_concept": "Airport Name",
+          "aliases": [
+            "airport_name",
+            "full_name"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Two-letter country code representing the country where the airport is located.",
+          "semantic_type": "code",
+          "business_concept": "Country Code",
+          "aliases": [
+            "country_code",
+            "nation_code"
+          ]
+        },
+        "city": {
+          "name": "city",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Name of the city where the airport is located.",
+          "semantic_type": "city",
+          "business_concept": "Location",
+          "aliases": [
+            "airport_city",
+            "city_name"
+          ]
+        },
+        "province": {
+          "name": "province",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Name of the province or region where the airport is located.",
+          "semantic_type": "description",
+          "business_concept": "Location",
+          "aliases": [
+            "region",
+            "province_name"
+          ]
+        },
+        "island": {
+          "name": "island",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Name of the island where the airport is located, if applicable.",
+          "semantic_type": "description",
+          "business_concept": "Location",
+          "aliases": [
+            "island_name",
+            "island_location"
+          ]
+        },
+        "latitude": {
+          "name": "latitude",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Geographical latitude coordinate of the airport.",
+          "semantic_type": "quantity",
+          "business_concept": "Geographical Coordinates",
+          "aliases": [
+            "lat",
+            "latitude_coord"
+          ]
+        },
+        "longitude": {
+          "name": "longitude",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Geographical longitude coordinate of the airport.",
+          "semantic_type": "quantity",
+          "business_concept": "Geographical Coordinates",
+          "aliases": [
+            "lon",
+            "longitude_coord"
+          ]
+        },
+        "elevation": {
+          "name": "elevation",
+          "dtype": "decimal",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Elevation of the airport above sea level.",
+          "semantic_type": "quantity",
+          "business_concept": "Physical Attribute",
+          "aliases": [
+            "elevation_meters",
+            "airport_elevation"
+          ]
+        },
+        "gmtoffset": {
+          "name": "gmtoffset",
+          "dtype": "decimal",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Time zone offset from Coordinated Universal Time (UTC) for the airport.",
+          "semantic_type": "quantity",
+          "business_concept": "Time Zone",
+          "aliases": [
+            "timezone_offset",
+            "gmt_offset"
+          ]
+        }
+      }
+    }
+  }
+}

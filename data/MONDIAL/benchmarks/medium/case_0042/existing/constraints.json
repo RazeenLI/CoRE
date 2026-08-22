@@ -1,0 +1,104 @@
+{
+  "database": "MONDIAL",
+  "constraints": {
+    "primary_keys": {
+      "city": [
+        "name",
+        "country",
+        "province"
+      ],
+      "spoken": [
+        "country",
+        "language"
+      ],
+      "borders": [
+        "country1",
+        "country2"
+      ],
+      "organization": [
+        "abbreviation"
+      ],
+      "river": [
+        "name"
+      ],
+      "geo_sea": [
+        "province",
+        "country",
+        "sea"
+      ],
+      "geo_estuary": [
+        "province",
+        "country",
+        "river"
+      ],
+      "riveronisland": [
+        "river",
+        "island"
+      ]
+    },
+    "foreign_keys": {
+      "organization": [
+        {
+          "columns": [
+            "city",
+            "country",
+            "province"
+          ],
+          "referenced_table": "city",
+          "referenced_columns": [
+            "name",
+            "country",
+            "province"
+          ]
+        }
+      ],
+      "river": [
+        {
+          "columns": [
+            "river"
+          ],
+          "referenced_table": "river",
+          "referenced_columns": [
+            "name"
+          ]
+        }
+      ],
+      "geo_estuary": [
+        {
+          "columns": [
+            "river"
+          ],
+          "referenced_table": "river",
+          "referenced_columns": [
+            "name"
+          ]
+        }
+      ],
+      "riveronisland": [
+        {
+          "columns": [
+            "river"
+          ],
+          "referenced_table": "river",
+          "referenced_columns": [
+            "name"
+          ]
+        }
+      ]
+    },
+    "unique_constraints": {
+      "organization": [
+        [
+          "name"
+        ]
+      ]
+    },
+    "check_constraints": {
+      "river": [
+        "(River IS NULL AND Lake IS NULL)\n            OR (River IS NULL AND Sea IS NULL)\n            OR (Lake IS NULL AND Sea is NULL)"
+      ]
+    },
+    "indexes": {},
+    "inferred_constraints": {}
+  }
+}

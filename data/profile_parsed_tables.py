@@ -15,7 +15,6 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from model.agents.profiler_agent import ProfilerAgent
-from model.core.llm_client import HFLLMClient
 
 
 """
@@ -263,12 +262,15 @@ def create_llm_client(
     model_name: str | None,
     device_map: str,
     no_llm: bool,
-) -> HFLLMClient | None:
+) -> Any | None:
     if no_llm:
         return None
 
     if not model_name:
         raise ValueError("--model-name is required unless --no-llm is set.")
+
+    # Keep heavyweight model dependencies optional for deterministic profiling.
+    from model.core.llm_client import HFLLMClient
 
     return HFLLMClient(
         model_name=model_name,
