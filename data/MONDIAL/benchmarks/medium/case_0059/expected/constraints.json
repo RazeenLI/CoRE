@@ -1,0 +1,83 @@
+{
+  "database": "MONDIAL",
+  "constraints": {
+    "primary_keys": {
+      "provincelocalname": [
+        "country",
+        "province"
+      ],
+      "lake": [
+        "name"
+      ],
+      "river": [
+        "name"
+      ],
+      "geo_mountain": [
+        "province",
+        "country",
+        "mountain"
+      ],
+      "geo_source": [
+        "province",
+        "country",
+        "river"
+      ],
+      "mountainonisland": [
+        "mountain",
+        "island"
+      ]
+    },
+    "foreign_keys": {
+      "river": [
+        {
+          "columns": [
+            "river"
+          ],
+          "referenced_table": "river",
+          "referenced_columns": [
+            "name"
+          ]
+        },
+        {
+          "columns": [
+            "lake"
+          ],
+          "referenced_table": "lake",
+          "referenced_columns": [
+            "name"
+          ]
+        }
+      ],
+      "lake": [
+        {
+          "columns": [
+            "river"
+          ],
+          "referenced_table": "river",
+          "referenced_columns": [
+            "name"
+          ]
+        }
+      ],
+      "geo_source": [
+        {
+          "columns": [
+            "river"
+          ],
+          "referenced_table": "river",
+          "referenced_columns": [
+            "name"
+          ]
+        }
+      ]
+    },
+    "unique_constraints": {},
+    "check_constraints": {
+      "river": [
+        "(River IS NULL AND Lake IS NULL)\n            OR (River IS NULL AND Sea IS NULL)\n            OR (Lake IS NULL AND Sea is NULL)"
+      ]
+    },
+    "indexes": {},
+    "inferred_constraints": {}
+  }
+}

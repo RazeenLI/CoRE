@@ -5,6 +5,8 @@ from typing import Callable
 
 PIPELINE_MODULES = {
     "standard": "model.pipeline",
+    "grain_profiler": "experiments.grain_profiler.pipeline",
+    "constraint_filter": "experiments.constraint_filter.pipeline",
     "no_profiler": "baselines.no_profiler.pipeline",
     "no_selector": "baselines.no_selector.pipeline",
     "llm_matcher": "baselines.llm_matcher.pipeline",

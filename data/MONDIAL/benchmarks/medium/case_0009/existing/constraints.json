@@ -1,0 +1,104 @@
+{
+  "database": "MONDIAL",
+  "constraints": {
+    "primary_keys": {
+      "province": [
+        "name",
+        "country"
+      ],
+      "economy": [
+        "country"
+      ],
+      "politics": [
+        "country"
+      ],
+      "countrylocalname": [
+        "country"
+      ],
+      "provpops": [
+        "country",
+        "province",
+        "year"
+      ],
+      "organization": [
+        "abbreviation"
+      ],
+      "river": [
+        "name"
+      ],
+      "geo_estuary": [
+        "province",
+        "country",
+        "river"
+      ],
+      "locatedon": [
+        "city",
+        "province",
+        "country",
+        "island"
+      ]
+    },
+    "foreign_keys": {
+      "provpops": [
+        {
+          "columns": [
+            "province",
+            "country"
+          ],
+          "referenced_table": "province",
+          "referenced_columns": [
+            "name",
+            "country"
+          ]
+        }
+      ],
+      "river": [
+        {
+          "columns": [
+            "river"
+          ],
+          "referenced_table": "river",
+          "referenced_columns": [
+            "name"
+          ]
+        }
+      ],
+      "geo_estuary": [
+        {
+          "columns": [
+            "river"
+          ],
+          "referenced_table": "river",
+          "referenced_columns": [
+            "name"
+          ]
+        },
+        {
+          "columns": [
+            "province",
+            "country"
+          ],
+          "referenced_table": "province",
+          "referenced_columns": [
+            "name",
+            "country"
+          ]
+        }
+      ]
+    },
+    "unique_constraints": {
+      "organization": [
+        [
+          "name"
+        ]
+      ]
+    },
+    "check_constraints": {
+      "river": [
+        "(River IS NULL AND Lake IS NULL)\n            OR (River IS NULL AND Sea IS NULL)\n            OR (Lake IS NULL AND Sea is NULL)"
+      ]
+    },
+    "indexes": {},
+    "inferred_constraints": {}
+  }
+}

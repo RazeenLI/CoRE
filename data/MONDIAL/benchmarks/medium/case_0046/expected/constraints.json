@@ -1,0 +1,173 @@
+{
+  "database": "MONDIAL",
+  "constraints": {
+    "primary_keys": {
+      "city": [
+        "name",
+        "country",
+        "province"
+      ],
+      "province": [
+        "name",
+        "country"
+      ],
+      "island": [
+        "name"
+      ],
+      "lake": [
+        "name"
+      ],
+      "river": [
+        "name"
+      ],
+      "riverthrough": [
+        "river",
+        "lake"
+      ],
+      "geo_river": [
+        "province",
+        "country",
+        "river"
+      ],
+      "mergeswith": [
+        "sea1",
+        "sea2"
+      ],
+      "riveronisland": [
+        "river",
+        "island"
+      ]
+    },
+    "foreign_keys": {
+      "city": [
+        {
+          "columns": [
+            "province",
+            "country"
+          ],
+          "referenced_table": "province",
+          "referenced_columns": [
+            "name",
+            "country"
+          ]
+        }
+      ],
+      "province": [
+        {
+          "columns": [
+            "capital",
+            "country",
+            "capprov"
+          ],
+          "referenced_table": "city",
+          "referenced_columns": [
+            "name",
+            "country",
+            "province"
+          ]
+        }
+      ],
+      "river": [
+        {
+          "columns": [
+            "river"
+          ],
+          "referenced_table": "river",
+          "referenced_columns": [
+            "name"
+          ]
+        },
+        {
+          "columns": [
+            "lake"
+          ],
+          "referenced_table": "lake",
+          "referenced_columns": [
+            "name"
+          ]
+        }
+      ],
+      "lake": [
+        {
+          "columns": [
+            "river"
+          ],
+          "referenced_table": "river",
+          "referenced_columns": [
+            "name"
+          ]
+        }
+      ],
+      "riverthrough": [
+        {
+          "columns": [
+            "river"
+          ],
+          "referenced_table": "river",
+          "referenced_columns": [
+            "name"
+          ]
+        },
+        {
+          "columns": [
+            "lake"
+          ],
+          "referenced_table": "lake",
+          "referenced_columns": [
+            "name"
+          ]
+        }
+      ],
+      "geo_river": [
+        {
+          "columns": [
+            "river"
+          ],
+          "referenced_table": "river",
+          "referenced_columns": [
+            "name"
+          ]
+        },
+        {
+          "columns": [
+            "province",
+            "country"
+          ],
+          "referenced_table": "province",
+          "referenced_columns": [
+            "name",
+            "country"
+          ]
+        }
+      ],
+      "riveronisland": [
+        {
+          "columns": [
+            "river"
+          ],
+          "referenced_table": "river",
+          "referenced_columns": [
+            "name"
+          ]
+        },
+        {
+          "columns": [
+            "island"
+          ],
+          "referenced_table": "island",
+          "referenced_columns": [
+            "name"
+          ]
+        }
+      ]
+    },
+    "unique_constraints": {},
+    "check_constraints": {
+      "river": [
+        "(River IS NULL AND Lake IS NULL)\n            OR (River IS NULL AND Sea IS NULL)\n            OR (Lake IS NULL AND Sea is NULL)"
+      ]
+    },
+    "indexes": {},
+    "inferred_constraints": {}
+  }
+}

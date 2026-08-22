@@ -5,6 +5,7 @@ import csv
 import copy
 import json
 import re
+import shutil
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -666,9 +667,13 @@ def parse_insert_values(values: str) -> List[List[Any]]:
     return rows
 
 
-def parse_insert(stmt: str, table_rows: Dict[str, List[Dict[str, Any]]]) -> None:
+def parse_insert(
+    stmt: str,
+    schema: Dict[str, Any],
+    table_rows: Dict[str, List[Dict[str, Any]]],
+) -> None:
     m = re.match(
-        r"INSERT\s+INTO\s+(?P<table>[^\s(]+)\s*\((?P<cols>.*?)\)\s+VALUES\s*(?P<values>.*)$",
+        r"INSERT\s+INTO\s+(?P<table>[^\s(]+)\s*(?:\((?P<cols>.*?)\))?\s+VALUES\s*(?P<values>.*)$",
         stmt,
         flags=re.IGNORECASE | re.DOTALL
     )
@@ -676,12 +681,28 @@ def parse_insert(stmt: str, table_rows: Dict[str, List[Dict[str, Any]]]) -> None
         return
 
     table = clean_identifier(m.group("table"))
-    cols = parse_identifier_list(m.group("cols"))
+    raw_cols = m.group("cols")
+    if raw_cols is not None:
+        cols = parse_identifier_list(raw_cols)
+    else:
+        table_schema = schema.get("tables", {}).get(table)
+        if table_schema is None:
+            raise ValueError(
+                f"INSERT without a column list refers to unknown table: {table}"
+            )
+        # Python dictionaries preserve insertion order. parse_create_table adds
+        # columns in DDL order, which is the order required by SQL VALUES rows.
+        cols = list(table_schema.get("columns", {}).keys())
+
     rows = parse_insert_values(m.group("values").strip())
 
     table_rows.setdefault(table, [])
 
     for row in rows:
+        if len(row) != len(cols):
+            raise ValueError(
+                f"INSERT into {table} has {len(row)} values but {len(cols)} columns"
+            )
         table_rows[table].append(dict(zip(cols, row)))
 
 
@@ -747,7 +768,7 @@ def parse_postgres_sql(
         elif upper.startswith("CREATE INDEX") or upper.startswith("CREATE UNIQUE INDEX"):
             parse_create_index(stmt, constraints)
         elif upper.startswith("INSERT INTO"):
-            parse_insert(stmt, table_rows)
+            parse_insert(stmt, schema, table_rows)
 
     # Primary key columns are always non-null.
     for pk in constraints["constraints"]["primary_keys"]:
@@ -789,6 +810,10 @@ def write_outputs(
     output_dir.mkdir(parents=True, exist_ok=True)
 
     tables_dir = output_dir / "tables"
+    # The directory is generated output. Remove it first so that re-parsing a
+    # dump with fewer populated tables cannot leave stale CSVs from an older run.
+    if tables_dir.exists():
+        shutil.rmtree(tables_dir)
     tables_dir.mkdir(parents=True, exist_ok=True)
 
     (output_dir / "schema.json").write_text(
@@ -827,7 +852,8 @@ def main() -> None:
         "-i",
         required=True,
         type=Path,
-        help="Input PostgreSQL .sql file"
+        nargs="+",
+        help="One or more PostgreSQL .sql files, parsed in the given order"
     )
 
     parser.add_argument(
@@ -837,11 +863,16 @@ def main() -> None:
         type=Path,
         help="Output parsed directory"
     )
+    parser.add_argument(
+        "--database-name",
+        default=None,
+        help="Database name when the SQL does not contain CREATE DATABASE"
+    )
 
     args = parser.parse_args()
 
-    sql = args.input.read_text(encoding="utf-8")
-    fallback_db = args.input.stem.lower()
+    sql = "\n".join(path.read_text(encoding="utf-8") for path in args.input)
+    fallback_db = args.database_name or args.input[0].stem.lower()
 
     schema, constraints, table_rows = parse_postgres_sql(sql, fallback_db)
     write_outputs(schema, constraints, table_rows, args.output)

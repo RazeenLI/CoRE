@@ -1,9 +1,45 @@
 # Experimental model variants
 
-These variants are isolated from `model/` so the current Standard remains
-reproducible. They are also isolated from each other: each experiment owns its
-pipeline, orchestrator, Evolutor, and prompt, and there is no shared experiment
-implementation whose modification could change both results.
+Experiment-specific code stays under `experiments/`; no experiment imports
+another experiment or baseline. Components that are intentionally unchanged
+are imported from the frozen Standard implementation, while each experimental
+difference is implemented locally.
+
+## `grain_profiler`
+
+```text
+Grain Profiler -> MPNet Candidate Selector -> Evolutor -> Validator -> Decision
+```
+
+The workflow matches Standard. Only the profile representation changes:
+incoming and existing profiles retain concise row-grain evidence and remove
+duplicated descriptions, aliases, schema fields, and value-pattern fields.
+
+```bash
+MODEL=grain_profiler DATASIZE=large ./run_cases.sh
+```
+
+## `embedding_evaluation`
+
+This is a retrieval-only experiment rather than a pipeline model. It compares
+SentenceTransformer encoders using target-table and exact-column Hit@K/MRR and
+does not call Qwen. See `embedding_evaluation/README.md` for the command.
+
+## `constraint_filter`
+
+```text
+Full Profiler -> MPNet Candidate Selector -> Constraint Filter
+              -> Evolutor -> Validator -> Decision
+```
+
+This is a single-variable Standard variant. Only the Evolutor's constraint
+context changes: table-scoped constraints retain Top-k tables, and foreign keys
+are retained only when both endpoints are in Top-k. The full TaskState and
+proposal application remain unchanged.
+
+```bash
+MODEL=constraint_filter DATASIZE=medium ./run_cases.sh
+```
 
 ## `no_matcher`
 
