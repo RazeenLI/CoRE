@@ -1,0 +1,80 @@
+benchmark:
+  name: TPCDS_medium
+  source_database: TPCDS
+  size_level: medium
+  output_dir: data/TPCDS/benchmarks/medium
+  random_seed: 42
+  source_path: data/TPCDS/parsed
+  sample_num: 3
+
+size:
+  after_table_count:
+    min: 6
+    max: 9
+  sample_row_count:
+    min: 10
+    max: 20
+
+case_counts:
+  extend_table: 30
+  create_table: 30
+  insert_table: 20
+
+after_context:
+  edge_source: foreign_keys
+  max_fk_depth: 3
+  seed_table_filters:
+    require_sample_rows: true
+    min_total_columns: 2
+    exclude_tables: []
+  allow_distractor_tables: true
+  distractor_table_count:
+    min: 0
+    max: 1
+
+case_rules:
+  extend_table:
+    source_table_filters:
+      require_primary_key: true
+      min_hideable_non_key_columns: 1
+      min_remaining_columns_after_hide: 2
+      exclude_pure_association_tables: true
+    hidden_columns:
+      column_type: non_key_columns
+      min: 1
+      max: 4
+    incoming:
+      include_key_columns: true
+      include_hidden_columns: true
+
+  create_table:
+    source_table_filters:
+      require_primary_key: true
+      min_columns: 3
+      require_fk_connection_to_remaining_after: true
+    incoming:
+      include_all_columns: true
+
+  insert_table:
+    source_table_filters:
+      require_primary_key: true
+      min_projectable_columns: 3
+    incoming:
+      include_key_columns: true
+      projection_columns:
+        min: 3
+        max: 8
+
+perturbation:
+  enabled: true
+  clean_ratio: 0.5
+  use_profile_aliases: true
+  apply_to:
+    incoming_table_name: true
+    incoming_column_names: true
+    incoming_column_order: true
+  probabilities:
+    table_name_rename: 0.3
+    column_name_rename: 0.5
+    column_order_shuffle: 0.5
+    low_name_overlap: 0.2

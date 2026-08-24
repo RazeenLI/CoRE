@@ -18,10 +18,22 @@ Each case should be a local RDB maintenance scenario, rather than a full databas
 | Subset    | Small case (3–5 tables) | Medium case (6–9 tables) | Large case (10–15 tables) | Total case count |
 | --------- | ----------------------- | ------------------------ | ------------------------- | ---------------- |
 | Chinook   | 50                      | 60                       | 40                        | 150        |
-| TPC-DS    | 60                      | 80                       | 600                        | 200        |
+| TPC-DS    | 60                      | 80                       | 60                        | 200        |
 | MONDIAL   | 70                      | 100                      | 80                        | 250        |
 | Spider    | 250                     | 400                      | 350                       | 1000       |
-| **Total** | **440**                 | **660**                  | **550**                   | **1650**   |
+| **Total** | **370**                 | **640**                  | **530**                   | **1540**   |
+
+The counts above are the target benchmark composition. They should be reported as final dataset statistics only after all cases have been generated and validated.
+
+### Paper-facing benchmark contribution
+
+A central contribution of this work is a benchmark for relational schema-maintenance decisions. Rather than evaluating on a single database, the benchmark draws complete relational schemas from Chinook, TPC-DS, MONDIAL, and Spider, covering conventional business databases, analytical warehouses, densely connected geographical data, and heterogeneous cross-domain schemas. Each complete database is treated as ground truth and systematically transformed into paired `existing`, `incoming`, and `expected` states. The cases exercise three maintenance decisions—extending an existing table, creating a new table, and inserting rows into an existing table—under small, medium, and large relational contexts. This construction provides controlled ground-truth actions while varying schema scale, topology, naming overlap, and domain.
+
+Suggested contribution bullet for the Introduction (replace the current target with final validated numbers):
+
+> We construct a multi-source benchmark for relational schema maintenance, comprising paired existing-database, incoming-table, and ground-truth target states derived from four structurally and semantically diverse database sources. The benchmark systematically covers table extension, table creation, and row insertion across small, medium, and large schema contexts, enabling controlled evaluation of both maintenance decisions and the resulting relational structures.
+
+Do not claim that this is the *first* benchmark for the task without a dedicated related-work review. Once generation is complete, strengthen the bullet with the validated numbers of databases, cases, tables, columns, foreign keys, decision classes, and size levels.
 
 
 
@@ -57,6 +69,13 @@ data/
 │               ├── schema.json, constraints.json, profiles.json
 │               ├── proposal.json
 │               └── tables/<table>.csv
+├── TPCDS/
+│   ├── <download-id>-TPC-DS-Tool.zip
+│   └── raw/DSGen-software-code-4.0.0/
+│       ├── tools/tpcds.sql       # 24 business tables + dbgen_version
+│       ├── tools/tpcds_ri.sql    # primary/foreign-key relationships
+│       ├── tools/tpcds_source.sql
+│       └── tools/dsdgen          # locally compiled data generator
 └── MONDIAL/
     ├── raw/
     │   ├── mondial-schema.psql       # official PostgreSQL DDL
@@ -100,7 +119,36 @@ The table counts above describe the original complete schemas, not the 3–5, 6�
 
 [TPC-DS](https://www.tpc.org/tpcds/) models a retail decision-support system. Its schema contains 24 tables: 7 fact tables and 17 dimension tables. Unlike TPC-H's 8-table schema, TPC-DS can support the shared benchmark case sizes of 3–5, 6–9, and 10–15 tables without redefining the large category.
 
-TPC-DS is generated rather than distributed as a PostgreSQL data dump. The planned import will use the official [TPC-DS Tools](https://www.tpc.org/tpc_documents_current_versions/current_specifications5.asp), run `dsdgen` at a documented scale factor, and convert its pipe-delimited `.dat` outputs into this repository's parsed RDB format. The generated data files should not be committed until the TPC license and repository-size policy have been reviewed; the generator version, scale factor, commands, schema, constraints, and conversion code will remain versioned for reproducibility.
+The official TPC-DS Tools v4.0.0 archive was downloaded from the [TPC specification page](https://www.tpc.org/tpc_documents_current_versions/current_specifications5.asp) and unpacked under `data/TPCDS/raw/`. It contains:
+
+- `tools/tpcds.sql`: ANSI SQL definitions for the 24 business tables plus the auxiliary `dbgen_version` table.
+- `tools/tpcds_ri.sql`: 109 `ALTER TABLE ... FOREIGN KEY` statements; the file also relies on primary keys declared by `tpcds.sql`.
+- `tools/tpcds_source.sql`: 9 source/staging tables for data-maintenance workloads, excluded from this dataset.
+- `tools/dsdgen`: the source and locally compiled executable that generates pipe-delimited `.dat` files.
+
+The current SQL parser successfully reads the two relevant official SQL files without a compatibility patch:
+
+```bash
+python data/parse_sql.py \
+  --input \
+    data/TPCDS/raw/DSGen-software-code-4.0.0/tools/tpcds.sql \
+    data/TPCDS/raw/DSGen-software-code-4.0.0/tools/tpcds_ri.sql \
+  --database-name TPCDS \
+  --output data/TPCDS/parsed
+```
+
+This preliminary parse produces 25 tables, 24 primary-key constraints spanning 32 key columns, and 109 foreign keys. `dbgen_version` has no primary key and must be removed during final conversion, leaving the intended 24 business tables, each with a primary key.
+
+On modern GCC, compile only the required data generator with `-fcommon`:
+
+```bash
+cd data/TPCDS/raw/DSGen-software-code-4.0.0/tools
+make clean
+make CC='gcc -fcommon' dsdgen
+./dsdgen -release
+```
+
+The full `make` target also tries to build `dsqgen` and requires `yacc`; query generation is not needed for this dataset-construction task. Data generation has not started yet because the scale factor determines both the raw size and the sampling methodology. Generated `.dat` files should not be committed until the TPC license and repository-size policy have been reviewed.
 
 ### MONDIAL
 
