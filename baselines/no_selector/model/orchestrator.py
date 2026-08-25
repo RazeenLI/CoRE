@@ -51,29 +51,31 @@ class Orchestrator:
             TaskStep.INITIALIZED,
         )
 
-        while state.status not in {TaskStatus.SUCCEEDED, TaskStatus.FAILED}:
+        with state.measure_end_to_end():
+          while state.status not in {TaskStatus.SUCCEEDED, TaskStatus.FAILED}:
             step = state.routing["next_step"]
-            if step == TaskStep.PROFILING:
+            with state.measure_step(step):
+              if step == TaskStep.PROFILING:
                 self._run_profiler(state)
-            elif step == TaskStep.EVOLVING:
+              elif step == TaskStep.EVOLVING:
                 self._run_evolutor(state)
-            elif step == TaskStep.BUILDING_PROPOSAL:
+              elif step == TaskStep.BUILDING_PROPOSAL:
                 self._build_proposal(state)
-            elif step == TaskStep.BUILDING_PREVIEW:
+              elif step == TaskStep.BUILDING_PREVIEW:
                 self._build_preview(state)
-            elif step == TaskStep.VALIDATING:
+              elif step == TaskStep.VALIDATING:
                 self._run_validator(state)
-            elif step == TaskStep.AWAITING_DECISION:
+              elif step == TaskStep.AWAITING_DECISION:
                 self._finalize_decision(state)
-            elif step == TaskStep.APPLYING_DECISION:
+              elif step == TaskStep.APPLYING_DECISION:
                 self._apply_decision(state)
-            elif step == TaskStep.COMPLETED:
+              elif step == TaskStep.COMPLETED:
                 state.update_status(
                     TaskStep.COMPLETED,
                     TaskStatus.SUCCEEDED,
                     "No-Matcher task completed.",
                 )
-            else:
+              else:
                 state.update_status(
                     TaskStep.ERROR,
                     TaskStatus.FAILED,

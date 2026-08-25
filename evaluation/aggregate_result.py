@@ -48,6 +48,8 @@ METRICS: list[str] = [
 
     "non_target_mean_preservation",
     "non_target_full_preservation_rate",
+
+    "timing_end_to_end_seconds_mean",
 ]
 
 
@@ -946,6 +948,32 @@ def summarize_dataset_results(
         )
         for row in preservation_rows
     )
+
+    timing_keys = sorted(
+        {
+            key
+            for row in evaluated_rows
+            for key in row
+            if key.startswith("timing_")
+            and (
+                key.endswith("_seconds")
+                or key.endswith("_call_count")
+            )
+        }
+    )
+
+    for key in timing_keys:
+        values = [
+            float(row[key])
+            for row in evaluated_rows
+            if row.get(key) not in {None, ""}
+        ]
+        if not values:
+            continue
+        summary[f"{key}_mean"] = mean(values)
+        summary[f"{key}_stdev"] = (
+            stdev(values) if len(values) > 1 else 0.0
+        )
 
     return summary
 # =====================================================

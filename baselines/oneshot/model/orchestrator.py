@@ -41,44 +41,44 @@ class Orchestrator:
             incoming_table=incoming_table,
         )
 
-        while task_state.status not in {
-            TaskStatus.SUCCEEDED,
-            TaskStatus.FAILED,
-        }:
+        with task_state.measure_end_to_end():
+          while task_state.status not in {
+              TaskStatus.SUCCEEDED,
+              TaskStatus.FAILED,
+          }:
             next_step = task_state.routing["next_step"]
 
-            if next_step == TaskStep.EVOLVING:
+            with task_state.measure_step(next_step):
+              if next_step == TaskStep.EVOLVING:
                 self._run_evolutor(task_state)
 
-            elif next_step == TaskStep.BUILDING_PROPOSAL:
+              elif next_step == TaskStep.BUILDING_PROPOSAL:
                 self._build_proposal(task_state)
 
-            elif next_step == TaskStep.BUILDING_PREVIEW:
+              elif next_step == TaskStep.BUILDING_PREVIEW:
                 self._build_preview(task_state)
 
-            elif next_step == TaskStep.AWAITING_DECISION:
+              elif next_step == TaskStep.AWAITING_DECISION:
                 self._finalize_decision(task_state)
 
-            elif next_step == TaskStep.APPLYING_DECISION:
+              elif next_step == TaskStep.APPLYING_DECISION:
                 self._apply_final_decision(task_state)
 
-            elif next_step == TaskStep.COMPLETED:
+              elif next_step == TaskStep.COMPLETED:
                 task_state.update_status(
                     current_step=TaskStep.COMPLETED,
                     status=TaskStatus.SUCCEEDED,
                     message="One-shot task completed successfully.",
                 )
-                break
 
-            elif next_step == TaskStep.ERROR:
+              elif next_step == TaskStep.ERROR:
                 task_state.update_status(
                     current_step=TaskStep.ERROR,
                     status=TaskStatus.FAILED,
                     message="One-shot task failed.",
                 )
-                break
 
-            else:
+              else:
                 task_state.set_routing(
                     next_step=TaskStep.ERROR,
                     reason=f"Unknown next_step: {next_step}",

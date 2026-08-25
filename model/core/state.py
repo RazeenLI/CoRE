@@ -38,6 +38,8 @@ Important:
 
 from __future__ import annotations
 
+from contextlib import contextmanager
+from time import perf_counter
 from typing import Any
 import uuid
 from enum import StrEnum
@@ -152,6 +154,55 @@ class TaskState:
 
         # Lightweight execution history
         self.trace: list[dict[str, Any]] = []
+
+        self.timing: dict[str, Any] = {
+            "end_to_end_seconds": 0.0,
+            "steps": {
+                step.value: {
+                    "total_seconds": 0.0,
+                    "call_count": 0,
+                    "runs": [],
+                }
+                for step in (
+                    TaskStep.PROFILING,
+                    TaskStep.MATCHING,
+                    TaskStep.EVOLVING,
+                    TaskStep.BUILDING_PROPOSAL,
+                    TaskStep.BUILDING_PREVIEW,
+                    TaskStep.VALIDATING,
+                    TaskStep.AWAITING_DECISION,
+                    TaskStep.APPLYING_DECISION,
+                )
+            },
+        }
+
+    @contextmanager
+    def measure_step(self, step: TaskStep):
+        started_at = perf_counter()
+        try:
+            yield
+        finally:
+            elapsed = perf_counter() - started_at
+            key = step.value
+            entry = self.timing["steps"].get(key)
+            if entry is not None:
+                entry["total_seconds"] += elapsed
+                entry["call_count"] += 1
+                entry["runs"].append(elapsed)
+
+    @contextmanager
+    def measure_end_to_end(self):
+        started_at = perf_counter()
+        try:
+            yield
+        finally:
+            self.timing["end_to_end_seconds"] = perf_counter() - started_at
+
+    def start_timer(self) -> float:
+        return perf_counter()
+
+    def finish_end_to_end(self, started_at: float) -> None:
+        self.timing["end_to_end_seconds"] = perf_counter() - started_at
 
     def save_result(
         self,
@@ -332,6 +383,7 @@ class TaskState:
             "results": self.results,
             "routing": self.routing,
             "trace": self.trace,
+            "timing": self.timing,
         }
 
     @classmethod
@@ -374,6 +426,9 @@ class TaskState:
         else:
             state.routing = None
         state.trace = data.get("trace", [])
+        state.timing = data.get(
+            "timing",
+            state.timing,
+        )
 
         return state
-
