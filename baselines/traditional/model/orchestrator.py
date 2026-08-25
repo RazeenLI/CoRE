@@ -42,43 +42,49 @@ class Orchestrator:
         incoming_table: dict[str, Any],
     ) -> tuple[TaskState, dict[str, Any] | None]:
         state = TaskState(id=task_id, existing_rdb=existing_rdb, incoming_table=incoming_table)
-        match_result = self.matcher(
-            incoming_schema=state.incoming_schema,
-            incoming_values=state.incoming_values,
-            existing_schema=state.existing_schema,
-            existing_values=state.existing_values,
-            existing_profiles=state.existing_profiles,
-        )
+        task_started_at = state.start_timer()
+        with state.measure_step(TaskStep.MATCHING):
+            match_result = self.matcher(
+                incoming_schema=state.incoming_schema,
+                incoming_values=state.incoming_values,
+                existing_schema=state.existing_schema,
+                existing_values=state.existing_values,
+                existing_profiles=state.existing_profiles,
+            )
         state.save_result(TaskStep.MATCHING, match_result, f"{self.matcher_name} matching completed.")
 
-        rule_result = build_rule_result(
-            matcher_name=self.matcher_name,
-            incoming_schema=state.incoming_schema,
-            existing_schema=state.existing_schema,
-            existing_constraints=state.constraints,
-            matching_result=match_result,
-            thresholds=self.thresholds,
-        )
+        with state.measure_step(TaskStep.EVOLVING):
+            rule_result = build_rule_result(
+                matcher_name=self.matcher_name,
+                incoming_schema=state.incoming_schema,
+                existing_schema=state.existing_schema,
+                existing_constraints=state.constraints,
+                matching_result=match_result,
+                thresholds=self.thresholds,
+            )
         state.save_result(TaskStep.EVOLVING, rule_result, "Rule-based operation decision completed.")
 
-        proposal = build_proposal(
-            incoming_schema=state.incoming_schema,
-            incoming_values=state.incoming_values,
-            existing_schema=state.existing_schema,
-            existing_values=state.existing_values,
-            existing_constraints=state.constraints,
-            result={"source": Agents.EVOLUTOR, "payload": rule_result},
-        )
+        with state.measure_step(TaskStep.BUILDING_PROPOSAL):
+            proposal = build_proposal(
+                incoming_schema=state.incoming_schema,
+                incoming_values=state.incoming_values,
+                existing_schema=state.existing_schema,
+                existing_values=state.existing_values,
+                existing_constraints=state.constraints,
+                result={"source": Agents.EVOLUTOR, "payload": rule_result},
+            )
         state.save_result(TaskStep.BUILDING_PROPOSAL, proposal, "Rule-based proposal completed.")
-        preview = apply_proposal(
-            incoming_schema=state.incoming_schema,
-            existing_schema=state.existing_schema,
-            existing_constraints=state.constraints,
-            proposal=proposal,
-        )
+        with state.measure_step(TaskStep.BUILDING_PREVIEW):
+            preview = apply_proposal(
+                incoming_schema=state.incoming_schema,
+                existing_schema=state.existing_schema,
+                existing_constraints=state.constraints,
+                proposal=proposal,
+            )
         state.save_result(TaskStep.BUILDING_PREVIEW, preview, "Proposal preview completed.")
 
-        decision_result = self.decision(
+        with state.measure_step(TaskStep.AWAITING_DECISION):
+            decision_result = self.decision(
             task_id=state.id,
             incoming_schema=state.incoming_schema,
             incoming_values=state.incoming_values,
@@ -89,18 +95,20 @@ class Orchestrator:
             results=state.results,
             trace=state.trace,
             save_path=self.save_path / "visualization",
-        )
+            )
         state.save_result(TaskStep.AWAITING_DECISION, decision_result, "Baseline decision completed.")
         if not decision_result["approved"]:
             state.update_status(TaskStep.ERROR, TaskStatus.FAILED, "Baseline proposal was rejected.")
+            state.finish_end_to_end(task_started_at)
             return state, proposal
 
-        (
+        with state.measure_step(TaskStep.APPLYING_DECISION):
+          (
             state.existing_schema,
             state.constraints,
             state.existing_profiles,
             state.existing_values,
-        ) = apply_update_plan_to_existing_parts(
+          ) = apply_update_plan_to_existing_parts(
             schema=state.existing_schema,
             constraints=state.constraints,
             profiles=state.existing_profiles,
@@ -108,7 +116,7 @@ class Orchestrator:
             incoming_values=state.incoming_values,
             proposal=proposal,
             update_plan=preview,
-        )
+          )
         state.set_routing(
             next_step=TaskStep.COMPLETED,
             reason=f"{self.matcher_name} baseline result applied.",
@@ -119,4 +127,5 @@ class Orchestrator:
             TaskStatus.SUCCEEDED,
             f"{self.matcher_name} baseline completed successfully.",
         )
+        state.finish_end_to_end(task_started_at)
         return state, proposal

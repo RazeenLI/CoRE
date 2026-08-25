@@ -143,6 +143,7 @@ def evaluate_benchmark(
 
         predicted_rdb_path = result_case_dir / "database"
         predicted_proposal_path = result_case_dir / "proposal.json"
+        task_state_path = result_case_dir / "task_state.json"
 
         # ---------------------------------------------
         # 1. Load benchmark data
@@ -217,6 +218,13 @@ def evaluate_benchmark(
                 }
             )
             continue
+
+        timing_result: dict[str, Any] = {}
+        if task_state_path.exists():
+            try:
+                timing_result = load_json(task_state_path).get("timing", {})
+            except (FileNotFoundError, ValueError):
+                timing_result = {}
 
         # ---------------------------------------------
         # 4. Call metrics
@@ -421,6 +429,8 @@ def evaluate_benchmark(
         case_result.update(flatten_dict(proposal_validity_result, prefix="proposal_validity"))
 
         case_result.update(flatten_dict(non_target_preservation_result, prefix="non_target_preservation"))
+
+        case_result.update(flatten_dict(timing_result, prefix="timing"))
 
         # print(json.dumps(case_result, indent=4))
 
