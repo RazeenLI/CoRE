@@ -62,9 +62,11 @@ Return only valid JSON with this exact structure:
 }}
 
 Decision rules:
-- Choose "insert_table" when the incoming table has the same row grain as one existing table and every incoming column can be reliably mapped to an existing column in that table without changing the existing schema.
-- Choose "extend_table" when the incoming table has the same row grain as one existing table but introduces one or more columns that must be added to that table.
-- Choose "create_table" when the incoming table has a new row grain that cannot be represented by any existing table.
+- First determine whether the incoming rows are additional instances of an existing relation, direct attributes of an existing relation's semantic subject, or a distinct semantic concept.
+- Choose "insert_table" only when the incoming rows are additional instances of one existing relation and every incoming column can be reliably mapped to an existing column in that relation without changing its schema.
+- Choose "extend_table" when the incoming table describes the same semantic subject as one existing relation and introduces one or more direct attributes that require new columns.
+- Choose "create_table" when the incoming table represents a distinct entity, event, relationship, or independently meaningful concept that should retain its own relation.
+- Apply these rules in order: test "insert_table" first, then distinguish "extend_table" from "create_table" by semantic subject.
 
 Scope rules:
 - Only use tables provided in existing_rdb.tables as existing tables.
@@ -74,12 +76,15 @@ Scope rules:
 - Do not create an association table unless at least two referenced existing tables are present in existing_rdb.tables.
 - Foreign keys may only reference tables from existing_rdb.tables.
 
-Grain rules:
-- Infer the incoming row grain from all incoming columns.
-- A matched identifier column may indicate table identity or a reference-like attribute; it is not enough by itself to create a new table.
-- If the incoming table name matches an existing table and all incoming columns reliably map to existing columns, prefer "insert_table".
-- If the incoming table name matches an existing table and the incoming columns can be stored on that table after adding columns, prefer "extend_table".
-- If a column looks like a reference to a missing table, keep it as a column on the selected target table and do not invent the missing table.
+Grain and semantic-boundary rules:
+- Infer what one incoming row represents from the table name, all columns, profiles, sample values, and constraints.
+- Row grain is evidence, but it is not sufficient by itself to distinguish "extend_table" from "create_table".
+- A shared identifier, key, one-to-one correspondence, foreign key, or joinability does not by itself imply "extend_table".
+- Choose "extend_table" only when the incoming columns are direct attributes of the semantic subject represented by the existing target table.
+- Choose "create_table" when the incoming columns collectively describe a different semantic subject, even if the incoming table shares a key or row grain with an existing table.
+- A new table does not need to have a foreign-key relationship with the existing RDB.
+- Table-name similarity is supporting evidence only and must not override the semantic meaning of the table and columns.
+- If a column references a missing table, do not invent that missing table; preserve the column within the table selected by the decision.
 
 Column placement rules:
 - Every incoming column must appear exactly once in column_placements.
