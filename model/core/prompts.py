@@ -136,6 +136,9 @@ Scope rules:
 
 Grain and semantic-boundary rules:
 - Infer what one incoming row represents from the table name, all columns, profiles, sample values, and constraints.
+- Before choosing "insert_table", verify that every incoming column corresponds to an existing column in the target table. If any incoming column requires creating a new column, "insert_table" is not allowed.
+- If the incoming table name exactly matches an existing table name after case and separator normalization, and at least one incoming column requires a new column, prefer "extend_table" over "create_table" unless the incoming rows clearly have a different grain.
+- Do not treat a semantic alias or general topical similarity as an exact table-name match.
 - Row grain is evidence, but it is not sufficient by itself to distinguish "extend_table" from "create_table".
 - A shared identifier, key, one-to-one correspondence, foreign key, or joinability does not by itself imply "extend_table".
 - Choose "extend_table" only when the incoming columns are direct attributes of the semantic subject represented by the existing target table.
