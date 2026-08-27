@@ -7,6 +7,7 @@ PIPELINE_MODULES = {
     "standard": "model.pipeline",
     "grain_profiler": "experiments.grain_profiler.pipeline",
     "constraint_filter": "experiments.constraint_filter.pipeline",
+    "validator_prompt": "experiments.validator_prompt.pipeline",
     "no_profiler": "baselines.no_profiler.pipeline",
     "no_selector": "baselines.no_selector.pipeline",
     "llm_matcher": "baselines.llm_matcher.pipeline",
