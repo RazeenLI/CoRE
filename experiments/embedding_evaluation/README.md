@@ -18,10 +18,10 @@ Evaluate the current MPNet encoder:
 
 ```bash
 python -m experiments.embedding_evaluation.evaluate \
-  --cases-root data/Chinook/benchmarks/large \
+  --cases-root data/TPCDS/benchmarks/large \
   --models sentence-transformers/all-mpnet-base-v2 \
   --k 1 3 5 10 20 \
-  --output experiments/embedding_evaluation/results/large.json
+  --output experiments/embedding_evaluation/TPCDS/results/large.json
 ```
 
 Compare multiple SentenceTransformer models by passing all model names after
