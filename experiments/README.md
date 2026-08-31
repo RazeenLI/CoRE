@@ -25,6 +25,20 @@ This is a retrieval-only experiment rather than a pipeline model. It compares
 SentenceTransformer encoders using target-table and exact-column Hit@K/MRR and
 does not call Qwen. See `embedding_evaluation/README.md` for the command.
 
+## `no_sample_values` (planned privacy experiment)
+
+This experiment evaluates deployments in which database and incoming-table
+cell values cannot be disclosed to the LLM. It follows the Standard pipeline
+but removes all example rows and literal sample values from the incoming-table
+and existing-RDB contexts. Schema names, constraints, and non-literal aggregate
+profile statistics remain available; profile fields containing raw values must
+also be removed.
+
+Compare this variant with Standard using decision, proposal, constraint, and
+validity metrics, together with prompt tokens and elapsed time. The comparison
+measures how much the framework depends on value-level evidence and whether it
+remains usable under this privacy restriction.
+
 ## `constraint_filter`
 
 ```text

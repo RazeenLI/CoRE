@@ -11,7 +11,7 @@
 | Metric | 状态 | 为什么使用 |
 |---|---|---|
 | Result Coverage | DONE | 区分模型质量与 missing/failed outputs，避免忽略失败 case。 |
-| Pipeline Success Rate | DERIVABLE | 与 Result Coverage 不同，它检查流程是否正常结束，即使失败流程可能残留可评估 proposal。 |
+| Pipeline Success Rate | DONE | 与 Result Coverage 不同，它检查流程是否正常结束，即使失败流程可能残留可评估 proposal。 |
 | Load/Parse Failure Rate | DONE | 单独暴露格式错误或损坏输出，不与语义错误混合。 |
 
 ## 2. Evolution Decision
@@ -22,9 +22,9 @@
 |---|---|---|
 | Decision Accuracy | DONE | 给出总体 operation 判断正确率，最直观但受类别分布影响。 |
 | Decision Macro-F1 | DONE | 对三类 decision 等权，避免大类别掩盖小类别失败。 |
-| Per-class Precision/Recall/F1 | DERIVABLE | 定位某一 operation 的系统性过预测或漏预测，Accuracy 无法显示方向。 |
-| Decision Confusion Matrix | DERIVABLE | 显示具体错误方向，例如 MONDIAL 的 `create→extend`。 |
-| Create→Extend Rate | DERIVABLE | 专门量化 create/extend 边界问题，不被其他 confusion 稀释。 |
+| Per-class Precision/Recall/F1 | DONE | 定位某一 operation 的系统性过预测或漏预测，Accuracy 无法显示方向。 |
+| Decision Confusion Matrix | DONE | 显示具体错误方向，例如 MONDIAL 的 `create→extend`。 |
+| Create→Extend Rate | DONE | 专门量化 create/extend 边界问题，不被其他 confusion 稀释。 |
 
 ## 3. Decision 与内部操作解耦
 
@@ -32,12 +32,12 @@ Decision 正确不代表 column/table/constraint actions 正确；Decision 错�
 
 | Metric | 状态 | 为什么使用 |
 |---|---|---|
-| Action F1 conditioned on correct decision | TODO | 检查在 operation 已判断正确时，proposal construction 还剩多少错误。 |
-| Action F1 conditioned on wrong decision | TODO | 衡量错误 decision 下内部 mappings 是否仍部分正确。 |
-| Correct-decision / Wrong-action Rate | TODO | 直接统计“外层判断对但内部执行错”的 cases，定位 Builder/Evolutor action 问题。 |
-| Wrong-decision / Useful-action Rate | TODO | 识别严格 Decision Accuracy 低估的部分正确结果。 |
+| Action F1 conditioned on correct decision | DONE | 检查在 operation 已判断正确时，proposal construction 还剩多少错误。 |
+| Action F1 conditioned on wrong decision | DONE | 衡量错误 decision 下内部 mappings 是否仍部分正确。 |
+| Correct-decision / Wrong-action Rate | DONE | 直接统计“外层判断对但内部执行错”的 cases，定位 Builder/Evolutor action 问题。 |
+| Wrong-decision / Useful-action Rate | DONE | 识别严格 Decision Accuracy 低估的部分正确结果。 |
 | Decision–Action Consistency Rate | PARTIAL | 检查 decision 与 table/column actions 是否自洽；当前 validity 只覆盖其中部分规则。 |
-| Operation-only Proposal F1 | DERIVABLE | 从 Proposal F1 中移除 decision fact，避免 decision 对内部操作质量重复计分。 |
+| Operation-only Proposal F1 | DONE | 从 Proposal F1 中移除 decision fact，避免 decision 对内部操作质量重复计分。 |
 
 ## 4. Target Relation 与 Column Placement
 
@@ -51,7 +51,7 @@ Decision 正确不代表 column/table/constraint actions 正确；Decision 错�
 | Column Placement Recall | DONE | 惩罚遗漏的正确 mappings。 |
 | Column Placement Micro-F1 | DONE | 按所有 column facts 汇总，适合总体比较。 |
 | Column Placement Macro-F1 | DONE | 每个 case 等权，避免宽表主导结果。 |
-| Exact Column-placement Accuracy | TODO | 要求一个 case 的全部 placements 都正确，比平均 F1 更严格。 |
+| Exact Column-placement Accuracy | DONE | 要求一个 case 的全部 placements 都正确，比平均 F1 更严格。 |
 
 ## 5. Proposal Actions
 
@@ -61,9 +61,9 @@ Decision 正确不代表 column/table/constraint actions 正确；Decision 错�
 |---|---|---|
 | Proposal Fact Precision/Recall/F1 | DONE | 联合比较 decision、target、create/add/map facts，提供总体 proposal 相似度。 |
 | Proposal Fact Macro-F1 | DONE | 每个 case 等权，补充 micro-F1。 |
-| Table-action Exact Match | TODO | 单独检查 create/map table actions，避免被大量 column facts 稀释。 |
-| Column-action Exact Match | TODO | 检查 action 类型和完整 mapping 集，而不只逐项累计。 |
-| Operation-only Fact F1 | DERIVABLE | 去除 decision fact后衡量具体 schema operations。 |
+| Table-action Exact Match | DONE | 单独检查 create/map table actions，避免被大量 column facts 稀释。 |
+| Column-action Exact Match | DONE | 检查 action 类型和完整 mapping 集，而不只逐项累计。 |
+| Operation-only Fact F1 | DONE | 去除 decision fact后衡量具体 schema operations。 |
 
 ## 6. Constraint Quality
 
@@ -71,9 +71,9 @@ PK/FK 等约束决定更新后的关系结构；只检查 proposal 合法不代�
 
 | Metric | 状态 | 为什么使用 |
 |---|---|---|
-| Primary-key Precision/Recall/F1 | TODO | 区分遗漏、错误和多余 PK，validity 只能检查是否合法。 |
-| Foreign-key Precision/Recall/F1 | TODO | 检查 FK 两端 table/columns 是否与 reference 一致。 |
-| Constraint Exact Match | TODO | 要求一个 case 的全部预期 constraints 正确且无额外约束。 |
+| Primary-key Precision/Recall/F1 | DONE | 区分遗漏、错误和多余 PK，validity 只能检查是否合法。 |
+| Foreign-key Precision/Recall/F1 | DONE | 检查 FK 两端 table/columns 是否与 reference 一致。 |
+| Constraint Exact Match | DONE | 要求一个 case 的全部预期 constraints 正确且无额外约束。 |
 | Broken-FK Count/Rate | DONE | 检查 FK 是否引用不存在或不兼容对象，衡量合法性而非语义正确性。 |
 
 ## 7. Completeness 与 Structural Validity
@@ -100,8 +100,8 @@ Proposal 看起来正确不保证实际应用结果正确；需要直接评价�
 | Non-target Full-preservation Rate | DONE | 统计完全没有 collateral change 的 cases。 |
 | Unexpected Table/Column Modification Rate | DONE | 具体量化误改范围，补充总体 preservation score。 |
 | Unexpected FK Attachment Rate | DONE | 单独检查约束被挂到错误 relation。 |
-| Final Schema Exact Match | TODO | 直接比较完整目标 schema，避免 proposal正确但 updater应用错误。 |
-| Final Constraint Exact/F1 | TODO | 比较最终 RDB constraints，而不只比较 proposal action。 |
+| Final Schema Exact Match | DONE | 直接比较完整目标 schema，避免 proposal正确但 updater应用错误。 |
+| Final Constraint Exact/F1 | DONE | 比较最终 RDB constraints，而不只比较 proposal action。 |
 | Tuple Incorporation Accuracy | TODO | 检查 incoming rows 是否被正确插入、映射和保留；当前指标主要是 schema-level。 |
 | Value Preservation/Transformation Accuracy | TODO | 用于未来 rename、cast、dedup或value transformation，不与 tuple coverage 混合。 |
 
@@ -155,13 +155,28 @@ Validator 的最终 validity 提升需要与误拒绝、无效重试和修复类
 
 | Metric | 状态 | 为什么使用 |
 |---|---|---|
-| Retry Rate / Mean Retry Count | DERIVABLE | 衡量闭环被触发的频率和额外成本。 |
-| Error Detection Precision/Recall | TODO | 检查 Validator 是否正确发现 evaluator可验证的错误，而非只看最终 valid。 |
-| False-accept Rate | TODO | 统计 invalid proposal被 Validator接受的比例。 |
-| False-reject Rate | TODO | 统计 valid proposal被错误退回的比例。 |
-| Repair Success Rate | TODO | 衡量 retry 是否将 invalid/incorrect proposal修复。 |
+| Retry Rate / Mean Retry Count | DONE | 衡量闭环被触发的频率和额外成本。 |
+| Error Detection Precision/Recall | PARTIAL | 已实现最终 proposal 的判别统计；完整指标还需逐次重放并评价每轮 Validator 输入。 |
+| False-accept Rate | DONE | 统计最终 invalid proposal被 Validator接受的比例。 |
+| False-reject Rate | PARTIAL | 已覆盖仍有最终 proposal/database 的失败流程；缺失最终输出的拒绝 case 无法纳入。 |
+| Repair Success Rate | DERIVABLE | 衡量 retry 是否将 invalid/incorrect proposal修复。 |
 | Decision Correction/Harm Rate | DERIVABLE | 分开统计 retry把错误 decision改对和把正确 decision改错。 |
-| No-change Retry Rate | TODO | 发现 Evolutor重复生成同类 proposal的无效循环。 |
+| No-change Retry Rate | DERIVABLE | 发现 Evolutor重复生成同类 proposal的无效循环。 |
+| Retry-exhaustion Rate | DONE | 统计达到最大重试次数仍未通过的 cases，区别于普通 retry。 |
+| Feedback-routing Accuracy | TODO | 检查 Validator 是否把问题送回真正需要修改的 agent，避免错误路由造成无效重算。 |
+
+### Validator 模型规模对比
+
+大模型与小模型不能只比较最终 Standard 分数；应在相同 Evolutor proposals 上离线重放 Validator，固定 prompt、解码配置和判定规则，隔离 Validator model size 的作用。
+
+| Metric | 状态 | 为什么使用 |
+|---|---|---|
+| Detection Precision/Recall by Model Size | TODO | 判断更大模型是否真正提高错误识别，而不是仅更频繁地拒绝。 |
+| False-accept/False-reject by Model Size | TODO | 比较不同规模 Validator 的宽松与保守倾向。 |
+| Repair Success/Harm by Model Size | TODO | 判断更强 Validator 的反馈是否带来更多有效修复，或反而破坏原本正确结果。 |
+| Quality–Cost Frontier | TODO | 联合比较最终质量、Validator latency、calls 和 tokens，判断大模型增益是否值得成本。 |
+| Cross-size Agreement Rate | TODO | 找出大小模型分歧的 cases，用于分析模型容量真正影响哪类判断。 |
+| Confidence Calibration / AUROC / AUPRC | TODO | 若保留 validation confidence，用于检验分数是否能可靠区分 valid 与 invalid proposal。 |
 
 ## 13. Efficiency
 
@@ -169,12 +184,12 @@ Standard 的多阶段质量收益需要与额外成本共同报告。
 
 | Metric | 状态 | 为什么使用 |
 |---|---|---|
-| End-to-end Latency | PARTIAL | 当前可从运行记录估算，但并发墙钟不能作为严格 latency benchmark。 |
-| Per-stage Latency | TODO | 定位 Profiler、Selector、Evolutor、Validator 的实际成本。 |
-| LLM Call Count | TODO | 比 latency 更稳定地反映 agent pipeline复杂度。 |
+| End-to-end Latency | DONE | evaluator与aggregator已输出逐 case 总耗时及均值；跨并发任务比较时仍需固定运行条件。 |
+| Per-stage Latency | DONE | 已输出各阶段 seconds、call count 及其汇总，可定位 Profiler、Selector、Evolutor、Validator 成本。 |
+| LLM Call Count | PARTIAL | 已记录阶段调用次数，但尚未将纯 LLM 调用与非 LLM 阶段执行严格拆开。 |
 | Input/Output Tokens | TODO | 衡量推理成本和 context reduction收益。 |
 | Peak Context Size | TODO | 检查 Selector 是否真正降低长上下文压力。 |
-| Retry Cost | TODO | 单独量化 Validator闭环增加的时间与tokens。 |
+| Retry Cost | DERIVABLE | Validator/Evolutor 的重复运行次数与阶段时间已保存，但尚未形成独立汇总指标。 |
 
 ## 14. Statistical Reliability
 

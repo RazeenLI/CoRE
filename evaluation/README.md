@@ -7,23 +7,21 @@ Evaluation 分为两步：
 
 ## 1. 运行单次 Evaluation
 
-首先修改 `evaluation/evaluator.py` 底部 `main()` 中的三个路径：
+首先修改 `evaluation/evaluator.py` 顶部的三个列表：
 
 ```python
-evaluate_benchmark(
-    benchmark_dir="data/Chinook/benchmarks/medium",
-    result_dir="save/Chinook/standard/medium",
-    output_csv_path="outputs/Chinook/standard/medium.csv",
-    sample_num=0,
-)
+DATASETS = ["Chinook", "MONDIAL"]
+MODELS = ["standard", "oneshot"]
+SIZES = ["small", "medium", "large"]
 ```
 
-路径含义：
+脚本会运行三个列表的全部组合，并自动使用以下路径：
 
-- `benchmark_dir`：benchmark case 的根目录。
-- `result_dir`：模型运行结果目录，其中每个 case 应包含 `proposal.json` 和 `database/`。
-- `output_csv_path`：case-level evaluation CSV 的保存位置。
-- `sample_num`：读取的 CSV 样本数；当前指标不依赖数据行，可以使用 `0`。
+- benchmark：`data/<dataset>/benchmarks/<size>`
+- 模型结果：`save/<dataset>/<model>/<size>`
+- evaluation CSV：`outputs/<dataset>/<model>/<size>.csv`
+
+`SAMPLE_NUM` 控制读取的 CSV 样本数；当前指标不依赖数据行，可以保持为 `0`。
 
 然后在项目根目录运行：
 
@@ -32,7 +30,7 @@ conda activate /data1/runzel/TimeSeriesImputation/.conda
 python -m evaluation.evaluator
 ```
 
-分别评估 small、medium 和 large 时，修改上述三个路径后各运行一次，建议输出为：
+例如，以上配置会自动生成：
 
 ```text
 outputs/Chinook/standard/small.csv

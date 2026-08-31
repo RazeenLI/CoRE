@@ -199,7 +199,7 @@ def apply_llm_output(
         "constraint_signals": normalize_constraint_signals(
             llm_output["constraint_signals"]
         ),
-        "reason": llm_output["reason"],
+        "reason": llm_output.get("reason", ""),
     }
 
 

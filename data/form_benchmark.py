@@ -42,6 +42,23 @@ def read_csv(path: Path) -> List[Dict[str, str]]:
         return list(csv.DictReader(f))
 
 
+def read_csv_reservoir(path: Path, limit: int, seed: int) -> List[Dict[str, str]]:
+    """Read a deterministic uniform sample without loading a large table."""
+    if limit <= 0:
+        return []
+    rng = random.Random(seed)
+    reservoir: List[Dict[str, str]] = []
+    with path.open("r", newline="", encoding="utf-8") as f:
+        for index, row in enumerate(csv.DictReader(f)):
+            if index < limit:
+                reservoir.append(row)
+                continue
+            replacement = rng.randint(0, index)
+            if replacement < limit:
+                reservoir[replacement] = row
+    return reservoir
+
+
 def write_csv(path: Path, rows: List[Dict[str, Any]], columns: List[str]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -648,8 +665,18 @@ def load_source_from_config(cfg: Dict[str, Any]) -> Tuple[
     tables_dir = source_cfg / "tables"
     rows: Dict[str, List[Dict[str, str]]] = {}
 
-    for table in schema["tables"]:
-        rows[table] = read_csv(tables_dir / f"{table}.csv")
+    source_row_limit = cfg["benchmark"].get("source_row_limit_per_table")
+    base_seed = int(cfg["benchmark"].get("random_seed", 42))
+    for table_index, table in enumerate(schema["tables"]):
+        table_path = tables_dir / f"{table}.csv"
+        if source_row_limit is None:
+            rows[table] = read_csv(table_path)
+        else:
+            rows[table] = read_csv_reservoir(
+                table_path,
+                int(source_row_limit),
+                base_seed + table_index,
+            )
 
     return schema, constraints, profiles, rows
 

@@ -40,6 +40,15 @@ METRICS: list[str] = [
     "proposal_fact_micro_f1",
     "proposal_fact_macro_f1",
 
+    "operation_only_fact_micro_f1",
+    "table_action_exact_match_rate",
+    "column_action_exact_match_rate",
+
+    "primary_key_micro_f1",
+    "foreign_key_micro_f1",
+    "final_constraint_exact_match_rate",
+    "final_schema_exact_match_rate",
+
     "required_column_micro_coverage",
     "required_column_full_coverage_rate",
 
@@ -50,6 +59,7 @@ METRICS: list[str] = [
     "non_target_full_preservation_rate",
 
     "timing_end_to_end_seconds_mean",
+    "validator_retry_rate",
 ]
 
 
@@ -600,7 +610,23 @@ def summarize_dataset_results(
             evaluated_case_count,
             total_case_count,
         ),
+        "result_load_parse_failure_rate": _safe_divide(
+            sum(
+                row.get("evaluation_status") == "result_load_failed"
+                for row in rows
+            ),
+            total_case_count,
+        ),
     }
+
+    pipeline_status_rows = [
+        row for row in rows
+        if row.get("run_pipeline_succeeded") is not None
+    ]
+    summary["pipeline_success_rate"] = _safe_divide(
+        sum(bool(row.get("run_pipeline_succeeded")) for row in pipeline_status_rows),
+        len(pipeline_status_rows),
+    )
 
     if not evaluated_rows:
         return summary
@@ -691,6 +717,32 @@ def summarize_dataset_results(
         class_f1_values
     )
 
+    summary["decision_create_to_extend_rate"] = _safe_divide(
+        sum(
+            reference == "create_table" and predicted == "extend_table"
+            for reference, predicted in zip(reference_decisions, predicted_decisions)
+        ),
+        sum(reference == "create_table" for reference in reference_decisions),
+    )
+
+    for reference_class in decision_classes:
+        reference_count = sum(
+            reference == reference_class for reference in reference_decisions
+        )
+        for predicted_class in decision_classes:
+            summary[
+                f"decision_confusion_{reference_class}_to_{predicted_class}"
+            ] = _safe_divide(
+                sum(
+                    reference == reference_class and predicted == predicted_class
+                    for reference, predicted in zip(
+                        reference_decisions,
+                        predicted_decisions,
+                    )
+                ),
+                reference_count,
+            )
+
     # -------------------------------------------------
     # Target table
     # -------------------------------------------------
@@ -732,6 +784,68 @@ def summarize_dataset_results(
             prefix="proposal_fact",
         )
     )
+
+    for prefix in (
+        "operation_only_fact",
+        "table_action",
+        "column_action",
+        "primary_key",
+        "foreign_key",
+        "final_constraint",
+        "final_schema",
+    ):
+        summary.update(_aggregate_prf(rows=evaluated_rows, prefix=prefix))
+        exact_rows = [
+            row for row in evaluated_rows
+            if row.get(f"{prefix}_exact_match") is not None
+        ]
+        summary[f"{prefix}_exact_match_rate"] = _safe_divide(
+            sum(bool(row.get(f"{prefix}_exact_match")) for row in exact_rows),
+            len(exact_rows),
+        )
+
+    exact_placement_rows = [
+        row for row in evaluated_rows
+        if row.get("column_placement_false_positive") is not None
+        and row.get("column_placement_false_negative") is not None
+    ]
+    summary["column_placement_exact_match_rate"] = _safe_divide(
+        sum(
+            int(row.get("column_placement_false_positive") or 0) == 0
+            and int(row.get("column_placement_false_negative") or 0) == 0
+            for row in exact_placement_rows
+        ),
+        len(exact_placement_rows),
+    )
+
+    for decision_correct, label in ((True, "correct"), (False, "wrong")):
+        conditioned_rows = [
+            row for row in evaluated_rows
+            if bool(row.get("decision_correct")) is decision_correct
+        ]
+        summary[f"operation_only_fact_f1_given_{label}_decision"] = _mean(
+            [
+                float(row["operation_only_fact_f1"])
+                for row in conditioned_rows
+                if row.get("operation_only_fact_f1") is not None
+            ]
+        )
+        if decision_correct:
+            summary["correct_decision_wrong_action_rate"] = _safe_divide(
+                sum(
+                    not bool(row.get("operation_only_fact_exact_match"))
+                    for row in conditioned_rows
+                ),
+                len(conditioned_rows),
+            )
+        else:
+            summary["wrong_decision_useful_action_rate"] = _safe_divide(
+                sum(
+                    float(row.get("operation_only_fact_f1") or 0.0) > 0.0
+                    for row in conditioned_rows
+                ),
+                len(conditioned_rows),
+            )
 
     # -------------------------------------------------
     # Required column coverage
@@ -974,6 +1088,56 @@ def summarize_dataset_results(
         summary[f"{key}_stdev"] = (
             stdev(values) if len(values) > 1 else 0.0
         )
+
+    retry_rows = [
+        row for row in evaluated_rows
+        if row.get("run_validator_call_count") is not None
+    ]
+    summary["validator_retry_rate"] = _safe_divide(
+        sum(bool(row.get("run_retried")) for row in retry_rows),
+        len(retry_rows),
+    )
+    summary["validator_mean_retry_count"] = _mean(
+        [float(row.get("run_retry_count") or 0) for row in retry_rows]
+    )
+    summary["validator_retry_exhaustion_rate"] = _safe_divide(
+        sum(bool(row.get("run_retry_exhausted")) for row in retry_rows),
+        len(retry_rows),
+    )
+
+    validator_quality_rows = [
+        row for row in evaluated_rows
+        if row.get("validator_quality_applicable") is True
+    ]
+    actual_invalid_count = sum(
+        not bool(row.get("validator_quality_actual_valid"))
+        for row in validator_quality_rows
+    )
+    rejected_count = sum(
+        not bool(row.get("validator_quality_accepted"))
+        for row in validator_quality_rows
+    )
+    detected_invalid_count = sum(
+        not bool(row.get("validator_quality_actual_valid"))
+        and not bool(row.get("validator_quality_accepted"))
+        for row in validator_quality_rows
+    )
+    summary["validator_error_detection_precision"] = _safe_divide(
+        detected_invalid_count,
+        rejected_count,
+    )
+    summary["validator_error_detection_recall"] = _safe_divide(
+        detected_invalid_count,
+        actual_invalid_count,
+    )
+    summary["validator_false_accept_rate"] = _safe_divide(
+        sum(bool(row.get("validator_quality_false_accept")) for row in validator_quality_rows),
+        actual_invalid_count,
+    )
+    summary["validator_false_reject_rate"] = _safe_divide(
+        sum(bool(row.get("validator_quality_false_reject")) for row in validator_quality_rows),
+        sum(bool(row.get("validator_quality_actual_valid")) for row in validator_quality_rows),
+    )
 
     return summary
 # =====================================================

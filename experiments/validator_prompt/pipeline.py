@@ -5,11 +5,11 @@ from pathlib import Path
 import yaml
 
 from experiments.validator_prompt.model.validator_agent import ValidatorPromptAgent
-from model.agents.evolutor_agent import EvolutorAgent
+from experiments.validator_prompt.model.evolutor_agent import ValidatorPromptEvolutorAgent
+from experiments.validator_prompt.model.orchestrator import ValidatorPromptOrchestrator
 from model.agents.profiler_agent import ProfilerAgent
 from model.agents.selector_agent import CandidateSelectorAgent
 from model.core.llm_client import HFLLMClient
-from model.core.orchestrator import Orchestrator
 from model.utils.io import load_rdb, load_table, save_json, save_rdb, terminal_message
 
 
@@ -41,10 +41,10 @@ def run_pipeline(
         column_top_k=config.get("column_top_k", 20),
         table_top_k=config.get("table_top_k", 5),
     )
-    orchestrator = Orchestrator(
+    orchestrator = ValidatorPromptOrchestrator(
         profiler_agent=ProfilerAgent(client),
         selector_agent=selector,
-        evolutor_agent=EvolutorAgent(client),
+        evolutor_agent=ValidatorPromptEvolutorAgent(client),
         validator_agent=ValidatorPromptAgent(client),
         save_path=save_root_path,
         config=agent_config["orchestrator"],

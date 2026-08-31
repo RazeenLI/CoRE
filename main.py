@@ -10,6 +10,7 @@ PIPELINE_MODULES = {
     "validator_prompt": "experiments.validator_prompt.pipeline",
     "no_profiler": "baselines.no_profiler.pipeline",
     "no_selector": "baselines.no_selector.pipeline",
+    "no_validator": "baselines.no_validator.pipeline",
     "llm_matcher": "baselines.llm_matcher.pipeline",
     "oneshot": "baselines.oneshot.pipeline",
     "magneto": "baselines.magneto.pipeline",

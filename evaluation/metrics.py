@@ -1,5 +1,40 @@
 from typing import Any
 
+
+def compute_fact_set_metrics(
+    predicted_facts: set[tuple[Any, ...]],
+    reference_facts: set[tuple[Any, ...]],
+) -> dict[str, Any]:
+    """Return PRF and exact match for two sets of normalized facts."""
+    true_positive_items = predicted_facts & reference_facts
+    false_positive_items = predicted_facts - reference_facts
+    false_negative_items = reference_facts - predicted_facts
+    true_positive = len(true_positive_items)
+    false_positive = len(false_positive_items)
+    false_negative = len(false_negative_items)
+
+    if not predicted_facts and not reference_facts:
+        precision = recall = f1 = 1.0
+    else:
+        precision = safe_divide(true_positive, true_positive + false_positive)
+        recall = safe_divide(true_positive, true_positive + false_negative)
+        f1 = safe_divide(2 * precision * recall, precision + recall)
+
+    return {
+        "true_positive": true_positive,
+        "false_positive": false_positive,
+        "false_negative": false_negative,
+        "precision": precision,
+        "recall": recall,
+        "f1": f1,
+        "exact_match": predicted_facts == reference_facts,
+        "predicted_count": len(predicted_facts),
+        "reference_count": len(reference_facts),
+        "true_positive_items": sorted(true_positive_items, key=repr),
+        "false_positive_items": sorted(false_positive_items, key=repr),
+        "false_negative_items": sorted(false_negative_items, key=repr),
+    }
+
 # -----------------------------
 # help function
 # -----------------------------
@@ -305,6 +340,54 @@ def _freeze(value: Any) -> Any:
     return value
 
 
+def extract_schema_facts(rdb: dict[str, Any]) -> set[tuple[Any, ...]]:
+    """Normalize the complete schema into comparable table/column facts."""
+    facts: set[tuple[Any, ...]] = set()
+    tables = rdb.get("schema", {}).get("tables", {})
+    if not isinstance(tables, dict):
+        return facts
+
+    for table_name, table in tables.items():
+        facts.add(("table", table_name))
+        if not isinstance(table, dict):
+            continue
+        columns = table.get("columns", {})
+        if isinstance(columns, dict):
+            for column_name, definition in columns.items():
+                facts.add(
+                    (
+                        "column",
+                        table_name,
+                        column_name,
+                        _freeze(definition),
+                    )
+                )
+        order = table.get("column_order")
+        if isinstance(order, list):
+            facts.add(("column_order", table_name, tuple(order)))
+    return facts
+
+
+def extract_constraint_facts(
+    rdb: dict[str, Any],
+    constraint_types: set[str] | None = None,
+) -> set[tuple[Any, ...]]:
+    """Normalize explicit RDB constraints, optionally filtering fact types."""
+    tables = set(rdb.get("schema", {}).get("tables", {}))
+    facts = _extract_protected_facts(rdb, tables)
+    constraint_fact_types = {
+        "primary_key",
+        "foreign_key",
+        "unique_constraint",
+        "check_constraint",
+        "index",
+    }
+    facts = {fact for fact in facts if fact[0] in constraint_fact_types}
+    if constraint_types is not None:
+        facts = {fact for fact in facts if fact[0] in constraint_types}
+    return facts
+
+
 def _iter_constraint_definitions(value: Any) -> list[Any]:
     """
     Convert one table's constraint definitions into
@@ -360,11 +443,22 @@ def _extract_foreign_key_facts(
             if (source_table not in protected_tables and referenced_table not in protected_tables):
                 continue
 
-            columns = foreign_key.get("columns", [])
+            columns = _freeze(foreign_key.get("columns"))
+            referenced_columns = _freeze(
+                foreign_key.get("referenced_columns")
+            )
 
-            referenced_columns = foreign_key.get("referenced_columns", [])
-
-            facts.add(("foreign_key", source_table, tuple(columns), referenced_table, tuple(referenced_columns)))
+            # Keep malformed values (for example null) as facts so they are
+            # counted as mismatches instead of crashing or being discarded.
+            facts.add(
+                (
+                    "foreign_key",
+                    source_table,
+                    columns,
+                    referenced_table,
+                    referenced_columns,
+                )
+            )
 
     return facts
 

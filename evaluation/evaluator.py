@@ -17,7 +17,76 @@ from evaluation.metrics import (
     compute_required_column_coverage,
     compute_proposal_validity_metrics,
     compute_non_target_preservation_metrics,
+    compute_fact_set_metrics,
+    extract_constraint_facts,
+    extract_schema_facts,
 )
+
+
+# =====================================================
+# Batch evaluation configuration
+# =====================================================
+
+# Edit these lists to select the experiment results to evaluate.
+DATASETS = [
+    "Chinook", 
+    "MONDIAL",
+]
+
+MODELS = [
+    "standard",
+    "oneshot",
+    "coma",
+    "jl",
+    "magneto",
+    "no_profiler",
+    "no_selector",
+    "no_validator",
+]
+
+SIZES = ["small", "medium", "large"]
+
+DATA_ROOT = Path("data")
+SAVE_ROOT = Path("save")
+OUTPUT_ROOT = Path("outputs")
+SAMPLE_NUM = 0
+
+
+def compute_task_state_metrics(task_state: dict[str, Any]) -> dict[str, Any]:
+    """Extract run completion and revision-loop counters from a saved task state."""
+    results = task_state.get("results", {})
+    if not isinstance(results, dict):
+        results = {}
+    validations = results.get("validating", [])
+    if not isinstance(validations, list):
+        validations = []
+    validator_calls = len(validations)
+    retries = max(validator_calls - 1, 0)
+    exhausted = any(
+        isinstance(item, dict)
+        and (
+            item.get("route") == "error"
+            or any(
+                "maximum retry" in str(issue).lower()
+                for issue in item.get("issues", [])
+            )
+        )
+        for item in validations
+    )
+    final_route = (
+        validations[-1].get("route")
+        if validations and isinstance(validations[-1], dict)
+        else None
+    )
+    return {
+        "pipeline_succeeded": task_state.get("status") == "succeeded",
+        "validator_call_count": validator_calls,
+        "retry_count": retries,
+        "retried": retries > 0,
+        "retry_exhausted": exhausted,
+        "validator_final_route": final_route,
+        "validator_accepted": final_route == "decision" if final_route else None,
+    }
 
 
 def flatten_dict(
@@ -145,6 +214,17 @@ def evaluate_benchmark(
         predicted_proposal_path = result_case_dir / "proposal.json"
         task_state_path = result_case_dir / "task_state.json"
 
+        timing_result: dict[str, Any] = {}
+        task_state_result: dict[str, Any] = {}
+        if task_state_path.exists():
+            try:
+                task_state = load_json(task_state_path)
+                timing_result = task_state.get("timing", {})
+                task_state_result = compute_task_state_metrics(task_state)
+            except (FileNotFoundError, ValueError):
+                timing_result = {}
+                task_state_result = {}
+
         # ---------------------------------------------
         # 1. Load benchmark data
         # ---------------------------------------------
@@ -181,8 +261,7 @@ def evaluate_benchmark(
             missing_paths.append(str(predicted_proposal_path))
 
         if missing_paths:
-            all_results.append(
-                {
+            missing_result = {
                     "case_id": case_id,
                     "evaluation_status": "missing_result",
                     "result_available": False,
@@ -191,7 +270,9 @@ def evaluate_benchmark(
                         + ", ".join(missing_paths)
                     ),
                 }
-            )
+            missing_result.update(flatten_dict(timing_result, prefix="timing"))
+            missing_result.update(flatten_dict(task_state_result, prefix="run"))
+            all_results.append(missing_result)
             continue
 
         # ---------------------------------------------
@@ -209,22 +290,16 @@ def evaluate_benchmark(
             )
 
         except (FileNotFoundError, ValueError) as exc:
-            all_results.append(
-                {
+            failed_result = {
                     "case_id": case_id,
                     "evaluation_status": "result_load_failed",
                     "result_available": False,
                     "error": str(exc),
                 }
-            )
+            failed_result.update(flatten_dict(timing_result, prefix="timing"))
+            failed_result.update(flatten_dict(task_state_result, prefix="run"))
+            all_results.append(failed_result)
             continue
-
-        timing_result: dict[str, Any] = {}
-        if task_state_path.exists():
-            try:
-                timing_result = load_json(task_state_path).get("timing", {})
-            except (FileNotFoundError, ValueError):
-                timing_result = {}
 
         # ---------------------------------------------
         # 4. Call metrics
@@ -339,6 +414,59 @@ def evaluate_benchmark(
             reference_facts=reference_proposal_facts,
         )
 
+        operation_only_result = compute_fact_set_metrics(
+            predicted_facts={
+                fact for fact in predicted_proposal_facts
+                if fact[0] != "decision"
+            },
+            reference_facts={
+                fact for fact in reference_proposal_facts
+                if fact[0] != "decision"
+            },
+        )
+
+        predicted_table_actions = {
+            fact for fact in predicted_proposal_facts
+            if fact[0] in {"target_table", "create_table"}
+        }
+        reference_table_actions = {
+            fact for fact in reference_proposal_facts
+            if fact[0] in {"target_table", "create_table"}
+        }
+        table_action_result = compute_fact_set_metrics(
+            predicted_table_actions,
+            reference_table_actions,
+        )
+        predicted_column_actions = {
+            fact for fact in predicted_proposal_facts
+            if fact[0] in {"map", "add_column"}
+        }
+        reference_column_actions = {
+            fact for fact in reference_proposal_facts
+            if fact[0] in {"map", "add_column"}
+        }
+        column_action_result = compute_fact_set_metrics(
+            predicted_column_actions,
+            reference_column_actions,
+        )
+
+        primary_key_result = compute_fact_set_metrics(
+            extract_constraint_facts(predicted_rdb, {"primary_key"}),
+            extract_constraint_facts(expected_rdb, {"primary_key"}),
+        )
+        foreign_key_result = compute_fact_set_metrics(
+            extract_constraint_facts(predicted_rdb, {"foreign_key"}),
+            extract_constraint_facts(expected_rdb, {"foreign_key"}),
+        )
+        final_constraint_result = compute_fact_set_metrics(
+            extract_constraint_facts(predicted_rdb),
+            extract_constraint_facts(expected_rdb),
+        )
+        final_schema_result = compute_fact_set_metrics(
+            extract_schema_facts(predicted_rdb),
+            extract_schema_facts(expected_rdb),
+        )
+
         # -----------------------------------
         # Functional Validity
         # -----------------------------------
@@ -383,6 +511,21 @@ def evaluate_benchmark(
             conflicting_operations=validity_data["conflicting_operations"],
         )
 
+        validator_accepted = task_state_result.get("validator_accepted")
+        validator_quality_result: dict[str, Any] = {
+            "applicable": validator_accepted is not None,
+            "accepted": validator_accepted,
+            "actual_valid": validity_data["checked_valid"],
+            "false_accept": (
+                bool(validator_accepted) and not validity_data["checked_valid"]
+                if validator_accepted is not None else None
+            ),
+            "false_reject": (
+                not bool(validator_accepted) and validity_data["checked_valid"]
+                if validator_accepted is not None else None
+            ),
+        }
+
         non_target_preservation_result = compute_non_target_preservation_metrics(
             existing_rdb=existing_rdb,
             predicted_rdb=predicted_rdb,
@@ -424,13 +567,23 @@ def evaluate_benchmark(
 
         case_result.update(flatten_dict(proposal_fact_result, prefix="proposal_fact"))
 
+        case_result.update(flatten_dict(operation_only_result, prefix="operation_only_fact"))
+        case_result.update(flatten_dict(table_action_result, prefix="table_action"))
+        case_result.update(flatten_dict(column_action_result, prefix="column_action"))
+        case_result.update(flatten_dict(primary_key_result, prefix="primary_key"))
+        case_result.update(flatten_dict(foreign_key_result, prefix="foreign_key"))
+        case_result.update(flatten_dict(final_constraint_result, prefix="final_constraint"))
+        case_result.update(flatten_dict(final_schema_result, prefix="final_schema"))
+
         case_result.update(flatten_dict(required_column_coverage_result, prefix="required_column_coverage"))
 
         case_result.update(flatten_dict(proposal_validity_result, prefix="proposal_validity"))
+        case_result.update(flatten_dict(validator_quality_result, prefix="validator_quality"))
 
         case_result.update(flatten_dict(non_target_preservation_result, prefix="non_target_preservation"))
 
         case_result.update(flatten_dict(timing_result, prefix="timing"))
+        case_result.update(flatten_dict(task_state_result, prefix="run"))
 
         # print(json.dumps(case_result, indent=4))
 
@@ -448,18 +601,26 @@ def evaluate_benchmark(
     return all_results
 
 def main() -> None:
-    evaluate_benchmark(
-        benchmark_dir=(
-            "data/Chinook/benchmarks/medium"
-        ),
-        result_dir=(
-            "save/Chinook/oneshot/medium"
-        ),
-        output_csv_path=(
-            "outputs/Chinook/oneshot/medium.csv"
-        ),
-        sample_num=0,
-    )
+    for dataset in DATASETS:
+        for model in MODELS:
+            for size in SIZES:
+                benchmark_dir = (
+                    DATA_ROOT / dataset / "benchmarks" / size
+                )
+                result_dir = SAVE_ROOT / dataset / model / size
+                output_path = OUTPUT_ROOT / dataset / model / f"{size}.csv"
+
+                print(
+                    f"[Evaluation] dataset={dataset} "
+                    f"model={model} size={size}"
+                )
+                evaluate_benchmark(
+                    benchmark_dir=benchmark_dir,
+                    result_dir=result_dir,
+                    output_csv_path=output_path,
+                    sample_num=SAMPLE_NUM,
+                )
+                print(f"[Saved] {output_path}")
 
 
 if __name__ == "__main__":

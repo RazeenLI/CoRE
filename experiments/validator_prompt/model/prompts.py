@@ -3,86 +3,101 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from model.core.prompts import literal_to_prompt_options
+from model.core.prompts import evolutor_prompt, literal_to_prompt_options
 from model.core.schemas import ValidationRoute
 
 
 def validator_prompt(llm_input: dict[str, Any]) -> str:
     return f"""
-You are a relational database validation agent.
+You are a conservative relational-database validation agent.
 
-Given a proposal, a BEFORE partial RDB, and an AFTER partial RDB, determine
-whether the proposal is internally consistent and whether AFTER correctly
-implements it.
+Given a proposal, a BEFORE partial RDB, and an AFTER partial RDB, first check
+whether AFTER implements the proposal. Only then assess whether the relational
+decision itself is demonstrably wrong.
 
 Input:
 {json.dumps(llm_input, indent=2, ensure_ascii=False)}
 
-Output Format:
 Return only valid JSON with this exact structure:
 
 {{
   "route": "{literal_to_prompt_options(ValidationRoute)}",
   "score": 0.0,
-  "issues": [
-    "short issue phrase"
+  "revision_scope": "none | proposal | decision",
+  "recommended_decision": "insert_table | extend_table | create_table | none",
+  "decision_confidence": 0.0,
+  "decision_evidence": [
+    {{
+      "type": "relation_granularity | row_identity | functional_dependency | cardinality | target_existence",
+      "objects": ["concrete table or column"],
+      "observation": "concrete observation grounded in the input"
+    }}
   ],
-  "summary": "..."
+  "issues": ["short actionable issue"],
+  "summary": "one concise sentence"
 }}
 
-Validate in this order:
-1. decision-operation consistency
-2. column-placement consistency
-3. constraint validity and preservation
-4. overall relational-design coherence
+Operation semantics (do not reverse these definitions):
+- insert_table loads rows into an existing table. Every source column maps to
+  an existing target column; BEFORE and AFTER schemas remain identical.
+- extend_table changes an existing table by creating at least one new column.
+- create_table creates a target table that is absent from BEFORE.
+- Mapping incoming columns to existing columns is expected for insert_table;
+  it is not evidence that insert_table is invalid.
+- insert_table does not create a table despite its historical name.
 
-Decision-operation consistency:
-- For "insert_table", the target table must exist in BEFORE, every incoming column must map to an existing target column, and the schema and constraints must remain unchanged.
-- Reject "insert_table" if any column, table, or constraint is created, removed, or modified.
-- For "extend_table", the target table must exist in BEFORE and at least one incoming column must create a new column in that target table.
-- Reject "extend_table" if it creates a new target table or places incoming columns outside the existing target table.
-- For "create_table", the target table must not exist in BEFORE and must be created in AFTER.
-- Reject "create_table" if incoming columns are instead attached to an existing table.
+Validation procedure:
+1. Check that every incoming source column is handled exactly once.
+2. Check mapped columns against BEFORE and created columns against AFTER.
+3. Check foreign-key endpoints, duplicate definitions, conflicts, and
+   preservation of unrelated schema objects.
+4. Distinguish a faulty proposal implementation from a faulty decision.
 
-Column-placement consistency:
-- Every incoming source column must be handled exactly once.
-- A mapped target column must exist in BEFORE.
-- A newly created target column must not exist in BEFORE and must exist in AFTER.
-- Reject missing source columns, duplicate source placements, conflicting target placements, and unjustified many-to-one mappings.
-- The proposal and AFTER must agree on every mapped or created column.
+Conservative decision policy:
+- Use revision_scope="proposal" when column placements or constraints should
+  be repaired while retaining the current source_decision.
+- Use revision_scope="decision" only when the current source_decision is
+  contradicted by strong relational evidence, not merely because a different
+  design is plausible.
+- A decision revision requires confidence >= 0.95, a different
+  recommended_decision, and at least two independent evidence items naming
+  concrete tables or columns.
+- Ambiguity, naming similarity, or a single suspicious mapping is insufficient
+  to change the decision. In those cases preserve the decision and repair the
+  proposal, or accept it when no blocking defect exists.
 
-Constraint and preservation consistency:
-- Every referenced table and column must exist in AFTER.
-- Reject broken foreign keys, duplicate constraints, conflicting definitions, and unsupported constraint changes.
-- Tables, columns, and constraints unrelated to the selected operation must remain unchanged.
-- Do not accept a proposal merely because AFTER is a valid standalone schema.
+Routing:
+- Use decision when the result is ready; revision_scope must be none.
+- Use matcher to revise an insert_table proposal.
+- Use evolutor to revise an extend_table or create_table proposal.
+- A revision route must include at least one actionable issue.
 
-Preview-scope rule:
-- Validate the schema and constraint transformation represented by the preview.
-- Do not reject a proposal merely because row samples are absent from AFTER.
+Scoring:
+- 0.90--1.00 means ready or a high-confidence diagnosis.
+- 0.75--0.89 means a concrete proposal-level repair is needed.
+- Below 0.75 means uncertain; do not authorize a decision change.
 
-Routing rules:
-- Use "decision" only when the decision type, proposal operations, column placements, constraints, and AFTER are mutually consistent.
-- A coherent AFTER schema is not sufficient if it contradicts the source decision or proposal.
-- Use "matcher" when an "insert_table" proposal requires revision.
-- Use "evolutor" when an "extend_table" or "create_table" proposal requires revision.
-
-Scoring rules:
-- 0.90-1.00: all required checks pass and the proposal is ready.
-- 0.75-0.89: consistent but with minor non-blocking concerns.
-- 0.50-0.74: significant consistency or design risks require revision.
-- 0.00-0.49: one or more required checks fail.
-
-Issue rules:
-- Issues must be short, concrete, and actionable.
-- Name the affected table or column whenever possible.
-- If route is "matcher" or "evolutor", provide at least one issue.
-- Use an empty list only when route is "decision".
-
-Output rules:
-- Summary must be one concise sentence.
-- If revision is required, summary must state the exact inconsistency to reconsider.
-- Return exactly one JSON object.
-- Do not wrap the JSON in markdown code fences.
-- Return JSON only.
+Return exactly one JSON object without markdown fences.
 """.strip()
+
+
+def conservative_evolutor_prompt(llm_input: dict[str, Any]) -> str:
+    prompt = evolutor_prompt(llm_input)
+    feedback = llm_input.get("validation_feedback") or {}
+    if not feedback.get("preserve_decision"):
+        return prompt
+    locked_decision = feedback.get("locked_decision", "")
+    locked_target = feedback.get("locked_target_table", "")
+    return (
+        prompt
+        + f"""
+
+Mandatory conservative revision constraint:
+- Keep decision.decision_type exactly "{locked_decision}".
+- Keep decision.target_table exactly "{locked_target}".
+- Repair only column placements, constraints, or explanations identified by
+  validation_feedback.
+- Do not reinterpret a proposal-level defect as permission to change the
+  relational operation.
+"""
+    ).strip()
