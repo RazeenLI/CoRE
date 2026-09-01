@@ -316,6 +316,8 @@ def profile_all_tables(
     device_map: str = "auto",
     sample_num: int = 5,
     no_llm: bool = False,
+    profiler: ProfilerAgent | None = None,
+    llm_enabled: bool | None = None,
 ) -> dict[str, Any]:
     schema_path = parsed_dir / "schema.json"
     tables_dir = parsed_dir / "tables"
@@ -327,13 +329,16 @@ def profile_all_tables(
     if not isinstance(tables, dict) or not tables:
         raise ValueError(f"No tables found in schema: {schema_path}")
 
-    llm_client = create_llm_client(
-        model_name=model_name,
-        device_map=device_map,
-        no_llm=no_llm,
-    )
-
-    profiler = ProfilerAgent(llm_client=llm_client)
+    if profiler is None:
+        llm_client = create_llm_client(
+            model_name=model_name,
+            device_map=device_map,
+            no_llm=no_llm,
+        )
+        profiler = ProfilerAgent(llm_client=llm_client)
+        llm_enabled = llm_client is not None
+    elif llm_enabled is None:
+        llm_enabled = not no_llm
 
     output: dict[str, Any] = {
         "database": database_name,
@@ -343,8 +348,8 @@ def profile_all_tables(
             "schema_path": str(schema_path),
             "tables_dir": str(tables_dir),
             "sample_num": sample_num,
-            "llm_enabled": llm_client is not None,
-            "model_name": model_name if llm_client is not None else None,
+            "llm_enabled": bool(llm_enabled),
+            "model_name": model_name if llm_enabled else None,
         },
         "tables": {},
     }
@@ -376,11 +381,16 @@ def parse_args() -> argparse.Namespace:
         description="Profile tables produced by parse_sql.py and save table_profiles.json."
     )
 
-    parser.add_argument(
+    input_group = parser.add_mutually_exclusive_group(required=True)
+    input_group.add_argument(
         "--parsed",
-        required=True,
         type=Path,
         help="Parsed directory containing schema.json and tables/*.csv.",
+    )
+    input_group.add_argument(
+        "--parsed-root",
+        type=Path,
+        help="Root containing multiple <database>/schema.json parsed directories.",
     )
 
     parser.add_argument(
@@ -388,6 +398,16 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=None,
         help="Output JSON path. Defaults to <parsed>/table_profiles.json.",
+    )
+    parser.add_argument(
+        "--output-name",
+        default="profiles.json",
+        help="Per-database output filename in --parsed-root mode.",
+    )
+    parser.add_argument(
+        "--skip-existing",
+        action="store_true",
+        help="Skip an existing output file in --parsed-root mode.",
     )
 
     parser.add_argument(
@@ -423,22 +443,62 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
 
-    parsed_dir = args.parsed
-    output_path = args.output or parsed_dir / "table_profiles.json"
+    if args.parsed is not None:
+        parsed_dir = args.parsed
+        output_path = args.output or parsed_dir / "profiles.json"
+        result = profile_all_tables(
+            parsed_dir=parsed_dir,
+            output_path=output_path,
+            model_name=args.model_name,
+            device_map=args.device_map,
+            sample_num=args.sample_num,
+            no_llm=args.no_llm,
+        )
+        print(f"table_profiles: {output_path}")
+        print(f"database:       {result['database']}")
+        print(f"table_count:    {len(result['tables'])}")
+        print(f"llm_enabled:    {result['source']['llm_enabled']}")
+        return
 
-    result = profile_all_tables(
-        parsed_dir=parsed_dir,
-        output_path=output_path,
+    if args.output is not None:
+        raise ValueError("--output is only valid with --parsed; use --output-name for --parsed-root.")
+
+    parsed_dirs = sorted(
+        path.parent for path in args.parsed_root.glob("*/schema.json")
+    )
+    if not parsed_dirs:
+        raise FileNotFoundError(f"No parsed databases found under {args.parsed_root}")
+
+    llm_client = create_llm_client(
         model_name=args.model_name,
         device_map=args.device_map,
-        sample_num=args.sample_num,
         no_llm=args.no_llm,
     )
-
-    print(f"table_profiles: {output_path}")
-    print(f"database:       {result['database']}")
-    print(f"table_count:    {len(result['tables'])}")
-    print(f"llm_enabled:    {result['source']['llm_enabled']}")
+    shared_profiler = ProfilerAgent(llm_client=llm_client)
+    completed = skipped = 0
+    for index, parsed_dir in enumerate(parsed_dirs, start=1):
+        output_path = parsed_dir / args.output_name
+        if args.skip_existing and output_path.exists():
+            skipped += 1
+            print(f"[{index}/{len(parsed_dirs)}] skip {parsed_dir.name}")
+            continue
+        result = profile_all_tables(
+            parsed_dir=parsed_dir,
+            output_path=output_path,
+            model_name=args.model_name,
+            device_map=args.device_map,
+            sample_num=args.sample_num,
+            no_llm=args.no_llm,
+            profiler=shared_profiler,
+            llm_enabled=llm_client is not None,
+        )
+        completed += 1
+        print(
+            f"[{index}/{len(parsed_dirs)}] {result['database']}: "
+            f"tables={len(result['tables'])} output={output_path}"
+        )
+    print(f"completed: {completed}")
+    print(f"skipped:   {skipped}")
 
 
 if __name__ == "__main__":

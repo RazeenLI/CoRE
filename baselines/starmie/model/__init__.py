@@ -1,0 +1,1 @@
+"""Starmie matching components."""

@@ -11,11 +11,15 @@ All models use the same case input, output layout, runner, and evaluation code.
 | `standard` | Proposed method | Profiler → MPNet Candidate Selector → Evolutor → Validator → Decision |
 | `grain_profiler` | Profiler experiment | Grain Profiler → MPNet Candidate Selector → Evolutor → Validator → Decision |
 | `constraint_filter` | Constraint experiment | Standard with constraints filtered to the Top-k table subgraph |
+| `no_values` | Privacy experiment | Standard without raw sample values in model inputs |
 | `llm_matcher` | LLM baseline | Profiler → Qwen Matcher → Evolutor when needed → Validator → Decision |
 | `no_profiler` | Profiler ablation | MPNet Candidate Selector → Evolutor → Validator → Decision |
 | `no_selector` | Selector ablation | Profiler → Evolutor with the full RDB → Validator → Decision |
 | `oneshot` | LLM baseline | One-shot Evolutor → Decision |
 | `magneto` | Retrieval + LLM baseline | MPNet retrieval → Qwen reranking → rule decision |
+| `santos` | Dataset-discovery baseline | Synthesized KB → relationship-aware matching → rule decision |
+| `embdi` | Graph-embedding baseline | Graph → random walks → Skip-gram → rule decision |
+| `starmie` | Contextual table baseline | Frozen external encoder → bipartite matching → rule decision |
 | `jl` | Rule baseline | Jaccard–Levenshtein matching → rule decision |
 | `coma` | Rule baseline | COMA matching → rule decision |
 
@@ -96,7 +100,7 @@ python -u main.py \
 Replace `<model>` with one of:
 
 ```text
-standard  grain_profiler  constraint_filter  llm_matcher  no_profiler  no_selector  oneshot  magneto  jl  coma
+standard  grain_profiler  constraint_filter  no_values  llm_matcher  no_profiler  no_selector  oneshot  magneto  santos  embdi  starmie  jl  coma
 ```
 
 Example for No Selector:
@@ -155,6 +159,7 @@ GPU_IDS=0,1,2,4 MODEL=standard DATASIZE=large \
 GPU_IDS=0,1,2,4 MODEL=standard DATASIZE=large ./run_cases.sh
 GPU_IDS=0,1,2,4 MODEL=grain_profiler DATASIZE=large ./run_cases.sh
 GPU_IDS=0,1,2,4 MODEL=constraint_filter DATASIZE=medium ./run_cases.sh
+GPU_IDS=0,1,2,4 MODEL=no_values DATASIZE=large ./run_cases.sh
 GPU_IDS=0,1,2,4 MODEL=llm_matcher DATASIZE=large ./run_cases.sh
 GPU_IDS=0,1,2,4 MODEL=no_profiler DATASIZE=large ./run_cases.sh
 GPU_IDS=0,1,2,4 MODEL=no_selector DATASIZE=large ./run_cases.sh
@@ -301,6 +306,9 @@ See [Evaluation usage](evaluation/README.md) for case-level metrics and aggregat
 - `baselines/no_selector/pipeline.py`: Standard without the Candidate Selector.
 - `baselines/oneshot/pipeline.py`: One-shot baseline.
 - `baselines/magneto/pipeline.py`: Magneto baseline.
+- `baselines/santos/pipeline.py`: adapted SANTOS synthesized-KB baseline.
+- `baselines/embdi/pipeline.py`: adapted EmbDI graph-embedding baseline.
+- `baselines/starmie/pipeline.py`: adapter for an externally trained official Starmie checkpoint.
 - `baselines/jl/pipeline.py`: JL baseline.
 - `baselines/coma/pipeline.py`: COMA baseline.
 - `evaluation/evaluator.py`: case-level evaluation.

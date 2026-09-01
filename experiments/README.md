@@ -5,6 +5,16 @@ another experiment or baseline. Components that are intentionally unchanged
 are imported from the frozen Standard implementation, while each experimental
 difference is implemented locally.
 
+## Pending baselines
+
+- **Aurum:** port its per-case profiling and discovery graph to the current
+  runtime. Profiling and index construction must be included in end-to-end
+  latency.
+- **Starmie experiment:** train the implemented adapter's frozen checkpoint on
+  external VizNet data, record the checkpoint hash and pretraining cost, and
+  run all benchmark cases. Per-case encoding and matching are included in
+  end-to-end latency; one-time pretraining is reported separately.
+
 ## `grain_profiler`
 
 ```text
@@ -25,7 +35,7 @@ This is a retrieval-only experiment rather than a pipeline model. It compares
 SentenceTransformer encoders using target-table and exact-column Hit@K/MRR and
 does not call Qwen. See `embedding_evaluation/README.md` for the command.
 
-## `no_sample_values` (planned privacy experiment)
+## `no_values`
 
 This experiment evaluates deployments in which database and incoming-table
 cell values cannot be disclosed to the LLM. It follows the Standard pipeline
@@ -38,6 +48,8 @@ Compare this variant with Standard using decision, proposal, constraint, and
 validity metrics, together with prompt tokens and elapsed time. The comparison
 measures how much the framework depends on value-level evidence and whether it
 remains usable under this privacy restriction.
+
+See `no_values/README.md` for the implementation and run command.
 
 ## `constraint_filter`
 

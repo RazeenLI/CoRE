@@ -20,7 +20,7 @@ Each case should be a local RDB maintenance scenario, rather than a full databas
 | Chinook   | 50                      | 60                       | 40                        | 150        |
 | TPC-DS    | 60                      | 80                       | 60                        | 200        |
 | MONDIAL   | 70                      | 100                      | 80                        | 250        |
-| Spider    | 250                     | 400                      | 350                       | 1000       |
+| Spider    | 200                     | 175                      | 125                       | 500        |
 | **Total** | **370**                 | **640**                  | **530**                   | **1540**   |
 
 The counts above are the target benchmark composition. They should be reported as final dataset statistics only after all cases have been generated and validated.

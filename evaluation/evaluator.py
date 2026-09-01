@@ -29,8 +29,9 @@ from evaluation.metrics import (
 
 # Edit these lists to select the experiment results to evaluate.
 DATASETS = [
-    "Chinook", 
+    "Chinook",
     "MONDIAL",
+    "TPCDS",
 ]
 
 MODELS = [
@@ -42,6 +43,10 @@ MODELS = [
     "no_profiler",
     "no_selector",
     "no_validator",
+    "no_values",
+    "santos",
+    "embdi",
+    "starmie",
 ]
 
 SIZES = ["small", "medium", "large"]
