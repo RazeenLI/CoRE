@@ -1,0 +1,306 @@
+{
+  "database": "product_catalog",
+  "tables": {
+    "attribute_definitions": {
+      "table": {
+        "name": "attribute_definitions",
+        "column_count": 3,
+        "summary": "A reference table defining the metadata for various attributes, including their unique identifiers, display names, and data types.",
+        "entity": "AttributeDefinition",
+        "role": "lookup_table",
+        "aliases": [
+          "attribute_metadata",
+          "attr_defs",
+          "attribute_master"
+        ]
+      },
+      "columns": {
+        "attribute_id": {
+          "name": "attribute_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each attribute definition.",
+          "semantic_type": "identifier",
+          "business_concept": "Attribute ID",
+          "aliases": [
+            "attr_id",
+            "id",
+            "attribute_key"
+          ]
+        },
+        "attribute_name": {
+          "name": "attribute_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The human-readable name or label of the attribute.",
+          "semantic_type": "code",
+          "business_concept": "Attribute Name",
+          "aliases": [
+            "attr_name",
+            "name",
+            "label",
+            "display_name"
+          ]
+        },
+        "attribute_data_type": {
+          "name": "attribute_data_type",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The data type classification of the attribute (e.g., Boolean, String, Integer).",
+          "semantic_type": "code",
+          "business_concept": "Data Type",
+          "aliases": [
+            "data_type",
+            "dtype",
+            "type",
+            "attr_type"
+          ]
+        }
+      }
+    },
+    "catalogs": {
+      "table": {
+        "name": "catalogs",
+        "column_count": 5,
+        "summary": "A table storing metadata about various product catalogs, including their names, publishers, and publication history.",
+        "entity": "Catalog",
+        "role": "entity_table",
+        "aliases": [
+          "catalogs",
+          "catalog_metadata",
+          "product_catalogs"
+        ]
+      },
+      "columns": {
+        "catalog_id": {
+          "name": "catalog_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each catalog entry.",
+          "semantic_type": "identifier",
+          "business_concept": "Catalog ID",
+          "aliases": [
+            "id",
+            "catalog_number",
+            "catalog_key"
+          ]
+        },
+        "catalog_name": {
+          "name": "catalog_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The name of the catalog.",
+          "semantic_type": "description",
+          "business_concept": "Catalog Name",
+          "aliases": [
+            "name",
+            "title",
+            "catalog_title"
+          ]
+        },
+        "catalog_publisher": {
+          "name": "catalog_publisher",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The organization or entity that published the catalog.",
+          "semantic_type": "organization_name",
+          "business_concept": "Publisher",
+          "aliases": [
+            "publisher",
+            "author",
+            "company",
+            "vendor"
+          ]
+        },
+        "date_of_publication": {
+          "name": "date_of_publication",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date when the catalog was originally published.",
+          "semantic_type": "timestamp",
+          "business_concept": "Publication Date",
+          "aliases": [
+            "pub_date",
+            "created_at",
+            "issue_date",
+            "release_date"
+          ]
+        },
+        "date_of_latest_revision": {
+          "name": "date_of_latest_revision",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date when the catalog was last updated or revised.",
+          "semantic_type": "timestamp",
+          "business_concept": "Last Updated Date",
+          "aliases": [
+            "updated_at",
+            "revision_date",
+            "last_modified",
+            "edit_date"
+          ]
+        }
+      }
+    },
+    "catalog_contents_additional_attributes": {
+      "table": {
+        "name": "catalog_contents_additional_attributes",
+        "column_count": 4,
+        "summary": "Stores additional boolean or numeric attributes associated with specific catalog entries at various hierarchy levels.",
+        "entity": "catalog_entry_attribute",
+        "role": "lookup_table",
+        "aliases": [
+          "catalog_extra_attrs",
+          "product_additional_props",
+          "item_attribute_details"
+        ]
+      },
+      "columns": {
+        "catalog_entry_id": {
+          "name": "catalog_entry_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the catalog entry to which the attribute belongs.",
+          "semantic_type": "identifier",
+          "business_concept": "catalog_entry_id",
+          "aliases": [
+            "entry_id",
+            "product_id",
+            "item_id",
+            "catalog_id"
+          ]
+        },
+        "catalog_level_number": {
+          "name": "catalog_level_number",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Numeric representation of the hierarchy level (e.g., category depth) for the catalog entry.",
+          "semantic_type": "code",
+          "business_concept": "hierarchy_level",
+          "aliases": [
+            "level",
+            "depth",
+            "category_level",
+            "tier"
+          ]
+        },
+        "attribute_id": {
+          "name": "attribute_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific attribute being stored in this row.",
+          "semantic_type": "identifier",
+          "business_concept": "attribute_id",
+          "aliases": [
+            "attr_id",
+            "prop_id",
+            "feature_id",
+            "key_id"
+          ]
+        },
+        "attribute_value": {
+          "name": "attribute_value",
+          "dtype": "string",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The value of the attribute, appearing to be binary (0/1) or short codes based on samples.",
+          "semantic_type": "boolean",
+          "business_concept": "attribute_value",
+          "aliases": [
+            "attr_val",
+            "prop_value",
+            "flag",
+            "status_value"
+          ]
+        }
+      }
+    },
+    "catalog_structure": {
+      "table": {
+        "name": "catalog_structure",
+        "column_count": 3,
+        "summary": "Defines the hierarchical structure of a product catalog, specifying levels such as Category, Sub-Category, and Product.",
+        "entity": "Catalog Level",
+        "role": "lookup_table",
+        "aliases": [
+          "catalog_hierarchy",
+          "product_taxonomy",
+          "category_structure"
+        ]
+      },
+      "columns": {
+        "catalog_level_number": {
+          "name": "catalog_level_number",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A numeric identifier representing the depth or order of the catalog level in the hierarchy.",
+          "semantic_type": "code",
+          "business_concept": "Hierarchy Level",
+          "aliases": [
+            "level_num",
+            "hierarchy_depth",
+            "level_code"
+          ]
+        },
+        "catalog_id": {
+          "name": "catalog_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific catalog level entry within the system.",
+          "semantic_type": "identifier",
+          "business_concept": "Catalog Level ID",
+          "aliases": [
+            "level_id",
+            "catalog_code",
+            "hierarchy_id"
+          ]
+        },
+        "catalog_level_name": {
+          "name": "catalog_level_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The textual name describing the type of the catalog level.",
+          "semantic_type": "category",
+          "business_concept": "Level Name",
+          "aliases": [
+            "level_name",
+            "category_type",
+            "hierarchy_name"
+          ]
+        }
+      }
+    }
+  }
+}

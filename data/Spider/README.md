@@ -63,6 +63,12 @@ Import every SQLite database into the common parsed-RDB representation:
 python data/prepare_spider.py
 ```
 
+If a batch was interrupted, resume without reparsing completed databases:
+
+```bash
+python data/prepare_spider.py --skip-existing
+```
+
 Import selected databases while testing:
 
 ```bash
@@ -86,3 +92,29 @@ Use `--no-llm` for a deterministic compatibility check. The importer uses the
 SQLite files as the authoritative source because all 166 databases provide
 them and they contain both schema and rows. The available `schema.sql` files
 are retained for validation rather than parsed as PostgreSQL input.
+
+## Benchmark construction
+
+First inspect operation-level eligibility after every database has a complete
+`profiles.json`:
+
+```bash
+for size in small medium large; do
+  python data/form_spider_benchmark.py \
+    "data/Spider/configs/$size.yaml" \
+    --inventory-only
+done
+```
+
+The inventories are saved as `data/Spider/inventory_<size>.json`. Generate the
+provisional 200/175/125 cases only after reviewing these files:
+
+```bash
+for size in small medium large; do
+  python data/form_spider_benchmark.py \
+    "data/Spider/configs/$size.yaml"
+done
+```
+
+Generation refuses to replace a non-empty benchmark directory. Use
+`--overwrite` only when intentionally rebuilding that size.

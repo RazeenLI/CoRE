@@ -1,0 +1,396 @@
+{
+  "database": "concert_singer",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/concert_singer",
+    "schema_path": "data/Spider/parsed/concert_singer/schema.json",
+    "tables_dir": "data/Spider/parsed/concert_singer/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "concert": {
+      "table": {
+        "name": "concert",
+        "column_count": 5,
+        "summary": "A table recording details of various concerts, including their names, themes, associated stadiums, and years.",
+        "entity": "Concert",
+        "role": "entity_table",
+        "aliases": [
+          "concerts",
+          "live_events",
+          "shows"
+        ]
+      },
+      "columns": {
+        "concert_id": {
+          "name": "concert_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each concert record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "concert_uid",
+            "event_id"
+          ]
+        },
+        "concert_name": {
+          "name": "concert_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The specific name or title of the concert event.",
+          "semantic_type": "description",
+          "business_concept": "Event Name",
+          "aliases": [
+            "name",
+            "title",
+            "event_name",
+            "show_name"
+          ]
+        },
+        "theme": {
+          "name": "theme",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The musical theme, song title, or category associated with the concert.",
+          "semantic_type": "category",
+          "business_concept": "Theme",
+          "aliases": [
+            "song",
+            "track",
+            "topic",
+            "genre"
+          ]
+        },
+        "stadium_id": {
+          "name": "stadium_id",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the concert to a specific stadium or venue.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Venue ID",
+          "aliases": [
+            "venue_id",
+            "stadium_code",
+            "location_id"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the concert took place.",
+          "semantic_type": "date",
+          "business_concept": "Event Year",
+          "aliases": [
+            "event_year",
+            "date",
+            "calendar_year"
+          ]
+        }
+      }
+    },
+    "singer": {
+      "table": {
+        "name": "singer",
+        "column_count": 7,
+        "summary": "A table containing demographic and professional information about singers, including their names, nationalities, representative songs, ages, and gender.",
+        "entity": "Singer",
+        "role": "entity_table",
+        "aliases": [
+          "artists",
+          "performers",
+          "musicians",
+          "talent"
+        ]
+      },
+      "columns": {
+        "singer_id": {
+          "name": "singer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each singer record in the database.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "singer_key",
+            "artist_id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name or stage name of the singer.",
+          "semantic_type": "person_name",
+          "business_concept": "Full Name",
+          "aliases": [
+            "full_name",
+            "stage_name",
+            "artist_name"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The country of origin or nationality of the singer.",
+          "semantic_type": "country",
+          "business_concept": "Nationality",
+          "aliases": [
+            "nationality",
+            "origin",
+            "nation"
+          ]
+        },
+        "song_name": {
+          "name": "song_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The title of a notable song associated with the singer.",
+          "semantic_type": "description",
+          "business_concept": "Hit Song",
+          "aliases": [
+            "track",
+            "single",
+            "hit",
+            "song_title"
+          ]
+        },
+        "song_release_year": {
+          "name": "song_release_year",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The year the associated song was released.",
+          "semantic_type": "date",
+          "business_concept": "Release Year",
+          "aliases": [
+            "release_year",
+            "year",
+            "song_year"
+          ]
+        },
+        "age": {
+          "name": "age",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The current age of the singer in years.",
+          "semantic_type": "quantity",
+          "business_concept": "Age",
+          "aliases": [
+            "years_old",
+            "age_in_years"
+          ]
+        },
+        "is_male": {
+          "name": "is_male",
+          "dtype": "boolean",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A boolean flag indicating the gender of the singer.",
+          "semantic_type": "boolean",
+          "business_concept": "Gender",
+          "aliases": [
+            "gender",
+            "male",
+            "sex"
+          ]
+        }
+      }
+    },
+    "singer_in_concert": {
+      "table": {
+        "name": "singer_in_concert",
+        "column_count": 2,
+        "summary": "Records the association between specific singers and their concert performances.",
+        "entity": "Concert Performance",
+        "role": "relationship_table",
+        "aliases": [
+          "singer_concerts",
+          "concert_participants",
+          "artist_show_list"
+        ]
+      },
+      "columns": {
+        "concert_id": {
+          "name": "concert_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific concert event.",
+          "semantic_type": "identifier",
+          "business_concept": "Concert Event ID",
+          "aliases": [
+            "concert_uuid",
+            "show_id",
+            "event_id"
+          ]
+        },
+        "singer_id": {
+          "name": "singer_id",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific singer participating in the concert.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Singer ID",
+          "aliases": [
+            "artist_id",
+            "performer_id",
+            "singer_uuid"
+          ]
+        }
+      }
+    },
+    "stadium": {
+      "table": {
+        "name": "stadium",
+        "column_count": 7,
+        "summary": "A dataset containing information about various stadiums, including their names, locations, seating capacities, and elevation statistics.",
+        "entity": "Stadium",
+        "role": "entity_table",
+        "aliases": [
+          "stadiums",
+          "stadium_info",
+          "ground_data"
+        ]
+      },
+      "columns": {
+        "stadium_id": {
+          "name": "stadium_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each stadium record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "stadium_code",
+            "ground_id"
+          ]
+        },
+        "location": {
+          "name": "location",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the football club or organization associated with the stadium.",
+          "semantic_type": "organization_name",
+          "business_concept": "Tenant Club",
+          "aliases": [
+            "club",
+            "team",
+            "owner",
+            "ground_owner"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official name of the stadium.",
+          "semantic_type": "organization_name",
+          "business_concept": "Stadium Name",
+          "aliases": [
+            "ground_name",
+            "venue_name",
+            "stadium_title"
+          ]
+        },
+        "capacity": {
+          "name": "capacity",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of spectators the stadium can hold.",
+          "semantic_type": "quantity",
+          "business_concept": "Seating Capacity",
+          "aliases": [
+            "seats",
+            "max_attendance",
+            "holding"
+          ]
+        },
+        "highest": {
+          "name": "highest",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The highest elevation point of the stadium in meters.",
+          "semantic_type": "quantity",
+          "business_concept": "Maximum Elevation",
+          "aliases": [
+            "max_elevation",
+            "top_height",
+            "highest_point"
+          ]
+        },
+        "lowest": {
+          "name": "lowest",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The lowest elevation point of the stadium in meters.",
+          "semantic_type": "quantity",
+          "business_concept": "Minimum Elevation",
+          "aliases": [
+            "min_elevation",
+            "bottom_height",
+            "lowest_point"
+          ]
+        },
+        "average": {
+          "name": "average",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The average elevation of the stadium in meters.",
+          "semantic_type": "quantity",
+          "business_concept": "Average Elevation",
+          "aliases": [
+            "avg_elevation",
+            "mean_height",
+            "average_point"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,406 @@
+{
+  "database": "sakila_1",
+  "tables": {
+    "store": {
+      "table": {
+        "name": "store",
+        "column_count": 4,
+        "summary": "Core reference table defining the attributes and relationships of individual retail stores within the system.",
+        "entity": "Store",
+        "role": "entity_table",
+        "aliases": [
+          "stores",
+          "store_master",
+          "shop",
+          "outlet"
+        ]
+      },
+      "columns": {
+        "store_id": {
+          "name": "store_id",
+          "dtype": "tinyint unsigned",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a specific store location.",
+          "semantic_type": "identifier",
+          "business_concept": "Store ID",
+          "aliases": [
+            "store_code",
+            "store_number",
+            "id"
+          ]
+        },
+        "manager_staff_id": {
+          "name": "manager_staff_id",
+          "dtype": "tinyint unsigned",
+          "value_patterns": [],
+          "meaning": "Foreign key referencing the staff member assigned as the manager for this store.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Manager Staff ID",
+          "aliases": [
+            "manager_id",
+            "staff_id",
+            "manager_code"
+          ]
+        },
+        "address_id": {
+          "name": "address_id",
+          "dtype": "smallint unsigned",
+          "value_patterns": [],
+          "meaning": "Foreign key referencing the specific address details (street, city, postal code) for this store.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Address ID",
+          "aliases": [
+            "address_code",
+            "addr_id",
+            "location_id"
+          ]
+        },
+        "last_update": {
+          "name": "last_update",
+          "dtype": "timestamp",
+          "value_patterns": [],
+          "meaning": "Timestamp indicating when the store record was last modified in the database.",
+          "semantic_type": "timestamp",
+          "business_concept": "Last Update Time",
+          "aliases": [
+            "updated_at",
+            "modification_date",
+            "last_modified"
+          ]
+        }
+      }
+    },
+    "rental": {
+      "table": {
+        "name": "rental",
+        "column_count": 7,
+        "summary": "Records of movie rentals made by customers, tracking the rental date, inventory item, customer, and staff member involved.",
+        "entity": "rental",
+        "role": "transaction_table",
+        "aliases": [
+          "rentals",
+          "movie_rentals",
+          "rental_history"
+        ]
+      },
+      "columns": {
+        "rental_id": {
+          "name": "rental_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific rental transaction.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "rental_id",
+            "id",
+            "rental_number"
+          ]
+        },
+        "rental_date": {
+          "name": "rental_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date and time when the rental transaction was initiated.",
+          "semantic_type": "timestamp",
+          "business_concept": "Rental Start Time",
+          "aliases": [
+            "rental_date",
+            "rental_start",
+            "rental_time"
+          ]
+        },
+        "inventory_id": {
+          "name": "inventory_id",
+          "dtype": "mediumint unsigned",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the specific copy of the movie being rented.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Inventory Item ID",
+          "aliases": [
+            "inventory_id",
+            "film_copy_id",
+            "stock_id"
+          ]
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "smallint unsigned",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the customer who rented the item.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "customer_id",
+            "client_id",
+            "user_id"
+          ]
+        },
+        "return_date": {
+          "name": "return_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date and time when the rental was returned (nullable if not yet returned).",
+          "semantic_type": "timestamp",
+          "business_concept": "Return Time",
+          "aliases": [
+            "return_date",
+            "return_time",
+            "drop_off_date"
+          ]
+        },
+        "staff_id": {
+          "name": "staff_id",
+          "dtype": "tinyint unsigned",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the staff member who processed the rental.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Staff ID",
+          "aliases": [
+            "staff_id",
+            "employee_id",
+            "agent_id"
+          ]
+        },
+        "last_update": {
+          "name": "last_update",
+          "dtype": "timestamp",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "Timestamp indicating when the record was last modified in the database.",
+          "semantic_type": "timestamp",
+          "business_concept": "Audit Timestamp",
+          "aliases": [
+            "last_update",
+            "updated_at",
+            "modification_time"
+          ]
+        }
+      }
+    },
+    "inventory": {
+      "table": {
+        "name": "inventory",
+        "column_count": 4,
+        "summary": "A junction table linking films to stores, recording the last update time for each inventory record.",
+        "entity": "Inventory",
+        "role": "relationship_table",
+        "aliases": [
+          "inventory",
+          "film_store_inventory",
+          "store_film_mapping"
+        ]
+      },
+      "columns": {
+        "inventory_id": {
+          "name": "inventory_id",
+          "dtype": "mediumint unsigned",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific inventory record within this table.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "inv_id",
+            "inventory_pk",
+            "id"
+          ]
+        },
+        "film_id": {
+          "name": "film_id",
+          "dtype": "smallint unsigned",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to a specific film in the films table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Film Reference",
+          "aliases": [
+            "film_ref",
+            "movie_id",
+            "fk_film"
+          ]
+        },
+        "store_id": {
+          "name": "store_id",
+          "dtype": "tinyint unsigned",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to a specific store in the stores table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Store Reference",
+          "aliases": [
+            "store_ref",
+            "shop_id",
+            "fk_store"
+          ]
+        },
+        "last_update": {
+          "name": "last_update",
+          "dtype": "timestamp",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "Timestamp indicating when the inventory record was last modified.",
+          "semantic_type": "timestamp",
+          "business_concept": "Last Update Time",
+          "aliases": [
+            "update_time",
+            "last_modified",
+            "inv_date"
+          ]
+        }
+      }
+    },
+    "payment": {
+      "table": {
+        "name": "payment",
+        "column_count": 7,
+        "summary": "Records financial transactions made by customers, including payment amounts, dates, and associated staff or rental IDs.",
+        "entity": "Payment",
+        "role": "transaction_table",
+        "aliases": [
+          "payments",
+          "payment_details",
+          "transaction_log"
+        ]
+      },
+      "columns": {
+        "payment_id": {
+          "name": "payment_id",
+          "dtype": "smallint unsigned",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each payment record.",
+          "semantic_type": "identifier",
+          "business_concept": "Payment ID",
+          "aliases": [
+            "id",
+            "payment_number",
+            "pk_payment"
+          ]
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "smallint unsigned",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the payment to a specific customer. The sample data showing only '1' suggests this might be a filtered sample or a specific test scenario, but semantically it represents the customer.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "customer_number",
+            "client_id"
+          ]
+        },
+        "staff_id": {
+          "name": "staff_id",
+          "dtype": "tinyint unsigned",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier of the staff member who processed the payment.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Staff ID",
+          "aliases": [
+            "staff_number",
+            "employee_id",
+            "agent_id"
+          ]
+        },
+        "rental_id": {
+          "name": "rental_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier of the rental transaction associated with this payment, indicating the payment is likely for a rental fee.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Rental ID",
+          "aliases": [
+            "rental_number",
+            "rental_id",
+            "rental_key"
+          ]
+        },
+        "amount": {
+          "name": "amount",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary value of the payment.",
+          "semantic_type": "money",
+          "business_concept": "Payment Amount",
+          "aliases": [
+            "total",
+            "price",
+            "value",
+            "sum"
+          ]
+        },
+        "payment_date": {
+          "name": "payment_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date and time when the payment was made.",
+          "semantic_type": "timestamp",
+          "business_concept": "Payment Date",
+          "aliases": [
+            "created_at",
+            "transaction_date",
+            "pay_date"
+          ]
+        },
+        "last_update": {
+          "name": "last_update",
+          "dtype": "timestamp",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the payment record was last modified in the database.",
+          "semantic_type": "timestamp",
+          "business_concept": "Last Update Time",
+          "aliases": [
+            "updated_at",
+            "modified_date",
+            "change_time"
+          ]
+        }
+      }
+    }
+  }
+}

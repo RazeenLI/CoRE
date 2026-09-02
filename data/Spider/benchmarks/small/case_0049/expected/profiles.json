@@ -1,0 +1,417 @@
+{
+  "database": "flight_4",
+  "tables": {
+    "routes": {
+      "table": {
+        "name": "routes",
+        "column_count": 8,
+        "summary": "A table defining flight routes, specifying the origin and destination airports, the operating airline, and associated route identifiers.",
+        "entity": "flight_route",
+        "role": "lookup_table",
+        "aliases": [
+          "flights",
+          "routes",
+          "flight_paths",
+          "airline_routes"
+        ]
+      },
+      "columns": {
+        "rid": {
+          "name": "rid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific route record.",
+          "semantic_type": "identifier",
+          "business_concept": "Route ID",
+          "aliases": [
+            "route_id",
+            "id",
+            "rid"
+          ]
+        },
+        "dst_apid": {
+          "name": "dst_apid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Numeric code representing the destination airport.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Destination Airport ID",
+          "aliases": [
+            "dest_apid",
+            "destination_id",
+            "d_apid"
+          ]
+        },
+        "dst_ap": {
+          "name": "dst_ap",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "IATA or ICAO code representing the destination airport.",
+          "semantic_type": "code",
+          "business_concept": "Destination Airport Code",
+          "aliases": [
+            "dest_ap",
+            "destination_code",
+            "d_ap",
+            "arrival_airport"
+          ]
+        },
+        "src_apid": {
+          "name": "src_apid",
+          "dtype": "bigint",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Numeric code representing the source airport.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Source Airport ID",
+          "aliases": [
+            "src_apid",
+            "origin_id",
+            "s_apid"
+          ]
+        },
+        "src_ap": {
+          "name": "src_ap",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "IATA or ICAO code representing the source airport.",
+          "semantic_type": "code",
+          "business_concept": "Source Airport Code",
+          "aliases": [
+            "src_ap",
+            "origin_code",
+            "s_ap",
+            "departure_airport"
+          ]
+        },
+        "alid": {
+          "name": "alid",
+          "dtype": "bigint",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Numeric identifier for the specific flight leg or schedule within the route.",
+          "semantic_type": "identifier",
+          "business_concept": "Leg ID",
+          "aliases": [
+            "leg_id",
+            "flight_id",
+            "al_id"
+          ]
+        },
+        "airline": {
+          "name": "airline",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "IATA code of the airline operating the flight.",
+          "semantic_type": "code",
+          "business_concept": "Operating Airline Code",
+          "aliases": [
+            "airline_code",
+            "carrier",
+            "airline_id",
+            "operating_carrier"
+          ]
+        },
+        "codeshare": {
+          "name": "codeshare",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Indicates if the flight is a codeshare agreement (empty string likely means no codeshare).",
+          "semantic_type": "boolean",
+          "business_concept": "Codeshare Status",
+          "aliases": [
+            "is_codeshare",
+            "cs_flag",
+            "shared"
+          ]
+        }
+      }
+    },
+    "airports": {
+      "table": {
+        "name": "airports",
+        "column_count": 9,
+        "summary": "A reference table containing detailed information about airports, including their names, locations, coordinates, elevation, and various identification codes.",
+        "entity": "Airport",
+        "role": "lookup_table",
+        "aliases": [
+          "airport_info",
+          "airports_reference",
+          "airport_details"
+        ]
+      },
+      "columns": {
+        "apid": {
+          "name": "apid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique internal identifier assigned to each airport record.",
+          "semantic_type": "identifier",
+          "business_concept": "Airport ID",
+          "aliases": [
+            "airport_id",
+            "id",
+            "airport_pk"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full official name of the airport.",
+          "semantic_type": "organization_name",
+          "business_concept": "Airport Name",
+          "aliases": [
+            "airport_name",
+            "full_name",
+            "title"
+          ]
+        },
+        "city": {
+          "name": "city",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The city where the airport is located.",
+          "semantic_type": "city",
+          "business_concept": "City",
+          "aliases": [
+            "city_name",
+            "location_city",
+            "municipality"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The country in which the airport is situated.",
+          "semantic_type": "country",
+          "business_concept": "Country",
+          "aliases": [
+            "nation",
+            "country_name",
+            "sovereign_state"
+          ]
+        },
+        "x": {
+          "name": "x",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The longitude coordinate of the airport.",
+          "semantic_type": "unknown",
+          "business_concept": "Longitude",
+          "aliases": [
+            "lon",
+            "longitude",
+            "x_coord",
+            "long"
+          ]
+        },
+        "y": {
+          "name": "y",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The latitude coordinate of the airport.",
+          "semantic_type": "unknown",
+          "business_concept": "Latitude",
+          "aliases": [
+            "lat",
+            "latitude",
+            "y_coord"
+          ]
+        },
+        "elevation": {
+          "name": "elevation",
+          "dtype": "bigint",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The elevation of the airport above sea level.",
+          "semantic_type": "quantity",
+          "business_concept": "Elevation",
+          "aliases": [
+            "altitude",
+            "height",
+            "elevation_ft"
+          ]
+        },
+        "iata": {
+          "name": "iata",
+          "dtype": "character varchar(3)",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The 3-letter IATA code assigned to the airport.",
+          "semantic_type": "code",
+          "business_concept": "IATA Code",
+          "aliases": [
+            "iata_code",
+            "iata",
+            "airline_code"
+          ]
+        },
+        "icao": {
+          "name": "icao",
+          "dtype": "character varchar(4)",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The 4-letter ICAO code assigned to the airport.",
+          "semantic_type": "code",
+          "business_concept": "ICAO Code",
+          "aliases": [
+            "icao_code",
+            "icao",
+            "international_code"
+          ]
+        }
+      }
+    },
+    "airlines": {
+      "table": {
+        "name": "airlines",
+        "column_count": 7,
+        "summary": "A reference table containing global information about commercial and private airlines, including their identifiers, names, country of origin, and operational status.",
+        "entity": "Airline",
+        "role": "lookup_table",
+        "aliases": [
+          "airlines",
+          "airlines_master",
+          "carrier_info",
+          "air_carriers"
+        ]
+      },
+      "columns": {
+        "alid": {
+          "name": "alid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique internal identifier for each airline record within the database.",
+          "semantic_type": "identifier",
+          "business_concept": "Airline ID",
+          "aliases": [
+            "airline_id",
+            "id",
+            "carrier_id",
+            "alid"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full legal or trading name of the airline.",
+          "semantic_type": "organization_name",
+          "business_concept": "Airline Name",
+          "aliases": [
+            "airline_name",
+            "carrier_name",
+            "full_name",
+            "name"
+          ]
+        },
+        "iata": {
+          "name": "iata",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The two-letter code assigned by IATA to identify the airline.",
+          "semantic_type": "code",
+          "business_concept": "IATA Code",
+          "aliases": [
+            "iata_code",
+            "iata",
+            "iata_identifier"
+          ]
+        },
+        "icao": {
+          "name": "icao",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The three-letter code assigned by ICAO to identify the airline.",
+          "semantic_type": "code",
+          "business_concept": "ICAO Code",
+          "aliases": [
+            "icao_code",
+            "icao",
+            "icao_identifier"
+          ]
+        },
+        "callsign": {
+          "name": "callsign",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The radio callsign used by the airline for air traffic control communications.",
+          "semantic_type": "code",
+          "business_concept": "Callsign",
+          "aliases": [
+            "callsign",
+            "radio_callsign",
+            "aircraft_callsign",
+            "csn"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The country where the airline is headquartered or registered.",
+          "semantic_type": "country",
+          "business_concept": "Country of Origin",
+          "aliases": [
+            "country",
+            "country_code",
+            "headquarters_country",
+            "registration_country"
+          ]
+        },
+        "active": {
+          "name": "active",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Indicates whether the airline is currently operational.",
+          "semantic_type": "boolean",
+          "business_concept": "Operational Status",
+          "aliases": [
+            "active",
+            "status",
+            "is_active",
+            "operational"
+          ]
+        }
+      }
+    }
+  }
+}

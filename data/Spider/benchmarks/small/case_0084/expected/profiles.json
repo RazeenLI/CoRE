@@ -1,0 +1,675 @@
+{
+  "database": "wta_1",
+  "tables": {
+    "players": {
+      "table": {
+        "name": "players",
+        "column_count": 6,
+        "summary": "A table containing demographic and basic profile information for professional tennis players.",
+        "entity": "Tennis Player",
+        "role": "entity_table",
+        "aliases": [
+          "tennis_players",
+          "player_profiles",
+          "athletes"
+        ]
+      },
+      "columns": {
+        "player_id": {
+          "name": "player_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each player record.",
+          "semantic_type": "identifier",
+          "business_concept": "Player ID",
+          "aliases": [
+            "id",
+            "pk",
+            "player_number"
+          ]
+        },
+        "first_name": {
+          "name": "first_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The given name of the player.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "fname",
+            "fn",
+            "given_name"
+          ]
+        },
+        "last_name": {
+          "name": "last_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The family name or surname of the player.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "lname",
+            "ln",
+            "surname",
+            "family_name"
+          ]
+        },
+        "hand": {
+          "name": "hand",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The dominant hand used by the player for playing tennis (e.g., Right, Left).",
+          "semantic_type": "code",
+          "business_concept": "Playing Hand",
+          "aliases": [
+            "dominant_hand",
+            "hand_preference",
+            "handedness"
+          ]
+        },
+        "birth_date": {
+          "name": "birth_date",
+          "dtype": "date",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The date of birth of the player, stored as a compact integer format (YYYYMMDD).",
+          "semantic_type": "date",
+          "business_concept": "Date of Birth",
+          "aliases": [
+            "dob",
+            "born",
+            "birthdate",
+            "bdate"
+          ]
+        },
+        "country_code": {
+          "name": "country_code",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The ISO country code representing the nation the player represents.",
+          "semantic_type": "country",
+          "business_concept": "Nationality",
+          "aliases": [
+            "country",
+            "nation",
+            "iso_code",
+            "cc"
+          ]
+        }
+      }
+    },
+    "matches": {
+      "table": {
+        "name": "matches",
+        "column_count": 32,
+        "summary": "A comprehensive record of professional tennis matches, detailing tournament information, match results, scores, and statistics for both the winner and the loser.",
+        "entity": "Tennis Match",
+        "role": "transaction_table",
+        "aliases": [
+          "match_results",
+          "tennis_matches",
+          "tournament_matches",
+          "player_matches"
+        ]
+      },
+      "columns": {
+        "best_of": {
+          "name": "best_of",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of sets required to win the match (e.g., best of 3 or best of 5).",
+          "semantic_type": "quantity",
+          "business_concept": "Match Format",
+          "aliases": [
+            "sets_to_win",
+            "match_length"
+          ]
+        },
+        "draw_size": {
+          "name": "draw_size",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of players entered in the tournament.",
+          "semantic_type": "quantity",
+          "business_concept": "Tournament Scale",
+          "aliases": [
+            "total_players",
+            "field_size"
+          ]
+        },
+        "loser_age": {
+          "name": "loser_age",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The age of the losing player at the time of the match.",
+          "semantic_type": "quantity",
+          "business_concept": "Player Demographics",
+          "aliases": [
+            "loser_age_years",
+            "loser_birth_age"
+          ]
+        },
+        "loser_entry": {
+          "name": "loser_entry",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The entry number or seed position of the loser in the tournament draw.",
+          "semantic_type": "code",
+          "business_concept": "Tournament Draw Position",
+          "aliases": [
+            "loser_draw_number",
+            "loser_seed_position"
+          ]
+        },
+        "loser_hand": {
+          "name": "loser_hand",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The playing hand of the losing player (R for Right, L for Left).",
+          "semantic_type": "code",
+          "business_concept": "Player Attribute",
+          "aliases": [
+            "loser_plays",
+            "loser_dominant_hand"
+          ]
+        },
+        "loser_ht": {
+          "name": "loser_ht",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The height of the losing player in centimeters.",
+          "semantic_type": "quantity",
+          "business_concept": "Player Physical Stats",
+          "aliases": [
+            "loser_height_cm",
+            "loser_stature"
+          ]
+        },
+        "loser_id": {
+          "name": "loser_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the losing player within the database.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Player Identity",
+          "aliases": [
+            "loser_player_id",
+            "loser_uid"
+          ]
+        },
+        "loser_ioc": {
+          "name": "loser_ioc",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The International Olympic Committee country code for the losing player's nation.",
+          "semantic_type": "code",
+          "business_concept": "Nationality",
+          "aliases": [
+            "loser_country_code",
+            "loser_noc"
+          ]
+        },
+        "loser_name": {
+          "name": "loser_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the losing player.",
+          "semantic_type": "person_name",
+          "business_concept": "Player Identity",
+          "aliases": [
+            "loser_fullname",
+            "loser_player_name"
+          ]
+        },
+        "loser_rank": {
+          "name": "loser_rank",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The current world ranking of the losing player at the time of the match.",
+          "semantic_type": "category",
+          "business_concept": "Player Standing",
+          "aliases": [
+            "loser_world_rank",
+            "loser_rating"
+          ]
+        },
+        "loser_rank_points": {
+          "name": "loser_rank_points",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total ranking points held by the losing player.",
+          "semantic_type": "quantity",
+          "business_concept": "Player Standing",
+          "aliases": [
+            "loser_points",
+            "loser_rank_score"
+          ]
+        },
+        "loser_seed": {
+          "name": "loser_seed",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The seed number assigned to the losing player in the tournament.",
+          "semantic_type": "category",
+          "business_concept": "Tournament Draw Position",
+          "aliases": [
+            "loser_seed_num",
+            "loser_tournament_seed"
+          ]
+        },
+        "match_num": {
+          "name": "match_num",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A sequential number identifying the specific match within the tournament.",
+          "semantic_type": "identifier",
+          "business_concept": "Match Identification",
+          "aliases": [
+            "match_sequence",
+            "match_index"
+          ]
+        },
+        "minutes": {
+          "name": "minutes",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total duration of the match in minutes.",
+          "semantic_type": "quantity",
+          "business_concept": "Match Duration",
+          "aliases": [
+            "match_duration",
+            "match_time"
+          ]
+        },
+        "round": {
+          "name": "round",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The specific round of the tournament in which the match took place.",
+          "semantic_type": "category",
+          "business_concept": "Tournament Stage",
+          "aliases": [
+            "match_round",
+            "tournament_round"
+          ]
+        },
+        "score": {
+          "name": "score",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The final set-by-set score of the match.",
+          "semantic_type": "description",
+          "business_concept": "Match Result",
+          "aliases": [
+            "match_scoreline",
+            "sets_scored"
+          ]
+        },
+        "surface": {
+          "name": "surface",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The type of court surface where the match was played.",
+          "semantic_type": "category",
+          "business_concept": "Match Environment",
+          "aliases": [
+            "court_type",
+            "playing_surface"
+          ]
+        },
+        "tourney_date": {
+          "name": "tourney_date",
+          "dtype": "date",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The date on which the tournament took place.",
+          "semantic_type": "date",
+          "business_concept": "Event Timing",
+          "aliases": [
+            "tournament_date",
+            "event_date"
+          ]
+        },
+        "tourney_id": {
+          "name": "tourney_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "A unique identifier for the specific tournament instance.",
+          "semantic_type": "identifier",
+          "business_concept": "Tournament Identification",
+          "aliases": [
+            "tournament_uid",
+            "event_id"
+          ]
+        },
+        "tourney_level": {
+          "name": "tourney_level",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The classification level of the tournament (e.g., W, WTA, ATP).",
+          "semantic_type": "category",
+          "business_concept": "Tournament Classification",
+          "aliases": [
+            "tournament_class",
+            "event_level"
+          ]
+        },
+        "tourney_name": {
+          "name": "tourney_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official name of the tournament.",
+          "semantic_type": "organization_name",
+          "business_concept": "Tournament Identity",
+          "aliases": [
+            "tournament_title",
+            "event_name"
+          ]
+        },
+        "winner_age": {
+          "name": "winner_age",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The age of the winning player at the time of the match.",
+          "semantic_type": "quantity",
+          "business_concept": "Player Demographics",
+          "aliases": [
+            "winner_age_years",
+            "winner_birth_age"
+          ]
+        },
+        "winner_entry": {
+          "name": "winner_entry",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The entry number or seed position of the winner in the tournament draw.",
+          "semantic_type": "code",
+          "business_concept": "Tournament Draw Position",
+          "aliases": [
+            "winner_draw_number",
+            "winner_seed_position"
+          ]
+        },
+        "winner_hand": {
+          "name": "winner_hand",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The playing hand of the winning player (R for Right, L for Left).",
+          "semantic_type": "code",
+          "business_concept": "Player Attribute",
+          "aliases": [
+            "winner_plays",
+            "winner_dominant_hand"
+          ]
+        },
+        "winner_ht": {
+          "name": "winner_ht",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The height of the winning player in centimeters.",
+          "semantic_type": "quantity",
+          "business_concept": "Player Physical Stats",
+          "aliases": [
+            "winner_height_cm",
+            "winner_stature"
+          ]
+        },
+        "winner_id": {
+          "name": "winner_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the winning player within the database.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Player Identity",
+          "aliases": [
+            "winner_player_id",
+            "winner_uid"
+          ]
+        },
+        "winner_ioc": {
+          "name": "winner_ioc",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The International Olympic Committee country code for the winning player's nation.",
+          "semantic_type": "code",
+          "business_concept": "Nationality",
+          "aliases": [
+            "winner_country_code",
+            "winner_noc"
+          ]
+        },
+        "winner_name": {
+          "name": "winner_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the winning player.",
+          "semantic_type": "person_name",
+          "business_concept": "Player Identity",
+          "aliases": [
+            "winner_fullname",
+            "winner_player_name"
+          ]
+        },
+        "winner_rank": {
+          "name": "winner_rank",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The current world ranking of the winning player at the time of the match.",
+          "semantic_type": "category",
+          "business_concept": "Player Standing",
+          "aliases": [
+            "winner_world_rank",
+            "winner_rating"
+          ]
+        },
+        "winner_rank_points": {
+          "name": "winner_rank_points",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total ranking points held by the winning player.",
+          "semantic_type": "quantity",
+          "business_concept": "Player Standing",
+          "aliases": [
+            "winner_points",
+            "winner_rank_score"
+          ]
+        },
+        "winner_seed": {
+          "name": "winner_seed",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The seed number assigned to the winning player in the tournament.",
+          "semantic_type": "category",
+          "business_concept": "Tournament Draw Position",
+          "aliases": [
+            "winner_seed_num",
+            "winner_tournament_seed"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the match occurred.",
+          "semantic_type": "date",
+          "business_concept": "Event Timing",
+          "aliases": [
+            "match_year",
+            "event_year"
+          ]
+        }
+      }
+    },
+    "rankings": {
+      "table": {
+        "name": "rankings",
+        "column_count": 5,
+        "summary": "A table recording tennis player rankings, including their rank, points, and tour count for specific dates.",
+        "entity": "player_ranking_record",
+        "role": "transaction_table",
+        "aliases": [
+          "player_rankings",
+          "tennis_rankings",
+          "ranking_history"
+        ]
+      },
+      "columns": {
+        "ranking_date": {
+          "name": "ranking_date",
+          "dtype": "date",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The date on which the ranking snapshot was recorded.",
+          "semantic_type": "date",
+          "business_concept": "ranking_date",
+          "aliases": [
+            "date",
+            "snapshot_date",
+            "record_date"
+          ]
+        },
+        "ranking": {
+          "name": "ranking",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The numerical position of the player in the ranking list.",
+          "semantic_type": "quantity",
+          "business_concept": "rank_position",
+          "aliases": [
+            "rank",
+            "position",
+            "order"
+          ]
+        },
+        "player_id": {
+          "name": "player_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific tennis player.",
+          "semantic_type": "identifier",
+          "business_concept": "player_identifier",
+          "aliases": [
+            "player_code",
+            "athlete_id",
+            "id"
+          ]
+        },
+        "ranking_points": {
+          "name": "ranking_points",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total points accumulated by the player contributing to their ranking.",
+          "semantic_type": "quantity",
+          "business_concept": "ranking_points_total",
+          "aliases": [
+            "points",
+            "score",
+            "total_points"
+          ]
+        },
+        "tours": {
+          "name": "tours",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of tournaments or tours the player has participated in during the ranking period.",
+          "semantic_type": "quantity",
+          "business_concept": "tournaments_played",
+          "aliases": [
+            "tournaments",
+            "events_count",
+            "matches_count"
+          ]
+        }
+      }
+    }
+  }
+}

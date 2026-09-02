@@ -1,0 +1,116 @@
+{
+  "database": "incoming",
+  "tables": {
+    "property_service_records": {
+      "table": {
+        "name": "property_service_records",
+        "column_count": 6,
+        "summary": "A transactional table recording specific service events (like cleaning or checks) associated with residents at various properties, including the date the resident moved in.",
+        "entity": "customer_event_note",
+        "role": "transaction_table",
+        "aliases": [
+          "event_notes",
+          "service_events",
+          "resident_activity_log",
+          "property_service_records"
+        ]
+      },
+      "columns": {
+        "event_note_pk": {
+          "name": "event_note_pk",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific service event note record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "note_id",
+            "event_note_pk",
+            "id"
+          ]
+        },
+        "event_id": {
+          "name": "event_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking this note to a broader customer event or transaction.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Event Reference",
+          "aliases": [
+            "event_id",
+            "customer_event_ref",
+            "parent_event_id"
+          ]
+        },
+        "type_code": {
+          "name": "type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short code describing the type of service performed (e.g., cleaning, check).",
+          "semantic_type": "code",
+          "business_concept": "Service Category",
+          "aliases": [
+            "service_code",
+            "type_code",
+            "activity_type"
+          ]
+        },
+        "tenant_id": {
+          "name": "tenant_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the resident associated with this event.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Resident Reference",
+          "aliases": [
+            "resident_ref",
+            "tenant_id",
+            "customer_id"
+          ]
+        },
+        "building_id": {
+          "name": "building_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the property where the event occurred.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Property Reference",
+          "aliases": [
+            "property_ref",
+            "building_id",
+            "site_id"
+          ]
+        },
+        "arrival_date": {
+          "name": "arrival_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp indicating when the resident moved into the property.",
+          "semantic_type": "timestamp",
+          "business_concept": "Move-in Date",
+          "aliases": [
+            "move_in_date",
+            "lease_start",
+            "arrival_date"
+          ]
+        }
+      }
+    }
+  }
+}

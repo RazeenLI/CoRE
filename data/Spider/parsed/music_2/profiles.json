@@ -1,0 +1,421 @@
+{
+  "database": "music_2",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/music_2",
+    "schema_path": "data/Spider/parsed/music_2/schema.json",
+    "tables_dir": "data/Spider/parsed/music_2/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "albums": {
+      "table": {
+        "name": "albums",
+        "column_count": 5,
+        "summary": "A catalog of music albums containing metadata such as title, release year, and record label.",
+        "entity": "Album",
+        "role": "entity_table",
+        "aliases": [
+          "album_catalog",
+          "music_albums",
+          "discography"
+        ]
+      },
+      "columns": {
+        "aid": {
+          "name": "aid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for each album record.",
+          "semantic_type": "identifier",
+          "business_concept": "Album ID",
+          "aliases": [
+            "album_id",
+            "id",
+            "album_key"
+          ]
+        },
+        "title": {
+          "name": "title",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name or title of the album.",
+          "semantic_type": "description",
+          "business_concept": "Album Title",
+          "aliases": [
+            "name",
+            "album_name",
+            "title_of_album"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The year the album was released.",
+          "semantic_type": "date",
+          "business_concept": "Release Year",
+          "aliases": [
+            "release_year",
+            "year_released",
+            "pub_year"
+          ]
+        },
+        "label": {
+          "name": "label",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The record company or label that released the album.",
+          "semantic_type": "organization_name",
+          "business_concept": "Record Label",
+          "aliases": [
+            "record_label",
+            "label_name",
+            "publisher"
+          ]
+        },
+        "type": {
+          "name": "type",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The format or category of the album (e.g., LP, CD, Digital).",
+          "semantic_type": "category",
+          "business_concept": "Album Format",
+          "aliases": [
+            "format",
+            "album_type",
+            "media_type"
+          ]
+        }
+      }
+    },
+    "band": {
+      "table": {
+        "name": "band",
+        "column_count": 3,
+        "summary": "A table containing basic personal identification information for individuals, likely representing a roster or directory of people.",
+        "entity": "Person",
+        "role": "entity_table",
+        "aliases": [
+          "people",
+          "members",
+          "users",
+          "artists"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "A unique numeric identifier for each record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "pk_id",
+            "record_id",
+            "band_id"
+          ]
+        },
+        "firstname": {
+          "name": "firstname",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The given name of the person.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "first_name",
+            "fname",
+            "given_name",
+            "fn"
+          ]
+        },
+        "lastname": {
+          "name": "lastname",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The family name or surname of the person.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "last_name",
+            "lname",
+            "surname",
+            "sn"
+          ]
+        }
+      }
+    },
+    "instruments": {
+      "table": {
+        "name": "instruments",
+        "column_count": 3,
+        "summary": "A lookup or relationship table mapping song identifiers to the musical instruments played by band members.",
+        "entity": "Instrumentation",
+        "role": "lookup_table",
+        "aliases": [
+          "song_instruments",
+          "band_instruments",
+          "instrument_roles"
+        ]
+      },
+      "columns": {
+        "songid": {
+          "name": "songid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a specific song record.",
+          "semantic_type": "identifier",
+          "business_concept": "Song ID",
+          "aliases": [
+            "song_id",
+            "id",
+            "track_id"
+          ]
+        },
+        "bandmateid": {
+          "name": "bandmateid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a specific band member playing the instrument.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Band Member ID",
+          "aliases": [
+            "member_id",
+            "artist_id",
+            "musician_id",
+            "bandmate_id"
+          ]
+        },
+        "instrument": {
+          "name": "instrument",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the musical instrument being played.",
+          "semantic_type": "category",
+          "business_concept": "Instrument Name",
+          "aliases": [
+            "instrument_name",
+            "type",
+            "instrument_type"
+          ]
+        }
+      }
+    },
+    "performance": {
+      "table": {
+        "name": "performance",
+        "column_count": 3,
+        "summary": "Stores performance data for musical acts, linking songs to band members and their positions.",
+        "entity": "Performance",
+        "role": "transaction_table",
+        "aliases": [
+          "performances",
+          "act_records",
+          "stage_performances"
+        ]
+      },
+      "columns": {
+        "songid": {
+          "name": "songid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for the song being performed.",
+          "semantic_type": "identifier",
+          "business_concept": "Song ID",
+          "aliases": [
+            "song_id",
+            "track_id",
+            "music_id"
+          ]
+        },
+        "bandmate": {
+          "name": "bandmate",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for the band member participating in the performance.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Band Member ID",
+          "aliases": [
+            "member_id",
+            "musician_id",
+            "artist_id"
+          ]
+        },
+        "stageposition": {
+          "name": "stageposition",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The physical or functional position of the band member on stage during the performance.",
+          "semantic_type": "category",
+          "business_concept": "Stage Position",
+          "aliases": [
+            "position",
+            "location",
+            "role_on_stage"
+          ]
+        }
+      }
+    },
+    "songs": {
+      "table": {
+        "name": "songs",
+        "column_count": 2,
+        "summary": "A table containing metadata about musical tracks, including unique identifiers and track names.",
+        "entity": "Song",
+        "role": "entity_table",
+        "aliases": [
+          "tracks",
+          "music",
+          "songs_data"
+        ]
+      },
+      "columns": {
+        "songid": {
+          "name": "songid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "A unique numeric identifier assigned to each song record.",
+          "semantic_type": "identifier",
+          "business_concept": "Song ID",
+          "aliases": [
+            "id",
+            "song_id",
+            "track_id",
+            "trackid"
+          ]
+        },
+        "title": {
+          "name": "title",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name or title of the song.",
+          "semantic_type": "description",
+          "business_concept": "Song Title",
+          "aliases": [
+            "name",
+            "track_name",
+            "song_name",
+            "title"
+          ]
+        }
+      }
+    },
+    "tracklists": {
+      "table": {
+        "name": "tracklists",
+        "column_count": 3,
+        "summary": "A table defining the sequence of songs within specific albums.",
+        "entity": "Tracklist",
+        "role": "relationship_table",
+        "aliases": [
+          "album_tracks",
+          "track_list",
+          "songs_by_album"
+        ]
+      },
+      "columns": {
+        "albumid": {
+          "name": "albumid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for the album to which these tracks belong.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Album ID",
+          "aliases": [
+            "album_id",
+            "album",
+            "aid"
+          ]
+        },
+        "position": {
+          "name": "position",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The sequential order of the song within the album's tracklist.",
+          "semantic_type": "quantity",
+          "business_concept": "Track Number",
+          "aliases": [
+            "track_number",
+            "track_num",
+            "order",
+            "seq"
+          ]
+        },
+        "songid": {
+          "name": "songid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for the specific song (track). Nullable suggests some albums may have tracks without a defined song ID or it acts as a join key to a songs table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Song ID",
+          "aliases": [
+            "song_id",
+            "track_id",
+            "tid",
+            "track"
+          ]
+        }
+      }
+    },
+    "vocals": {
+      "table": {
+        "name": "vocals",
+        "column_count": 3,
+        "summary": "A relationship table linking songs to band members and their specific vocal roles.",
+        "entity": "Vocal Performance",
+        "role": "relationship_table",
+        "aliases": [
+          "vocalists",
+          "band_members_vocals",
+          "song_vocals"
+        ]
+      },
+      "columns": {
+        "songid": {
+          "name": "songid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a specific song record.",
+          "semantic_type": "identifier",
+          "business_concept": "Song ID",
+          "aliases": [
+            "song_id",
+            "id",
+            "track_id"
+          ]
+        },
+        "bandmate": {
+          "name": "bandmate",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a band member participating in the vocal performance.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Band Member ID",
+          "aliases": [
+            "member_id",
+            "artist_id",
+            "person_id"
+          ]
+        },
+        "type": {
+          "name": "type",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The specific vocal role or part performed by the bandmate on the song.",
+          "semantic_type": "category",
+          "business_concept": "Vocal Role",
+          "aliases": [
+            "role",
+            "part",
+            "vocal_type",
+            "instrument"
+          ]
+        }
+      }
+    }
+  }
+}

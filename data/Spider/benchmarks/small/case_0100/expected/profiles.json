@@ -1,0 +1,387 @@
+{
+  "database": "music_1",
+  "tables": {
+    "artist": {
+      "table": {
+        "name": "artist",
+        "column_count": 4,
+        "summary": "A reference table containing demographic and stylistic information about various artists.",
+        "entity": "artist",
+        "role": "entity_table",
+        "aliases": [
+          "artists",
+          "musician_info",
+          "performer_details"
+        ]
+      },
+      "columns": {
+        "artist_name": {
+          "name": "artist_name",
+          "dtype": "varchar2(50)",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The full name or primary identifier of the artist.",
+          "semantic_type": "person_name",
+          "business_concept": "Artist Identity",
+          "aliases": [
+            "name",
+            "full_name",
+            "artist_id",
+            "performer_name"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "varchar2(20)",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country of origin or primary residence of the artist.",
+          "semantic_type": "country",
+          "business_concept": "Nationality/Origin",
+          "aliases": [
+            "nation",
+            "origin_country",
+            "home_country",
+            "nationality"
+          ]
+        },
+        "gender": {
+          "name": "gender",
+          "dtype": "varchar2(20)",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The gender classification of the artist.",
+          "semantic_type": "category",
+          "business_concept": "Demographic Attribute",
+          "aliases": [
+            "sex",
+            "gender_code",
+            "biological_sex"
+          ]
+        },
+        "preferred_genre": {
+          "name": "preferred_genre",
+          "dtype": "varchar2(50)",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The primary musical genre associated with the artist.",
+          "semantic_type": "category",
+          "business_concept": "Musical Style",
+          "aliases": [
+            "genre",
+            "music_genre",
+            "style",
+            "category"
+          ]
+        }
+      }
+    },
+    "files": {
+      "table": {
+        "name": "files",
+        "column_count": 5,
+        "summary": "A table storing metadata for digital media files, including artist information, file size, duration, and format.",
+        "entity": "Media File",
+        "role": "entity_table",
+        "aliases": [
+          "media_files",
+          "file_metadata",
+          "audio_video_files"
+        ]
+      },
+      "columns": {
+        "f_id": {
+          "name": "f_id",
+          "dtype": "number(10)",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each file record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "File ID",
+          "aliases": [
+            "file_id",
+            "id",
+            "record_id"
+          ]
+        },
+        "artist_name": {
+          "name": "artist_name",
+          "dtype": "varchar2(50)",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The name of the artist or creator associated with the media file.",
+          "semantic_type": "person_name",
+          "business_concept": "Artist Name",
+          "aliases": [
+            "artist",
+            "creator",
+            "performer"
+          ]
+        },
+        "file_size": {
+          "name": "file_size",
+          "dtype": "varchar2(20)",
+          "value_patterns": [],
+          "meaning": "The storage size of the media file, expressed in megabytes (MB).",
+          "semantic_type": "quantity",
+          "business_concept": "File Size",
+          "aliases": [
+            "size",
+            "storage_size",
+            "bytes"
+          ]
+        },
+        "duration": {
+          "name": "duration",
+          "dtype": "varchar2(20)",
+          "value_patterns": [],
+          "meaning": "The total playback length of the media file in minutes and seconds.",
+          "semantic_type": "unknown",
+          "business_concept": "Media Duration",
+          "aliases": [
+            "length",
+            "time",
+            "play_time"
+          ]
+        },
+        "formats": {
+          "name": "formats",
+          "dtype": "varchar2(20)",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The file extension or container format of the media file.",
+          "semantic_type": "code",
+          "business_concept": "File Format",
+          "aliases": [
+            "format",
+            "extension",
+            "type"
+          ]
+        }
+      }
+    },
+    "genre": {
+      "table": {
+        "name": "genre",
+        "column_count": 3,
+        "summary": "A lookup table defining music genres, their popularity ratings, and the regions where they are most prevalent.",
+        "entity": "Genre",
+        "role": "lookup_table",
+        "aliases": [
+          "genre_master",
+          "music_genre",
+          "genre_list"
+        ]
+      },
+      "columns": {
+        "g_name": {
+          "name": "g_name",
+          "dtype": "varchar2(20)",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The unique identifier or name of the music genre.",
+          "semantic_type": "category",
+          "business_concept": "Genre Name",
+          "aliases": [
+            "genre_id",
+            "genre_code",
+            "name"
+          ]
+        },
+        "rating": {
+          "name": "rating",
+          "dtype": "varchar2(10)",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A numerical score indicating the popularity or quality of the genre.",
+          "semantic_type": "quantity",
+          "business_concept": "Popularity Rating",
+          "aliases": [
+            "popularity_score",
+            "rank",
+            "score"
+          ]
+        },
+        "most_popular_in": {
+          "name": "most_popular_in",
+          "dtype": "varchar2(50)",
+          "value_patterns": [],
+          "meaning": "The geographic region(s) where this genre is most popular.",
+          "semantic_type": "country",
+          "business_concept": "Region of Popularity",
+          "aliases": [
+            "popular_region",
+            "top_location",
+            "primary_market"
+          ]
+        }
+      }
+    },
+    "song": {
+      "table": {
+        "name": "song",
+        "column_count": 9,
+        "summary": "A catalog of songs containing metadata such as title, artist, origin, genre, language, release date, and quality metrics.",
+        "entity": "Song",
+        "role": "entity_table",
+        "aliases": [
+          "songs",
+          "track_catalog",
+          "music_library"
+        ]
+      },
+      "columns": {
+        "song_name": {
+          "name": "song_name",
+          "dtype": "varchar2(50)",
+          "value_patterns": [],
+          "meaning": "The title of the musical track.",
+          "semantic_type": "description",
+          "business_concept": "Track Title",
+          "aliases": [
+            "title",
+            "track_name",
+            "song_title"
+          ]
+        },
+        "artist_name": {
+          "name": "artist_name",
+          "dtype": "varchar2(50)",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The name of the performer or group who created the song.",
+          "semantic_type": "person_name",
+          "business_concept": "Artist",
+          "aliases": [
+            "performer",
+            "singer",
+            "band",
+            "musician"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "varchar2(20)",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country of origin for the song or artist.",
+          "semantic_type": "country",
+          "business_concept": "Origin Country",
+          "aliases": [
+            "nation",
+            "source_country",
+            "origin"
+          ]
+        },
+        "f_id": {
+          "name": "f_id",
+          "dtype": "number(10)",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the song record within the database.",
+          "semantic_type": "identifier",
+          "business_concept": "Song ID",
+          "aliases": [
+            "id",
+            "song_id",
+            "track_id",
+            "primary_key"
+          ]
+        },
+        "genre_is": {
+          "name": "genre_is",
+          "dtype": "varchar2(20)",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The musical genre classification of the song.",
+          "semantic_type": "category",
+          "business_concept": "Genre",
+          "aliases": [
+            "genre",
+            "category",
+            "style",
+            "type"
+          ]
+        },
+        "rating": {
+          "name": "rating",
+          "dtype": "number(10)",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A numerical score representing the quality or popularity of the song.",
+          "semantic_type": "quantity",
+          "business_concept": "Quality Score",
+          "aliases": [
+            "score",
+            "quality",
+            "popularity",
+            "rank"
+          ]
+        },
+        "languages": {
+          "name": "languages",
+          "dtype": "varchar2(20)",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The language(s) in which the song is performed.",
+          "semantic_type": "category",
+          "business_concept": "Language",
+          "aliases": [
+            "lang",
+            "language_code",
+            "spoken_language"
+          ]
+        },
+        "releasedate": {
+          "name": "releasedate",
+          "dtype": "date",
+          "value_patterns": [],
+          "meaning": "The date on which the song was officially released.",
+          "semantic_type": "date",
+          "business_concept": "Release Date",
+          "aliases": [
+            "release_date",
+            "pub_date",
+            "date_released"
+          ]
+        },
+        "resolution": {
+          "name": "resolution",
+          "dtype": "number(10)",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The audio resolution or bitrate quality of the song file.",
+          "semantic_type": "quantity",
+          "business_concept": "Audio Resolution",
+          "aliases": [
+            "bitrate",
+            "quality_level",
+            "sample_rate",
+            "audio_res"
+          ]
+        }
+      }
+    }
+  }
+}

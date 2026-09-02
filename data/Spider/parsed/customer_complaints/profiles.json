@@ -1,0 +1,547 @@
+{
+  "database": "customer_complaints",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/customer_complaints",
+    "schema_path": "data/Spider/parsed/customer_complaints/schema.json",
+    "tables_dir": "data/Spider/parsed/customer_complaints/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "complaints": {
+      "table": {
+        "name": "complaints",
+        "column_count": 9,
+        "summary": "A record of customer complaints including product details, staff assignment, and resolution status.",
+        "entity": "Complaint",
+        "role": "transaction_table",
+        "aliases": [
+          "complaints_log",
+          "customer_complaints",
+          "issue_records"
+        ]
+      },
+      "columns": {
+        "complaint_id": {
+          "name": "complaint_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each complaint record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "complaint_number",
+            "case_id"
+          ]
+        },
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the complaint to a specific product.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Product Reference",
+          "aliases": [
+            "product_ref",
+            "item_id",
+            "sku_id"
+          ]
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the complaint to a specific customer.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer Reference",
+          "aliases": [
+            "cust_id",
+            "client_id",
+            "account_id"
+          ]
+        },
+        "complaint_outcome_code": {
+          "name": "complaint_outcome_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Code representing the final result or resolution of the complaint.",
+          "semantic_type": "code",
+          "business_concept": "Resolution Outcome",
+          "aliases": [
+            "outcome",
+            "result_code",
+            "disposition"
+          ]
+        },
+        "complaint_status_code": {
+          "name": "complaint_status_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Code representing the current lifecycle status of the complaint.",
+          "semantic_type": "status",
+          "business_concept": "Complaint Status",
+          "aliases": [
+            "status",
+            "state",
+            "lifecycle_stage"
+          ]
+        },
+        "complaint_type_code": {
+          "name": "complaint_type_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Code categorizing the nature or reason of the complaint.",
+          "semantic_type": "category",
+          "business_concept": "Issue Category",
+          "aliases": [
+            "type",
+            "category_code",
+            "issue_type"
+          ]
+        },
+        "date_complaint_raised": {
+          "name": "date_complaint_raised",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "Timestamp indicating when the complaint was initially submitted.",
+          "semantic_type": "timestamp",
+          "business_concept": "Creation Date",
+          "aliases": [
+            "created_at",
+            "opened_date",
+            "report_date"
+          ]
+        },
+        "date_complaint_closed": {
+          "name": "date_complaint_closed",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "Timestamp indicating when the complaint was resolved or closed.",
+          "semantic_type": "timestamp",
+          "business_concept": "Closure Date",
+          "aliases": [
+            "closed_at",
+            "resolved_date",
+            "completed_date"
+          ]
+        },
+        "staff_id": {
+          "name": "staff_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier of the staff member assigned to handle the complaint.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Assigned Agent",
+          "aliases": [
+            "agent_id",
+            "handler_id",
+            "employee_id"
+          ]
+        }
+      }
+    },
+    "customers": {
+      "table": {
+        "name": "customers",
+        "column_count": 8,
+        "summary": "A table containing contact and address information for individual customers, including unique identifiers, credit ratings, and communication details.",
+        "entity": "Customer",
+        "role": "entity_table",
+        "aliases": [
+          "clients",
+          "accounts",
+          "user_contacts"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each customer record.",
+          "semantic_type": "identifier",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "id",
+            "customer_number"
+          ]
+        },
+        "customer_type_code": {
+          "name": "customer_type_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A text field indicating the credit rating or classification of the customer.",
+          "semantic_type": "code",
+          "business_concept": "Credit Rating",
+          "aliases": [
+            "credit_class",
+            "customer_class",
+            "rating_code"
+          ]
+        },
+        "address_line_1": {
+          "name": "address_line_1",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The primary street address for the customer.",
+          "semantic_type": "address",
+          "business_concept": "Street Address",
+          "aliases": [
+            "street",
+            "addr_1",
+            "line1"
+          ]
+        },
+        "address_line_2": {
+          "name": "address_line_2",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Secondary address information such as apartment number or suite.",
+          "semantic_type": "address",
+          "business_concept": "Secondary Address",
+          "aliases": [
+            "apt",
+            "suite",
+            "addr_2",
+            "line2"
+          ]
+        },
+        "town_city": {
+          "name": "town_city",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The city or town where the customer resides.",
+          "semantic_type": "city",
+          "business_concept": "City",
+          "aliases": [
+            "city",
+            "town",
+            "locality"
+          ]
+        },
+        "state": {
+          "name": "state",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The state or region where the customer resides.",
+          "semantic_type": "address",
+          "business_concept": "State",
+          "aliases": [
+            "st",
+            "region",
+            "province"
+          ]
+        },
+        "email_address": {
+          "name": "email_address",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "The email contact address for the customer.",
+          "semantic_type": "email",
+          "business_concept": "Email",
+          "aliases": [
+            "email",
+            "e_mail",
+            "contact_email"
+          ]
+        },
+        "phone_number": {
+          "name": "phone_number",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The telephone contact number for the customer.",
+          "semantic_type": "phone",
+          "business_concept": "Phone Number",
+          "aliases": [
+            "phone",
+            "tel",
+            "mobile",
+            "contact_phone"
+          ]
+        }
+      }
+    },
+    "products": {
+      "table": {
+        "name": "products",
+        "column_count": 8,
+        "summary": "A catalog of products containing identification details, categorization, availability dates, descriptions, and pricing.",
+        "entity": "Product",
+        "role": "entity_table",
+        "aliases": [
+          "product_catalog",
+          "items",
+          "merchandise",
+          "inventory"
+        ]
+      },
+      "columns": {
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each product record.",
+          "semantic_type": "identifier",
+          "business_concept": "Product ID",
+          "aliases": [
+            "id",
+            "pid",
+            "sku"
+          ]
+        },
+        "parent_product_id": {
+          "name": "parent_product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the parent product, indicating a hierarchical relationship (e.g., product variants or sub-categories).",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Parent Product ID",
+          "aliases": [
+            "parent_id",
+            "superseded_by",
+            "category_id"
+          ]
+        },
+        "product_category_code": {
+          "name": "product_category_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Alphanumeric code representing the broad category of the product.",
+          "semantic_type": "code",
+          "business_concept": "Product Category",
+          "aliases": [
+            "category",
+            "cat_code",
+            "type"
+          ]
+        },
+        "date_product_first_available": {
+          "name": "date_product_first_available",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the product was first released or became available for sale.",
+          "semantic_type": "timestamp",
+          "business_concept": "Release Date",
+          "aliases": [
+            "start_date",
+            "launch_date",
+            "created_at"
+          ]
+        },
+        "date_product_discontinued": {
+          "name": "date_product_discontinued",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the product was removed from sale or discontinued.",
+          "semantic_type": "timestamp",
+          "business_concept": "Discontinuation Date",
+          "aliases": [
+            "end_date",
+            "retired_date",
+            "deleted_at"
+          ]
+        },
+        "product_name": {
+          "name": "product_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The human-readable name of the product.",
+          "semantic_type": "unknown",
+          "business_concept": "Product Name",
+          "aliases": [
+            "name",
+            "title",
+            "label"
+          ]
+        },
+        "product_description": {
+          "name": "product_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A detailed textual description of the product's features or purpose.",
+          "semantic_type": "description",
+          "business_concept": "Product Description",
+          "aliases": [
+            "desc",
+            "details",
+            "summary"
+          ]
+        },
+        "product_price": {
+          "name": "product_price",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary value assigned to the product.",
+          "semantic_type": "money",
+          "business_concept": "Price",
+          "aliases": [
+            "price",
+            "cost",
+            "amount",
+            "unit_price"
+          ]
+        }
+      }
+    },
+    "staff": {
+      "table": {
+        "name": "staff",
+        "column_count": 6,
+        "summary": "A table containing personal contact and demographic information for staff members.",
+        "entity": "staff_member",
+        "role": "entity_table",
+        "aliases": [
+          "employees",
+          "personnel",
+          "staff_list",
+          "user_directory"
+        ]
+      },
+      "columns": {
+        "staff_id": {
+          "name": "staff_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each staff member.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "staff_number",
+            "emp_id",
+            "employee_id"
+          ]
+        },
+        "gender": {
+          "name": "gender",
+          "dtype": "string",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A binary indicator representing the gender of the staff member.",
+          "semantic_type": "boolean",
+          "business_concept": "Gender",
+          "aliases": [
+            "sex",
+            "gender_code",
+            "g"
+          ]
+        },
+        "first_name": {
+          "name": "first_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The given name of the staff member.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "fname",
+            "fn",
+            "given_name",
+            "first"
+          ]
+        },
+        "last_name": {
+          "name": "last_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The family name or surname of the staff member.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "lname",
+            "ln",
+            "surname",
+            "family_name",
+            "last"
+          ]
+        },
+        "email_address": {
+          "name": "email_address",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "The electronic mail address associated with the staff member.",
+          "semantic_type": "email",
+          "business_concept": "Email Address",
+          "aliases": [
+            "email",
+            "e_mail",
+            "work_email",
+            "contact_email"
+          ]
+        },
+        "phone_number": {
+          "name": "phone_number",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The telephone contact number for the staff member.",
+          "semantic_type": "phone",
+          "business_concept": "Phone Number",
+          "aliases": [
+            "phone",
+            "telephone",
+            "tel",
+            "mobile",
+            "contact_phone"
+          ]
+        }
+      }
+    }
+  }
+}

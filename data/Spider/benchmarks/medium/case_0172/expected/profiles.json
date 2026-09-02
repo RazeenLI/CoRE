@@ -1,0 +1,820 @@
+{
+  "database": "products_for_hire",
+  "tables": {
+    "payments": {
+      "table": {
+        "name": "payments",
+        "column_count": 8,
+        "summary": "Records financial transactions including payment details, amounts paid and due, payment methods, and associated booking and customer identifiers.",
+        "entity": "Payment",
+        "role": "transaction_table",
+        "aliases": [
+          "payment_records",
+          "payment_details",
+          "transaction_log",
+          "payments"
+        ]
+      },
+      "columns": {
+        "payment_id": {
+          "name": "payment_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each payment record.",
+          "semantic_type": "identifier",
+          "business_concept": "Payment ID",
+          "aliases": [
+            "payment_uid",
+            "pay_id",
+            "txn_id"
+          ]
+        },
+        "booking_id": {
+          "name": "booking_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the payment to a specific booking or reservation.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Booking Reference",
+          "aliases": [
+            "booking_ref",
+            "reservation_id",
+            "order_id"
+          ]
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the customer making the payment.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "client_id",
+            "user_id"
+          ]
+        },
+        "payment_type_code": {
+          "name": "payment_type_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Categorical code indicating the method used for the payment.",
+          "semantic_type": "code",
+          "business_concept": "Payment Method",
+          "aliases": [
+            "pay_method",
+            "payment_mode",
+            "transaction_type"
+          ]
+        },
+        "amount_paid_in_full_yn": {
+          "name": "amount_paid_in_full_yn",
+          "dtype": "string",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Indicator specifying whether the payment covers the full outstanding balance.",
+          "semantic_type": "boolean",
+          "business_concept": "Full Payment Flag",
+          "aliases": [
+            "paid_in_full",
+            "balance_cleared",
+            "full_settlement"
+          ]
+        },
+        "payment_date": {
+          "name": "payment_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "Timestamp recording when the payment transaction occurred.",
+          "semantic_type": "timestamp",
+          "business_concept": "Payment Date",
+          "aliases": [
+            "pay_datetime",
+            "transaction_time",
+            "post_date"
+          ]
+        },
+        "amount_due": {
+          "name": "amount_due",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total monetary amount remaining to be paid for the associated booking.",
+          "semantic_type": "money",
+          "business_concept": "Outstanding Balance",
+          "aliases": [
+            "balance_due",
+            "remaining_amount",
+            "total_due"
+          ]
+        },
+        "amount_paid": {
+          "name": "amount_paid",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary value of the payment made in this transaction.",
+          "semantic_type": "money",
+          "business_concept": "Payment Amount",
+          "aliases": [
+            "pay_amount",
+            "transaction_value",
+            "paid_sum"
+          ]
+        }
+      }
+    },
+    "bookings": {
+      "table": {
+        "name": "bookings",
+        "column_count": 11,
+        "summary": "A transactional table recording customer bookings, including status, dates, financial details (payable, discounts, refunds), and item counts.",
+        "entity": "Booking",
+        "role": "transaction_table",
+        "aliases": [
+          "bookings",
+          "booking_records",
+          "rental_bookings"
+        ]
+      },
+      "columns": {
+        "booking_id": {
+          "name": "booking_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific booking record.",
+          "semantic_type": "identifier",
+          "business_concept": "Booking ID",
+          "aliases": [
+            "id",
+            "booking_number",
+            "ref_id"
+          ]
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier linking the booking to a specific customer.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "client_id",
+            "user_id"
+          ]
+        },
+        "booking_status_code": {
+          "name": "booking_status_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Current state of the booking (e.g., Provisional, Confirmed).",
+          "semantic_type": "status",
+          "business_concept": "Booking Status",
+          "aliases": [
+            "status",
+            "booking_status",
+            "state"
+          ]
+        },
+        "returned_damaged_yn": {
+          "name": "returned_damaged_yn",
+          "dtype": "string",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Indicates whether items were returned in a damaged condition (0 or 1).",
+          "semantic_type": "boolean",
+          "business_concept": "Damage Flag",
+          "aliases": [
+            "damaged",
+            "return_condition",
+            "damage_yn"
+          ]
+        },
+        "booking_start_date": {
+          "name": "booking_start_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the booking period begins.",
+          "semantic_type": "timestamp",
+          "business_concept": "Start Date",
+          "aliases": [
+            "start_time",
+            "pickup_date",
+            "from_date"
+          ]
+        },
+        "booking_end_date": {
+          "name": "booking_end_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the booking period ends.",
+          "semantic_type": "timestamp",
+          "business_concept": "End Date",
+          "aliases": [
+            "end_time",
+            "dropoff_date",
+            "to_date"
+          ]
+        },
+        "count_hired": {
+          "name": "count_hired",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The quantity of items or units hired under this booking.",
+          "semantic_type": "quantity",
+          "business_concept": "Item Count",
+          "aliases": [
+            "qty",
+            "number_hired",
+            "units"
+          ]
+        },
+        "amount_payable": {
+          "name": "amount_payable",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total monetary amount due for the booking.",
+          "semantic_type": "money",
+          "business_concept": "Total Amount",
+          "aliases": [
+            "total",
+            "price",
+            "amount_due"
+          ]
+        },
+        "amount_of_discount": {
+          "name": "amount_of_discount",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary value of any discount applied to the booking.",
+          "semantic_type": "money",
+          "business_concept": "Discount Amount",
+          "aliases": [
+            "discount",
+            "deduction",
+            "rebate"
+          ]
+        },
+        "amount_outstanding": {
+          "name": "amount_outstanding",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The remaining balance to be paid after discounts and payments.",
+          "semantic_type": "money",
+          "business_concept": "Outstanding Balance",
+          "aliases": [
+            "balance",
+            "remaining",
+            "due"
+          ]
+        },
+        "amount_of_refund": {
+          "name": "amount_of_refund",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary value refunded to the customer.",
+          "semantic_type": "money",
+          "business_concept": "Refund Amount",
+          "aliases": [
+            "refund",
+            "returned_amount",
+            "credit"
+          ]
+        }
+      }
+    },
+    "discount_coupons": {
+      "table": {
+        "name": "discount_coupons",
+        "column_count": 3,
+        "summary": "Stores information about issued discount coupons, including their unique identifier, issuance timestamp, and monetary value.",
+        "entity": "Discount Coupon",
+        "role": "entity_table",
+        "aliases": [
+          "coupons",
+          "discounts",
+          "promo_codes",
+          "coupon_master"
+        ]
+      },
+      "columns": {
+        "coupon_id": {
+          "name": "coupon_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each discount coupon record.",
+          "semantic_type": "identifier",
+          "business_concept": "Coupon ID",
+          "aliases": [
+            "id",
+            "coupon_code",
+            "code_id"
+          ]
+        },
+        "date_issued": {
+          "name": "date_issued",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The specific date and time when the coupon was generated or issued.",
+          "semantic_type": "timestamp",
+          "business_concept": "Issuance Date",
+          "aliases": [
+            "created_at",
+            "issue_date",
+            "creation_time",
+            "issued_on"
+          ]
+        },
+        "coupon_amount": {
+          "name": "coupon_amount",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary value or discount amount associated with the coupon.",
+          "semantic_type": "money",
+          "business_concept": "Coupon Value",
+          "aliases": [
+            "amount",
+            "discount_value",
+            "face_value",
+            "coupon_value"
+          ]
+        }
+      }
+    },
+    "customers": {
+      "table": {
+        "name": "customers",
+        "column_count": 8,
+        "summary": "A table containing demographic and temporal information about customers, including their names, gender, status, and key dates.",
+        "entity": "Customer",
+        "role": "entity_table",
+        "aliases": [
+          "cust",
+          "clients",
+          "users"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each customer record.",
+          "semantic_type": "identifier",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "id",
+            "customer_number"
+          ]
+        },
+        "coupon_id": {
+          "name": "coupon_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier for a coupon associated with the customer, likely indicating a specific promotion or discount code linked to their account.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Coupon ID",
+          "aliases": [
+            "coupon_code",
+            "promo_id",
+            "offer_id"
+          ]
+        },
+        "good_or_bad_customer": {
+          "name": "good_or_bad_customer",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A classification flag indicating whether the customer is considered 'good' or 'bad' based on some internal criteria.",
+          "semantic_type": "status",
+          "business_concept": "Customer Quality Score",
+          "aliases": [
+            "cust_status",
+            "quality_flag",
+            "risk_level"
+          ]
+        },
+        "first_name": {
+          "name": "first_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The first name of the customer.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "fname",
+            "fn",
+            "given_name"
+          ]
+        },
+        "last_name": {
+          "name": "last_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The last name of the customer.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "lname",
+            "ln",
+            "surname"
+          ]
+        },
+        "gender_mf": {
+          "name": "gender_mf",
+          "dtype": "string",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The gender of the customer, represented as a binary code (0 or 1).",
+          "semantic_type": "boolean",
+          "business_concept": "Gender",
+          "aliases": [
+            "gender",
+            "sex",
+            "gender_code"
+          ]
+        },
+        "date_became_customer": {
+          "name": "date_became_customer",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the individual first became a customer.",
+          "semantic_type": "timestamp",
+          "business_concept": "Registration Date",
+          "aliases": [
+            "created_at",
+            "signup_date",
+            "join_date",
+            "reg_date"
+          ]
+        },
+        "date_last_hire": {
+          "name": "date_last_hire",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp of the most recent hire event associated with the customer record.",
+          "semantic_type": "timestamp",
+          "business_concept": "Last Hire Date",
+          "aliases": [
+            "last_hired",
+            "hire_date",
+            "last_activity"
+          ]
+        }
+      }
+    },
+    "view_product_availability": {
+      "table": {
+        "name": "view_product_availability",
+        "column_count": 4,
+        "summary": "A view tracking the availability status of products at specific points in time, linking product entities to booking records.",
+        "entity": "Product Availability Record",
+        "role": "transaction_table",
+        "aliases": [
+          "product_availability_view",
+          "product_stock_status",
+          "booking_product_status"
+        ]
+      },
+      "columns": {
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific product.",
+          "semantic_type": "identifier",
+          "business_concept": "Product ID",
+          "aliases": [
+            "prod_id",
+            "product_code",
+            "item_id"
+          ]
+        },
+        "booking_id": {
+          "name": "booking_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific booking or transaction record.",
+          "semantic_type": "identifier",
+          "business_concept": "Booking ID",
+          "aliases": [
+            "book_id",
+            "reservation_id",
+            "order_id"
+          ]
+        },
+        "status_date": {
+          "name": "status_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp indicating when the availability status was recorded or updated.",
+          "semantic_type": "timestamp",
+          "business_concept": "Status Date",
+          "aliases": [
+            "record_date",
+            "update_time",
+            "snapshot_date"
+          ]
+        },
+        "available_yn": {
+          "name": "available_yn",
+          "dtype": "string",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A boolean flag indicating whether the product is currently available, stored as a numeric string.",
+          "semantic_type": "boolean",
+          "business_concept": "Availability Flag",
+          "aliases": [
+            "is_available",
+            "stock_status",
+            "avail_flag"
+          ]
+        }
+      }
+    },
+    "products_for_hire": {
+      "table": {
+        "name": "products_for_hire",
+        "column_count": 5,
+        "summary": "A catalog of items available for daily rental, including books and DVDs, with associated pricing and descriptive details.",
+        "entity": "Product",
+        "role": "entity_table",
+        "aliases": [
+          "rental_catalog",
+          "hireable_items",
+          "inventory",
+          "rental_products"
+        ]
+      },
+      "columns": {
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each product in the catalog.",
+          "semantic_type": "identifier",
+          "business_concept": "Product ID",
+          "aliases": [
+            "pid",
+            "prod_id",
+            "item_id"
+          ]
+        },
+        "product_type_code": {
+          "name": "product_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short code representing the general category of the product (e.g., Cutlery, Din_Plates).",
+          "semantic_type": "code",
+          "business_concept": "Product Category Code",
+          "aliases": [
+            "type_code",
+            "cat_code",
+            "item_type"
+          ]
+        },
+        "daily_hire_cost": {
+          "name": "daily_hire_cost",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary cost to hire the product for a single day.",
+          "semantic_type": "money",
+          "business_concept": "Daily Rental Price",
+          "aliases": [
+            "price",
+            "rate",
+            "cost_per_day",
+            "hire_fee"
+          ]
+        },
+        "product_name": {
+          "name": "product_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The specific name or title of the product (e.g., Book collection C).",
+          "semantic_type": "unknown",
+          "business_concept": "Product Name",
+          "aliases": [
+            "name",
+            "title",
+            "item_name"
+          ]
+        },
+        "product_description": {
+          "name": "product_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A detailed text description of the specific item, often containing the actual title of a book or movie.",
+          "semantic_type": "description",
+          "business_concept": "Item Description",
+          "aliases": [
+            "desc",
+            "details",
+            "notes",
+            "item_desc"
+          ]
+        }
+      }
+    },
+    "products_booked": {
+      "table": {
+        "name": "products_booked",
+        "column_count": 6,
+        "summary": "A table recording booking details for specific products, including return status, late return status, and aggregated booking metrics.",
+        "entity": "product_booking",
+        "role": "transaction_table",
+        "aliases": [
+          "booked_products",
+          "product_bookings",
+          "booking_details"
+        ]
+      },
+      "columns": {
+        "booking_id": {
+          "name": "booking_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific booking record.",
+          "semantic_type": "identifier",
+          "business_concept": "booking_reference",
+          "aliases": [
+            "bk_id",
+            "booking_ref",
+            "id"
+          ]
+        },
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the booking to a specific product.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "product_reference",
+          "aliases": [
+            "prod_id",
+            "product_ref",
+            "item_id"
+          ]
+        },
+        "returned_yn": {
+          "name": "returned_yn",
+          "dtype": "string",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Indicates whether the product has been returned (1 for yes, 0 for no).",
+          "semantic_type": "boolean",
+          "business_concept": "return_status",
+          "aliases": [
+            "is_returned",
+            "return_flag",
+            "returned"
+          ]
+        },
+        "returned_late_yn": {
+          "name": "returned_late_yn",
+          "dtype": "string",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Indicates whether the product was returned after the due date (1 for yes, 0 for no).",
+          "semantic_type": "boolean",
+          "business_concept": "late_return_status",
+          "aliases": [
+            "is_late_return",
+            "late_return_flag",
+            "overdue_return"
+          ]
+        },
+        "booked_count": {
+          "name": "booked_count",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of units or instances booked for this product entry.",
+          "semantic_type": "quantity",
+          "business_concept": "booking_quantity",
+          "aliases": [
+            "qty_booked",
+            "count",
+            "units"
+          ]
+        },
+        "booked_amount": {
+          "name": "booked_amount",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total monetary value associated with the booking.",
+          "semantic_type": "money",
+          "business_concept": "booking_value",
+          "aliases": [
+            "total_amount",
+            "price",
+            "value",
+            "cost"
+          ]
+        }
+      }
+    }
+  }
+}

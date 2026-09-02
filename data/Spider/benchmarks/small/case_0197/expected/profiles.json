@@ -1,0 +1,342 @@
+{
+  "database": "solvency_ii",
+  "tables": {
+    "products_in_events": {
+      "table": {
+        "name": "products_in_events",
+        "column_count": 3,
+        "summary": "A junction table linking specific products to specific events, recording which products are included in which events.",
+        "entity": "Product-Event Association",
+        "role": "relationship_table",
+        "aliases": [
+          "product_event_mapping",
+          "event_products",
+          "products_per_event"
+        ]
+      },
+      "columns": {
+        "product_in_event_id": {
+          "name": "product_in_event_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the specific record representing the association between a product and an event.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "pk",
+            "id",
+            "product_event_pk"
+          ]
+        },
+        "event_id": {
+          "name": "event_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A reference identifier pointing to a specific event in the events table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Event Identifier",
+          "aliases": [
+            "evt_id",
+            "event_pk",
+            "event_ref"
+          ]
+        },
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A reference identifier pointing to a specific product in the products table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Product Identifier",
+          "aliases": [
+            "prod_id",
+            "product_pk",
+            "product_ref"
+          ]
+        }
+      }
+    },
+    "addresses": {
+      "table": {
+        "name": "addresses",
+        "column_count": 2,
+        "summary": "Stores unique address records with an identifier and a full formatted address string.",
+        "entity": "Address",
+        "role": "entity_table",
+        "aliases": [
+          "addr",
+          "address_info",
+          "locations"
+        ]
+      },
+      "columns": {
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each address record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "addr_id",
+            "address_key"
+          ]
+        },
+        "address_details": {
+          "name": "address_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The complete physical address including street, city, state, and zip code.",
+          "semantic_type": "address",
+          "business_concept": "Full Address",
+          "aliases": [
+            "full_address",
+            "addr",
+            "street_address",
+            "location"
+          ]
+        }
+      }
+    },
+    "locations": {
+      "table": {
+        "name": "locations",
+        "column_count": 2,
+        "summary": "A reference table containing unique identifiers and associated organization names for various business locations.",
+        "entity": "Location",
+        "role": "lookup_table",
+        "aliases": [
+          "loc",
+          "site",
+          "branch",
+          "office",
+          "address_list"
+        ]
+      },
+      "columns": {
+        "location_id": {
+          "name": "location_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each location record.",
+          "semantic_type": "identifier",
+          "business_concept": "Location ID",
+          "aliases": [
+            "loc_id",
+            "id",
+            "site_id",
+            "branch_id"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The name of the organization or company associated with the location.",
+          "semantic_type": "organization_name",
+          "business_concept": "Company Name",
+          "aliases": [
+            "company",
+            "org_name",
+            "firm",
+            "business_name",
+            "client_name"
+          ]
+        }
+      }
+    },
+    "parties_in_events": {
+      "table": {
+        "name": "parties_in_events",
+        "column_count": 3,
+        "summary": "Records the participation of various parties in specific events, linking entities to their assigned roles.",
+        "entity": "party_event_participation",
+        "role": "relationship_table",
+        "aliases": [
+          "event_participants",
+          "party_roles",
+          "event_attendees",
+          "party_event_links"
+        ]
+      },
+      "columns": {
+        "party_id": {
+          "name": "party_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a party (person, organization, or group) involved in the event.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Party Identifier",
+          "aliases": [
+            "party_key",
+            "entity_id",
+            "user_id",
+            "org_id"
+          ]
+        },
+        "event_id": {
+          "name": "event_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the event in which the party is participating.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Event Identifier",
+          "aliases": [
+            "event_key",
+            "activity_id",
+            "meeting_id",
+            "conference_id"
+          ]
+        },
+        "role_code": {
+          "name": "role_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A short code or label describing the specific function or capacity of the party within the event.",
+          "semantic_type": "code",
+          "business_concept": "Party Role",
+          "aliases": [
+            "role",
+            "function",
+            "capacity",
+            "status_code"
+          ]
+        }
+      }
+    },
+    "events": {
+      "table": {
+        "name": "events",
+        "column_count": 6,
+        "summary": "A master table defining the core attributes of specific events, including unique identifiers and links to related entities like addresses, channels, finance records, and locations.",
+        "entity": "Event",
+        "role": "entity_table",
+        "aliases": [
+          "event_master",
+          "event_details",
+          "event_reference"
+        ]
+      },
+      "columns": {
+        "event_id": {
+          "name": "event_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The unique primary key identifier for a specific event record.",
+          "semantic_type": "identifier",
+          "business_concept": "Event ID",
+          "aliases": [
+            "id",
+            "event_uid",
+            "evt_id"
+          ]
+        },
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A foreign key linking the event to a specific physical address record.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Address Reference",
+          "aliases": [
+            "addr_id",
+            "location_ref",
+            "site_id"
+          ]
+        },
+        "channel_id": {
+          "name": "channel_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A foreign key linking the event to a specific distribution or communication channel.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Channel Reference",
+          "aliases": [
+            "channel_ref",
+            "media_id",
+            "source_id"
+          ]
+        },
+        "event_type_code": {
+          "name": "event_type_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A categorical code or label describing the nature of the event (e.g., Trade Show, Press Conference).",
+          "semantic_type": "category",
+          "business_concept": "Event Type",
+          "aliases": [
+            "type",
+            "event_category",
+            "evt_type",
+            "category_code"
+          ]
+        },
+        "finance_id": {
+          "name": "finance_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A foreign key linking the event to a specific financial record or budget line item.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Finance Reference",
+          "aliases": [
+            "fin_id",
+            "budget_id",
+            "cost_center_id",
+            "account_id"
+          ]
+        },
+        "location_id": {
+          "name": "location_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A foreign key linking the event to a specific location record (distinct from address_id, possibly representing a venue or region).",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Location Reference",
+          "aliases": [
+            "loc_id",
+            "venue_id",
+            "site_ref",
+            "geo_id"
+          ]
+        }
+      }
+    }
+  }
+}

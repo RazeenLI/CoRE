@@ -1,0 +1,213 @@
+{
+  "database": "body_builder",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/body_builder",
+    "schema_path": "data/Spider/parsed/body_builder/schema.json",
+    "tables_dir": "data/Spider/parsed/body_builder/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "body_builder": {
+      "table": {
+        "name": "body_builder",
+        "column_count": 5,
+        "summary": "Records bodybuilding competition results, specifically listing the snatch, clean and jerk, and total lift weights for individual athletes.",
+        "entity": "Bodybuilding Competition Result",
+        "role": "transaction_table",
+        "aliases": [
+          "bodybuilder_results",
+          "powerlifting_scores",
+          "lift_records"
+        ]
+      },
+      "columns": {
+        "body_builder_id": {
+          "name": "body_builder_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific bodybuilder record within this table.",
+          "semantic_type": "identifier",
+          "business_concept": "Bodybuilder Record ID",
+          "aliases": [
+            "id",
+            "bb_id",
+            "primary_key"
+          ]
+        },
+        "people_id": {
+          "name": "people_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key linking to a master table of people/athletes.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Athlete Reference",
+          "aliases": [
+            "person_id",
+            "athlete_id",
+            "user_id"
+          ]
+        },
+        "snatch": {
+          "name": "snatch",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The weight lifted in the snatch event, measured in kilograms.",
+          "semantic_type": "quantity",
+          "business_concept": "Snatch Weight",
+          "aliases": [
+            "snatch_kg",
+            "snatch_lift",
+            "snatch_score"
+          ]
+        },
+        "clean_jerk": {
+          "name": "clean_jerk",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The weight lifted in the clean and jerk event, measured in kilograms.",
+          "semantic_type": "quantity",
+          "business_concept": "Clean and Jerk Weight",
+          "aliases": [
+            "clean_jerk_kg",
+            "cj_weight",
+            "clean_jerk_score"
+          ]
+        },
+        "total": {
+          "name": "total",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The sum of the snatch and clean and jerk weights, representing the athlete's total score.",
+          "semantic_type": "quantity",
+          "business_concept": "Total Lift Score",
+          "aliases": [
+            "total_kg",
+            "total_score",
+            "combined_weight"
+          ]
+        }
+      }
+    },
+    "people": {
+      "table": {
+        "name": "people",
+        "column_count": 6,
+        "summary": "A table containing demographic and physical statistics for a group of individuals, likely athletes given the specific names and height/weight ranges.",
+        "entity": "Person",
+        "role": "entity_table",
+        "aliases": [
+          "personnel",
+          "roster",
+          "players",
+          "individuals"
+        ]
+      },
+      "columns": {
+        "people_id": {
+          "name": "people_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "pk",
+            "person_id",
+            "player_id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the individual.",
+          "semantic_type": "person_name",
+          "business_concept": "Full Name",
+          "aliases": [
+            "full_name",
+            "first_name",
+            "last_name",
+            "player_name"
+          ]
+        },
+        "height": {
+          "name": "height",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The physical height of the individual, likely measured in centimeters.",
+          "semantic_type": "quantity",
+          "business_concept": "Height",
+          "aliases": [
+            "ht",
+            "height_cm",
+            "stature"
+          ]
+        },
+        "weight": {
+          "name": "weight",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The physical weight of the individual, likely measured in kilograms.",
+          "semantic_type": "quantity",
+          "business_concept": "Weight",
+          "aliases": [
+            "wt",
+            "weight_kg",
+            "mass"
+          ]
+        },
+        "birth_date": {
+          "name": "birth_date",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The date on which the individual was born.",
+          "semantic_type": "date",
+          "business_concept": "Date of Birth",
+          "aliases": [
+            "dob",
+            "born",
+            "birth_dt",
+            "bday"
+          ]
+        },
+        "birth_place": {
+          "name": "birth_place",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The city and state/country where the individual was born.",
+          "semantic_type": "address",
+          "business_concept": "Place of Birth",
+          "aliases": [
+            "bop",
+            "born_in",
+            "birth_city",
+            "origin"
+          ]
+        }
+      }
+    }
+  }
+}

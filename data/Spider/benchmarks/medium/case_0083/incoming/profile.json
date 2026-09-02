@@ -1,0 +1,104 @@
+{
+  "database": "incoming",
+  "tables": {
+    "line_items": {
+      "table": {
+        "name": "line_items",
+        "column_count": 5,
+        "summary": "A transactional table storing individual line items associated with specific invoices, tracking product details, pricing, and quantities.",
+        "entity": "invoice_line",
+        "role": "transaction_table",
+        "aliases": [
+          "invoice_items",
+          "order_lines",
+          "bill_details",
+          "line_items"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific line item record within the table.",
+          "semantic_type": "identifier",
+          "business_concept": "line_item_id",
+          "aliases": [
+            "line_id",
+            "item_id",
+            "row_id"
+          ]
+        },
+        "invoice_id": {
+          "name": "invoice_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key referencing the parent invoice to which this line item belongs.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "invoice_reference",
+          "aliases": [
+            "invoice_ref",
+            "parent_invoice",
+            "bill_id"
+          ]
+        },
+        "track_id": {
+          "name": "track_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the specific product, service, or tracking unit associated with this line item.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "product_id",
+          "aliases": [
+            "item_code",
+            "product_ref",
+            "sku_id",
+            "track_ref"
+          ]
+        },
+        "unit_price": {
+          "name": "unit_price",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary price per single unit of the item.",
+          "semantic_type": "money",
+          "business_concept": "unit_cost",
+          "aliases": [
+            "price",
+            "cost_per_unit",
+            "rate"
+          ]
+        },
+        "quantity": {
+          "name": "quantity",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of units of the item included in this line item.",
+          "semantic_type": "quantity",
+          "business_concept": "item_count",
+          "aliases": [
+            "qty",
+            "amount",
+            "count",
+            "units"
+          ]
+        }
+      }
+    }
+  }
+}

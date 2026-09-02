@@ -1,0 +1,730 @@
+{
+  "database": "cre_Doc_Control_Systems",
+  "tables": {
+    "employees": {
+      "table": {
+        "name": "employees",
+        "column_count": 4,
+        "summary": "A table containing core employee identification and basic demographic information.",
+        "entity": "Employee",
+        "role": "entity_table",
+        "aliases": [
+          "staff",
+          "personnel",
+          "users",
+          "workers"
+        ]
+      },
+      "columns": {
+        "employee_id": {
+          "name": "employee_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each employee record.",
+          "semantic_type": "identifier",
+          "business_concept": "Employee ID",
+          "aliases": [
+            "emp_id",
+            "id",
+            "employee_number",
+            "staff_id"
+          ]
+        },
+        "role_code": {
+          "name": "role_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short alphanumeric code representing the job role or position of the employee.",
+          "semantic_type": "code",
+          "business_concept": "Job Role",
+          "aliases": [
+            "role",
+            "position",
+            "job_code",
+            "job_title_code"
+          ]
+        },
+        "employee_name": {
+          "name": "employee_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The full name or first name of the employee.",
+          "semantic_type": "person_name",
+          "business_concept": "Employee Name",
+          "aliases": [
+            "name",
+            "first_name",
+            "full_name",
+            "staff_name"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short code representing additional demographic or status information, likely gender or department prefix based on samples.",
+          "semantic_type": "code",
+          "business_concept": "Demographic Code",
+          "aliases": [
+            "gender_code",
+            "dept_code",
+            "status_code",
+            "details_code"
+          ]
+        }
+      }
+    },
+    "documents": {
+      "table": {
+        "name": "documents",
+        "column_count": 7,
+        "summary": "A master table storing metadata and status information for various documents, including their type, shipping agent, receipt details, and current processing state.",
+        "entity": "Document",
+        "role": "entity_table",
+        "aliases": [
+          "doc",
+          "docs",
+          "document_master",
+          "receipts"
+        ]
+      },
+      "columns": {
+        "document_id": {
+          "name": "document_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each document record in the system.",
+          "semantic_type": "identifier",
+          "business_concept": "Document ID",
+          "aliases": [
+            "doc_id",
+            "id",
+            "primary_key"
+          ]
+        },
+        "document_status_code": {
+          "name": "document_status_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Current processing or lifecycle status of the document.",
+          "semantic_type": "status",
+          "business_concept": "Document Status",
+          "aliases": [
+            "status",
+            "doc_status",
+            "state"
+          ]
+        },
+        "document_type_code": {
+          "name": "document_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Classification or format type of the document (e.g., CD, Paper).",
+          "semantic_type": "category",
+          "business_concept": "Document Type",
+          "aliases": [
+            "type",
+            "doc_type",
+            "format"
+          ]
+        },
+        "shipping_agent_code": {
+          "name": "shipping_agent_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the logistics or shipping company handling the document.",
+          "semantic_type": "code",
+          "business_concept": "Shipping Agent",
+          "aliases": [
+            "carrier",
+            "agent",
+            "shipper",
+            "logistics_provider"
+          ]
+        },
+        "receipt_date": {
+          "name": "receipt_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the document was officially received or processed.",
+          "semantic_type": "timestamp",
+          "business_concept": "Receipt Date",
+          "aliases": [
+            "received_at",
+            "date_received",
+            "created_at"
+          ]
+        },
+        "receipt_number": {
+          "name": "receipt_number",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique reference number assigned to the receipt or transaction.",
+          "semantic_type": "identifier",
+          "business_concept": "Receipt Number",
+          "aliases": [
+            "ref_number",
+            "receipt_ref",
+            "txn_id"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Additional short code or flag providing supplementary information about the document.",
+          "semantic_type": "code",
+          "business_concept": "Additional Details",
+          "aliases": [
+            "extra_info",
+            "flags",
+            "notes_code"
+          ]
+        }
+      }
+    },
+    "draft_copies": {
+      "table": {
+        "name": "draft_copies",
+        "column_count": 3,
+        "summary": "Stores individual copies or versions of documents, identified by a parent document and a specific draft/copy sequence number.",
+        "entity": "Document Copy",
+        "role": "entity_table",
+        "aliases": [
+          "doc_copies",
+          "draft_versions",
+          "copy_records"
+        ]
+      },
+      "columns": {
+        "document_id": {
+          "name": "document_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the parent document to which this copy belongs.",
+          "semantic_type": "identifier",
+          "business_concept": "Document ID",
+          "aliases": [
+            "doc_id",
+            "parent_id",
+            "document_number"
+          ]
+        },
+        "draft_number": {
+          "name": "draft_number",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Sequence number representing the specific draft iteration of the document.",
+          "semantic_type": "code",
+          "business_concept": "Draft Version",
+          "aliases": [
+            "draft_seq",
+            "draft_id",
+            "revision_number"
+          ]
+        },
+        "copy_number": {
+          "name": "copy_number",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Sequence number representing the specific copy instance within a draft.",
+          "semantic_type": "code",
+          "business_concept": "Copy Instance",
+          "aliases": [
+            "copy_seq",
+            "copy_id",
+            "instance_number"
+          ]
+        }
+      }
+    },
+    "roles": {
+      "table": {
+        "name": "roles",
+        "column_count": 2,
+        "summary": "Defines the set of available roles within the system, mapping unique role codes to their human-readable descriptions.",
+        "entity": "Role",
+        "role": "lookup_table",
+        "aliases": [
+          "user_roles",
+          "system_roles",
+          "role_definitions",
+          "access_roles"
+        ]
+      },
+      "columns": {
+        "role_code": {
+          "name": "role_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique, short alphanumeric identifier for a specific role.",
+          "semantic_type": "code",
+          "business_concept": "Role Identifier",
+          "aliases": [
+            "role_id",
+            "role_key",
+            "role_ref",
+            "r_code"
+          ]
+        },
+        "role_description": {
+          "name": "role_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A textual explanation of the permissions or responsibilities associated with the role.",
+          "semantic_type": "description",
+          "business_concept": "Role Description",
+          "aliases": [
+            "role_name",
+            "role_title",
+            "role_desc",
+            "r_desc"
+          ]
+        }
+      }
+    },
+    "document_drafts": {
+      "table": {
+        "name": "document_drafts",
+        "column_count": 3,
+        "summary": "Stores metadata and unique identifiers for document drafts, likely used to track versioning or specific draft states within a document management system.",
+        "entity": "Document Draft",
+        "role": "entity_table",
+        "aliases": [
+          "doc_drafts",
+          "drafts",
+          "document_versions"
+        ]
+      },
+      "columns": {
+        "document_id": {
+          "name": "document_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the parent document associated with the draft.",
+          "semantic_type": "identifier",
+          "business_concept": "Document ID",
+          "aliases": [
+            "doc_id",
+            "parent_id",
+            "document_number"
+          ]
+        },
+        "draft_number": {
+          "name": "draft_number",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A sequential or unique integer representing the specific draft instance or version number.",
+          "semantic_type": "identifier",
+          "business_concept": "Draft Sequence Number",
+          "aliases": [
+            "draft_seq",
+            "version_num",
+            "draft_index"
+          ]
+        },
+        "draft_details": {
+          "name": "draft_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short code or status indicator representing the current state or type of the draft.",
+          "semantic_type": "code",
+          "business_concept": "Draft Status Code",
+          "aliases": [
+            "draft_status",
+            "draft_type",
+            "state_code"
+          ]
+        }
+      }
+    },
+    "circulation_history": {
+      "table": {
+        "name": "circulation_history",
+        "column_count": 4,
+        "summary": "Records tracking the circulation instances of specific documents, including draft and copy numbers, associated with specific employees.",
+        "entity": "Circulation Record",
+        "role": "transaction_table",
+        "aliases": [
+          "circulation_log",
+          "doc_circulation",
+          "copy_history"
+        ]
+      },
+      "columns": {
+        "document_id": {
+          "name": "document_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the document being circulated.",
+          "semantic_type": "identifier",
+          "business_concept": "Document ID",
+          "aliases": [
+            "doc_id",
+            "document_number",
+            "ref_id"
+          ]
+        },
+        "draft_number": {
+          "name": "draft_number",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Sequence number indicating which draft version of the document is being circulated.",
+          "semantic_type": "code",
+          "business_concept": "Draft Version",
+          "aliases": [
+            "draft_seq",
+            "version_num",
+            "draft_id"
+          ]
+        },
+        "copy_number": {
+          "name": "copy_number",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Sequence number indicating which copy of the document is being circulated.",
+          "semantic_type": "code",
+          "business_concept": "Copy Sequence",
+          "aliases": [
+            "copy_seq",
+            "copy_id",
+            "instance_num"
+          ]
+        },
+        "employee_id": {
+          "name": "employee_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier of the employee involved in the circulation process (e.g., creator, approver, or recipient).",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Employee ID",
+          "aliases": [
+            "emp_id",
+            "user_id",
+            "staff_id"
+          ]
+        }
+      }
+    },
+    "addresses": {
+      "table": {
+        "name": "addresses",
+        "column_count": 2,
+        "summary": "Stores unique address identifiers and their corresponding country codes.",
+        "entity": "Address",
+        "role": "lookup_table",
+        "aliases": [
+          "addr",
+          "address_info",
+          "country_addresses"
+        ]
+      },
+      "columns": {
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each address record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "addr_id",
+            "address_key"
+          ]
+        },
+        "address_details": {
+          "name": "address_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The ISO country code representing the country associated with the address.",
+          "semantic_type": "code",
+          "business_concept": "Country Code",
+          "aliases": [
+            "country_code",
+            "cc",
+            "iso_code",
+            "nation"
+          ]
+        }
+      }
+    },
+    "documents_mailed": {
+      "table": {
+        "name": "documents_mailed",
+        "column_count": 3,
+        "summary": "Records tracking the mailing of documents to specific addresses with associated timestamps.",
+        "entity": "mailing_record",
+        "role": "transaction_table",
+        "aliases": [
+          "mailed_documents",
+          "document_mailings",
+          "mail_log"
+        ]
+      },
+      "columns": {
+        "document_id": {
+          "name": "document_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the document being mailed.",
+          "semantic_type": "identifier",
+          "business_concept": "document_reference",
+          "aliases": [
+            "doc_id",
+            "document_ref",
+            "id"
+          ]
+        },
+        "mailed_to_address_id": {
+          "name": "mailed_to_address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the mailing record to a specific recipient address.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "recipient_address_reference",
+          "aliases": [
+            "address_id",
+            "to_address_id",
+            "recipient_id"
+          ]
+        },
+        "mailing_date": {
+          "name": "mailing_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the document was mailed.",
+          "semantic_type": "timestamp",
+          "business_concept": "mailing_time",
+          "aliases": [
+            "sent_date",
+            "mail_time",
+            "timestamp"
+          ]
+        }
+      }
+    },
+    "ref_document_status": {
+      "table": {
+        "name": "ref_document_status",
+        "column_count": 2,
+        "summary": "A reference table defining the possible states and descriptions of documents within the system.",
+        "entity": "document_status",
+        "role": "lookup_table",
+        "aliases": [
+          "doc_status_ref",
+          "document_state_lookup",
+          "status_codes"
+        ]
+      },
+      "columns": {
+        "document_status_code": {
+          "name": "document_status_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique alphanumeric identifier representing the current state of a document.",
+          "semantic_type": "code",
+          "business_concept": "document_status",
+          "aliases": [
+            "status_code",
+            "doc_status",
+            "state_code"
+          ]
+        },
+        "document_status_description": {
+          "name": "document_status_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A human-readable text string explaining the meaning of the status code.",
+          "semantic_type": "description",
+          "business_concept": "status_description",
+          "aliases": [
+            "status_desc",
+            "status_text",
+            "description"
+          ]
+        }
+      }
+    },
+    "ref_document_types": {
+      "table": {
+        "name": "ref_document_types",
+        "column_count": 2,
+        "summary": "A reference table defining standard document types with their unique codes and descriptions.",
+        "entity": "Document Type",
+        "role": "lookup_table",
+        "aliases": [
+          "doc_type_ref",
+          "document_category",
+          "file_type_master"
+        ]
+      },
+      "columns": {
+        "document_type_code": {
+          "name": "document_type_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A unique alphanumeric identifier for a specific document type.",
+          "semantic_type": "code",
+          "business_concept": "Document Type Code",
+          "aliases": [
+            "doc_code",
+            "type_id",
+            "document_code"
+          ]
+        },
+        "document_type_description": {
+          "name": "document_type_description",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A textual description or label for the document type, though sample values suggest it may currently store short codes or single characters.",
+          "semantic_type": "code",
+          "business_concept": "Document Type Label",
+          "aliases": [
+            "doc_desc",
+            "type_name",
+            "document_label"
+          ]
+        }
+      }
+    },
+    "ref_shipping_agents": {
+      "table": {
+        "name": "ref_shipping_agents",
+        "column_count": 3,
+        "summary": "A reference table containing master data for various shipping agents, including their unique codes, names, and brief descriptions.",
+        "entity": "Shipping Agent",
+        "role": "lookup_table",
+        "aliases": [
+          "ref_shipping_agents",
+          "shipping_agents",
+          "carrier_reference",
+          "logistics_providers"
+        ]
+      },
+      "columns": {
+        "shipping_agent_code": {
+          "name": "shipping_agent_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique alphanumeric identifier assigned to a specific shipping agent.",
+          "semantic_type": "code",
+          "business_concept": "Shipping Agent Identifier",
+          "aliases": [
+            "agent_code",
+            "carrier_code",
+            "shipping_code",
+            "ref_code"
+          ]
+        },
+        "shipping_agent_name": {
+          "name": "shipping_agent_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The official or common name of the shipping agent organization.",
+          "semantic_type": "organization_name",
+          "business_concept": "Shipping Agent Name",
+          "aliases": [
+            "agent_name",
+            "carrier_name",
+            "shipping_company",
+            "provider_name"
+          ]
+        },
+        "shipping_agent_description": {
+          "name": "shipping_agent_description",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short textual note or code describing the shipping agent, potentially indicating service type or region.",
+          "semantic_type": "description",
+          "business_concept": "Shipping Agent Description",
+          "aliases": [
+            "agent_desc",
+            "carrier_desc",
+            "shipping_notes",
+            "agent_type"
+          ]
+        }
+      }
+    }
+  }
+}

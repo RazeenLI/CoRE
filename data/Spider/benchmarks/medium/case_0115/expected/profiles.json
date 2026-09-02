@@ -1,0 +1,471 @@
+{
+  "database": "insurance_fnol",
+  "tables": {
+    "claims": {
+      "table": {
+        "name": "claims",
+        "column_count": 3,
+        "summary": "A table storing records of insurance claims, linking them to specific First Notice of Loss (FNOL) events and their effective dates.",
+        "entity": "Insurance Claim",
+        "role": "transaction_table",
+        "aliases": [
+          "claim_records",
+          "insurance_claims",
+          "loss_claims"
+        ]
+      },
+      "columns": {
+        "claim_id": {
+          "name": "claim_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific insurance claim record.",
+          "semantic_type": "identifier",
+          "business_concept": "Claim Reference Number",
+          "aliases": [
+            "claim_number",
+            "claim_ref",
+            "claim_no"
+          ]
+        },
+        "fnol_id": {
+          "name": "fnol_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier linking the claim to its corresponding First Notice of Loss event.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "FNOL Reference Number",
+          "aliases": [
+            "fnol_ref",
+            "fno_id",
+            "incident_id"
+          ]
+        },
+        "effective_date": {
+          "name": "effective_date",
+          "dtype": "date",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The date on which the claim or the associated loss event became effective or occurred.",
+          "semantic_type": "date",
+          "business_concept": "Claim Effective Date",
+          "aliases": [
+            "claim_date",
+            "loss_date",
+            "occurrence_date",
+            "policy_effective_date"
+          ]
+        }
+      }
+    },
+    "customers_policies": {
+      "table": {
+        "name": "customers_policies",
+        "column_count": 4,
+        "summary": "A table linking customers to their insurance policies, recording the opening and closing dates of each policy.",
+        "entity": "customer_policy",
+        "role": "relationship_table",
+        "aliases": [
+          "customer_policies",
+          "policies",
+          "policy_customer_mapping"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a customer associated with the policy.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "client_id",
+            "policy_holder_id"
+          ]
+        },
+        "policy_id": {
+          "name": "policy_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for an insurance policy.",
+          "semantic_type": "identifier",
+          "business_concept": "Policy ID",
+          "aliases": [
+            "pol_id",
+            "policy_number",
+            "contract_id"
+          ]
+        },
+        "date_opened": {
+          "name": "date_opened",
+          "dtype": "date",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The date on which the insurance policy was initiated or became active.",
+          "semantic_type": "date",
+          "business_concept": "Policy Start Date",
+          "aliases": [
+            "start_date",
+            "issue_date",
+            "effective_date",
+            "open_date"
+          ]
+        },
+        "date_closed": {
+          "name": "date_closed",
+          "dtype": "date",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The date on which the insurance policy was terminated or expired.",
+          "semantic_type": "date",
+          "business_concept": "Policy End Date",
+          "aliases": [
+            "end_date",
+            "close_date",
+            "termination_date",
+            "expiry_date"
+          ]
+        }
+      }
+    },
+    "services": {
+      "table": {
+        "name": "services",
+        "column_count": 2,
+        "summary": "A catalog of available services, likely within an insurance or policy management system, defining the types of actions or processes a user can initiate.",
+        "entity": "Service",
+        "role": "lookup_table",
+        "aliases": [
+          "service_catalog",
+          "available_services",
+          "service_definitions",
+          "policy_services"
+        ]
+      },
+      "columns": {
+        "service_id": {
+          "name": "service_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each specific service record.",
+          "semantic_type": "identifier",
+          "business_concept": "Service ID",
+          "aliases": [
+            "svc_id",
+            "service_code",
+            "id"
+          ]
+        },
+        "service_name": {
+          "name": "service_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A human-readable description of the service, typically indicating the action performed on a policy.",
+          "semantic_type": "description",
+          "business_concept": "Service Name",
+          "aliases": [
+            "svc_name",
+            "service_description",
+            "name"
+          ]
+        }
+      }
+    },
+    "settlements": {
+      "table": {
+        "name": "settlements",
+        "column_count": 4,
+        "summary": "Records financial settlements associated with specific claims, detailing the amount paid and the effective date of the settlement.",
+        "entity": "Settlement",
+        "role": "transaction_table",
+        "aliases": [
+          "settlements",
+          "settlement_records",
+          "claim_settlements",
+          "payment_settlements"
+        ]
+      },
+      "columns": {
+        "settlement_id": {
+          "name": "settlement_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each settlement record.",
+          "semantic_type": "identifier",
+          "business_concept": "Settlement ID",
+          "aliases": [
+            "settlement_key",
+            "id",
+            "settlement_no"
+          ]
+        },
+        "claim_id": {
+          "name": "claim_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A reference to the specific claim that this settlement resolves or is associated with.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Claim Reference",
+          "aliases": [
+            "claim_ref",
+            "claim_number",
+            "parent_claim_id"
+          ]
+        },
+        "effective_date": {
+          "name": "effective_date",
+          "dtype": "date",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The date on which the settlement becomes effective or is processed.",
+          "semantic_type": "date",
+          "business_concept": "Settlement Date",
+          "aliases": [
+            "settlement_date",
+            "effective_dt",
+            "date"
+          ]
+        },
+        "settlement_amount": {
+          "name": "settlement_amount",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary value of the settlement payment.",
+          "semantic_type": "money",
+          "business_concept": "Settlement Amount",
+          "aliases": [
+            "amount",
+            "settlement_value",
+            "payment_amount",
+            "total"
+          ]
+        }
+      }
+    },
+    "customers": {
+      "table": {
+        "name": "customers",
+        "column_count": 2,
+        "summary": "A table containing core identification and naming information for individual customers.",
+        "entity": "Customer",
+        "role": "entity_table",
+        "aliases": [
+          "clients",
+          "accounts",
+          "users",
+          "members"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each customer record.",
+          "semantic_type": "identifier",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "id",
+            "client_id",
+            "account_id"
+          ]
+        },
+        "customer_name": {
+          "name": "customer_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full name of the customer, including titles and last names.",
+          "semantic_type": "person_name",
+          "business_concept": "Customer Name",
+          "aliases": [
+            "name",
+            "full_name",
+            "client_name",
+            "contact_name"
+          ]
+        }
+      }
+    },
+    "available_policies": {
+      "table": {
+        "name": "available_policies",
+        "column_count": 3,
+        "summary": "A table containing details about available insurance policies, including their unique identifiers, types, and associated customer contact information.",
+        "entity": "Insurance Policy",
+        "role": "entity_table",
+        "aliases": [
+          "policies",
+          "policy_catalog",
+          "active_policies",
+          "insurance_offers"
+        ]
+      },
+      "columns": {
+        "policy_id": {
+          "name": "policy_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each insurance policy record.",
+          "semantic_type": "identifier",
+          "business_concept": "Policy Reference Number",
+          "aliases": [
+            "policy_number",
+            "pol_id",
+            "id",
+            "policy_key"
+          ]
+        },
+        "policy_type_code": {
+          "name": "policy_type_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A text field describing the category or type of insurance coverage offered by the policy.",
+          "semantic_type": "category",
+          "business_concept": "Insurance Product Type",
+          "aliases": [
+            "policy_category",
+            "coverage_type",
+            "product_type",
+            "ins_type"
+          ]
+        },
+        "customer_phone": {
+          "name": "customer_phone",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The contact telephone number associated with the customer holding the policy.",
+          "semantic_type": "phone",
+          "business_concept": "Customer Contact Number",
+          "aliases": [
+            "phone_number",
+            "contact_phone",
+            "client_phone",
+            "tel"
+          ]
+        }
+      }
+    },
+    "first_notification_of_loss": {
+      "table": {
+        "name": "first_notification_of_loss",
+        "column_count": 4,
+        "summary": "Records the initial notification of a loss event, linking a specific customer, their policy, and the service channel used to report it.",
+        "entity": "First Notification of Loss (FNOL) Event",
+        "role": "transaction_table",
+        "aliases": [
+          "fnol",
+          "loss_notification",
+          "claim_report",
+          "incident_report"
+        ]
+      },
+      "columns": {
+        "fnol_id": {
+          "name": "fnol_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific first notification of loss record.",
+          "semantic_type": "identifier",
+          "business_concept": "Case ID",
+          "aliases": [
+            "case_id",
+            "incident_id",
+            "report_id",
+            "claim_number"
+          ]
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the customer who reported the loss.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer",
+          "aliases": [
+            "cust_id",
+            "client_id",
+            "policyholder_id"
+          ]
+        },
+        "policy_id": {
+          "name": "policy_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the insurance policy associated with the reported loss.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Policy",
+          "aliases": [
+            "pol_id",
+            "policy_number",
+            "contract_id"
+          ]
+        },
+        "service_id": {
+          "name": "service_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the specific service channel or method used to submit the notification.",
+          "semantic_type": "code",
+          "business_concept": "Service Channel",
+          "aliases": [
+            "channel_id",
+            "source_id",
+            "contact_method_id"
+          ]
+        }
+      }
+    }
+  }
+}

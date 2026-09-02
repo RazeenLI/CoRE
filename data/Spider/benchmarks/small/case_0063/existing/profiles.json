@@ -1,0 +1,269 @@
+{
+  "database": "tracking_orders",
+  "tables": {
+    "orders": {
+      "table": {
+        "name": "orders",
+        "column_count": 5,
+        "summary": "A transactional table recording customer orders with details on status, placement time, and associated customer.",
+        "entity": "Order",
+        "role": "transaction_table",
+        "aliases": [
+          "order",
+          "orders",
+          "purchase",
+          "transactions"
+        ]
+      },
+      "columns": {
+        "order_id": {
+          "name": "order_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific order record.",
+          "semantic_type": "identifier",
+          "business_concept": "Order ID",
+          "aliases": [
+            "id",
+            "order_number",
+            "ord_id"
+          ]
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier linking the order to a specific customer.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "client_id",
+            "user_id"
+          ]
+        },
+        "order_status": {
+          "name": "order_status",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Current state of the order in the fulfillment lifecycle.",
+          "semantic_type": "status",
+          "business_concept": "Order Status",
+          "aliases": [
+            "status",
+            "order_state",
+            "fulfillment_status"
+          ]
+        },
+        "date_order_placed": {
+          "name": "date_order_placed",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The specific timestamp when the order was initiated by the customer.",
+          "semantic_type": "timestamp",
+          "business_concept": "Order Date",
+          "aliases": [
+            "created_at",
+            "placed_at",
+            "order_date",
+            "timestamp"
+          ]
+        },
+        "order_details": {
+          "name": "order_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional textual information or notes regarding the order, often empty in this sample.",
+          "semantic_type": "description",
+          "business_concept": "Order Notes",
+          "aliases": [
+            "notes",
+            "comments",
+            "description",
+            "memo"
+          ]
+        }
+      }
+    },
+    "shipments": {
+      "table": {
+        "name": "shipments",
+        "column_count": 6,
+        "summary": "A table recording details of individual shipments, linking them to specific orders and invoices with tracking information and timestamps.",
+        "entity": "Shipment",
+        "role": "transaction_table",
+        "aliases": [
+          "shipments",
+          "shipment_records",
+          "delivery_log"
+        ]
+      },
+      "columns": {
+        "shipment_id": {
+          "name": "shipment_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each shipment record within the system.",
+          "semantic_type": "identifier",
+          "business_concept": "Shipment ID",
+          "aliases": [
+            "ship_id",
+            "id",
+            "shipment_key"
+          ]
+        },
+        "order_id": {
+          "name": "order_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A reference to the parent order associated with this shipment.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Order ID",
+          "aliases": [
+            "order_key",
+            "ord_id",
+            "parent_order"
+          ]
+        },
+        "invoice_number": {
+          "name": "invoice_number",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A reference to the invoice generated for this shipment or order.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Invoice Number",
+          "aliases": [
+            "inv_id",
+            "invoice_key",
+            "billing_ref"
+          ]
+        },
+        "shipment_tracking_number": {
+          "name": "shipment_tracking_number",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The external tracking number provided by the carrier to monitor the shipment's progress.",
+          "semantic_type": "code",
+          "business_concept": "Tracking Number",
+          "aliases": [
+            "tracking_num",
+            "carrier_ref",
+            "track_id"
+          ]
+        },
+        "shipment_date": {
+          "name": "shipment_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp indicating when the shipment was created, processed, or shipped.",
+          "semantic_type": "timestamp",
+          "business_concept": "Shipment Date",
+          "aliases": [
+            "ship_date",
+            "created_at",
+            "dispatch_time"
+          ]
+        },
+        "other_shipment_details": {
+          "name": "other_shipment_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional free-text information or notes regarding the shipment, currently appearing empty in samples.",
+          "semantic_type": "description",
+          "business_concept": "Shipment Notes",
+          "aliases": [
+            "notes",
+            "comments",
+            "extra_info"
+          ]
+        }
+      }
+    },
+    "customers": {
+      "table": {
+        "name": "customers",
+        "column_count": 3,
+        "summary": "A table containing basic identification and name information for customers.",
+        "entity": "Customer",
+        "role": "entity_table",
+        "aliases": [
+          "cust",
+          "clients",
+          "accounts"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each customer record.",
+          "semantic_type": "identifier",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "id",
+            "customer_number"
+          ]
+        },
+        "customer_name": {
+          "name": "customer_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The name of the customer.",
+          "semantic_type": "person_name",
+          "business_concept": "Customer Name",
+          "aliases": [
+            "name",
+            "full_name",
+            "cust_name"
+          ]
+        },
+        "customer_details": {
+          "name": "customer_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Additional descriptive information about the customer, though sample values appear to be random strings or truncated data.",
+          "semantic_type": "description",
+          "business_concept": "Customer Details",
+          "aliases": [
+            "details",
+            "notes",
+            "info"
+          ]
+        }
+      }
+    }
+  }
+}

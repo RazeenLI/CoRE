@@ -1,0 +1,175 @@
+{
+  "database": "scientist_1",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/scientist_1",
+    "schema_path": "data/Spider/parsed/scientist_1/schema.json",
+    "tables_dir": "data/Spider/parsed/scientist_1/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "assignedto": {
+      "table": {
+        "name": "assignedto",
+        "column_count": 2,
+        "summary": "A mapping table linking specific projects to assigned scientists.",
+        "entity": "Assignment",
+        "role": "relationship_table",
+        "aliases": [
+          "assignments",
+          "project_assignments",
+          "scientist_projects"
+        ]
+      },
+      "columns": {
+        "scientist": {
+          "name": "scientist",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the scientist assigned to the project.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Scientist ID",
+          "aliases": [
+            "scientist_id",
+            "user_id",
+            "employee_id",
+            "staff_id"
+          ]
+        },
+        "project": {
+          "name": "project",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the project to which the scientist is assigned.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Project Code",
+          "aliases": [
+            "project_id",
+            "proj_code",
+            "project_key"
+          ]
+        }
+      }
+    },
+    "projects": {
+      "table": {
+        "name": "projects",
+        "column_count": 3,
+        "summary": "A catalog of academic or research projects, identified by short codes and descriptive titles, with associated effort metrics.",
+        "entity": "Project",
+        "role": "entity_table",
+        "aliases": [
+          "proj",
+          "project_list",
+          "research_projects",
+          "studies"
+        ]
+      },
+      "columns": {
+        "code": {
+          "name": "code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique, short alphanumeric identifier for each project.",
+          "semantic_type": "code",
+          "business_concept": "Project ID",
+          "aliases": [
+            "proj_code",
+            "project_id",
+            "short_code",
+            "ref"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A descriptive title summarizing the subject or scope of the project.",
+          "semantic_type": "description",
+          "business_concept": "Project Title",
+          "aliases": [
+            "title",
+            "project_name",
+            "subject",
+            "topic"
+          ]
+        },
+        "hours": {
+          "name": "hours",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total quantity of hours allocated to or spent on the project.",
+          "semantic_type": "quantity",
+          "business_concept": "Effort Hours",
+          "aliases": [
+            "hrs",
+            "total_hours",
+            "duration",
+            "work_hours"
+          ]
+        }
+      }
+    },
+    "scientists": {
+      "table": {
+        "name": "scientists",
+        "column_count": 2,
+        "summary": "A table containing personal information for scientists, including their unique identifier and full name.",
+        "entity": "scientist",
+        "role": "entity_table",
+        "aliases": [
+          "scientists",
+          "researchers",
+          "personnel"
+        ]
+      },
+      "columns": {
+        "ssn": {
+          "name": "ssn",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each scientist, likely representing a Social Security Number or an internal unique ID.",
+          "semantic_type": "identifier",
+          "business_concept": "unique_person_id",
+          "aliases": [
+            "id",
+            "social_security_number",
+            "ssn",
+            "employee_id",
+            "user_id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full name of the scientist.",
+          "semantic_type": "person_name",
+          "business_concept": "full_name",
+          "aliases": [
+            "full_name",
+            "first_name",
+            "last_name",
+            "name",
+            "person_name"
+          ]
+        }
+      }
+    }
+  }
+}

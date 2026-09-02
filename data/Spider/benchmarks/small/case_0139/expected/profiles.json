@@ -1,0 +1,455 @@
+{
+  "database": "customers_and_invoices",
+  "tables": {
+    "order_items": {
+      "table": {
+        "name": "order_items",
+        "column_count": 5,
+        "summary": "Stores the line-level details of orders, linking specific products to orders with their quantities.",
+        "entity": "Order Item",
+        "role": "transaction_table",
+        "aliases": [
+          "order_lines",
+          "order_details",
+          "order_line_items",
+          "oi"
+        ]
+      },
+      "columns": {
+        "order_item_id": {
+          "name": "order_item_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific line item within an order.",
+          "semantic_type": "identifier",
+          "business_concept": "Order Item ID",
+          "aliases": [
+            "item_id",
+            "line_id",
+            "order_line_id"
+          ]
+        },
+        "order_id": {
+          "name": "order_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the parent order containing this item.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Order ID",
+          "aliases": [
+            "parent_order_id",
+            "order_ref"
+          ]
+        },
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the specific product included in this order line.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Product ID",
+          "aliases": [
+            "item_sku",
+            "product_ref",
+            "sku"
+          ]
+        },
+        "product_quantity": {
+          "name": "product_quantity",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of units of the product ordered in this line item.",
+          "semantic_type": "quantity",
+          "business_concept": "Quantity Ordered",
+          "aliases": [
+            "qty",
+            "amount",
+            "count",
+            "units"
+          ]
+        },
+        "other_order_item_details": {
+          "name": "other_order_item_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Optional additional information or notes regarding the specific order item.",
+          "semantic_type": "description",
+          "business_concept": "Item Notes",
+          "aliases": [
+            "notes",
+            "remarks",
+            "extra_info",
+            "metadata"
+          ]
+        }
+      }
+    },
+    "product_categories": {
+      "table": {
+        "name": "product_categories",
+        "column_count": 3,
+        "summary": "A lookup table defining product categories, their descriptions, and associated VAT ratings.",
+        "entity": "Product Category",
+        "role": "lookup_table",
+        "aliases": [
+          "product_category_master",
+          "category_definitions",
+          "prod_cat_lookup"
+        ]
+      },
+      "columns": {
+        "production_type_code": {
+          "name": "production_type_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A unique alphanumeric code representing the type of product category.",
+          "semantic_type": "code",
+          "business_concept": "Category Identifier",
+          "aliases": [
+            "prod_type_code",
+            "category_code",
+            "type_code"
+          ]
+        },
+        "product_type_description": {
+          "name": "product_type_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A human-readable text description of the product category.",
+          "semantic_type": "description",
+          "business_concept": "Category Description",
+          "aliases": [
+            "prod_type_desc",
+            "category_name",
+            "type_description"
+          ]
+        },
+        "vat_rating": {
+          "name": "vat_rating",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The Value Added Tax (VAT) percentage applicable to products in this category.",
+          "semantic_type": "money",
+          "business_concept": "Tax Rate",
+          "aliases": [
+            "vat_rate",
+            "tax_percentage",
+            "vat_percent"
+          ]
+        }
+      }
+    },
+    "invoice_line_items": {
+      "table": {
+        "name": "invoice_line_items",
+        "column_count": 9,
+        "summary": "A transactional table detailing individual line items within invoices, recording product details, quantities, costs, and derived financial metrics.",
+        "entity": "invoice_line_item",
+        "role": "transaction_table",
+        "aliases": [
+          "invoice_items",
+          "order_line_items",
+          "bill_lines",
+          "invoice_details"
+        ]
+      },
+      "columns": {
+        "order_item_id": {
+          "name": "order_item_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific line item within an order or invoice context.",
+          "semantic_type": "identifier",
+          "business_concept": "Line Item ID",
+          "aliases": [
+            "item_id",
+            "line_id",
+            "row_id"
+          ]
+        },
+        "invoice_number": {
+          "name": "invoice_number",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Numeric identifier representing the specific invoice to which this line item belongs.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Invoice ID",
+          "aliases": [
+            "inv_id",
+            "invoice_id",
+            "bill_number"
+          ]
+        },
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific product being purchased or billed.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Product ID",
+          "aliases": [
+            "prod_id",
+            "item_code",
+            "sku"
+          ]
+        },
+        "product_title": {
+          "name": "product_title",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Descriptive name or title of the product associated with the line item.",
+          "semantic_type": "description",
+          "business_concept": "Product Name",
+          "aliases": [
+            "product_name",
+            "item_name",
+            "description"
+          ]
+        },
+        "product_quantity": {
+          "name": "product_quantity",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of units of the product included in this line item.",
+          "semantic_type": "quantity",
+          "business_concept": "Quantity",
+          "aliases": [
+            "qty",
+            "quantity",
+            "units"
+          ]
+        },
+        "product_price": {
+          "name": "product_price",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The unit price of the product before any discounts or taxes are applied.",
+          "semantic_type": "money",
+          "business_concept": "Unit Price",
+          "aliases": [
+            "price",
+            "unit_price",
+            "cost_price"
+          ]
+        },
+        "derived_product_cost": {
+          "name": "derived_product_cost",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "A calculated field representing the total cost for the product line item (likely Quantity * Price).",
+          "semantic_type": "money",
+          "business_concept": "Line Total Cost",
+          "aliases": [
+            "line_cost",
+            "subtotal",
+            "amount"
+          ]
+        },
+        "derived_vat_payable": {
+          "name": "derived_vat_payable",
+          "dtype": "decimal",
+          "value_patterns": [],
+          "meaning": "A calculated field representing the Value Added Tax (VAT) amount applicable to this line item.",
+          "semantic_type": "money",
+          "business_concept": "VAT Amount",
+          "aliases": [
+            "tax",
+            "vat",
+            "tax_amount"
+          ]
+        },
+        "derived_total_cost": {
+          "name": "derived_total_cost",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "A calculated field representing the final total cost for the line item after applying taxes or other adjustments.",
+          "semantic_type": "money",
+          "business_concept": "Final Line Total",
+          "aliases": [
+            "total",
+            "final_amount",
+            "net_total"
+          ]
+        }
+      }
+    },
+    "invoices": {
+      "table": {
+        "name": "invoices",
+        "column_count": 3,
+        "summary": "A table recording financial invoices linked to specific orders with associated timestamps.",
+        "entity": "Invoice",
+        "role": "transaction_table",
+        "aliases": [
+          "invoice",
+          "billing",
+          "payment_record"
+        ]
+      },
+      "columns": {
+        "invoice_number": {
+          "name": "invoice_number",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier assigned to each invoice record.",
+          "semantic_type": "identifier",
+          "business_concept": "Invoice ID",
+          "aliases": [
+            "inv_id",
+            "invoice_id",
+            "doc_number"
+          ]
+        },
+        "order_id": {
+          "name": "order_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A reference key linking the invoice to a specific customer order.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Order Reference",
+          "aliases": [
+            "order_ref",
+            "order_no",
+            "parent_order"
+          ]
+        },
+        "invoice_date": {
+          "name": "invoice_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp indicating when the invoice was generated or issued.",
+          "semantic_type": "timestamp",
+          "business_concept": "Invoice Date",
+          "aliases": [
+            "created_at",
+            "issue_date",
+            "date_issued"
+          ]
+        }
+      }
+    },
+    "orders": {
+      "table": {
+        "name": "orders",
+        "column_count": 4,
+        "summary": "A transactional table recording individual customer orders with placement timestamps and optional details.",
+        "entity": "Order",
+        "role": "transaction_table",
+        "aliases": [
+          "order",
+          "orders",
+          "purchase",
+          "transactions"
+        ]
+      },
+      "columns": {
+        "order_id": {
+          "name": "order_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each order record.",
+          "semantic_type": "identifier",
+          "business_concept": "Order ID",
+          "aliases": [
+            "id",
+            "order_number",
+            "order_no",
+            "ord_id"
+          ]
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A reference identifier linking the order to a specific customer.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "client_id",
+            "user_id",
+            "customer_no"
+          ]
+        },
+        "date_order_placed": {
+          "name": "date_order_placed",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The specific date and time when the order was submitted.",
+          "semantic_type": "timestamp",
+          "business_concept": "Order Date",
+          "aliases": [
+            "order_date",
+            "created_at",
+            "placed_at",
+            "order_time"
+          ]
+        },
+        "order_details": {
+          "name": "order_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Optional textual information or notes associated with the order, currently appearing empty in samples.",
+          "semantic_type": "description",
+          "business_concept": "Order Notes",
+          "aliases": [
+            "notes",
+            "comments",
+            "description",
+            "memo"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,292 @@
+{
+  "database": "inn_1",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/inn_1",
+    "schema_path": "data/Spider/parsed/inn_1/schema.json",
+    "tables_dir": "data/Spider/parsed/inn_1/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "reservations": {
+      "table": {
+        "name": "reservations",
+        "column_count": 9,
+        "summary": "A table storing details of hotel room reservations, including guest information, room assignment, dates, and pricing.",
+        "entity": "Reservation",
+        "role": "transaction_table",
+        "aliases": [
+          "bookings",
+          "hotel_reservations",
+          "room_bookings",
+          "stays"
+        ]
+      },
+      "columns": {
+        "code": {
+          "name": "code",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the reservation record.",
+          "semantic_type": "identifier",
+          "business_concept": "Reservation ID",
+          "aliases": [
+            "res_id",
+            "booking_code",
+            "reservation_number"
+          ]
+        },
+        "room": {
+          "name": "room",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The specific room code assigned to the guest for the stay.",
+          "semantic_type": "code",
+          "business_concept": "Room Number",
+          "aliases": [
+            "room_code",
+            "room_number",
+            "assigned_room"
+          ]
+        },
+        "checkin": {
+          "name": "checkin",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The date and time when the guest is scheduled to arrive at the hotel.",
+          "semantic_type": "date",
+          "business_concept": "Check-in Date",
+          "aliases": [
+            "arrival_date",
+            "check_in",
+            "start_date"
+          ]
+        },
+        "checkout": {
+          "name": "checkout",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The date and time when the guest is scheduled to leave the hotel.",
+          "semantic_type": "date",
+          "business_concept": "Check-out Date",
+          "aliases": [
+            "departure_date",
+            "check_out",
+            "end_date"
+          ]
+        },
+        "rate": {
+          "name": "rate",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The price charged per night for the reservation.",
+          "semantic_type": "money",
+          "business_concept": "Room Rate",
+          "aliases": [
+            "price",
+            "nightly_rate",
+            "cost_per_night"
+          ]
+        },
+        "lastname": {
+          "name": "lastname",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The surname of the primary guest making the reservation.",
+          "semantic_type": "person_name",
+          "business_concept": "Guest Last Name",
+          "aliases": [
+            "surname",
+            "family_name",
+            "last_name"
+          ]
+        },
+        "firstname": {
+          "name": "firstname",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The given name of the primary guest making the reservation.",
+          "semantic_type": "person_name",
+          "business_concept": "Guest First Name",
+          "aliases": [
+            "given_name",
+            "first_name",
+            "name"
+          ]
+        },
+        "adults": {
+          "name": "adults",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of adult guests included in the reservation.",
+          "semantic_type": "quantity",
+          "business_concept": "Number of Adults",
+          "aliases": [
+            "adult_count",
+            "num_adults",
+            "adults_count"
+          ]
+        },
+        "kids": {
+          "name": "kids",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of child guests included in the reservation.",
+          "semantic_type": "quantity",
+          "business_concept": "Number of Children",
+          "aliases": [
+            "child_count",
+            "num_kids",
+            "children_count"
+          ]
+        }
+      }
+    },
+    "rooms": {
+      "table": {
+        "name": "rooms",
+        "column_count": 7,
+        "summary": "A catalog of available rooms with details on capacity, pricing, and amenities.",
+        "entity": "Room",
+        "role": "entity_table",
+        "aliases": [
+          "room_catalog",
+          "accommodation",
+          "inventory_rooms"
+        ]
+      },
+      "columns": {
+        "roomid": {
+          "name": "roomid",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific room.",
+          "semantic_type": "identifier",
+          "business_concept": "Room ID",
+          "aliases": [
+            "room_code",
+            "room_key",
+            "id"
+          ]
+        },
+        "roomname": {
+          "name": "roomname",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Descriptive name or theme associated with the room.",
+          "semantic_type": "description",
+          "business_concept": "Room Name",
+          "aliases": [
+            "room_title",
+            "room_description",
+            "name"
+          ]
+        },
+        "beds": {
+          "name": "beds",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of beds available in the room.",
+          "semantic_type": "quantity",
+          "business_concept": "Bed Count",
+          "aliases": [
+            "bed_count",
+            "num_beds",
+            "beds_available"
+          ]
+        },
+        "bedtype": {
+          "name": "bedtype",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Type of bed provided in the room.",
+          "semantic_type": "category",
+          "business_concept": "Bed Type",
+          "aliases": [
+            "bed_category",
+            "bed_size",
+            "bed_class"
+          ]
+        },
+        "maxoccupancy": {
+          "name": "maxoccupancy",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Maximum number of people allowed to stay in the room.",
+          "semantic_type": "quantity",
+          "business_concept": "Max Occupancy",
+          "aliases": [
+            "capacity",
+            "max_guests",
+            "occupancy_limit"
+          ]
+        },
+        "baseprice": {
+          "name": "baseprice",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Standard nightly rate for the room.",
+          "semantic_type": "money",
+          "business_concept": "Room Rate",
+          "aliases": [
+            "price",
+            "rate",
+            "cost_per_night",
+            "base_rate"
+          ]
+        },
+        "decor": {
+          "name": "decor",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Interior design style of the room.",
+          "semantic_type": "category",
+          "business_concept": "Room Style",
+          "aliases": [
+            "style",
+            "theme",
+            "interior_style",
+            "decoration"
+          ]
+        }
+      }
+    }
+  }
+}

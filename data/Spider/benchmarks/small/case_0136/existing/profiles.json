@@ -1,0 +1,430 @@
+{
+  "database": "aircraft",
+  "tables": {
+    "match": {
+      "table": {
+        "name": "match",
+        "column_count": 7,
+        "summary": "Records of air racing matches including details on location, date, participants, and winners.",
+        "entity": "Match",
+        "role": "transaction_table",
+        "aliases": [
+          "race_match",
+          "air_racing_event",
+          "match_result"
+        ]
+      },
+      "columns": {
+        "round": {
+          "name": "round",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The sequential number of the match within a series or season.",
+          "semantic_type": "quantity",
+          "business_concept": "Round Number",
+          "aliases": [
+            "match_round",
+            "round_num",
+            "sequence"
+          ]
+        },
+        "location": {
+          "name": "location",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The specific venue or geographic area where the match took place.",
+          "semantic_type": "address",
+          "business_concept": "Match Location",
+          "aliases": [
+            "venue",
+            "site",
+            "track",
+            "place"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The nation in which the match location is situated.",
+          "semantic_type": "country",
+          "business_concept": "Host Country",
+          "aliases": [
+            "nation",
+            "land",
+            "sovereign_state"
+          ]
+        },
+        "date": {
+          "name": "date",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The calendar dates on which the match was held.",
+          "semantic_type": "date",
+          "business_concept": "Event Date",
+          "aliases": [
+            "event_date",
+            "match_date",
+            "hold_date"
+          ]
+        },
+        "fastest_qualifying": {
+          "name": "fastest_qualifying",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the pilot who achieved the fastest qualifying time.",
+          "semantic_type": "person_name",
+          "business_concept": "Fastest Qualifier",
+          "aliases": [
+            "qualifying_leader",
+            "fast_qualifier",
+            "pole_sitter"
+          ]
+        },
+        "winning_pilot": {
+          "name": "winning_pilot",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The identifier (likely pilot number) of the winner of the match.",
+          "semantic_type": "code",
+          "business_concept": "Winner Pilot ID",
+          "aliases": [
+            "winner_id",
+            "pilot_number",
+            "winning_number"
+          ]
+        },
+        "winning_aircraft": {
+          "name": "winning_aircraft",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The identifier (likely aircraft number) of the winning plane.",
+          "semantic_type": "code",
+          "business_concept": "Winning Aircraft ID",
+          "aliases": [
+            "winner_plane",
+            "aircraft_number",
+            "winning_machine"
+          ]
+        }
+      }
+    },
+    "aircraft": {
+      "table": {
+        "name": "aircraft",
+        "column_count": 6,
+        "summary": "A reference table containing technical specifications and descriptions for various helicopter models.",
+        "entity": "Helicopter Model",
+        "role": "lookup_table",
+        "aliases": [
+          "aircraft_spec",
+          "helicopter_catalog",
+          "aircraft_data"
+        ]
+      },
+      "columns": {
+        "aircraft_id": {
+          "name": "aircraft_id",
+          "dtype": "int(11)",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each aircraft model record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "aircraft_code",
+            "model_id"
+          ]
+        },
+        "aircraft": {
+          "name": "aircraft",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The specific name or model designation of the helicopter.",
+          "semantic_type": "code",
+          "business_concept": "Model Name",
+          "aliases": [
+            "model",
+            "name",
+            "aircraft_name"
+          ]
+        },
+        "description": {
+          "name": "description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A brief textual summary of the aircraft's class or primary function.",
+          "semantic_type": "description",
+          "business_concept": "Category Description",
+          "aliases": [
+            "type",
+            "class",
+            "notes"
+          ]
+        },
+        "max_gross_weight": {
+          "name": "max_gross_weight",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The maximum allowable total weight of the aircraft including payload and fuel.",
+          "semantic_type": "quantity",
+          "business_concept": "Maximum Gross Weight",
+          "aliases": [
+            "mgw",
+            "max_weight",
+            "gross_weight"
+          ]
+        },
+        "total_disk_area": {
+          "name": "total_disk_area",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The total area swept by the rotor blades during rotation.",
+          "semantic_type": "quantity",
+          "business_concept": "Rotor Disk Area",
+          "aliases": [
+            "disk_area",
+            "rotor_area",
+            "total_area"
+          ]
+        },
+        "max_disk_loading": {
+          "name": "max_disk_loading",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The ratio of the aircraft's maximum gross weight to its total rotor disk area.",
+          "semantic_type": "quantity",
+          "business_concept": "Maximum Disk Loading",
+          "aliases": [
+            "mdl",
+            "disk_loading",
+            "loading_ratio"
+          ]
+        }
+      }
+    },
+    "airport": {
+      "table": {
+        "name": "airport",
+        "column_count": 9,
+        "summary": "A dataset containing annual passenger and operational statistics for various airports, including total passengers, domestic/international splits, transit passengers, aircraft movements, and freight tonnage.",
+        "entity": "Airport",
+        "role": "entity_table",
+        "aliases": [
+          "airports",
+          "airport_stats",
+          "airport_metrics",
+          "aviation_data"
+        ]
+      },
+      "columns": {
+        "airport_id": {
+          "name": "airport_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each airport record.",
+          "semantic_type": "identifier",
+          "business_concept": "Airport ID",
+          "aliases": [
+            "airport_code",
+            "id",
+            "airport_key"
+          ]
+        },
+        "airport_name": {
+          "name": "airport_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the airport.",
+          "semantic_type": "organization_name",
+          "business_concept": "Airport Name",
+          "aliases": [
+            "name",
+            "airport_title",
+            "full_name"
+          ]
+        },
+        "total_passengers": {
+          "name": "total_passengers",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total number of passengers handled by the airport.",
+          "semantic_type": "quantity",
+          "business_concept": "Total Passenger Count",
+          "aliases": [
+            "passengers",
+            "total_pax",
+            "passenger_volume"
+          ]
+        },
+        "%_change_2007": {
+          "name": "%_change_2007",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The percentage change in passenger numbers compared to a previous year (likely 2006).",
+          "semantic_type": "category",
+          "business_concept": "Passenger Growth Rate",
+          "aliases": [
+            "growth_rate",
+            "pax_change",
+            "year_over_year_change"
+          ]
+        },
+        "international_passengers": {
+          "name": "international_passengers",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The number of passengers traveling on international flights.",
+          "semantic_type": "quantity",
+          "business_concept": "International Passenger Count",
+          "aliases": [
+            "intl_passengers",
+            "international_pax",
+            "foreign_passengers"
+          ]
+        },
+        "domestic_passengers": {
+          "name": "domestic_passengers",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The number of passengers traveling on domestic flights.",
+          "semantic_type": "quantity",
+          "business_concept": "Domestic Passenger Count",
+          "aliases": [
+            "dom_pax",
+            "domestic_pax",
+            "local_passengers"
+          ]
+        },
+        "transit_passengers": {
+          "name": "transit_passengers",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The number of passengers who are in transit (connecting flights) rather than starting or ending their journey at the airport.",
+          "semantic_type": "quantity",
+          "business_concept": "Transit Passenger Count",
+          "aliases": [
+            "transit_pax",
+            "connecting_passengers",
+            "transfer_passengers"
+          ]
+        },
+        "aircraft_movements": {
+          "name": "aircraft_movements",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total count of aircraft movements (takeoffs and landings) at the airport.",
+          "semantic_type": "quantity",
+          "business_concept": "Aircraft Movement Count",
+          "aliases": [
+            "movements",
+            "flights",
+            "aircraft_count",
+            "ops"
+          ]
+        },
+        "freight_metric_tonnes": {
+          "name": "freight_metric_tonnes",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total weight of freight transported by the airport, measured in metric tonnes.",
+          "semantic_type": "quantity",
+          "business_concept": "Freight Volume",
+          "aliases": [
+            "freight",
+            "cargo",
+            "tonnes",
+            "freight_weight"
+          ]
+        }
+      }
+    },
+    "pilot": {
+      "table": {
+        "name": "pilot",
+        "column_count": 3,
+        "summary": "A table containing demographic and identification information for pilots.",
+        "entity": "pilot",
+        "role": "entity_table",
+        "aliases": [
+          "pilots",
+          "pilot_master",
+          "pilot_info"
+        ]
+      },
+      "columns": {
+        "pilot_id": {
+          "name": "pilot_id",
+          "dtype": "int(11)",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each pilot record.",
+          "semantic_type": "identifier",
+          "business_concept": "Pilot ID",
+          "aliases": [
+            "id",
+            "pid",
+            "pilot_number"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full name of the pilot, including titles and suffixes.",
+          "semantic_type": "person_name",
+          "business_concept": "Pilot Name",
+          "aliases": [
+            "full_name",
+            "name",
+            "pilot_name"
+          ]
+        },
+        "age": {
+          "name": "age",
+          "dtype": "int(11)",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The current age of the pilot in years.",
+          "semantic_type": "quantity",
+          "business_concept": "Pilot Age",
+          "aliases": [
+            "years_old",
+            "age",
+            "pilot_age"
+          ]
+        }
+      }
+    }
+  }
+}

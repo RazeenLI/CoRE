@@ -1,0 +1,843 @@
+{
+  "database": "tracking_grants_for_research",
+  "tables": {
+    "documents": {
+      "table": {
+        "name": "documents",
+        "column_count": 6,
+        "summary": "A table recording the lifecycle of various documents, specifically tracking the submission date and the date a response was received.",
+        "entity": "document",
+        "role": "transaction_table",
+        "aliases": [
+          "doc_records",
+          "document_log",
+          "submission_tracking"
+        ]
+      },
+      "columns": {
+        "document_id": {
+          "name": "document_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each document record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Document ID",
+          "aliases": [
+            "doc_id",
+            "id",
+            "primary_key"
+          ]
+        },
+        "document_type_code": {
+          "name": "document_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short alphanumeric code classifying the type of document (e.g., Application, Registration).",
+          "semantic_type": "code",
+          "business_concept": "Document Category",
+          "aliases": [
+            "doc_type",
+            "type_code",
+            "category_code"
+          ]
+        },
+        "grant_id": {
+          "name": "grant_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "An identifier linking the document to a specific grant or funding opportunity.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Grant Reference",
+          "aliases": [
+            "grant_ref",
+            "grant_number",
+            "funding_id"
+          ]
+        },
+        "sent_date": {
+          "name": "sent_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the document was submitted or sent.",
+          "semantic_type": "timestamp",
+          "business_concept": "Submission Date",
+          "aliases": [
+            "submit_date",
+            "created_at",
+            "sent_timestamp"
+          ]
+        },
+        "response_received_date": {
+          "name": "response_received_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when a response to the document was received.",
+          "semantic_type": "timestamp",
+          "business_concept": "Response Date",
+          "aliases": [
+            "response_date",
+            "received_at",
+            "reply_timestamp"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A field intended for additional notes or details, but currently contains no data in the sample.",
+          "semantic_type": "description",
+          "business_concept": "Additional Notes",
+          "aliases": [
+            "notes",
+            "remarks",
+            "extra_info"
+          ]
+        }
+      }
+    },
+    "tasks": {
+      "table": {
+        "name": "tasks",
+        "column_count": 4,
+        "summary": "A table storing individual task records linked to specific projects, containing unique identifiers, project references, and brief task codes.",
+        "entity": "Task",
+        "role": "entity_table",
+        "aliases": [
+          "task_list",
+          "work_items",
+          "project_tasks"
+        ]
+      },
+      "columns": {
+        "task_id": {
+          "name": "task_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each task record.",
+          "semantic_type": "identifier",
+          "business_concept": "Task ID",
+          "aliases": [
+            "id",
+            "task_number",
+            "task_key"
+          ]
+        },
+        "project_id": {
+          "name": "project_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the project associated with the task.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Project ID",
+          "aliases": [
+            "proj_id",
+            "project_number",
+            "parent_id"
+          ]
+        },
+        "task_details": {
+          "name": "task_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short code or label representing the task details.",
+          "semantic_type": "code",
+          "business_concept": "Task Code",
+          "aliases": [
+            "task_code",
+            "task_label",
+            "short_desc"
+          ]
+        },
+        "eg agree objectives": {
+          "name": "eg agree objectives",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A single-character flag indicating agreement status, likely empty in the provided samples.",
+          "semantic_type": "boolean",
+          "business_concept": "Agreement Status",
+          "aliases": [
+            "agree_flag",
+            "obj_agree",
+            "status_flag"
+          ]
+        }
+      }
+    },
+    "research_staff": {
+      "table": {
+        "name": "research_staff",
+        "column_count": 3,
+        "summary": "A table containing core identification and organizational affiliation data for research staff members.",
+        "entity": "Research Staff Member",
+        "role": "entity_table",
+        "aliases": [
+          "researchers",
+          "staff_directory",
+          "academic_staff"
+        ]
+      },
+      "columns": {
+        "staff_id": {
+          "name": "staff_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific research staff member.",
+          "semantic_type": "identifier",
+          "business_concept": "Staff ID",
+          "aliases": [
+            "staff_code",
+            "employee_id",
+            "researcher_id",
+            "person_id"
+          ]
+        },
+        "employer_organisation_id": {
+          "name": "employer_organisation_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the staff member to their employing organization.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Employer Organization ID",
+          "aliases": [
+            "org_id",
+            "employer_code",
+            "institution_id",
+            "department_id"
+          ]
+        },
+        "staff_details": {
+          "name": "staff_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short code or category label associated with the staff member, likely representing a role, department, or status group.",
+          "semantic_type": "code",
+          "business_concept": "Staff Category Code",
+          "aliases": [
+            "staff_code",
+            "role_code",
+            "dept_code",
+            "status_code",
+            "category"
+          ]
+        }
+      }
+    },
+    "project_outcomes": {
+      "table": {
+        "name": "project_outcomes",
+        "column_count": 3,
+        "summary": "Records the final deliverable types (outcomes) associated with specific projects.",
+        "entity": "Project Outcome",
+        "role": "transaction_table",
+        "aliases": [
+          "project_deliverables",
+          "project_results",
+          "project_outputs"
+        ]
+      },
+      "columns": {
+        "project_id": {
+          "name": "project_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier linking the outcome record to a specific project.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Project Identifier",
+          "aliases": [
+            "proj_id",
+            "id",
+            "project_number"
+          ]
+        },
+        "outcome_code": {
+          "name": "outcome_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Categorical code representing the type of deliverable produced by the project.",
+          "semantic_type": "category",
+          "business_concept": "Deliverable Type",
+          "aliases": [
+            "outcome_type",
+            "result_code",
+            "deliverable_category"
+          ]
+        },
+        "outcome_details": {
+          "name": "outcome_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Optional textual description providing additional context about the outcome.",
+          "semantic_type": "description",
+          "business_concept": "Outcome Description",
+          "aliases": [
+            "details",
+            "notes",
+            "description"
+          ]
+        }
+      }
+    },
+    "grants": {
+      "table": {
+        "name": "grants",
+        "column_count": 6,
+        "summary": "A record of financial grants issued to organizations, tracking the amount, duration, and unique identifiers for each grant.",
+        "entity": "Grant",
+        "role": "transaction_table",
+        "aliases": [
+          "grant_records",
+          "funding_grants",
+          "grant_details"
+        ]
+      },
+      "columns": {
+        "grant_id": {
+          "name": "grant_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific grant record.",
+          "semantic_type": "identifier",
+          "business_concept": "Grant Reference Number",
+          "aliases": [
+            "grant_number",
+            "grant_ref",
+            "id"
+          ]
+        },
+        "organisation_id": {
+          "name": "organisation_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the grant to the recipient organization.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Recipient Organization ID",
+          "aliases": [
+            "org_id",
+            "recipient_id",
+            "entity_id"
+          ]
+        },
+        "grant_amount": {
+          "name": "grant_amount",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total monetary value of the grant.",
+          "semantic_type": "money",
+          "business_concept": "Grant Funding Amount",
+          "aliases": [
+            "amount",
+            "funding",
+            "value",
+            "budget"
+          ]
+        },
+        "grant_start_date": {
+          "name": "grant_start_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date and time when the grant period begins.",
+          "semantic_type": "timestamp",
+          "business_concept": "Grant Commencement Date",
+          "aliases": [
+            "start_date",
+            "effective_date",
+            "begin_date"
+          ]
+        },
+        "grant_end_date": {
+          "name": "grant_end_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date and time when the grant period concludes.",
+          "semantic_type": "timestamp",
+          "business_concept": "Grant Expiration Date",
+          "aliases": [
+            "end_date",
+            "completion_date",
+            "finish_date"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Additional descriptive text or code associated with the grant, potentially containing status or category codes based on sample values.",
+          "semantic_type": "code",
+          "business_concept": "Grant Status or Category Code",
+          "aliases": [
+            "details",
+            "notes",
+            "status_code",
+            "category_code"
+          ]
+        }
+      }
+    },
+    "project_staff": {
+      "table": {
+        "name": "project_staff",
+        "column_count": 6,
+        "summary": "Records the assignment of staff members to specific projects, including their role, tenure period, and additional details.",
+        "entity": "staff_project_assignment",
+        "role": "relationship_table",
+        "aliases": [
+          "project_staff",
+          "staff_projects",
+          "employee_project_roles"
+        ]
+      },
+      "columns": {
+        "staff_id": {
+          "name": "staff_id",
+          "dtype": "double",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Unique identifier for a staff member.",
+          "semantic_type": "identifier",
+          "business_concept": "Staff ID",
+          "aliases": [
+            "staff_number",
+            "employee_id",
+            "person_id"
+          ]
+        },
+        "project_id": {
+          "name": "project_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a project.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Project ID",
+          "aliases": [
+            "project_number",
+            "proj_id",
+            "task_id"
+          ]
+        },
+        "role_code": {
+          "name": "role_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short code representing the staff member's function or title within the project.",
+          "semantic_type": "code",
+          "business_concept": "Job Role",
+          "aliases": [
+            "role",
+            "position",
+            "job_title",
+            "function"
+          ]
+        },
+        "date_from": {
+          "name": "date_from",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The start date of the staff member's assignment to the project.",
+          "semantic_type": "timestamp",
+          "business_concept": "Assignment Start Date",
+          "aliases": [
+            "start_date",
+            "join_date",
+            "from_date"
+          ]
+        },
+        "date_to": {
+          "name": "date_to",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The end date of the staff member's assignment to the project.",
+          "semantic_type": "timestamp",
+          "business_concept": "Assignment End Date",
+          "aliases": [
+            "end_date",
+            "leave_date",
+            "to_date"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional textual information regarding the assignment, often empty.",
+          "semantic_type": "description",
+          "business_concept": "Notes",
+          "aliases": [
+            "remarks",
+            "comments",
+            "extra_info",
+            "memo"
+          ]
+        }
+      }
+    },
+    "organisation_types": {
+      "table": {
+        "name": "organisation_types",
+        "column_count": 2,
+        "summary": "A reference table defining standard categories and descriptions for different types of organizations.",
+        "entity": "Organisation Type",
+        "role": "lookup_table",
+        "aliases": [
+          "org_types",
+          "organization_categories",
+          "entity_types"
+        ]
+      },
+      "columns": {
+        "organisation_type": {
+          "name": "organisation_type",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique short code identifier representing the specific category of an organization.",
+          "semantic_type": "code",
+          "business_concept": "Organization Type Code",
+          "aliases": [
+            "org_type_code",
+            "type_id",
+            "org_category_code"
+          ]
+        },
+        "organisation_type_description": {
+          "name": "organisation_type_description",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A human-readable text description explaining the meaning of the organization type code.",
+          "semantic_type": "description",
+          "business_concept": "Organization Type Description",
+          "aliases": [
+            "org_type_desc",
+            "type_description",
+            "org_category_name"
+          ]
+        }
+      }
+    },
+    "document_types": {
+      "table": {
+        "name": "document_types",
+        "column_count": 2,
+        "summary": "A reference table defining standard document types with unique codes and human-readable descriptions.",
+        "entity": "Document Type",
+        "role": "lookup_table",
+        "aliases": [
+          "doc_types",
+          "document_category",
+          "type_codes"
+        ]
+      },
+      "columns": {
+        "document_type_code": {
+          "name": "document_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique, short alphanumeric identifier used to reference a specific document type.",
+          "semantic_type": "code",
+          "business_concept": "Document Type Identifier",
+          "aliases": [
+            "doc_code",
+            "type_id",
+            "short_code",
+            "doc_type_key"
+          ]
+        },
+        "document_description": {
+          "name": "document_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A textual explanation or label describing the purpose or nature of the document type.",
+          "semantic_type": "description",
+          "business_concept": "Document Type Description",
+          "aliases": [
+            "doc_desc",
+            "type_name",
+            "description",
+            "label"
+          ]
+        }
+      }
+    },
+    "organisations": {
+      "table": {
+        "name": "organisations",
+        "column_count": 3,
+        "summary": "A master table containing core identification and classification data for various organizations.",
+        "entity": "Organisation",
+        "role": "entity_table",
+        "aliases": [
+          "orgs",
+          "companies",
+          "entities",
+          "org_master"
+        ]
+      },
+      "columns": {
+        "organisation_id": {
+          "name": "organisation_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each organization record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "org_id",
+            "id",
+            "organization_id"
+          ]
+        },
+        "organisation_type": {
+          "name": "organisation_type",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Categorical code representing the legal or functional type of the organization.",
+          "semantic_type": "code",
+          "business_concept": "Organization Classification",
+          "aliases": [
+            "org_type",
+            "type",
+            "entity_type",
+            "category"
+          ]
+        },
+        "organisation_details": {
+          "name": "organisation_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Additional descriptive text or specific details about the organization, though sample values appear nonsensical or placeholder-like.",
+          "semantic_type": "description",
+          "business_concept": "Organization Details",
+          "aliases": [
+            "org_details",
+            "description",
+            "notes",
+            "info"
+          ]
+        }
+      }
+    },
+    "projects": {
+      "table": {
+        "name": "projects",
+        "column_count": 3,
+        "summary": "A table storing core project information, linking projects to their respective organizations via unique identifiers.",
+        "entity": "Project",
+        "role": "entity_table",
+        "aliases": [
+          "proj",
+          "projects_list",
+          "project_master"
+        ]
+      },
+      "columns": {
+        "project_id": {
+          "name": "project_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific project record.",
+          "semantic_type": "identifier",
+          "business_concept": "Project ID",
+          "aliases": [
+            "id",
+            "proj_id",
+            "project_number"
+          ]
+        },
+        "organisation_id": {
+          "name": "organisation_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key linking the project to its parent organization.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Organization ID",
+          "aliases": [
+            "org_id",
+            "company_id",
+            "parent_id"
+          ]
+        },
+        "project_details": {
+          "name": "project_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short code or label representing the project, likely used for display or quick reference.",
+          "semantic_type": "code",
+          "business_concept": "Project Code",
+          "aliases": [
+            "code",
+            "short_name",
+            "project_code",
+            "label"
+          ]
+        }
+      }
+    },
+    "staff_roles": {
+      "table": {
+        "name": "staff_roles",
+        "column_count": 2,
+        "summary": "Defines the set of available job roles within an organization, including their unique identifiers and textual descriptions.",
+        "entity": "Role",
+        "role": "lookup_table",
+        "aliases": [
+          "job_roles",
+          "position_definitions",
+          "staff_positions",
+          "role_catalog"
+        ]
+      },
+      "columns": {
+        "role_code": {
+          "name": "role_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique, short alphanumeric identifier used to reference a specific job role.",
+          "semantic_type": "code",
+          "business_concept": "Role Identifier",
+          "aliases": [
+            "role_id",
+            "role_key",
+            "position_code",
+            "job_code"
+          ]
+        },
+        "role_description": {
+          "name": "role_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A human-readable text string explaining the responsibilities and title of the role.",
+          "semantic_type": "description",
+          "business_concept": "Role Description",
+          "aliases": [
+            "role_name",
+            "position_title",
+            "job_title",
+            "role_definition"
+          ]
+        }
+      }
+    },
+    "research_outcomes": {
+      "table": {
+        "name": "research_outcomes",
+        "column_count": 2,
+        "summary": "Stores the types and descriptions of research outputs generated by the organization.",
+        "entity": "Research Outcome",
+        "role": "lookup_table",
+        "aliases": [
+          "research_outputs",
+          "output_types",
+          "intellectual_property_types"
+        ]
+      },
+      "columns": {
+        "outcome_code": {
+          "name": "outcome_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short, unique identifier representing the category of the research outcome.",
+          "semantic_type": "code",
+          "business_concept": "Outcome Category Code",
+          "aliases": [
+            "outcome_type_code",
+            "output_code",
+            "result_code"
+          ]
+        },
+        "outcome_description": {
+          "name": "outcome_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A textual explanation of the specific type of research outcome.",
+          "semantic_type": "description",
+          "business_concept": "Outcome Description",
+          "aliases": [
+            "outcome_name",
+            "output_description",
+            "result_type"
+          ]
+        }
+      }
+    }
+  }
+}

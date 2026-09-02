@@ -1104,6 +1104,23 @@ def summarize_dataset_results(
         sum(bool(row.get("run_retry_exhausted")) for row in retry_rows),
         len(retry_rows),
     )
+    retried_rows = [row for row in retry_rows if bool(row.get("run_retried"))]
+    summary["validator_repair_success_rate"] = _safe_divide(
+        sum(bool(row.get("run_repair_succeeded")) for row in retried_rows),
+        len(retried_rows),
+    )
+    summary["validator_no_change_retry_rate"] = _safe_divide(
+        sum(bool(row.get("run_no_change_retry")) for row in retried_rows),
+        len(retried_rows),
+    )
+    summary["validator_decision_correction_rate"] = _safe_divide(
+        sum(bool(row.get("run_decision_corrected")) for row in retried_rows),
+        len(retried_rows),
+    )
+    summary["validator_decision_harm_rate"] = _safe_divide(
+        sum(bool(row.get("run_decision_harmed")) for row in retried_rows),
+        len(retried_rows),
+    )
 
     validator_quality_rows = [
         row for row in evaluated_rows
@@ -1138,6 +1155,94 @@ def summarize_dataset_results(
         sum(bool(row.get("validator_quality_false_reject")) for row in validator_quality_rows),
         sum(bool(row.get("validator_quality_actual_valid")) for row in validator_quality_rows),
     )
+
+    summary["decision_action_consistency_rate"] = _safe_divide(
+        sum(bool(row.get("decision_action_consistency_consistent")) for row in evaluated_rows),
+        evaluated_case_count,
+    )
+    summary.update(
+        _aggregate_prf(rows=evaluated_rows, prefix="final_tuple")
+    )
+    summary["final_tuple_exact_match_rate"] = _safe_divide(
+        sum(bool(row.get("final_tuple_exact_match")) for row in evaluated_rows),
+        evaluated_case_count,
+    )
+    tuple_rows = [
+        row for row in evaluated_rows
+        if row.get("tuple_incorporation_applicable") is True
+    ]
+    summary["tuple_incorporation_accuracy"] = _safe_divide(
+        sum(int(row.get("tuple_incorporation_matched_row_count") or 0) for row in tuple_rows),
+        sum(int(row.get("tuple_incorporation_required_row_count") or 0) for row in tuple_rows),
+    )
+    summary["tuple_full_incorporation_rate"] = _safe_divide(
+        sum(bool(row.get("tuple_incorporation_full_incorporation")) for row in tuple_rows),
+        len(tuple_rows),
+    )
+
+    # Predefined robustness slices.  They stay in the machine-readable summary
+    # rather than expanding the paper's main table.
+    for operation in sorted(set(reference_decisions)):
+        operation_rows = [
+            row for row in evaluated_rows
+            if row.get("decision_reference") == operation
+        ]
+        prefix = f"slice_operation_{operation}"
+        summary[f"{prefix}_case_count"] = len(operation_rows)
+        summary[f"{prefix}_decision_accuracy"] = _safe_divide(
+            sum(bool(row.get("decision_correct")) for row in operation_rows),
+            len(operation_rows),
+        )
+        summary[f"{prefix}_proposal_f1"] = _mean([
+            float(row.get("proposal_fact_f1") or 0.0) for row in operation_rows
+        ])
+
+    for perturbed in (False, True):
+        slice_rows = [
+            row for row in evaluated_rows
+            if bool(row.get("case_perturbed")) is perturbed
+        ]
+        label = "perturbed" if perturbed else "clean"
+        summary[f"slice_{label}_case_count"] = len(slice_rows)
+        summary[f"slice_{label}_decision_accuracy"] = _safe_divide(
+            sum(bool(row.get("decision_correct")) for row in slice_rows),
+            len(slice_rows),
+        )
+        summary[f"slice_{label}_proposal_f1"] = _mean([
+            float(row.get("proposal_fact_f1") or 0.0) for row in slice_rows
+        ])
+
+    perturbation_types = sorted({
+        tag
+        for row in evaluated_rows
+        for tag in str(row.get("case_perturbation_types") or "").split("|")
+        if tag
+    })
+    for tag in perturbation_types:
+        slice_rows = [
+            row for row in evaluated_rows
+            if tag in str(row.get("case_perturbation_types") or "").split("|")
+        ]
+        safe_tag = re.sub(r"[^a-zA-Z0-9]+", "_", tag).strip("_").lower()
+        prefix = f"slice_perturbation_{safe_tag}"
+        summary[f"{prefix}_case_count"] = len(slice_rows)
+        summary[f"{prefix}_decision_accuracy"] = _safe_divide(
+            sum(bool(row.get("decision_correct")) for row in slice_rows),
+            len(slice_rows),
+        )
+
+    complexity_keys = sorted({
+        key for row in evaluated_rows for key in row if key.startswith("complexity_")
+    })
+    for key in complexity_keys:
+        values = [float(row[key]) for row in evaluated_rows if row.get(key) not in {None, ""}]
+        if values:
+            summary[f"{key}_mean"] = _mean(values)
+
+    retried_rows = [row for row in evaluated_rows if bool(row.get("run_retried"))]
+    summary["validator_retry_end_to_end_seconds_mean"] = _mean([
+        float(row.get("timing_end_to_end_seconds") or 0.0) for row in retried_rows
+    ])
 
     return summary
 # =====================================================

@@ -1,0 +1,272 @@
+{
+  "database": "wedding",
+  "tables": {
+    "wedding": {
+      "table": {
+        "name": "wedding",
+        "column_count": 4,
+        "summary": "A table recording wedding events, linking a specific church, a male participant, and a female participant by year.",
+        "entity": "Wedding",
+        "role": "transaction_table",
+        "aliases": [
+          "weddings",
+          "marriages",
+          "wedding_events"
+        ]
+      },
+      "columns": {
+        "church_id": {
+          "name": "church_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the church where the wedding took place.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Church",
+          "aliases": [
+            "church",
+            "venue_id",
+            "location_id"
+          ]
+        },
+        "male_id": {
+          "name": "male_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the male participant in the wedding.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Groom",
+          "aliases": [
+            "groom_id",
+            "male",
+            "husband_id",
+            "person_male"
+          ]
+        },
+        "female_id": {
+          "name": "female_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the female participant in the wedding.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Bride",
+          "aliases": [
+            "bride_id",
+            "female",
+            "wife_id",
+            "person_female"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the wedding occurred.",
+          "semantic_type": "date",
+          "business_concept": "Event Year",
+          "aliases": [
+            "wedding_year",
+            "event_year",
+            "year"
+          ]
+        }
+      }
+    },
+    "church": {
+      "table": {
+        "name": "church",
+        "column_count": 5,
+        "summary": "A catalog of religious organizations, specifically churches, detailing their names, founding dates, founders, and historical lineage.",
+        "entity": "Church",
+        "role": "entity_table",
+        "aliases": [
+          "churches",
+          "religious_organizations",
+          "congregations",
+          "denominations"
+        ]
+      },
+      "columns": {
+        "church_id": {
+          "name": "church_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each church record in the database.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "church_number",
+            "unique_id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official or common name of the church organization.",
+          "semantic_type": "organization_name",
+          "business_concept": "Entity Name",
+          "aliases": [
+            "title",
+            "full_name",
+            "church_name"
+          ]
+        },
+        "organized_by": {
+          "name": "organized_by",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the individual who founded or organized the church.",
+          "semantic_type": "person_name",
+          "business_concept": "Founder",
+          "aliases": [
+            "founder",
+            "organizer",
+            "established_by",
+            "leader"
+          ]
+        },
+        "open_date": {
+          "name": "open_date",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The year the church was established or opened for service.",
+          "semantic_type": "date",
+          "business_concept": "Founding Date",
+          "aliases": [
+            "established",
+            "founded",
+            "start_year",
+            "incorporation_date"
+          ]
+        },
+        "continuation_of": {
+          "name": "continuation_of",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the predecessor church or organization that this church continues.",
+          "semantic_type": "organization_name",
+          "business_concept": "Predecessor Organization",
+          "aliases": [
+            "predecessor",
+            "origin",
+            "split_from",
+            "parent_organization"
+          ]
+        }
+      }
+    },
+    "people": {
+      "table": {
+        "name": "people",
+        "column_count": 5,
+        "summary": "A table containing demographic information about individuals, including their names, countries of origin, gender, and age.",
+        "entity": "person",
+        "role": "entity_table",
+        "aliases": [
+          "persons",
+          "individuals",
+          "users",
+          "players"
+        ]
+      },
+      "columns": {
+        "people_id": {
+          "name": "people_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "primary_key",
+          "aliases": [
+            "id",
+            "pk",
+            "person_id",
+            "pid"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the individual.",
+          "semantic_type": "person_name",
+          "business_concept": "full_name",
+          "aliases": [
+            "full_name",
+            "first_name",
+            "last_name",
+            "name_first_last"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The country associated with the individual.",
+          "semantic_type": "country",
+          "business_concept": "nationality",
+          "aliases": [
+            "nation",
+            "nationality",
+            "country_code",
+            "origin"
+          ]
+        },
+        "is_male": {
+          "name": "is_male",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A boolean indicator representing the gender of the individual.",
+          "semantic_type": "boolean",
+          "business_concept": "gender",
+          "aliases": [
+            "gender",
+            "sex",
+            "male",
+            "is_male_flag"
+          ]
+        },
+        "age": {
+          "name": "age",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The age of the individual in years.",
+          "semantic_type": "quantity",
+          "business_concept": "age",
+          "aliases": [
+            "years_old",
+            "age_in_years",
+            "birth_year_offset"
+          ]
+        }
+      }
+    }
+  }
+}

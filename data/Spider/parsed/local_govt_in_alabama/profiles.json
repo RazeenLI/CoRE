@@ -1,0 +1,230 @@
+{
+  "database": "local_govt_in_alabama",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/local_govt_in_alabama",
+    "schema_path": "data/Spider/parsed/local_govt_in_alabama/schema.json",
+    "tables_dir": "data/Spider/parsed/local_govt_in_alabama/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "events": {
+      "table": {
+        "name": "events",
+        "column_count": 3,
+        "summary": "A table recording the outcomes of specific events associated with various services.",
+        "entity": "Event",
+        "role": "transaction_table",
+        "aliases": [
+          "event_log",
+          "service_events",
+          "event_results"
+        ]
+      },
+      "columns": {
+        "event_id": {
+          "name": "event_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific event record.",
+          "semantic_type": "identifier",
+          "business_concept": "Event ID",
+          "aliases": [
+            "id",
+            "evt_id",
+            "event_number"
+          ]
+        },
+        "service_id": {
+          "name": "service_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "An identifier linking the event to a specific service.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Service ID",
+          "aliases": [
+            "svc_id",
+            "service_code",
+            "service_ref"
+          ]
+        },
+        "event_details": {
+          "name": "event_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The result or status of the event execution.",
+          "semantic_type": "status",
+          "business_concept": "Event Status",
+          "aliases": [
+            "status",
+            "result",
+            "outcome",
+            "event_status"
+          ]
+        }
+      }
+    },
+    "participants": {
+      "table": {
+        "name": "participants",
+        "column_count": 3,
+        "summary": "Stores information about individuals or groups participating in an event or system, including their unique ID, role classification, and personal name.",
+        "entity": "Participant",
+        "role": "entity_table",
+        "aliases": [
+          "participants",
+          "user_participants",
+          "event_participants"
+        ]
+      },
+      "columns": {
+        "participant_id": {
+          "name": "participant_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each participant record.",
+          "semantic_type": "identifier",
+          "business_concept": "Unique ID",
+          "aliases": [
+            "id",
+            "pk",
+            "participant_key"
+          ]
+        },
+        "participant_type_code": {
+          "name": "participant_type_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A categorical code indicating the role or classification of the participant (e.g., Organizer vs. Participant).",
+          "semantic_type": "category",
+          "business_concept": "Participant Role",
+          "aliases": [
+            "type",
+            "role_code",
+            "participant_category"
+          ]
+        },
+        "participant_details": {
+          "name": "participant_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full name or descriptive details of the participant.",
+          "semantic_type": "person_name",
+          "business_concept": "Full Name",
+          "aliases": [
+            "name",
+            "full_name",
+            "display_name"
+          ]
+        }
+      }
+    },
+    "participants_in_events": {
+      "table": {
+        "name": "participants_in_events",
+        "column_count": 2,
+        "summary": "A relationship table linking specific participants to specific events.",
+        "entity": "participant_event_association",
+        "role": "relationship_table",
+        "aliases": [
+          "event_participants",
+          "participants_by_event",
+          "event_attendees"
+        ]
+      },
+      "columns": {
+        "event_id": {
+          "name": "event_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the event that the participant is associated with.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Event Identifier",
+          "aliases": [
+            "event_code",
+            "evt_id",
+            "event_ref"
+          ]
+        },
+        "participant_id": {
+          "name": "participant_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the participant attending the event.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Participant Identifier",
+          "aliases": [
+            "participant_code",
+            "p_id",
+            "user_id"
+          ]
+        }
+      }
+    },
+    "services": {
+      "table": {
+        "name": "services",
+        "column_count": 2,
+        "summary": "A catalog defining available services with unique identifiers and classification codes.",
+        "entity": "Service",
+        "role": "lookup_table",
+        "aliases": [
+          "service_catalog",
+          "service_registry",
+          "service_definitions"
+        ]
+      },
+      "columns": {
+        "service_id": {
+          "name": "service_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each service record.",
+          "semantic_type": "identifier",
+          "business_concept": "Service ID",
+          "aliases": [
+            "svc_id",
+            "id",
+            "service_key"
+          ]
+        },
+        "service_type_code": {
+          "name": "service_type_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Categorical code representing the type or category of the service.",
+          "semantic_type": "code",
+          "business_concept": "Service Type",
+          "aliases": [
+            "svc_type",
+            "type_code",
+            "service_category",
+            "service_class"
+          ]
+        }
+      }
+    }
+  }
+}

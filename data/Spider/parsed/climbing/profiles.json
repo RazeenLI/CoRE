@@ -1,0 +1,219 @@
+{
+  "database": "climbing",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/climbing",
+    "schema_path": "data/Spider/parsed/climbing/schema.json",
+    "tables_dir": "data/Spider/parsed/climbing/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "climber": {
+      "table": {
+        "name": "climber",
+        "column_count": 6,
+        "summary": "A table recording individual climbing achievements, including the climber's identity, nationality, performance time, and points awarded for specific mountains.",
+        "entity": "climbing_record",
+        "role": "transaction_table",
+        "aliases": [
+          "climber_achievements",
+          "climbing_results",
+          "mountain_climbs"
+        ]
+      },
+      "columns": {
+        "climber_id": {
+          "name": "climber_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific climbing record or entry.",
+          "semantic_type": "identifier",
+          "business_concept": "record_id",
+          "aliases": [
+            "id",
+            "climb_id",
+            "entry_id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Full name of the climber who achieved the record.",
+          "semantic_type": "person_name",
+          "business_concept": "climber_name",
+          "aliases": [
+            "climber_name",
+            "athlete_name",
+            "full_name"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Nationality or country of origin of the climber.",
+          "semantic_type": "country",
+          "business_concept": "climber_nationality",
+          "aliases": [
+            "nationality",
+            "origin",
+            "nation"
+          ]
+        },
+        "time": {
+          "name": "time",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Duration taken to complete the climb, formatted as hours:minutes:seconds.",
+          "semantic_type": "timestamp",
+          "business_concept": "climb_duration",
+          "aliases": [
+            "duration",
+            "elapsed_time",
+            "climb_time"
+          ]
+        },
+        "points": {
+          "name": "points",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Score or points awarded for the climbing achievement.",
+          "semantic_type": "quantity",
+          "business_concept": "achievement_points",
+          "aliases": [
+            "score",
+            "points_awarded",
+            "rating"
+          ]
+        },
+        "mountain_id": {
+          "name": "mountain_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the record to a specific mountain.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "mountain_reference",
+          "aliases": [
+            "mountain_ref",
+            "peak_id",
+            "summit_id"
+          ]
+        }
+      }
+    },
+    "mountain": {
+      "table": {
+        "name": "mountain",
+        "column_count": 6,
+        "summary": "A catalog of mountains containing their names, elevations, topographic prominence, mountain ranges, and associated countries.",
+        "entity": "Mountain",
+        "role": "entity_table",
+        "aliases": [
+          "mountains",
+          "peaks",
+          "summits",
+          "high_peaks"
+        ]
+      },
+      "columns": {
+        "mountain_id": {
+          "name": "mountain_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each mountain record.",
+          "semantic_type": "identifier",
+          "business_concept": "Mountain ID",
+          "aliases": [
+            "id",
+            "mountain_code",
+            "pk"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The proper name of the mountain, often including specific peak names in parentheses.",
+          "semantic_type": "person_name",
+          "business_concept": "Mountain Name",
+          "aliases": [
+            "mountain_name",
+            "peak_name",
+            "title"
+          ]
+        },
+        "height": {
+          "name": "height",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The elevation of the mountain above sea level.",
+          "semantic_type": "quantity",
+          "business_concept": "Elevation",
+          "aliases": [
+            "elevation",
+            "altitude",
+            "summit_height",
+            "meters"
+          ]
+        },
+        "prominence": {
+          "name": "prominence",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The topographic prominence of the mountain, representing its independence from surrounding terrain.",
+          "semantic_type": "quantity",
+          "business_concept": "Topographic Prominence",
+          "aliases": [
+            "prominence",
+            "independence",
+            "prom"
+          ]
+        },
+        "range": {
+          "name": "range",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The mountain range or massif to which the mountain belongs.",
+          "semantic_type": "category",
+          "business_concept": "Mountain Range",
+          "aliases": [
+            "mountain_range",
+            "massif",
+            "range_name"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The country or countries where the mountain is located.",
+          "semantic_type": "country",
+          "business_concept": "Location Country",
+          "aliases": [
+            "nation",
+            "sovereign_state",
+            "location"
+          ]
+        }
+      }
+    }
+  }
+}

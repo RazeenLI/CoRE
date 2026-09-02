@@ -1,0 +1,797 @@
+{
+  "database": "customers_campaigns_ecommerce",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/customers_campaigns_ecommerce",
+    "schema_path": "data/Spider/parsed/customers_campaigns_ecommerce/schema.json",
+    "tables_dir": "data/Spider/parsed/customers_campaigns_ecommerce/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "customer_addresses": {
+      "table": {
+        "name": "customer_addresses",
+        "column_count": 5,
+        "summary": "Stores historical records of addresses associated with customers, including the type of address (e.g., billing, shipping) and the validity period.",
+        "entity": "Customer Address",
+        "role": "entity_table",
+        "aliases": [
+          "customer_addresses",
+          "addr_history",
+          "cust_addr_log"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier linking the address record to a specific customer.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer Identifier",
+          "aliases": [
+            "cust_id",
+            "customer_no",
+            "client_id"
+          ]
+        },
+        "premise_id": {
+          "name": "premise_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific physical location or premise associated with the address.",
+          "semantic_type": "identifier",
+          "business_concept": "Premise Identifier",
+          "aliases": [
+            "prem_id",
+            "location_id",
+            "site_id"
+          ]
+        },
+        "date_address_from": {
+          "name": "date_address_from",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The start date and time when this address record became active or valid.",
+          "semantic_type": "timestamp",
+          "business_concept": "Address Validity Start Date",
+          "aliases": [
+            "addr_start_date",
+            "valid_from",
+            "effective_date"
+          ]
+        },
+        "address_type_code": {
+          "name": "address_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A code indicating the functional purpose of the address (e.g., Billing, Shipping).",
+          "semantic_type": "code",
+          "business_concept": "Address Type",
+          "aliases": [
+            "addr_type",
+            "address_category",
+            "purpose_code"
+          ]
+        },
+        "date_address_to": {
+          "name": "date_address_to",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The end date and time when this address record ceased to be active or valid (nullable if currently active).",
+          "semantic_type": "timestamp",
+          "business_concept": "Address Validity End Date",
+          "aliases": [
+            "addr_end_date",
+            "valid_to",
+            "expiry_date"
+          ]
+        }
+      }
+    },
+    "customer_orders": {
+      "table": {
+        "name": "customer_orders",
+        "column_count": 7,
+        "summary": "A transactional table recording details of customer orders, including status, shipping method, timing, and charges.",
+        "entity": "Order",
+        "role": "transaction_table",
+        "aliases": [
+          "orders",
+          "customer_orders",
+          "order_details"
+        ]
+      },
+      "columns": {
+        "order_id": {
+          "name": "order_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific order record.",
+          "semantic_type": "identifier",
+          "business_concept": "Order ID",
+          "aliases": [
+            "id",
+            "order_number",
+            "ord_id"
+          ]
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier linking the order to a specific customer.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "client_id",
+            "customer_number"
+          ]
+        },
+        "order_status_code": {
+          "name": "order_status_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A code representing the current state of the order in the fulfillment lifecycle.",
+          "semantic_type": "status",
+          "business_concept": "Order Status",
+          "aliases": [
+            "status",
+            "order_status",
+            "state"
+          ]
+        },
+        "shipping_method_code": {
+          "name": "shipping_method_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A code indicating the carrier or method used to deliver the order.",
+          "semantic_type": "code",
+          "business_concept": "Shipping Method",
+          "aliases": [
+            "ship_method",
+            "carrier",
+            "delivery_method"
+          ]
+        },
+        "order_placed_datetime": {
+          "name": "order_placed_datetime",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the order was created or submitted by the customer.",
+          "semantic_type": "timestamp",
+          "business_concept": "Order Date",
+          "aliases": [
+            "created_at",
+            "order_date",
+            "placed_date",
+            "order_time"
+          ]
+        },
+        "order_delivered_datetime": {
+          "name": "order_delivered_datetime",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the order was successfully delivered to the customer (nullable if not yet delivered).",
+          "semantic_type": "timestamp",
+          "business_concept": "Delivery Date",
+          "aliases": [
+            "delivered_at",
+            "delivery_date",
+            "ship_date",
+            "completed_date"
+          ]
+        },
+        "order_shipping_charges": {
+          "name": "order_shipping_charges",
+          "dtype": "string",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary amount charged for shipping the order.",
+          "semantic_type": "money",
+          "business_concept": "Shipping Cost",
+          "aliases": [
+            "shipping_cost",
+            "ship_charge",
+            "freight_cost",
+            "delivery_fee"
+          ]
+        }
+      }
+    },
+    "customers": {
+      "table": {
+        "name": "customers",
+        "column_count": 8,
+        "summary": "A table containing core profile information, contact details, and authentication credentials for individual customers.",
+        "entity": "Customer",
+        "role": "entity_table",
+        "aliases": [
+          "clients",
+          "users",
+          "accounts",
+          "members"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each customer record.",
+          "semantic_type": "identifier",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "id",
+            "customer_number"
+          ]
+        },
+        "payment_method": {
+          "name": "payment_method",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The preferred method used by the customer to make payments.",
+          "semantic_type": "category",
+          "business_concept": "Payment Method",
+          "aliases": [
+            "pay_method",
+            "payment_type",
+            "billing_method"
+          ]
+        },
+        "customer_name": {
+          "name": "customer_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The first name or full name of the customer.",
+          "semantic_type": "person_name",
+          "business_concept": "Customer Name",
+          "aliases": [
+            "first_name",
+            "full_name",
+            "name",
+            "cust_name"
+          ]
+        },
+        "customer_phone": {
+          "name": "customer_phone",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The telephone contact number for the customer.",
+          "semantic_type": "phone",
+          "business_concept": "Phone Number",
+          "aliases": [
+            "phone",
+            "telephone",
+            "mobile",
+            "contact_phone"
+          ]
+        },
+        "customer_email": {
+          "name": "customer_email",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "The email address associated with the customer account.",
+          "semantic_type": "email",
+          "business_concept": "Email Address",
+          "aliases": [
+            "email",
+            "e_mail",
+            "contact_email",
+            "user_email"
+          ]
+        },
+        "customer_address": {
+          "name": "customer_address",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The physical mailing address of the customer.",
+          "semantic_type": "address",
+          "business_concept": "Mailing Address",
+          "aliases": [
+            "address",
+            "street_address",
+            "mailing_address",
+            "cust_address"
+          ]
+        },
+        "customer_login": {
+          "name": "customer_login",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The username or login identifier used to access the customer's account.",
+          "semantic_type": "code",
+          "business_concept": "Username",
+          "aliases": [
+            "username",
+            "login_name",
+            "user_id",
+            "account_login"
+          ]
+        },
+        "customer_password": {
+          "name": "customer_password",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The hashed or encrypted password string used for authentication.",
+          "semantic_type": "code",
+          "business_concept": "Password Hash",
+          "aliases": [
+            "password",
+            "pwd",
+            "pass",
+            "secret"
+          ]
+        }
+      }
+    },
+    "mailshot_campaigns": {
+      "table": {
+        "name": "mailshot_campaigns",
+        "column_count": 5,
+        "summary": "Stores metadata and scheduling details for marketing mailshot campaigns, including their unique identifiers, associated product categories, names, and execution timeframes.",
+        "entity": "mailshot_campaign",
+        "role": "entity_table",
+        "aliases": [
+          "campaigns",
+          "mailshots",
+          "marketing_campaigns",
+          "email_campaigns"
+        ]
+      },
+      "columns": {
+        "mailshot_id": {
+          "name": "mailshot_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each mailshot campaign record.",
+          "semantic_type": "identifier",
+          "business_concept": "campaign_id",
+          "aliases": [
+            "id",
+            "campaign_id",
+            "mailshot_key"
+          ]
+        },
+        "product_category": {
+          "name": "product_category",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The product category associated with the mailshot campaign.",
+          "semantic_type": "category",
+          "business_concept": "product_category",
+          "aliases": [
+            "category",
+            "cat",
+            "product_cat"
+          ]
+        },
+        "mailshot_name": {
+          "name": "mailshot_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short code or identifier representing the specific mailshot campaign.",
+          "semantic_type": "code",
+          "business_concept": "campaign_code",
+          "aliases": [
+            "name",
+            "code",
+            "short_name",
+            "campaign_code"
+          ]
+        },
+        "mailshot_start_date": {
+          "name": "mailshot_start_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp indicating when the mailshot campaign was scheduled to begin.",
+          "semantic_type": "timestamp",
+          "business_concept": "start_time",
+          "aliases": [
+            "start_date",
+            "created_at",
+            "launch_date",
+            "begins"
+          ]
+        },
+        "mailshot_end_date": {
+          "name": "mailshot_end_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp indicating when the mailshot campaign was scheduled to conclude.",
+          "semantic_type": "timestamp",
+          "business_concept": "end_time",
+          "aliases": [
+            "end_date",
+            "completed_at",
+            "finish_date",
+            "expires"
+          ]
+        }
+      }
+    },
+    "mailshot_customers": {
+      "table": {
+        "name": "mailshot_customers",
+        "column_count": 4,
+        "summary": "Records the results of marketing mailshots, linking specific customers to their response outcomes and the timestamp of the campaign.",
+        "entity": "mailshot_customer_response",
+        "role": "transaction_table",
+        "aliases": [
+          "mailshot_results",
+          "campaign_responses",
+          "mailshot_outcomes",
+          "customer_mailshot_log"
+        ]
+      },
+      "columns": {
+        "mailshot_id": {
+          "name": "mailshot_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific marketing mailshot campaign.",
+          "semantic_type": "identifier",
+          "business_concept": "campaign_id",
+          "aliases": [
+            "campaign_id",
+            "mailshot_key",
+            "batch_id"
+          ]
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the customer who received the mailshot.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "customer_id",
+          "aliases": [
+            "cust_id",
+            "client_id",
+            "user_id"
+          ]
+        },
+        "outcome_code": {
+          "name": "outcome_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Categorical code representing the customer's reaction to the mailshot (e.g., placed an order or did not respond).",
+          "semantic_type": "code",
+          "business_concept": "response_status",
+          "aliases": [
+            "result_code",
+            "action_taken",
+            "conversion_status"
+          ]
+        },
+        "mailshot_customer_date": {
+          "name": "mailshot_customer_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp indicating when the mailshot was sent to or processed for the specific customer.",
+          "semantic_type": "timestamp",
+          "business_concept": "campaign_date",
+          "aliases": [
+            "sent_date",
+            "mailshot_date",
+            "event_time"
+          ]
+        }
+      }
+    },
+    "order_items": {
+      "table": {
+        "name": "order_items",
+        "column_count": 7,
+        "summary": "A transactional table recording individual line items within orders, tracking product details, quantities, and fulfillment statuses.",
+        "entity": "Order Item",
+        "role": "transaction_table",
+        "aliases": [
+          "order_lines",
+          "line_items",
+          "order_details",
+          "items"
+        ]
+      },
+      "columns": {
+        "item_id": {
+          "name": "item_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific line item within an order.",
+          "semantic_type": "identifier",
+          "business_concept": "Line Item ID",
+          "aliases": [
+            "id",
+            "item_number",
+            "line_id"
+          ]
+        },
+        "order_item_status_code": {
+          "name": "order_item_status_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A code representing the current lifecycle status of the entire order item (e.g., Delivered, Paid, Cancelled).",
+          "semantic_type": "status",
+          "business_concept": "Order Item Status",
+          "aliases": [
+            "status",
+            "order_status",
+            "item_status"
+          ]
+        },
+        "order_id": {
+          "name": "order_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key referencing the parent order to which this item belongs.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Order ID",
+          "aliases": [
+            "order_number",
+            "parent_order",
+            "ord_id"
+          ]
+        },
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key referencing the specific product associated with this line item.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Product ID",
+          "aliases": [
+            "prod_id",
+            "sku",
+            "item_code",
+            "product_code"
+          ]
+        },
+        "item_status_code": {
+          "name": "item_status_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A code representing the specific condition or quality status of the item itself (e.g., 'good'), distinct from the order status.",
+          "semantic_type": "status",
+          "business_concept": "Item Condition",
+          "aliases": [
+            "condition",
+            "quality_status",
+            "item_condition"
+          ]
+        },
+        "item_delivered_datetime": {
+          "name": "item_delivered_datetime",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the item was delivered to the customer.",
+          "semantic_type": "timestamp",
+          "business_concept": "Delivery Date",
+          "aliases": [
+            "delivered_at",
+            "delivery_time",
+            "ship_date",
+            "received_date"
+          ]
+        },
+        "item_order_quantity": {
+          "name": "item_order_quantity",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of units of the product ordered in this specific line item.",
+          "semantic_type": "quantity",
+          "business_concept": "Quantity Ordered",
+          "aliases": [
+            "qty",
+            "quantity",
+            "amount",
+            "count"
+          ]
+        }
+      }
+    },
+    "premises": {
+      "table": {
+        "name": "premises",
+        "column_count": 3,
+        "summary": "A table containing metadata and location details for various physical premises such as warehouses, residences, and offices.",
+        "entity": "Premise",
+        "role": "entity_table",
+        "aliases": [
+          "premises",
+          "locations",
+          "sites",
+          "facilities",
+          "properties"
+        ]
+      },
+      "columns": {
+        "premise_id": {
+          "name": "premise_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each premise record.",
+          "semantic_type": "identifier",
+          "business_concept": "Premise ID",
+          "aliases": [
+            "id",
+            "premise_code",
+            "location_id",
+            "site_id"
+          ]
+        },
+        "premises_type": {
+          "name": "premises_type",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The classification or category of the premise (e.g., Warehouse, Residence).",
+          "semantic_type": "category",
+          "business_concept": "Premise Type",
+          "aliases": [
+            "type",
+            "category",
+            "classification",
+            "facility_type",
+            "usage_type"
+          ]
+        },
+        "premise_details": {
+          "name": "premise_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full street address or specific location string for the premise.",
+          "semantic_type": "address",
+          "business_concept": "Premise Address",
+          "aliases": [
+            "address",
+            "location",
+            "street_address",
+            "full_address",
+            "site_address"
+          ]
+        }
+      }
+    },
+    "products": {
+      "table": {
+        "name": "products",
+        "column_count": 3,
+        "summary": "A catalog of items containing their unique identifiers, names, and broad category classifications.",
+        "entity": "Product",
+        "role": "entity_table",
+        "aliases": [
+          "item_catalog",
+          "merchandise",
+          "goods"
+        ]
+      },
+      "columns": {
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each product record.",
+          "semantic_type": "identifier",
+          "business_concept": "Product ID",
+          "aliases": [
+            "pid",
+            "prod_id",
+            "sku",
+            "item_id"
+          ]
+        },
+        "product_category": {
+          "name": "product_category",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A high-level classification grouping products into specific domains.",
+          "semantic_type": "category",
+          "business_concept": "Product Category",
+          "aliases": [
+            "category",
+            "cat",
+            "type",
+            "class"
+          ]
+        },
+        "product_name": {
+          "name": "product_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The descriptive title or name of the specific product.",
+          "semantic_type": "description",
+          "business_concept": "Product Name",
+          "aliases": [
+            "name",
+            "title",
+            "desc",
+            "label"
+          ]
+        }
+      }
+    }
+  }
+}

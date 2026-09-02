@@ -1,0 +1,351 @@
+{
+  "database": "game_injury",
+  "tables": {
+    "game": {
+      "table": {
+        "name": "game",
+        "column_count": 8,
+        "summary": "A record of football matches including teams, scores, dates, and competition types.",
+        "entity": "match",
+        "role": "transaction_table",
+        "aliases": [
+          "matches",
+          "games",
+          "fixtures",
+          "results"
+        ]
+      },
+      "columns": {
+        "stadium_id": {
+          "name": "stadium_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the stadium where the match was played.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "stadium",
+          "aliases": [
+            "stadium",
+            "venue_id",
+            "ground_id"
+          ]
+        },
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Primary unique identifier for the match record.",
+          "semantic_type": "identifier",
+          "business_concept": "match_id",
+          "aliases": [
+            "match_id",
+            "game_id",
+            "fixture_id"
+          ]
+        },
+        "season": {
+          "name": "season",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The sports season year in which the match took place.",
+          "semantic_type": "code",
+          "business_concept": "season",
+          "aliases": [
+            "year",
+            "season_year"
+          ]
+        },
+        "date": {
+          "name": "date",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The calendar date on which the match occurred.",
+          "semantic_type": "date",
+          "business_concept": "match_date",
+          "aliases": [
+            "match_date",
+            "game_date",
+            "event_date"
+          ]
+        },
+        "home_team": {
+          "name": "home_team",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Name of the team playing at home.",
+          "semantic_type": "organization_name",
+          "business_concept": "home_team",
+          "aliases": [
+            "home",
+            "home_club",
+            "home_side"
+          ]
+        },
+        "away_team": {
+          "name": "away_team",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Name of the team playing away.",
+          "semantic_type": "organization_name",
+          "business_concept": "away_team",
+          "aliases": [
+            "away",
+            "away_club",
+            "away_side"
+          ]
+        },
+        "score": {
+          "name": "score",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The final score of the match, potentially including extra time details.",
+          "semantic_type": "code",
+          "business_concept": "match_score",
+          "aliases": [
+            "result",
+            "final_score",
+            "scoreline"
+          ]
+        },
+        "competition": {
+          "name": "competition",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The type of competition the match belongs to (e.g., League, Cup).",
+          "semantic_type": "category",
+          "business_concept": "competition_type",
+          "aliases": [
+            "comp",
+            "tournament",
+            "league_type"
+          ]
+        }
+      }
+    },
+    "injury_accident": {
+      "table": {
+        "name": "injury_accident",
+        "column_count": 6,
+        "summary": "Records detailing player injuries during specific games, including the nature of the injury, recovery status (matches missed), and data source.",
+        "entity": "injury_event",
+        "role": "transaction_table",
+        "aliases": [
+          "player_injuries",
+          "match_injuries",
+          "injury_log",
+          "accident_records"
+        ]
+      },
+      "columns": {
+        "game_id": {
+          "name": "game_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific match or game during which the injury occurred.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "match_identifier",
+          "aliases": [
+            "game_identifier",
+            "match_id",
+            "fixture_id"
+          ]
+        },
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Primary unique key for the specific injury record row.",
+          "semantic_type": "identifier",
+          "business_concept": "record_id",
+          "aliases": [
+            "injury_id",
+            "row_id",
+            "primary_key"
+          ]
+        },
+        "player": {
+          "name": "player",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Full name of the athlete who sustained the injury.",
+          "semantic_type": "person_name",
+          "business_concept": "athlete_name",
+          "aliases": [
+            "player_name",
+            "athlete",
+            "full_name"
+          ]
+        },
+        "injury": {
+          "name": "injury",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Detailed description of the medical condition or injury sustained.",
+          "semantic_type": "description",
+          "business_concept": "injury_description",
+          "aliases": [
+            "injury_type",
+            "medical_condition",
+            "diagnosis"
+          ]
+        },
+        "number_of_matches": {
+          "name": "number_of_matches",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Count of matches the player was unable to participate in due to the injury.",
+          "semantic_type": "quantity",
+          "business_concept": "matches_missed",
+          "aliases": [
+            "matches_out",
+            "games_missed",
+            "match_count"
+          ]
+        },
+        "source": {
+          "name": "source",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The external website or database from which this injury record was scraped or retrieved.",
+          "semantic_type": "organization_name",
+          "business_concept": "data_source",
+          "aliases": [
+            "origin",
+            "url_source",
+            "reference"
+          ]
+        }
+      }
+    },
+    "stadium": {
+      "table": {
+        "name": "stadium",
+        "column_count": 6,
+        "summary": "A dataset containing statistics and details for various sports stadiums, including attendance metrics and capacity utilization.",
+        "entity": "Stadium",
+        "role": "entity_table",
+        "aliases": [
+          "stadiums",
+          "venues",
+          "stadium_data",
+          "sports_venues"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each stadium record.",
+          "semantic_type": "identifier",
+          "business_concept": "Stadium ID",
+          "aliases": [
+            "stadium_id",
+            "venue_id",
+            "primary_key"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official name of the stadium.",
+          "semantic_type": "organization_name",
+          "business_concept": "Stadium Name",
+          "aliases": [
+            "stadium_name",
+            "venue_name",
+            "official_name"
+          ]
+        },
+        "home_games": {
+          "name": "home_games",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of home games played at the stadium.",
+          "semantic_type": "quantity",
+          "business_concept": "Home Games Count",
+          "aliases": [
+            "games_played",
+            "home_match_count",
+            "total_games"
+          ]
+        },
+        "average_attendance": {
+          "name": "average_attendance",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The average number of spectators per game.",
+          "semantic_type": "quantity",
+          "business_concept": "Average Attendance",
+          "aliases": [
+            "avg_attendance",
+            "mean_attendance",
+            "avg_spectators"
+          ]
+        },
+        "total_attendance": {
+          "name": "total_attendance",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The cumulative number of spectators across all games.",
+          "semantic_type": "quantity",
+          "business_concept": "Total Attendance",
+          "aliases": [
+            "total_spectators",
+            "cumulative_attendance",
+            "total_visitors"
+          ]
+        },
+        "capacity_percentage": {
+          "name": "capacity_percentage",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The average percentage of the stadium's total capacity filled during games.",
+          "semantic_type": "quantity",
+          "business_concept": "Capacity Utilization",
+          "aliases": [
+            "fill_rate",
+            "occupancy_rate",
+            "avg_capacity_usage"
+          ]
+        }
+      }
+    }
+  }
+}

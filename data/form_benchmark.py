@@ -915,6 +915,7 @@ def sample_after_tables(
     source_constraints: Dict[str, Any],
     source_rows: Dict[str, List[Dict[str, str]]],
     graph: Dict[str, Set[str]],
+    required_seed_table: str | None = None,
 ) -> List[str]:
     size_cfg = cfg["size"]["after_table_count"]
     min_tables = int(size_cfg["min"])
@@ -922,10 +923,13 @@ def sample_after_tables(
     target_count = rng.randint(min_tables, max_tables)
 
     max_depth = int(cfg.get("after_context", {}).get("max_fk_depth", 2))
-    seed_candidates = [
-        table for table in all_source_tables(source_schema)
-        if passes_common_table_filters(table, cfg, source_schema, source_rows)
-    ]
+    if required_seed_table is not None:
+        seed_candidates = [required_seed_table]
+    else:
+        seed_candidates = [
+            table for table in all_source_tables(source_schema)
+            if passes_common_table_filters(table, cfg, source_schema, source_rows)
+        ]
 
     if not seed_candidates:
         raise ValueError("No valid seed tables for after-context generation.")
@@ -936,7 +940,10 @@ def sample_after_tables(
         distances = graph_distances(graph, seed_table, max_depth)
         reachable = sorted(distances.keys(), key=lambda t: (distances[t], t))
 
-        if len(reachable) < min_tables:
+        allow_unconnected = bool(
+            cfg.get("after_context", {}).get("allow_unconnected_fillers", False)
+        )
+        if len(reachable) < min_tables and not allow_unconnected:
             continue
 
         selected = [seed_table]
@@ -947,6 +954,17 @@ def sample_after_tables(
             if len(selected) >= target_count:
                 break
             selected.append(table)
+
+        if len(selected) < target_count and allow_unconnected:
+            filler_pool = [
+                table for table in all_source_tables(source_schema)
+                if table not in set(selected)
+            ]
+            rng.shuffle(filler_pool)
+            for table in filler_pool:
+                if len(selected) >= target_count:
+                    break
+                selected.append(table)
 
         if len(selected) < min_tables:
             continue
@@ -1346,28 +1364,51 @@ def generate_case(
     max_attempts = 500
 
     for _attempt in range(max_attempts):
-        after_tables = sample_after_tables(
-            cfg=cfg,
-            rng=rng,
-            source_schema=source_schema,
-            source_constraints=source_constraints,
-            source_rows=source_rows,
-            graph=graph,
-        )
+        source_first = bool(cfg.get("after_context", {}).get("source_first", False))
+        if source_first:
+            source_candidates = source_candidates_for_decision(
+                decision=decision,
+                after_tables=all_source_tables(source_schema),
+                cfg=cfg,
+                source_schema=source_schema,
+                source_constraints=source_constraints,
+                source_rows=source_rows,
+            )
+            if not source_candidates:
+                continue
+            source_table = rng.choice(source_candidates)
+            after_tables = sample_after_tables(
+                cfg=cfg,
+                rng=rng,
+                source_schema=source_schema,
+                source_constraints=source_constraints,
+                source_rows=source_rows,
+                graph=graph,
+                required_seed_table=source_table,
+            )
+        else:
+            after_tables = sample_after_tables(
+                cfg=cfg,
+                rng=rng,
+                source_schema=source_schema,
+                source_constraints=source_constraints,
+                source_rows=source_rows,
+                graph=graph,
+            )
 
-        source_candidates = source_candidates_for_decision(
-            decision=decision,
-            after_tables=after_tables,
-            cfg=cfg,
-            source_schema=source_schema,
-            source_constraints=source_constraints,
-            source_rows=source_rows,
-        )
+            source_candidates = source_candidates_for_decision(
+                decision=decision,
+                after_tables=after_tables,
+                cfg=cfg,
+                source_schema=source_schema,
+                source_constraints=source_constraints,
+                source_rows=source_rows,
+            )
 
-        if not source_candidates:
-            continue
+            if not source_candidates:
+                continue
 
-        source_table = rng.choice(source_candidates)
+            source_table = rng.choice(source_candidates)
         after_table_cols = {table: table_column_order(source_schema, table) for table in after_tables}
         after_schema = make_schema_subset(source_schema, after_table_cols)
         after_constraints = filter_constraints(source_constraints, after_schema)

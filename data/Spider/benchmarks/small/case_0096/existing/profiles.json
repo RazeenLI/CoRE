@@ -1,0 +1,310 @@
+{
+  "database": "flight_1",
+  "tables": {
+    "flight": {
+      "table": {
+        "name": "flight",
+        "column_count": 7,
+        "summary": "A table containing details of individual flight segments, including route information, timing, distance, and pricing.",
+        "entity": "flight",
+        "role": "transaction_table",
+        "aliases": [
+          "flights",
+          "flight_details",
+          "flight_segments",
+          "airline_routes"
+        ]
+      },
+      "columns": {
+        "flno": {
+          "name": "flno",
+          "dtype": "number(4,0)",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific flight record or segment.",
+          "semantic_type": "identifier",
+          "business_concept": "Flight Number",
+          "aliases": [
+            "flight_id",
+            "flight_no",
+            "flight_number",
+            "fl_num"
+          ]
+        },
+        "origin": {
+          "name": "origin",
+          "dtype": "varchar2(20)",
+          "value_patterns": [],
+          "meaning": "The city or airport from which the flight departs.",
+          "semantic_type": "city",
+          "business_concept": "Departure Location",
+          "aliases": [
+            "dep_city",
+            "from",
+            "source_city",
+            "origin_city"
+          ]
+        },
+        "destination": {
+          "name": "destination",
+          "dtype": "varchar2(20)",
+          "value_patterns": [],
+          "meaning": "The city or airport to which the flight arrives.",
+          "semantic_type": "city",
+          "business_concept": "Arrival Location",
+          "aliases": [
+            "arr_city",
+            "to",
+            "dest_city",
+            "destination_city"
+          ]
+        },
+        "distance": {
+          "name": "distance",
+          "dtype": "number(6,0)",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total distance of the flight route in kilometers or miles.",
+          "semantic_type": "quantity",
+          "business_concept": "Flight Distance",
+          "aliases": [
+            "dist",
+            "route_distance",
+            "km",
+            "miles"
+          ]
+        },
+        "arrival_date": {
+          "name": "arrival_date",
+          "dtype": "date",
+          "value_patterns": [],
+          "meaning": "The date and time the flight is scheduled to arrive.",
+          "semantic_type": "timestamp",
+          "business_concept": "Arrival Time",
+          "aliases": [
+            "arr_time",
+            "end_time",
+            "land_date",
+            "inbound"
+          ]
+        },
+        "price": {
+          "name": "price",
+          "dtype": "number(7,2)",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The cost of the ticket for this flight segment.",
+          "semantic_type": "money",
+          "business_concept": "Ticket Price",
+          "aliases": [
+            "fare",
+            "cost",
+            "price_per_seat",
+            "amount"
+          ]
+        },
+        "aid": {
+          "name": "aid",
+          "dtype": "number(9,0)",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "An internal code or identifier associated with the flight, possibly representing an airline ID, aircraft type, or service class.",
+          "semantic_type": "code",
+          "business_concept": "Flight Attribute ID",
+          "aliases": [
+            "airline_id",
+            "aircraft_code",
+            "service_class",
+            "flight_code",
+            "carrier_id"
+          ]
+        }
+      }
+    },
+    "certificate": {
+      "table": {
+        "name": "certificate",
+        "column_count": 2,
+        "summary": "A table storing certificate records linked to specific entities and aid types.",
+        "entity": "Certificate",
+        "role": "entity_table",
+        "aliases": [
+          "cert",
+          "certificates",
+          "crt"
+        ]
+      },
+      "columns": {
+        "eid": {
+          "name": "eid",
+          "dtype": "number(9,0)",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific certificate record.",
+          "semantic_type": "identifier",
+          "business_concept": "Certificate ID",
+          "aliases": [
+            "cert_id",
+            "certificate_id",
+            "id"
+          ]
+        },
+        "aid": {
+          "name": "aid",
+          "dtype": "number(9,0)",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier representing the type or category of the aid associated with the certificate.",
+          "semantic_type": "code",
+          "business_concept": "Aid Type Code",
+          "aliases": [
+            "aid_code",
+            "aid_type",
+            "aid_category"
+          ]
+        }
+      }
+    },
+    "aircraft": {
+      "table": {
+        "name": "aircraft",
+        "column_count": 3,
+        "summary": "A reference table containing details about various aircraft models, including their unique identifiers, names, and maximum operating distances.",
+        "entity": "Aircraft Model",
+        "role": "lookup_table",
+        "aliases": [
+          "aircraft_models",
+          "aircraft_types",
+          "planes",
+          "aircraft_catalog"
+        ]
+      },
+      "columns": {
+        "aid": {
+          "name": "aid",
+          "dtype": "number(9,0)",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each aircraft model in the database.",
+          "semantic_type": "identifier",
+          "business_concept": "Aircraft Model ID",
+          "aliases": [
+            "aircraft_id",
+            "model_id",
+            "plane_id",
+            "ac_id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "varchar2(30)",
+          "value_patterns": [],
+          "meaning": "The full commercial name of the aircraft model.",
+          "semantic_type": "category",
+          "business_concept": "Aircraft Model Name",
+          "aliases": [
+            "model_name",
+            "aircraft_name",
+            "plane_name",
+            "type_name"
+          ]
+        },
+        "distance": {
+          "name": "distance",
+          "dtype": "number(6,0)",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The maximum operating distance or range of the aircraft in kilometers or miles.",
+          "semantic_type": "quantity",
+          "business_concept": "Aircraft Range",
+          "aliases": [
+            "range",
+            "max_distance",
+            "operating_range",
+            "distance_km"
+          ]
+        }
+      }
+    },
+    "employee": {
+      "table": {
+        "name": "employee",
+        "column_count": 3,
+        "summary": "Stores core information about employees including their unique identifier, full name, and salary.",
+        "entity": "Employee",
+        "role": "entity_table",
+        "aliases": [
+          "emp",
+          "staff",
+          "personnel",
+          "employees"
+        ]
+      },
+      "columns": {
+        "eid": {
+          "name": "eid",
+          "dtype": "number(9,0)",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each employee record.",
+          "semantic_type": "identifier",
+          "business_concept": "Employee ID",
+          "aliases": [
+            "emp_id",
+            "employee_id",
+            "id",
+            "emp_no"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "varchar2(30)",
+          "value_patterns": [],
+          "meaning": "Full name of the employee.",
+          "semantic_type": "person_name",
+          "business_concept": "Employee Name",
+          "aliases": [
+            "full_name",
+            "first_name",
+            "last_name",
+            "employee_name"
+          ]
+        },
+        "salary": {
+          "name": "salary",
+          "dtype": "number(10,2)",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Annual compensation amount for the employee.",
+          "semantic_type": "money",
+          "business_concept": "Salary",
+          "aliases": [
+            "pay",
+            "compensation",
+            "annual_salary",
+            "base_salary"
+          ]
+        }
+      }
+    }
+  }
+}

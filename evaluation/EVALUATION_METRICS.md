@@ -36,7 +36,7 @@ Decision 正确不代表 column/table/constraint actions 正确；Decision 错�
 | Action F1 conditioned on wrong decision | DONE | 衡量错误 decision 下内部 mappings 是否仍部分正确。 |
 | Correct-decision / Wrong-action Rate | DONE | 直接统计“外层判断对但内部执行错”的 cases，定位 Builder/Evolutor action 问题。 |
 | Wrong-decision / Useful-action Rate | DONE | 识别严格 Decision Accuracy 低估的部分正确结果。 |
-| Decision–Action Consistency Rate | PARTIAL | 检查 decision 与 table/column actions 是否自洽；当前 validity 只覆盖其中部分规则。 |
+| Decision–Action Consistency Rate | DONE | 按 create/extend/insert 分别检查 table action 形状，并额外禁止 insert 创建 column。 |
 | Operation-only Proposal F1 | DONE | 从 Proposal F1 中移除 decision fact，避免 decision 对内部操作质量重复计分。 |
 
 ## 4. Target Relation 与 Column Placement
@@ -102,7 +102,7 @@ Proposal 看起来正确不保证实际应用结果正确；需要直接评价�
 | Unexpected FK Attachment Rate | DONE | 单独检查约束被挂到错误 relation。 |
 | Final Schema Exact Match | DONE | 直接比较完整目标 schema，避免 proposal正确但 updater应用错误。 |
 | Final Constraint Exact/F1 | DONE | 比较最终 RDB constraints，而不只比较 proposal action。 |
-| Tuple Incorporation Accuracy | TODO | 检查 incoming rows 是否被正确插入、映射和保留；当前指标主要是 schema-level。 |
+| Tuple Incorporation Accuracy | DONE | 按 reference placement 投影实际传给 pipeline 的 incoming rows，检查目标表中的 multiset coverage，输出 accuracy 和 full-incorporation rate。 |
 | Value Preservation/Transformation Accuracy | TODO | 用于未来 rename、cast、dedup或value transformation，不与 tuple coverage 混合。 |
 
 ## 9. Candidate Retrieval / Embedding
@@ -141,9 +141,9 @@ Proposal 看起来正确不保证实际应用结果正确；需要直接评价�
 |---|---|---|
 | Dataset | DONE | 检查结论能否跨 domain/schema style复现。 |
 | Small/Medium/Large | DONE | 检查随 context规模变化的趋势。 |
-| Operation Type | DERIVABLE | 区分 create、extend、insert 的不同难点。 |
-| Clean vs Perturbed | TODO | 判断错误来自结构推理还是 rename/order等扰动。 |
-| Perturbation Type | TODO | 分别衡量 table rename、column rename、shuffle、low-overlap。 |
+| Operation Type | DONE | evaluator 保留 reference operation，aggregator 输出 create、extend、insert 的 case count、Decision Accuracy 和 Proposal F1。 |
+| Clean vs Perturbed | DONE | 从 reference proposal 读取 perturbation tags，aggregator 分别汇总 clean/perturbed 的 Decision Accuracy 和 Proposal F1。 |
+| Perturbation Type | DONE | 按每个 perturbation tag 单独输出 case count 和 Decision Accuracy。 |
 | PK Width / Composite-key | TODO | 检查复合 grain 是否是主要失败来源。 |
 | Relation Role | TODO | 分析 entity、association、history、weak-entity等结构类别。 |
 | Schema-overlap Bucket | TODO | 衡量高字段重叠是否诱发 create→extend。 |
@@ -159,9 +159,9 @@ Validator 的最终 validity 提升需要与误拒绝、无效重试和修复类
 | Error Detection Precision/Recall | PARTIAL | 已实现最终 proposal 的判别统计；完整指标还需逐次重放并评价每轮 Validator 输入。 |
 | False-accept Rate | DONE | 统计最终 invalid proposal被 Validator接受的比例。 |
 | False-reject Rate | PARTIAL | 已覆盖仍有最终 proposal/database 的失败流程；缺失最终输出的拒绝 case 无法纳入。 |
-| Repair Success Rate | DERIVABLE | 衡量 retry 是否将 invalid/incorrect proposal修复。 |
-| Decision Correction/Harm Rate | DERIVABLE | 分开统计 retry把错误 decision改对和把正确 decision改错。 |
-| No-change Retry Rate | DERIVABLE | 发现 Evolutor重复生成同类 proposal的无效循环。 |
+| Repair Success Rate | DONE | 统计首轮被拒绝且 retry 后最终被接受的比例。 |
+| Decision Correction/Harm Rate | DONE | 对比首轮与最后一轮 proposal decision，分别统计由错到对和由对到错。 |
+| No-change Retry Rate | DONE | 对各轮 normalized proposal 做签名，统计 retry 中 proposal 始终未变的 cases。 |
 | Retry-exhaustion Rate | DONE | 统计达到最大重试次数仍未通过的 cases，区别于普通 retry。 |
 | Feedback-routing Accuracy | TODO | 检查 Validator 是否把问题送回真正需要修改的 agent，避免错误路由造成无效重算。 |
 
@@ -189,7 +189,7 @@ Standard 的多阶段质量收益需要与额外成本共同报告。
 | LLM Call Count | PARTIAL | 已记录阶段调用次数，但尚未将纯 LLM 调用与非 LLM 阶段执行严格拆开。 |
 | Input/Output Tokens | TODO | 衡量推理成本和 context reduction收益。 |
 | Peak Context Size | TODO | 检查 Selector 是否真正降低长上下文压力。 |
-| Retry Cost | DERIVABLE | Validator/Evolutor 的重复运行次数与阶段时间已保存，但尚未形成独立汇总指标。 |
+| Retry Cost | DONE | 汇总 retried cases 的 mean retry count 和 end-to-end latency，可与未 retry cases 分开比较。 |
 
 ## 14. Statistical Reliability
 
@@ -212,6 +212,25 @@ Matching baselines 与 evolution system解决的问题不同，应同时报告�
 | Adapted End-to-end Metrics | DONE | 衡量其 correspondence 经统一 adapter后能否完成 evolution任务。 |
 | Adapter-induced Error Rate | TODO | 区分 baseline matcher错误与 correspondence-to-proposal规则错误。 |
 | Coverage/Failure Rate | DONE | 避免只在 adapter成功输出的子集上比较。 |
+
+## 16. RDB Structural Complexity Analysis
+
+该分析回答 existing RDB 的 attribute 数量和关系依赖复杂度是否影响系统效果。它们是每个 case 的输入结构特征，而不是新的预测质量指标；应将这些特征写入 case-level evaluation CSV，再用现有的 decision、placement、proposal、exact-match 和 latency 指标进行分层分析。
+
+| Feature/Slice | 状态 | 定义与用途 |
+|---|---|---|
+| Existing Table Count | DONE | 写入 case-level CSV，用于控制现有 small/medium/large context size。 |
+| Existing Attribute Count | DONE | 写入 existing RDB 所有 relations 的 attribute 总数。 |
+| Incoming Attribute Count | DONE | 写入 incoming table 的 attribute 数。 |
+| Mean/Maximum Attributes per Relation | DONE | 写入 existing relations 的 mean/max attribute count。 |
+| Existing Foreign-key Count | DONE | 写入 existing constraints 中的 FK edge 数。 |
+| Foreign Keys per Relation | DONE | 写入 FK count / relation count。 |
+| Mean/Maximum FK Degree | DONE | 将 FK 两端都计入 relation degree，写入 mean/max degree。 |
+| Composite PK/FK Count and Width | DONE | 写入 composite count 及 PK/FK mean/max width。 |
+| Quality by Complexity Bucket | TODO | 在 Low/Medium/High complexity buckets 中报告 Decision Accuracy、Column F1、Proposal F1、Final-schema Exact Match 和 latency。 |
+| Complexity--Quality Correlation | TODO | 报告 Spearman correlation 或带控制变量的回归；相关性不能表述为因果影响。 |
+
+分桶阈值应在分析前固定，并报告每桶 case 数。为避免混淆，attribute 与 dependency complexity 至少应在 dataset、operation type 和 small/medium/large size 内分层；尤其不能把 size 带来的 relation-count 差异直接解释为 attribute 或 dependency 的独立影响。推荐将 `existing_attribute_count` 作为主要 attribute complexity，将 `foreign_keys_per_relation` 作为主要 dependency complexity，其余图结构统计用于解释性分析。
 
 ## 最小论文主表建议
 

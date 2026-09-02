@@ -1,0 +1,545 @@
+{
+  "database": "company_1",
+  "tables": {
+    "department": {
+      "table": {
+        "name": "department",
+        "column_count": 4,
+        "summary": "Stores information about organizational departments, including their names, unique identifiers, and management details.",
+        "entity": "Department",
+        "role": "entity_table",
+        "aliases": [
+          "dept",
+          "departments",
+          "org_units"
+        ]
+      },
+      "columns": {
+        "dname": {
+          "name": "dname",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the department.",
+          "semantic_type": "organization_name",
+          "business_concept": "Department Name",
+          "aliases": [
+            "dept_name",
+            "name",
+            "title"
+          ]
+        },
+        "dnumber": {
+          "name": "dnumber",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for the department.",
+          "semantic_type": "identifier",
+          "business_concept": "Department ID",
+          "aliases": [
+            "dept_id",
+            "id",
+            "department_number"
+          ]
+        },
+        "mgr_ssn": {
+          "name": "mgr_ssn",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The Social Security Number of the department manager.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Manager SSN",
+          "aliases": [
+            "manager_ssn",
+            "mgr_id",
+            "manager_ssn_number"
+          ]
+        },
+        "mgr_start_date": {
+          "name": "mgr_start_date",
+          "dtype": "text",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The date when the current manager started their role in the department.",
+          "semantic_type": "date",
+          "business_concept": "Manager Start Date",
+          "aliases": [
+            "mgr_start",
+            "start_date",
+            "hire_date"
+          ]
+        }
+      }
+    },
+    "project": {
+      "table": {
+        "name": "project",
+        "column_count": 4,
+        "summary": "Stores information about various projects, including their names, unique identifiers, locations, and associated department numbers.",
+        "entity": "Project",
+        "role": "entity_table",
+        "aliases": [
+          "projects",
+          "proj",
+          "project_list"
+        ]
+      },
+      "columns": {
+        "pname": {
+          "name": "pname",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The human-readable name or title of the project.",
+          "semantic_type": "description",
+          "business_concept": "Project Name",
+          "aliases": [
+            "name",
+            "title",
+            "project_name",
+            "proj_name"
+          ]
+        },
+        "pnumber": {
+          "name": "pnumber",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each project.",
+          "semantic_type": "identifier",
+          "business_concept": "Project ID",
+          "aliases": [
+            "id",
+            "project_id",
+            "proj_id",
+            "pk"
+          ]
+        },
+        "plocation": {
+          "name": "plocation",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The city or geographic location where the project is based or executed.",
+          "semantic_type": "city",
+          "business_concept": "Project Location",
+          "aliases": [
+            "location",
+            "city",
+            "site",
+            "place"
+          ]
+        },
+        "dnum": {
+          "name": "dnum",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A numeric code representing the department associated with the project.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Department Number",
+          "aliases": [
+            "dept",
+            "department",
+            "dept_no",
+            "dnum"
+          ]
+        }
+      }
+    },
+    "works_on": {
+      "table": {
+        "name": "works_on",
+        "column_count": 3,
+        "summary": "Records the association between employees and projects, detailing the number of hours worked.",
+        "entity": "works_on",
+        "role": "relationship_table",
+        "aliases": [
+          "employee_project_assignment",
+          "project_hours",
+          "work_log"
+        ]
+      },
+      "columns": {
+        "essn": {
+          "name": "essn",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Employee Social Security Number, uniquely identifying the employee.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "employee_id",
+          "aliases": [
+            "employee_id",
+            "emp_id",
+            "ssn",
+            "emp_ssn"
+          ]
+        },
+        "pno": {
+          "name": "pno",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Project Number, uniquely identifying the project.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "project_id",
+          "aliases": [
+            "project_id",
+            "proj_id",
+            "project_number"
+          ]
+        },
+        "hours": {
+          "name": "hours",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The number of hours the employee worked on the specific project.",
+          "semantic_type": "quantity",
+          "business_concept": "work_hours",
+          "aliases": [
+            "hrs",
+            "hours_worked",
+            "time_spent"
+          ]
+        }
+      }
+    },
+    "employee": {
+      "table": {
+        "name": "employee",
+        "column_count": 10,
+        "summary": "Stores detailed personal and employment information for employees, including demographics, contact details, compensation, and departmental assignment.",
+        "entity": "Employee",
+        "role": "entity_table",
+        "aliases": [
+          "emp",
+          "staff",
+          "personnel",
+          "workers"
+        ]
+      },
+      "columns": {
+        "fname": {
+          "name": "fname",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "First name of the employee.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "first_name",
+            "fn",
+            "firstname",
+            "given_name"
+          ]
+        },
+        "minit": {
+          "name": "minit",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Initial of the employee's middle name.",
+          "semantic_type": "person_name",
+          "business_concept": "Middle Initial",
+          "aliases": [
+            "middle_initial",
+            "mi",
+            "middle_name_initial"
+          ]
+        },
+        "lname": {
+          "name": "lname",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Last name (surname) of the employee.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "last_name",
+            "ln",
+            "lastname",
+            "surname"
+          ]
+        },
+        "ssn": {
+          "name": "ssn",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Social Security Number, a unique identifier for the employee.",
+          "semantic_type": "identifier",
+          "business_concept": "Social Security Number",
+          "aliases": [
+            "social_security_number",
+            "ssn",
+            "social_sec",
+            "employee_id"
+          ]
+        },
+        "bdate": {
+          "name": "bdate",
+          "dtype": "text",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "Date of birth of the employee.",
+          "semantic_type": "date",
+          "business_concept": "Date of Birth",
+          "aliases": [
+            "birth_date",
+            "dob",
+            "date_of_birth",
+            "born"
+          ]
+        },
+        "address": {
+          "name": "address",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Physical residential address of the employee.",
+          "semantic_type": "address",
+          "business_concept": "Home Address",
+          "aliases": [
+            "residence",
+            "home_address",
+            "addr",
+            "street_address"
+          ]
+        },
+        "sex": {
+          "name": "sex",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Gender of the employee.",
+          "semantic_type": "category",
+          "business_concept": "Gender",
+          "aliases": [
+            "gender",
+            "sex",
+            "gender_code"
+          ]
+        },
+        "salary": {
+          "name": "salary",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Annual compensation amount for the employee.",
+          "semantic_type": "money",
+          "business_concept": "Salary",
+          "aliases": [
+            "pay",
+            "annual_salary",
+            "compensation",
+            "earnings"
+          ]
+        },
+        "super_ssn": {
+          "name": "super_ssn",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Social Security Number of the employee's direct supervisor.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Supervisor ID",
+          "aliases": [
+            "manager_ssn",
+            "supervisor_id",
+            "boss_ssn",
+            "manager"
+          ]
+        },
+        "dno": {
+          "name": "dno",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Department number where the employee works.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Department Number",
+          "aliases": [
+            "dept_no",
+            "department_id",
+            "dept",
+            "work_group"
+          ]
+        }
+      }
+    },
+    "dept_locations": {
+      "table": {
+        "name": "dept_locations",
+        "column_count": 2,
+        "summary": "Maps department numbers to their physical office locations.",
+        "entity": "Department Location",
+        "role": "lookup_table",
+        "aliases": [
+          "dept_locations",
+          "department_locations",
+          "dept_loc"
+        ]
+      },
+      "columns": {
+        "dnumber": {
+          "name": "dnumber",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a department.",
+          "semantic_type": "identifier",
+          "business_concept": "Department ID",
+          "aliases": [
+            "dept_id",
+            "department_number",
+            "d_num"
+          ]
+        },
+        "dlocation": {
+          "name": "dlocation",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The city or specific site where the department is located.",
+          "semantic_type": "city",
+          "business_concept": "Office Location",
+          "aliases": [
+            "dept_location",
+            "office_city",
+            "site",
+            "location"
+          ]
+        }
+      }
+    },
+    "dependent": {
+      "table": {
+        "name": "dependent",
+        "column_count": 5,
+        "summary": "Stores information about dependents associated with employees, including their names, gender, birth dates, and relationship to the employee.",
+        "entity": "dependent",
+        "role": "relationship_table",
+        "aliases": [
+          "dependents",
+          "employee_dependents",
+          "family_members"
+        ]
+      },
+      "columns": {
+        "essn": {
+          "name": "essn",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Employee Social Security Number, serving as a foreign key to link the dependent to their primary employee.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "employee_identifier",
+          "aliases": [
+            "employee_id",
+            "emp_ssn",
+            "primary_employee_ssn"
+          ]
+        },
+        "dependent_name": {
+          "name": "dependent_name",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The full name of the dependent person.",
+          "semantic_type": "person_name",
+          "business_concept": "dependent_name",
+          "aliases": [
+            "name",
+            "full_name",
+            "dep_name"
+          ]
+        },
+        "sex": {
+          "name": "sex",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The gender of the dependent.",
+          "semantic_type": "code",
+          "business_concept": "gender",
+          "aliases": [
+            "gender",
+            "sex_code",
+            "gender_code"
+          ]
+        },
+        "bdate": {
+          "name": "bdate",
+          "dtype": "text",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The date of birth of the dependent.",
+          "semantic_type": "date",
+          "business_concept": "birth_date",
+          "aliases": [
+            "dob",
+            "date_of_birth",
+            "born"
+          ]
+        },
+        "relationship": {
+          "name": "relationship",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The familial or spousal relationship the dependent has to the employee.",
+          "semantic_type": "category",
+          "business_concept": "relationship_type",
+          "aliases": [
+            "relation",
+            "rel_type",
+            "family_relation"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,634 @@
+{
+  "database": "document_management",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/document_management",
+    "schema_path": "data/Spider/parsed/document_management/schema.json",
+    "tables_dir": "data/Spider/parsed/document_management/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "document_functional_areas": {
+      "table": {
+        "name": "document_functional_areas",
+        "column_count": 2,
+        "summary": "A lookup or dimension table mapping document codes to their corresponding functional area classifications.",
+        "entity": "Document Functional Area Mapping",
+        "role": "lookup_table",
+        "aliases": [
+          "doc_functional_areas",
+          "document_areas",
+          "doc_area_mapping"
+        ]
+      },
+      "columns": {
+        "document_code": {
+          "name": "document_code",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific document or record within the system.",
+          "semantic_type": "code",
+          "business_concept": "Document ID",
+          "aliases": [
+            "doc_id",
+            "document_id",
+            "doc_code",
+            "reference_number"
+          ]
+        },
+        "functional_area_code": {
+          "name": "functional_area_code",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A classification code indicating the functional department or category associated with the document.",
+          "semantic_type": "code",
+          "business_concept": "Functional Area",
+          "aliases": [
+            "area_code",
+            "func_area",
+            "department_code",
+            "category_code"
+          ]
+        }
+      }
+    },
+    "document_sections": {
+      "table": {
+        "name": "document_sections",
+        "column_count": 5,
+        "summary": "Stores metadata and structural information for specific sections within documents, including unique identifiers, sequence numbers, and titles.",
+        "entity": "document_section",
+        "role": "entity_table",
+        "aliases": [
+          "doc_sections",
+          "section_metadata",
+          "document_parts"
+        ]
+      },
+      "columns": {
+        "section_id": {
+          "name": "section_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique primary identifier for a specific document section record.",
+          "semantic_type": "identifier",
+          "business_concept": "Section Unique ID",
+          "aliases": [
+            "id",
+            "section_uid",
+            "pk_section"
+          ]
+        },
+        "document_code": {
+          "name": "document_code",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the section to its parent document.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Document Reference Code",
+          "aliases": [
+            "doc_ref",
+            "parent_doc_id",
+            "document_ref"
+          ]
+        },
+        "section_sequence": {
+          "name": "section_sequence",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Numeric value representing the order or sequence of the section within a document.",
+          "semantic_type": "quantity",
+          "business_concept": "Section Order Number",
+          "aliases": [
+            "seq",
+            "order_num",
+            "position"
+          ]
+        },
+        "section_code": {
+          "name": "section_code",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Short alphanumeric code representing the type or category of the section.",
+          "semantic_type": "code",
+          "business_concept": "Section Type Code",
+          "aliases": [
+            "sec_type",
+            "category_code",
+            "section_ref"
+          ]
+        },
+        "section_title": {
+          "name": "section_title",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Descriptive title or label for the section.",
+          "semantic_type": "description",
+          "business_concept": "Section Name",
+          "aliases": [
+            "title",
+            "name",
+            "heading"
+          ]
+        }
+      }
+    },
+    "document_sections_images": {
+      "table": {
+        "name": "document_sections_images",
+        "column_count": 2,
+        "summary": "Stores the mapping between document sections and their associated images.",
+        "entity": "Document Section Image Association",
+        "role": "relationship_table",
+        "aliases": [
+          "doc_section_images",
+          "section_image_map",
+          "document_images"
+        ]
+      },
+      "columns": {
+        "section_id": {
+          "name": "section_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific section within a document.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Document Section ID",
+          "aliases": [
+            "section_uuid",
+            "section_key",
+            "doc_section"
+          ]
+        },
+        "image_id": {
+          "name": "image_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for an image file associated with the document section.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Image ID",
+          "aliases": [
+            "image_uuid",
+            "image_key",
+            "img_id"
+          ]
+        }
+      }
+    },
+    "document_structures": {
+      "table": {
+        "name": "document_structures",
+        "column_count": 3,
+        "summary": "Defines the hierarchical structure of documents, identifying specific structural components and their relationships.",
+        "entity": "Document Structure",
+        "role": "lookup_table",
+        "aliases": [
+          "doc_structure",
+          "document_types",
+          "structure_codes"
+        ]
+      },
+      "columns": {
+        "document_structure_code": {
+          "name": "document_structure_code",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific document structure type.",
+          "semantic_type": "code",
+          "business_concept": "Document Structure ID",
+          "aliases": [
+            "structure_code",
+            "doc_code",
+            "struct_id"
+          ]
+        },
+        "parent_document_structure_code": {
+          "name": "parent_document_structure_code",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The code of the parent structure to which this structure belongs, establishing a hierarchy.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Parent Structure Reference",
+          "aliases": [
+            "parent_code",
+            "parent_structure",
+            "hierarchy_parent"
+          ]
+        },
+        "document_structure_description": {
+          "name": "document_structure_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A textual description of the document structure component.",
+          "semantic_type": "description",
+          "business_concept": "Structure Name/Label",
+          "aliases": [
+            "structure_name",
+            "struct_desc",
+            "component_name"
+          ]
+        }
+      }
+    },
+    "documents": {
+      "table": {
+        "name": "documents",
+        "column_count": 5,
+        "summary": "A catalog of documents containing metadata such as unique identifiers, structural codes, types, access statistics, and human-readable names.",
+        "entity": "Document",
+        "role": "entity_table",
+        "aliases": [
+          "doc_table",
+          "documents_master",
+          "doc_catalog"
+        ]
+      },
+      "columns": {
+        "document_code": {
+          "name": "document_code",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific document record.",
+          "semantic_type": "identifier",
+          "business_concept": "Document ID",
+          "aliases": [
+            "doc_id",
+            "id",
+            "document_number"
+          ]
+        },
+        "document_structure_code": {
+          "name": "document_structure_code",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Code representing the structural format or classification of the document.",
+          "semantic_type": "code",
+          "business_concept": "Document Structure Type",
+          "aliases": [
+            "struct_code",
+            "structure_type",
+            "format_code"
+          ]
+        },
+        "document_type_code": {
+          "name": "document_type_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Categorical code indicating the genre or type of the document (e.g., Book, Paper).",
+          "semantic_type": "category",
+          "business_concept": "Document Type",
+          "aliases": [
+            "doc_type",
+            "type",
+            "genre"
+          ]
+        },
+        "access_count": {
+          "name": "access_count",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Numeric count representing the number of times the document has been accessed.",
+          "semantic_type": "quantity",
+          "business_concept": "Access Frequency",
+          "aliases": [
+            "view_count",
+            "hits",
+            "access_total",
+            "read_count"
+          ]
+        },
+        "document_name": {
+          "name": "document_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Human-readable title or name of the document.",
+          "semantic_type": "description",
+          "business_concept": "Document Title",
+          "aliases": [
+            "title",
+            "name",
+            "doc_title"
+          ]
+        }
+      }
+    },
+    "functional_areas": {
+      "table": {
+        "name": "functional_areas",
+        "column_count": 3,
+        "summary": "Defines the hierarchy and descriptions of functional areas within an organization.",
+        "entity": "Functional Area",
+        "role": "lookup_table",
+        "aliases": [
+          "func_areas",
+          "org_functions",
+          "department_codes"
+        ]
+      },
+      "columns": {
+        "functional_area_code": {
+          "name": "functional_area_code",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific functional area.",
+          "semantic_type": "code",
+          "business_concept": "Functional Area ID",
+          "aliases": [
+            "func_area_id",
+            "fa_code",
+            "area_code"
+          ]
+        },
+        "parent_functional_area_code": {
+          "name": "parent_functional_area_code",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the parent functional area, establishing a hierarchical relationship.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Parent Functional Area ID",
+          "aliases": [
+            "parent_id",
+            "parent_code",
+            "supervisor_area_code"
+          ]
+        },
+        "functional_area_description": {
+          "name": "functional_area_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Textual description of the functional area's purpose or scope.",
+          "semantic_type": "description",
+          "business_concept": "Functional Area Name/Description",
+          "aliases": [
+            "func_area_name",
+            "area_desc",
+            "function_title"
+          ]
+        }
+      }
+    },
+    "images": {
+      "table": {
+        "name": "images",
+        "column_count": 4,
+        "summary": "A table storing metadata and access links for a collection of images, likely associated with a content management system or media library.",
+        "entity": "image",
+        "role": "entity_table",
+        "aliases": [
+          "media",
+          "pictures",
+          "assets",
+          "photo_metadata"
+        ]
+      },
+      "columns": {
+        "image_id": {
+          "name": "image_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each image record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Image ID",
+          "aliases": [
+            "id",
+            "img_id",
+            "image_key"
+          ]
+        },
+        "image_alt_text": {
+          "name": "image_alt_text",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Alternative text description for the image, currently containing sample values that appear to be person names, suggesting a data quality issue or specific use case for naming images after people.",
+          "semantic_type": "description",
+          "business_concept": "Image Alt Text",
+          "aliases": [
+            "alt",
+            "alt_text",
+            "description",
+            "caption"
+          ]
+        },
+        "image_name": {
+          "name": "image_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short label or name for the image, with samples indicating a pattern of categorization (e.g., 'top1', 'chapter1') or naming after individuals.",
+          "semantic_type": "code",
+          "business_concept": "Image Name",
+          "aliases": [
+            "name",
+            "title",
+            "label",
+            "short_name"
+          ]
+        },
+        "image_url": {
+          "name": "image_url",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The web address where the image file is hosted or can be retrieved.",
+          "semantic_type": "unknown",
+          "business_concept": "Image URL",
+          "aliases": [
+            "url",
+            "link",
+            "source",
+            "path",
+            "href"
+          ]
+        }
+      }
+    },
+    "roles": {
+      "table": {
+        "name": "roles",
+        "column_count": 2,
+        "summary": "Defines system roles with unique codes and human-readable descriptions.",
+        "entity": "Role",
+        "role": "lookup_table",
+        "aliases": [
+          "user_roles",
+          "system_roles",
+          "access_roles"
+        ]
+      },
+      "columns": {
+        "role_code": {
+          "name": "role_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique alphanumeric identifier for a specific role.",
+          "semantic_type": "code",
+          "business_concept": "Role Identifier",
+          "aliases": [
+            "role_id",
+            "role_key",
+            "role_ref"
+          ]
+        },
+        "role_description": {
+          "name": "role_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A textual explanation of the responsibilities associated with the role.",
+          "semantic_type": "description",
+          "business_concept": "Role Description",
+          "aliases": [
+            "role_desc",
+            "role_name",
+            "role_title"
+          ]
+        }
+      }
+    },
+    "users": {
+      "table": {
+        "name": "users",
+        "column_count": 5,
+        "summary": "Stores core user account information including unique identifiers, roles, names, login status, and hashed passwords.",
+        "entity": "User",
+        "role": "entity_table",
+        "aliases": [
+          "user_accounts",
+          "accounts",
+          "members"
+        ]
+      },
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique numeric identifier for each user record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "uid",
+            "id",
+            "user_number"
+          ]
+        },
+        "role_code": {
+          "name": "role_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Alphanumeric code representing the user's job function or access level.",
+          "semantic_type": "code",
+          "business_concept": "Job Role",
+          "aliases": [
+            "role",
+            "job_code",
+            "position_code"
+          ]
+        },
+        "user_name": {
+          "name": "user_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Human-readable name of the user, often formatted as first.last.",
+          "semantic_type": "person_name",
+          "business_concept": "Full Name",
+          "aliases": [
+            "name",
+            "display_name",
+            "full_name"
+          ]
+        },
+        "user_login": {
+          "name": "user_login",
+          "dtype": "string",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Binary flag indicating whether the user account is currently active or enabled.",
+          "semantic_type": "boolean",
+          "business_concept": "Account Status",
+          "aliases": [
+            "is_active",
+            "enabled",
+            "status_flag"
+          ]
+        },
+        "password": {
+          "name": "password",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Hashed string used for authenticating the user's identity.",
+          "semantic_type": "unknown",
+          "business_concept": "Authentication Credential",
+          "aliases": [
+            "pwd",
+            "pass",
+            "secret"
+          ]
+        }
+      }
+    }
+  }
+}

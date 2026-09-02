@@ -1,0 +1,350 @@
+{
+  "database": "department_store",
+  "tables": {
+    "products": {
+      "table": {
+        "name": "products",
+        "column_count": 4,
+        "summary": "A catalog of products containing their unique identifiers, types, names, and prices.",
+        "entity": "Product",
+        "role": "entity_table",
+        "aliases": [
+          "product_catalog",
+          "items",
+          "merchandise"
+        ]
+      },
+      "columns": {
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each product record.",
+          "semantic_type": "identifier",
+          "business_concept": "Product ID",
+          "aliases": [
+            "id",
+            "pid",
+            "sku"
+          ]
+        },
+        "product_type_code": {
+          "name": "product_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short code representing the category or type of the product.",
+          "semantic_type": "code",
+          "business_concept": "Product Category Code",
+          "aliases": [
+            "type",
+            "category_code",
+            "product_class"
+          ]
+        },
+        "product_name": {
+          "name": "product_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The descriptive name of the product, often including color or specific attributes.",
+          "semantic_type": "description",
+          "business_concept": "Product Name",
+          "aliases": [
+            "name",
+            "title",
+            "description"
+          ]
+        },
+        "product_price": {
+          "name": "product_price",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary value assigned to the product.",
+          "semantic_type": "money",
+          "business_concept": "Unit Price",
+          "aliases": [
+            "price",
+            "cost",
+            "amount",
+            "unit_price"
+          ]
+        }
+      }
+    },
+    "order_items": {
+      "table": {
+        "name": "order_items",
+        "column_count": 3,
+        "summary": "Stores the line-level details of orders, linking specific products to specific orders with unique item identifiers.",
+        "entity": "Order Item",
+        "role": "transaction_table",
+        "aliases": [
+          "order_details",
+          "order_lines",
+          "order_line_items",
+          "oi"
+        ]
+      },
+      "columns": {
+        "order_item_id": {
+          "name": "order_item_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific line item within an order.",
+          "semantic_type": "identifier",
+          "business_concept": "Order Item ID",
+          "aliases": [
+            "item_id",
+            "line_item_id",
+            "order_line_id"
+          ]
+        },
+        "order_id": {
+          "name": "order_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A reference to the parent order to which this item belongs.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Order ID",
+          "aliases": [
+            "parent_order_id",
+            "order_ref",
+            "ord_id"
+          ]
+        },
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A reference to the specific product included in this order line.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Product ID",
+          "aliases": [
+            "item_sku",
+            "product_ref",
+            "prod_id"
+          ]
+        }
+      }
+    },
+    "customer_addresses": {
+      "table": {
+        "name": "customer_addresses",
+        "column_count": 4,
+        "summary": "Stores the historical address records associated with customers, tracking the validity period of each address.",
+        "entity": "Customer Address",
+        "role": "relationship_table",
+        "aliases": [
+          "customer_addresses",
+          "addr_history",
+          "cust_addr_log"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier linking the address record to a specific customer.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "customer_key",
+            "client_id"
+          ]
+        },
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific address record within the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Address Record ID",
+          "aliases": [
+            "addr_id",
+            "address_key",
+            "record_id"
+          ]
+        },
+        "date_from": {
+          "name": "date_from",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The start date and time when this address became valid for the customer.",
+          "semantic_type": "timestamp",
+          "business_concept": "Address Validity Start Date",
+          "aliases": [
+            "valid_from",
+            "start_date",
+            "effective_date"
+          ]
+        },
+        "date_to": {
+          "name": "date_to",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The end date and time when this address ceased to be valid (nullable, indicating current address if null).",
+          "semantic_type": "timestamp",
+          "business_concept": "Address Validity End Date",
+          "aliases": [
+            "valid_to",
+            "end_date",
+            "expiry_date"
+          ]
+        }
+      }
+    },
+    "customers": {
+      "table": {
+        "name": "customers",
+        "column_count": 7,
+        "summary": "A table containing core customer profile information including unique identifiers, contact details, and payment preferences.",
+        "entity": "Customer",
+        "role": "entity_table",
+        "aliases": [
+          "clients",
+          "accounts",
+          "user_profiles",
+          "buyer_info"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The primary unique identifier for each customer record in the system.",
+          "semantic_type": "identifier",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "id",
+            "primary_key",
+            "pk"
+          ]
+        },
+        "payment_method_code": {
+          "name": "payment_method_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The type of payment method associated with the customer account.",
+          "semantic_type": "code",
+          "business_concept": "Payment Method",
+          "aliases": [
+            "pay_method",
+            "payment_type",
+            "billing_method",
+            "pm_code"
+          ]
+        },
+        "customer_code": {
+          "name": "customer_code",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "An alternative or legacy identifier for the customer, potentially used for external referencing.",
+          "semantic_type": "identifier",
+          "business_concept": "Customer Reference Code",
+          "aliases": [
+            "ref_code",
+            "client_code",
+            "account_code",
+            "external_id"
+          ]
+        },
+        "customer_name": {
+          "name": "customer_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The full name or first name of the customer.",
+          "semantic_type": "person_name",
+          "business_concept": "Customer Name",
+          "aliases": [
+            "name",
+            "first_name",
+            "full_name",
+            "cust_name"
+          ]
+        },
+        "customer_address": {
+          "name": "customer_address",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The physical mailing address of the customer.",
+          "semantic_type": "address",
+          "business_concept": "Customer Address",
+          "aliases": [
+            "addr",
+            "mailing_address",
+            "shipping_address",
+            "location"
+          ]
+        },
+        "customer_phone": {
+          "name": "customer_phone",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The telephone number associated with the customer.",
+          "semantic_type": "phone",
+          "business_concept": "Customer Phone Number",
+          "aliases": [
+            "phone",
+            "tel",
+            "mobile",
+            "contact_number",
+            "mobile_number"
+          ]
+        },
+        "customer_email": {
+          "name": "customer_email",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "The email address associated with the customer.",
+          "semantic_type": "email",
+          "business_concept": "Customer Email Address",
+          "aliases": [
+            "email",
+            "e_mail",
+            "contact_email",
+            "user_email"
+          ]
+        }
+      }
+    }
+  }
+}

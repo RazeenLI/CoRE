@@ -1,0 +1,302 @@
+{
+  "database": "cre_Doc_Control_Systems",
+  "tables": {
+    "ref_shipping_agents": {
+      "table": {
+        "name": "ref_shipping_agents",
+        "column_count": 3,
+        "summary": "A reference table containing master data for various shipping agents, including their unique codes, names, and brief descriptions.",
+        "entity": "Shipping Agent",
+        "role": "lookup_table",
+        "aliases": [
+          "ref_shipping_agents",
+          "shipping_agents",
+          "carrier_reference",
+          "logistics_providers"
+        ]
+      },
+      "columns": {
+        "shipping_agent_code": {
+          "name": "shipping_agent_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique alphanumeric identifier assigned to a specific shipping agent.",
+          "semantic_type": "code",
+          "business_concept": "Shipping Agent Identifier",
+          "aliases": [
+            "agent_code",
+            "carrier_code",
+            "shipping_code",
+            "ref_code"
+          ]
+        },
+        "shipping_agent_name": {
+          "name": "shipping_agent_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The official or common name of the shipping agent organization.",
+          "semantic_type": "organization_name",
+          "business_concept": "Shipping Agent Name",
+          "aliases": [
+            "agent_name",
+            "carrier_name",
+            "shipping_company",
+            "provider_name"
+          ]
+        },
+        "shipping_agent_description": {
+          "name": "shipping_agent_description",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short textual note or code describing the shipping agent, potentially indicating service type or region.",
+          "semantic_type": "description",
+          "business_concept": "Shipping Agent Description",
+          "aliases": [
+            "agent_desc",
+            "carrier_desc",
+            "shipping_notes",
+            "agent_type"
+          ]
+        }
+      }
+    },
+    "documents": {
+      "table": {
+        "name": "documents",
+        "column_count": 7,
+        "summary": "A master table storing metadata and status information for various documents, including their type, shipping agent, receipt details, and current processing state.",
+        "entity": "Document",
+        "role": "entity_table",
+        "aliases": [
+          "doc",
+          "docs",
+          "document_master",
+          "receipts"
+        ]
+      },
+      "columns": {
+        "document_id": {
+          "name": "document_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each document record in the system.",
+          "semantic_type": "identifier",
+          "business_concept": "Document ID",
+          "aliases": [
+            "doc_id",
+            "id",
+            "primary_key"
+          ]
+        },
+        "document_status_code": {
+          "name": "document_status_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Current processing or lifecycle status of the document.",
+          "semantic_type": "status",
+          "business_concept": "Document Status",
+          "aliases": [
+            "status",
+            "doc_status",
+            "state"
+          ]
+        },
+        "document_type_code": {
+          "name": "document_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Classification or format type of the document (e.g., CD, Paper).",
+          "semantic_type": "category",
+          "business_concept": "Document Type",
+          "aliases": [
+            "type",
+            "doc_type",
+            "format"
+          ]
+        },
+        "shipping_agent_code": {
+          "name": "shipping_agent_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the logistics or shipping company handling the document.",
+          "semantic_type": "code",
+          "business_concept": "Shipping Agent",
+          "aliases": [
+            "carrier",
+            "agent",
+            "shipper",
+            "logistics_provider"
+          ]
+        },
+        "receipt_date": {
+          "name": "receipt_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the document was officially received or processed.",
+          "semantic_type": "timestamp",
+          "business_concept": "Receipt Date",
+          "aliases": [
+            "received_at",
+            "date_received",
+            "created_at"
+          ]
+        },
+        "receipt_number": {
+          "name": "receipt_number",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique reference number assigned to the receipt or transaction.",
+          "semantic_type": "identifier",
+          "business_concept": "Receipt Number",
+          "aliases": [
+            "ref_number",
+            "receipt_ref",
+            "txn_id"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Additional short code or flag providing supplementary information about the document.",
+          "semantic_type": "code",
+          "business_concept": "Additional Details",
+          "aliases": [
+            "extra_info",
+            "flags",
+            "notes_code"
+          ]
+        }
+      }
+    },
+    "documents_mailed": {
+      "table": {
+        "name": "documents_mailed",
+        "column_count": 3,
+        "summary": "Records tracking the mailing of documents to specific addresses with associated timestamps.",
+        "entity": "mailing_record",
+        "role": "transaction_table",
+        "aliases": [
+          "mailed_documents",
+          "document_mailings",
+          "mail_log"
+        ]
+      },
+      "columns": {
+        "document_id": {
+          "name": "document_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the document being mailed.",
+          "semantic_type": "identifier",
+          "business_concept": "document_reference",
+          "aliases": [
+            "doc_id",
+            "document_ref",
+            "id"
+          ]
+        },
+        "mailed_to_address_id": {
+          "name": "mailed_to_address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the mailing record to a specific recipient address.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "recipient_address_reference",
+          "aliases": [
+            "address_id",
+            "to_address_id",
+            "recipient_id"
+          ]
+        },
+        "mailing_date": {
+          "name": "mailing_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the document was mailed.",
+          "semantic_type": "timestamp",
+          "business_concept": "mailing_time",
+          "aliases": [
+            "sent_date",
+            "mail_time",
+            "timestamp"
+          ]
+        }
+      }
+    },
+    "ref_document_types": {
+      "table": {
+        "name": "ref_document_types",
+        "column_count": 2,
+        "summary": "A reference table defining standard document types with their unique codes and descriptions.",
+        "entity": "Document Type",
+        "role": "lookup_table",
+        "aliases": [
+          "doc_type_ref",
+          "document_category",
+          "file_type_master"
+        ]
+      },
+      "columns": {
+        "document_type_code": {
+          "name": "document_type_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A unique alphanumeric identifier for a specific document type.",
+          "semantic_type": "code",
+          "business_concept": "Document Type Code",
+          "aliases": [
+            "doc_code",
+            "type_id",
+            "document_code"
+          ]
+        },
+        "document_type_description": {
+          "name": "document_type_description",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A textual description or label for the document type, though sample values suggest it may currently store short codes or single characters.",
+          "semantic_type": "code",
+          "business_concept": "Document Type Label",
+          "aliases": [
+            "doc_desc",
+            "type_name",
+            "document_label"
+          ]
+        }
+      }
+    }
+  }
+}

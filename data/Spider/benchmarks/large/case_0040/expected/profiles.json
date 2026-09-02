@@ -1,0 +1,925 @@
+{
+  "database": "local_govt_and_lot",
+  "tables": {
+    "services": {
+      "table": {
+        "name": "services",
+        "column_count": 4,
+        "summary": "A table defining available services offered by different organizations, including their type codes and customer satisfaction feedback.",
+        "entity": "Service",
+        "role": "entity_table",
+        "aliases": [
+          "service_catalog",
+          "service_list",
+          "offered_services"
+        ]
+      },
+      "columns": {
+        "service_id": {
+          "name": "service_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific service record.",
+          "semantic_type": "identifier",
+          "business_concept": "Service ID",
+          "aliases": [
+            "svc_id",
+            "service_key",
+            "id"
+          ]
+        },
+        "organization_id": {
+          "name": "organization_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the service to the organization providing it.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Organization ID",
+          "aliases": [
+            "org_id",
+            "company_id",
+            "provider_id"
+          ]
+        },
+        "service_type_code": {
+          "name": "service_type_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Categorical code representing the general category or nature of the service.",
+          "semantic_type": "code",
+          "business_concept": "Service Category",
+          "aliases": [
+            "svc_type",
+            "service_category",
+            "type_code"
+          ]
+        },
+        "service_details": {
+          "name": "service_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Textual feedback or status description associated with the service, likely indicating customer satisfaction.",
+          "semantic_type": "status",
+          "business_concept": "Service Feedback",
+          "aliases": [
+            "feedback",
+            "rating",
+            "customer_status",
+            "satisfaction"
+          ]
+        }
+      }
+    },
+    "customer_events": {
+      "table": {
+        "name": "customer_events",
+        "column_count": 6,
+        "summary": "A transactional log recording the movement of residents into specific properties, linking customers, properties, and resident entities with timestamps.",
+        "entity": "customer_events",
+        "role": "transaction_table",
+        "aliases": [
+          "residents_moved_in",
+          "move_in_events",
+          "property_occupancy_logs",
+          "tenant_move_ins"
+        ]
+      },
+      "columns": {
+        "customer_event_id": {
+          "name": "customer_event_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific move-in event record.",
+          "semantic_type": "identifier",
+          "business_concept": "Event ID",
+          "aliases": [
+            "event_id",
+            "move_in_id",
+            "log_id"
+          ]
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the customer associated with the move-in event.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "client_id",
+            "account_id"
+          ]
+        },
+        "date_moved_in": {
+          "name": "date_moved_in",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the resident moved into the property.",
+          "semantic_type": "timestamp",
+          "business_concept": "Move-in Date",
+          "aliases": [
+            "move_in_date",
+            "occupancy_start",
+            "arrival_date"
+          ]
+        },
+        "property_id": {
+          "name": "property_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the property where the move-in occurred.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Property ID",
+          "aliases": [
+            "prop_id",
+            "building_id",
+            "unit_id"
+          ]
+        },
+        "resident_id": {
+          "name": "resident_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the specific resident individual moving in.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Resident ID",
+          "aliases": [
+            "res_id",
+            "tenant_id",
+            "person_id"
+          ]
+        },
+        "thing_id": {
+          "name": "thing_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Generic identifier for an associated entity or object related to the event.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Thing ID",
+          "aliases": [
+            "item_id",
+            "object_id",
+            "reference_id"
+          ]
+        }
+      }
+    },
+    "timed_locations_of_things": {
+      "table": {
+        "name": "timed_locations_of_things",
+        "column_count": 3,
+        "summary": "Records the specific geographic locations where distinct entities (things) were present at various points in time.",
+        "entity": "Location Event",
+        "role": "transaction_table",
+        "aliases": [
+          "thing_location_history",
+          "entity_presence_log",
+          "location_tracking_log",
+          "thing_movement_records"
+        ]
+      },
+      "columns": {
+        "thing_id": {
+          "name": "thing_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the entity or object being tracked.",
+          "semantic_type": "identifier",
+          "business_concept": "Entity ID",
+          "aliases": [
+            "entity_id",
+            "object_id",
+            "item_id",
+            "thing_ref"
+          ]
+        },
+        "date_and_time": {
+          "name": "date_and_time",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The precise moment when the entity was recorded at the specified location.",
+          "semantic_type": "timestamp",
+          "business_concept": "Event Time",
+          "aliases": [
+            "event_time",
+            "timestamp",
+            "recorded_at",
+            "datetime"
+          ]
+        },
+        "location_code": {
+          "name": "location_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A descriptive string code representing the geographic location or place name where the entity was found.",
+          "semantic_type": "address",
+          "business_concept": "Location Name",
+          "aliases": [
+            "place_name",
+            "site_code",
+            "location_name",
+            "geo_code"
+          ]
+        }
+      }
+    },
+    "customer_event_notes": {
+      "table": {
+        "name": "customer_event_notes",
+        "column_count": 6,
+        "summary": "A transactional table recording specific service events (like cleaning or checks) associated with residents at various properties, including the date the resident moved in.",
+        "entity": "customer_event_note",
+        "role": "transaction_table",
+        "aliases": [
+          "event_notes",
+          "service_events",
+          "resident_activity_log",
+          "property_service_records"
+        ]
+      },
+      "columns": {
+        "customer_event_note_id": {
+          "name": "customer_event_note_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific service event note record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "note_id",
+            "event_note_pk",
+            "id"
+          ]
+        },
+        "customer_event_id": {
+          "name": "customer_event_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking this note to a broader customer event or transaction.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Event Reference",
+          "aliases": [
+            "event_id",
+            "customer_event_ref",
+            "parent_event_id"
+          ]
+        },
+        "service_type_code": {
+          "name": "service_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short code describing the type of service performed (e.g., cleaning, check).",
+          "semantic_type": "code",
+          "business_concept": "Service Category",
+          "aliases": [
+            "service_code",
+            "type_code",
+            "activity_type"
+          ]
+        },
+        "resident_id": {
+          "name": "resident_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the resident associated with this event.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Resident Reference",
+          "aliases": [
+            "resident_ref",
+            "tenant_id",
+            "customer_id"
+          ]
+        },
+        "property_id": {
+          "name": "property_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the property where the event occurred.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Property Reference",
+          "aliases": [
+            "property_ref",
+            "building_id",
+            "site_id"
+          ]
+        },
+        "date_moved_in": {
+          "name": "date_moved_in",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp indicating when the resident moved into the property.",
+          "semantic_type": "timestamp",
+          "business_concept": "Move-in Date",
+          "aliases": [
+            "move_in_date",
+            "lease_start",
+            "arrival_date"
+          ]
+        }
+      }
+    },
+    "residents": {
+      "table": {
+        "name": "residents",
+        "column_count": 5,
+        "summary": "A table recording the occupancy history of residents at specific properties, tracking move-in and move-out dates.",
+        "entity": "Resident Occupancy Record",
+        "role": "transaction_table",
+        "aliases": [
+          "occupancy_log",
+          "tenancy_records",
+          "resident_moves",
+          "property_residents"
+        ]
+      },
+      "columns": {
+        "resident_id": {
+          "name": "resident_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a resident or tenant.",
+          "semantic_type": "identifier",
+          "business_concept": "Resident ID",
+          "aliases": [
+            "resident_key",
+            "tenant_id",
+            "person_id"
+          ]
+        },
+        "property_id": {
+          "name": "property_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the property where the resident lived.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Property ID",
+          "aliases": [
+            "property_key",
+            "building_id",
+            "unit_id"
+          ]
+        },
+        "date_moved_in": {
+          "name": "date_moved_in",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the resident started living at the property.",
+          "semantic_type": "timestamp",
+          "business_concept": "Move-in Date",
+          "aliases": [
+            "start_date",
+            "occupancy_start",
+            "check_in_date"
+          ]
+        },
+        "date_moved_out": {
+          "name": "date_moved_out",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the resident stopped living at the property.",
+          "semantic_type": "timestamp",
+          "business_concept": "Move-out Date",
+          "aliases": [
+            "end_date",
+            "occupancy_end",
+            "check_out_date"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional descriptive information about the resident or the move, such as name or notes.",
+          "semantic_type": "description",
+          "business_concept": "Resident Details",
+          "aliases": [
+            "resident_name",
+            "notes",
+            "extra_info"
+          ]
+        }
+      }
+    },
+    "organizations": {
+      "table": {
+        "name": "organizations",
+        "column_count": 3,
+        "summary": "A table storing hierarchical information about organizations, including their unique identifiers, parent relationships, and descriptive names.",
+        "entity": "Organization",
+        "role": "entity_table",
+        "aliases": [
+          "orgs",
+          "companies",
+          "groups",
+          "entities"
+        ]
+      },
+      "columns": {
+        "organization_id": {
+          "name": "organization_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The unique identifier for a specific organization record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "org_id",
+            "id",
+            "organization_code"
+          ]
+        },
+        "parent_organization_id": {
+          "name": "parent_organization_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The identifier of the parent organization to which this organization belongs, establishing a hierarchy.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Parent Reference",
+          "aliases": [
+            "parent_id",
+            "parent_org_id",
+            "supervisor_id"
+          ]
+        },
+        "organization_details": {
+          "name": "organization_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full name or descriptive title of the organization.",
+          "semantic_type": "organization_name",
+          "business_concept": "Organization Name",
+          "aliases": [
+            "org_name",
+            "company_name",
+            "group_name",
+            "full_name"
+          ]
+        }
+      }
+    },
+    "timed_status_of_things": {
+      "table": {
+        "name": "timed_status_of_things",
+        "column_count": 3,
+        "summary": "Records the temporal status changes of various entities or items.",
+        "entity": "timed_status_of_things",
+        "role": "transaction_table",
+        "aliases": [
+          "thing_status_log",
+          "entity_status_history",
+          "status_timeline"
+        ]
+      },
+      "columns": {
+        "thing_id": {
+          "name": "thing_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the entity or item whose status is being tracked.",
+          "semantic_type": "identifier",
+          "business_concept": "Entity ID",
+          "aliases": [
+            "id",
+            "entity_id",
+            "item_id",
+            "thing_key"
+          ]
+        },
+        "date_and_date": {
+          "name": "date_and_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The specific point in time when the status was recorded or changed.",
+          "semantic_type": "timestamp",
+          "business_concept": "Event Time",
+          "aliases": [
+            "timestamp",
+            "event_time",
+            "recorded_at",
+            "datetime"
+          ]
+        },
+        "status_of_thing_code": {
+          "name": "status_of_thing_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The current or historical state of the entity at the given timestamp.",
+          "semantic_type": "status",
+          "business_concept": "Entity Status",
+          "aliases": [
+            "status",
+            "state",
+            "thing_status",
+            "current_status"
+          ]
+        }
+      }
+    },
+    "properties": {
+      "table": {
+        "name": "properties",
+        "column_count": 4,
+        "summary": "A master table containing unique identifiers and basic descriptive attributes for real estate properties.",
+        "entity": "Property",
+        "role": "entity_table",
+        "aliases": [
+          "properties",
+          "property_master",
+          "real_estate_properties"
+        ]
+      },
+      "columns": {
+        "property_id": {
+          "name": "property_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each property record.",
+          "semantic_type": "identifier",
+          "business_concept": "Property ID",
+          "aliases": [
+            "id",
+            "property_number",
+            "pk_property"
+          ]
+        },
+        "property_type_code": {
+          "name": "property_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short textual code or label indicating the type of the property (e.g., residential, commercial).",
+          "semantic_type": "code",
+          "business_concept": "Property Type",
+          "aliases": [
+            "type",
+            "property_class",
+            "res_type"
+          ]
+        },
+        "property_address": {
+          "name": "property_address",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full physical street address of the property.",
+          "semantic_type": "address",
+          "business_concept": "Property Location",
+          "aliases": [
+            "addr",
+            "street_address",
+            "location"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Additional contextual information about the property, currently observed to contain country codes.",
+          "semantic_type": "code",
+          "business_concept": "Property Country",
+          "aliases": [
+            "country",
+            "region",
+            "details"
+          ]
+        }
+      }
+    },
+    "residents_services": {
+      "table": {
+        "name": "residents_services",
+        "column_count": 7,
+        "summary": "Records tracking the provision of services to residents, including move-in dates, request times, and satisfaction feedback.",
+        "entity": "Service Request",
+        "role": "transaction_table",
+        "aliases": [
+          "resident_services",
+          "service_requests",
+          "residents_service_log",
+          "service_provision_records"
+        ]
+      },
+      "columns": {
+        "resident_id": {
+          "name": "resident_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the resident receiving the service.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Resident Identifier",
+          "aliases": [
+            "resident_key",
+            "user_id",
+            "client_id"
+          ]
+        },
+        "service_id": {
+          "name": "service_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific service requested or provided.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Service Identifier",
+          "aliases": [
+            "service_key",
+            "service_code",
+            "item_id"
+          ]
+        },
+        "date_moved_in": {
+          "name": "date_moved_in",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date and time the resident moved into the property associated with this record.",
+          "semantic_type": "timestamp",
+          "business_concept": "Move-in Date",
+          "aliases": [
+            "move_in_date",
+            "occupancy_start",
+            "check_in_date"
+          ]
+        },
+        "property_id": {
+          "name": "property_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the property where the resident lives.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Property Identifier",
+          "aliases": [
+            "property_key",
+            "building_id",
+            "unit_id"
+          ]
+        },
+        "date_requested": {
+          "name": "date_requested",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date and time when the service was requested by the resident.",
+          "semantic_type": "timestamp",
+          "business_concept": "Request Date",
+          "aliases": [
+            "request_date",
+            "order_date",
+            "ticket_created"
+          ]
+        },
+        "date_provided": {
+          "name": "date_provided",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date and time when the service was actually provided to the resident.",
+          "semantic_type": "timestamp",
+          "business_concept": "Fulfillment Date",
+          "aliases": [
+            "completion_date",
+            "service_date",
+            "resolved_date"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional information regarding the service interaction, specifically indicating satisfaction status.",
+          "semantic_type": "status",
+          "business_concept": "Satisfaction Status",
+          "aliases": [
+            "feedback",
+            "satisfaction_rating",
+            "notes",
+            "outcome"
+          ]
+        }
+      }
+    },
+    "things": {
+      "table": {
+        "name": "things",
+        "column_count": 5,
+        "summary": "A catalog of items or services categorized by organization, type, and service status.",
+        "entity": "Thing",
+        "role": "entity_table",
+        "aliases": [
+          "items",
+          "services",
+          "catalog",
+          "things_list"
+        ]
+      },
+      "columns": {
+        "thing_id": {
+          "name": "thing_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific thing record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "thing_key",
+            "item_id"
+          ]
+        },
+        "organization_id": {
+          "name": "organization_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the thing to a specific organization.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Organization Reference",
+          "aliases": [
+            "org_id",
+            "company_id",
+            "tenant_id"
+          ]
+        },
+        "type_of_thing_code": {
+          "name": "type_of_thing_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Categorical code defining the broad classification of the thing.",
+          "semantic_type": "code",
+          "business_concept": "Item Category",
+          "aliases": [
+            "category_code",
+            "item_type",
+            "product_class"
+          ]
+        },
+        "service_type_code": {
+          "name": "service_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Categorical code defining the specific type of service associated with the thing.",
+          "semantic_type": "code",
+          "business_concept": "Service Category",
+          "aliases": [
+            "service_code",
+            "service_class",
+            "operation_type"
+          ]
+        },
+        "service_details": {
+          "name": "service_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Textual description of the service status or outcome.",
+          "semantic_type": "description",
+          "business_concept": "Service Status",
+          "aliases": [
+            "status",
+            "feedback",
+            "outcome",
+            "service_note"
+          ]
+        }
+      }
+    },
+    "customers": {
+      "table": {
+        "name": "customers",
+        "column_count": 2,
+        "summary": "A table containing core identification and name information for individual customers.",
+        "entity": "Customer",
+        "role": "entity_table",
+        "aliases": [
+          "clients",
+          "accounts",
+          "users",
+          "members"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each customer record.",
+          "semantic_type": "identifier",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "id",
+            "client_id",
+            "account_id"
+          ]
+        },
+        "customer_details": {
+          "name": "customer_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full name of the customer, including titles and suffixes.",
+          "semantic_type": "person_name",
+          "business_concept": "Customer Name",
+          "aliases": [
+            "name",
+            "full_name",
+            "cust_name",
+            "client_name"
+          ]
+        }
+      }
+    }
+  }
+}

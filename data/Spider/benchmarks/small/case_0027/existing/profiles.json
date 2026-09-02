@@ -1,0 +1,292 @@
+{
+  "database": "cre_Doc_Template_Mgt",
+  "tables": {
+    "paragraphs": {
+      "table": {
+        "name": "paragraphs",
+        "column_count": 2,
+        "summary": "A table storing short text snippets, likely representing countries or regions, associated with specific documents.",
+        "entity": "paragraph",
+        "role": "lookup_table",
+        "aliases": [
+          "country_paragraphs",
+          "region_snippets",
+          "doc_paragraphs"
+        ]
+      },
+      "columns": {
+        "paragraph_id": {
+          "name": "paragraph_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each paragraph record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "pk_paragraph",
+            "id"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional metadata or notes, currently empty in samples.",
+          "semantic_type": "description",
+          "business_concept": "Supplementary Information",
+          "aliases": [
+            "notes",
+            "extra_info",
+            "metadata"
+          ]
+        }
+      }
+    },
+    "documents": {
+      "table": {
+        "name": "documents",
+        "column_count": 5,
+        "summary": "A table storing metadata and basic information for various documents, including their unique identifiers, associated templates, names, and brief descriptions.",
+        "entity": "Document",
+        "role": "entity_table",
+        "aliases": [
+          "docs",
+          "doc_metadata",
+          "document_info"
+        ]
+      },
+      "columns": {
+        "document_id": {
+          "name": "document_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each document record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Document ID",
+          "aliases": [
+            "doc_id",
+            "id",
+            "primary_key"
+          ]
+        },
+        "template_id": {
+          "name": "template_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to a specific template used to generate or structure the document.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Template Reference",
+          "aliases": [
+            "tpl_id",
+            "template_ref",
+            "template_code"
+          ]
+        },
+        "document_name": {
+          "name": "document_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The human-readable title or name of the document.",
+          "semantic_type": "description",
+          "business_concept": "Document Title",
+          "aliases": [
+            "doc_title",
+            "name",
+            "title"
+          ]
+        },
+        "document_description": {
+          "name": "document_description",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short code or status indicator associated with the document, likely representing a single-character status or category.",
+          "semantic_type": "code",
+          "business_concept": "Document Status/Code",
+          "aliases": [
+            "doc_status",
+            "doc_code",
+            "status_flag"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional free-text information about the document, which appears to be currently unused or empty in the sample data.",
+          "semantic_type": "description",
+          "business_concept": "Additional Notes",
+          "aliases": [
+            "notes",
+            "extra_info",
+            "remarks"
+          ]
+        }
+      }
+    },
+    "templates": {
+      "table": {
+        "name": "templates",
+        "column_count": 6,
+        "summary": "Stores definitions of various templates with metadata including versioning, effective dates, and type codes.",
+        "entity": "Template",
+        "role": "lookup_table",
+        "aliases": [
+          "template_master",
+          "template_definitions",
+          "template_config"
+        ]
+      },
+      "columns": {
+        "template_id": {
+          "name": "template_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each template record.",
+          "semantic_type": "identifier",
+          "business_concept": "Template ID",
+          "aliases": [
+            "id",
+            "template_key",
+            "tmpl_id"
+          ]
+        },
+        "version_number": {
+          "name": "version_number",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Indicates the specific version of the template.",
+          "semantic_type": "code",
+          "business_concept": "Version",
+          "aliases": [
+            "ver",
+            "version",
+            "v_num"
+          ]
+        },
+        "template_type_code": {
+          "name": "template_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Categorizes the template into a specific type (e.g., PP, BK).",
+          "semantic_type": "code",
+          "business_concept": "Template Type",
+          "aliases": [
+            "type",
+            "tmpl_type",
+            "category_code"
+          ]
+        },
+        "date_effective_from": {
+          "name": "date_effective_from",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The start date and time when the template becomes active.",
+          "semantic_type": "timestamp",
+          "business_concept": "Effective Start Date",
+          "aliases": [
+            "start_date",
+            "from_date",
+            "effective_start"
+          ]
+        },
+        "date_effective_to": {
+          "name": "date_effective_to",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The end date and time when the template is no longer active.",
+          "semantic_type": "timestamp",
+          "business_concept": "Effective End Date",
+          "aliases": [
+            "end_date",
+            "to_date",
+            "effective_end"
+          ]
+        },
+        "template_details": {
+          "name": "template_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional descriptive text or notes about the template.",
+          "semantic_type": "description",
+          "business_concept": "Template Description",
+          "aliases": [
+            "notes",
+            "description",
+            "details",
+            "remarks"
+          ]
+        }
+      }
+    },
+    "ref_template_types": {
+      "table": {
+        "name": "ref_template_types",
+        "column_count": 2,
+        "summary": "A reference table defining standard codes and descriptions for various document or content template types.",
+        "entity": "Template Type",
+        "role": "lookup_table",
+        "aliases": [
+          "ref_template_types",
+          "template_type_ref",
+          "doc_type_codes",
+          "content_type_lookup"
+        ]
+      },
+      "columns": {
+        "template_type_code": {
+          "name": "template_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique, short alphanumeric identifier representing a specific template type.",
+          "semantic_type": "code",
+          "business_concept": "Template Type Code",
+          "aliases": [
+            "template_code",
+            "type_code",
+            "doc_code",
+            "tt_code"
+          ]
+        },
+        "template_type_description": {
+          "name": "template_type_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A human-readable text description explaining the purpose or nature of the template type.",
+          "semantic_type": "description",
+          "business_concept": "Template Type Description",
+          "aliases": [
+            "template_desc",
+            "type_description",
+            "doc_description",
+            "tt_description"
+          ]
+        }
+      }
+    }
+  }
+}

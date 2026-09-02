@@ -1,3 +1,8 @@
+from __future__ import annotations
+
+from collections import Counter
+from pathlib import Path
+import csv
 from typing import Any
 
 
@@ -46,6 +51,206 @@ def safe_divide(
         return 0.0
 
     return numerator / denominator
+
+
+def compute_decision_action_consistency(
+    proposal: dict[str, Any],
+) -> dict[str, Any]:
+    """Check whether the proposal shape agrees with its declared decision."""
+    decision = proposal.get("source_decision")
+    actions = proposal.get("table_actions", [])
+    if not isinstance(actions, list):
+        actions = []
+    table_action_types = [
+        action.get("action") for action in actions if isinstance(action, dict)
+    ]
+    issues: list[str] = []
+    if decision == "create_table":
+        if table_action_types.count("create") != 1:
+            issues.append("create_table requires exactly one create table action")
+        if "map" in table_action_types:
+            issues.append("create_table cannot map to an existing table")
+    elif decision in {"extend_table", "insert_table"}:
+        if table_action_types.count("map") != 1:
+            issues.append(f"{decision} requires exactly one map table action")
+        if "create" in table_action_types:
+            issues.append(f"{decision} cannot create a table")
+    else:
+        issues.append("unsupported or missing source_decision")
+
+    if decision == "insert_table":
+        for action in actions:
+            if not isinstance(action, dict):
+                continue
+            if any(
+                column_action.get("action") == "create"
+                for column_action in action.get("column_actions", [])
+                if isinstance(column_action, dict)
+            ):
+                issues.append("insert_table cannot create columns")
+                break
+    return {"consistent": not issues, "issue_count": len(issues), "issues": issues}
+
+
+def compute_rdb_complexity_features(
+    rdb: dict[str, Any], incoming_table: dict[str, Any]
+) -> dict[str, Any]:
+    """Extract case-level schema-width, key, and FK-graph features."""
+    tables = rdb.get("schema", {}).get("tables", {})
+    if not isinstance(tables, dict):
+        tables = {}
+    widths = [
+        len(table.get("columns", {}))
+        for table in tables.values()
+        if isinstance(table, dict)
+    ]
+    incoming_tables = incoming_table.get("schema", {}).get("tables", {})
+    incoming_width = sum(
+        len(table.get("columns", {}))
+        for table in incoming_tables.values()
+        if isinstance(table, dict)
+    ) if isinstance(incoming_tables, dict) else 0
+
+    constraints = rdb.get("constraints", {}).get("constraints", {})
+    if not isinstance(constraints, dict):
+        constraints = {}
+    primary_keys = constraints.get("primary_keys", {})
+    foreign_keys = constraints.get("foreign_keys", {})
+    if not isinstance(primary_keys, dict):
+        primary_keys = {}
+    if not isinstance(foreign_keys, dict):
+        foreign_keys = {}
+
+    pk_widths = [len(cols) for cols in primary_keys.values() if isinstance(cols, list)]
+    fk_widths: list[int] = []
+    degree = {table: 0 for table in tables}
+    fk_count = 0
+    for source_table, items in foreign_keys.items():
+        if not isinstance(items, list):
+            continue
+        for fk in items:
+            if not isinstance(fk, dict):
+                continue
+            fk_count += 1
+            columns = fk.get("columns")
+            fk_widths.append(len(columns) if isinstance(columns, list) else 0)
+            if source_table in degree:
+                degree[source_table] += 1
+            referenced_table = fk.get("referenced_table")
+            if referenced_table in degree:
+                degree[referenced_table] += 1
+
+    return {
+        "existing_table_count": len(tables),
+        "existing_attribute_count": sum(widths),
+        "incoming_attribute_count": incoming_width,
+        "mean_attributes_per_relation": safe_divide(sum(widths), len(widths)),
+        "max_attributes_per_relation": max(widths, default=0),
+        "existing_foreign_key_count": fk_count,
+        "foreign_keys_per_relation": safe_divide(fk_count, len(tables)),
+        "mean_fk_degree": safe_divide(sum(degree.values()), len(degree)),
+        "max_fk_degree": max(degree.values(), default=0),
+        "composite_pk_count": sum(width > 1 for width in pk_widths),
+        "mean_pk_width": safe_divide(sum(pk_widths), len(pk_widths)),
+        "max_pk_width": max(pk_widths, default=0),
+        "composite_fk_count": sum(width > 1 for width in fk_widths),
+        "mean_fk_width": safe_divide(sum(fk_widths), len(fk_widths)),
+        "max_fk_width": max(fk_widths, default=0),
+    }
+
+
+def _read_csv_multiset(path: Path, columns: list[str] | None = None) -> Counter[tuple[str, ...]]:
+    if not path.exists():
+        return Counter()
+    with path.open("r", encoding="utf-8-sig", newline="") as file:
+        reader = csv.DictReader(file)
+        selected = columns or list(reader.fieldnames or [])
+        return Counter(tuple(row.get(column, "") for column in selected) for row in reader)
+
+
+def compute_final_tuple_metrics(
+    predicted_rdb_path: str | Path,
+    expected_rdb_path: str | Path,
+    expected_schema: dict[str, Any],
+) -> dict[str, Any]:
+    """Compare complete final-table row multisets using the reference column order."""
+    predicted_root = Path(predicted_rdb_path) / "tables"
+    expected_root = Path(expected_rdb_path) / "tables"
+    tables = expected_schema.get("tables", {})
+    matched = predicted_total = expected_total = 0
+    exact_tables = 0
+    expected_table_names = set(tables)
+    predicted_table_names = {path.stem for path in predicted_root.glob("*.csv")}
+    all_table_names = expected_table_names | predicted_table_names
+    for table_name in sorted(all_table_names):
+        table = tables.get(table_name, {})
+        columns = table.get("column_order") or list(table.get("columns", {}))
+        if table_name not in expected_table_names:
+            columns = None
+        predicted = _read_csv_multiset(predicted_root / f"{table_name}.csv", columns)
+        expected = (
+            _read_csv_multiset(expected_root / f"{table_name}.csv", columns)
+            if table_name in expected_table_names else Counter()
+        )
+        matched += sum((predicted & expected).values())
+        predicted_total += sum(predicted.values())
+        expected_total += sum(expected.values())
+        exact_tables += (
+            predicted == expected
+            and (table_name in predicted_table_names) == (table_name in expected_table_names)
+        )
+    precision = safe_divide(matched, predicted_total)
+    recall = safe_divide(matched, expected_total)
+    return {
+        "true_positive": matched,
+        "false_positive": predicted_total - matched,
+        "false_negative": expected_total - matched,
+        "matched_row_count": matched,
+        "predicted_row_count": predicted_total,
+        "expected_row_count": expected_total,
+        "precision": precision,
+        "recall": recall,
+        "f1": safe_divide(2 * precision * recall, precision + recall),
+        "exact_match": exact_tables == len(all_table_names),
+        "exact_table_rate": safe_divide(exact_tables, len(all_table_names)),
+    }
+
+
+def compute_tuple_incorporation_metrics(
+    incoming_rows: list[dict[str, Any]],
+    column_placements: dict[str, str],
+    predicted_rdb_path: str | Path,
+) -> dict[str, Any]:
+    """Measure whether the incoming row values supplied to the run appear at their targets."""
+    placements_by_table: dict[str, list[tuple[str, str]]] = {}
+    for source_column, target_location in column_placements.items():
+        if not isinstance(target_location, str) or "." not in target_location:
+            continue
+        target_table, target_column = target_location.split(".", maxsplit=1)
+        placements_by_table.setdefault(target_table, []).append(
+            (source_column, target_column)
+        )
+
+    required = matched = 0
+    for target_table, placements in placements_by_table.items():
+        target_columns = [target for _, target in placements]
+        available = _read_csv_multiset(
+            Path(predicted_rdb_path) / "tables" / f"{target_table}.csv",
+            target_columns,
+        )
+        expected = Counter(
+            tuple(str(row.get(source, "")) for source, _ in placements)
+            for row in incoming_rows
+        )
+        required += sum(expected.values())
+        matched += sum((expected & available).values())
+    return {
+        "applicable": bool(placements_by_table) and bool(incoming_rows),
+        "matched_row_count": matched,
+        "required_row_count": required,
+        "accuracy": safe_divide(matched, required),
+        "full_incorporation": required > 0 and matched == required,
+    }
 
 
 def compute_decision_metrics(

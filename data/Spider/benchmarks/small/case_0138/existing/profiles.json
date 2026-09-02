@@ -1,0 +1,388 @@
+{
+  "database": "insurance_policies",
+  "tables": {
+    "customer_policies": {
+      "table": {
+        "name": "customer_policies",
+        "column_count": 5,
+        "summary": "Stores active and historical insurance policies linked to specific customers, including policy types and validity periods.",
+        "entity": "Insurance Policy",
+        "role": "entity_table",
+        "aliases": [
+          "policies",
+          "customer_policies",
+          "policy_details"
+        ]
+      },
+      "columns": {
+        "policy_id": {
+          "name": "policy_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific insurance policy record.",
+          "semantic_type": "identifier",
+          "business_concept": "Policy ID",
+          "aliases": [
+            "policy_number",
+            "p_id",
+            "id"
+          ]
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key linking the policy to a specific customer account.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "client_id",
+            "customer_number"
+          ]
+        },
+        "policy_type_code": {
+          "name": "policy_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Categorical code indicating the class of insurance coverage (e.g., Car, Life).",
+          "semantic_type": "code",
+          "business_concept": "Policy Type",
+          "aliases": [
+            "policy_class",
+            "coverage_type",
+            "type_code"
+          ]
+        },
+        "start_date": {
+          "name": "start_date",
+          "dtype": "date",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The effective date when the insurance coverage begins.",
+          "semantic_type": "date",
+          "business_concept": "Policy Start Date",
+          "aliases": [
+            "effective_date",
+            "issue_date",
+            "commencement_date",
+            "start"
+          ]
+        },
+        "end_date": {
+          "name": "end_date",
+          "dtype": "date",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The expiration date when the insurance coverage terminates.",
+          "semantic_type": "date",
+          "business_concept": "Policy End Date",
+          "aliases": [
+            "expiry_date",
+            "termination_date",
+            "end_date",
+            "close_date"
+          ]
+        }
+      }
+    },
+    "customers": {
+      "table": {
+        "name": "customers",
+        "column_count": 2,
+        "summary": "A table containing core identification and name information for individual customers.",
+        "entity": "Customer",
+        "role": "entity_table",
+        "aliases": [
+          "clients",
+          "accounts",
+          "users"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each customer record.",
+          "semantic_type": "identifier",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "id",
+            "customer_number"
+          ]
+        },
+        "customer_details": {
+          "name": "customer_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full name of the customer, including titles and last names.",
+          "semantic_type": "person_name",
+          "business_concept": "Customer Name",
+          "aliases": [
+            "name",
+            "full_name",
+            "cust_name",
+            "client_name"
+          ]
+        }
+      }
+    },
+    "settlements": {
+      "table": {
+        "name": "settlements",
+        "column_count": 7,
+        "summary": "Records of insurance claims and their corresponding settlement details, including dates, amounts, and associated policy/customer identifiers.",
+        "entity": "Settlement",
+        "role": "transaction_table",
+        "aliases": [
+          "claim_settlements",
+          "settlement_records",
+          "claims_settled"
+        ]
+      },
+      "columns": {
+        "settlement_id": {
+          "name": "settlement_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific settlement record.",
+          "semantic_type": "identifier",
+          "business_concept": "Settlement ID",
+          "aliases": [
+            "settlement_key",
+            "id",
+            "pk_settlement"
+          ]
+        },
+        "claim_id": {
+          "name": "claim_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier linking the settlement to a specific insurance claim.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Claim ID",
+          "aliases": [
+            "claim_number",
+            "claim_ref",
+            "fk_claim"
+          ]
+        },
+        "date_claim_made": {
+          "name": "date_claim_made",
+          "dtype": "date",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The date on which the insurance claim was originally filed.",
+          "semantic_type": "date",
+          "business_concept": "Claim Date",
+          "aliases": [
+            "claim_date",
+            "date_of_claim",
+            "filing_date"
+          ]
+        },
+        "date_claim_settled": {
+          "name": "date_claim_settled",
+          "dtype": "date",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The date on which the claim was officially settled.",
+          "semantic_type": "date",
+          "business_concept": "Settlement Date",
+          "aliases": [
+            "settlement_date",
+            "resolved_date",
+            "close_date"
+          ]
+        },
+        "amount_claimed": {
+          "name": "amount_claimed",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total monetary value requested by the claimant.",
+          "semantic_type": "money",
+          "business_concept": "Claim Amount",
+          "aliases": [
+            "requested_amount",
+            "claim_value",
+            "gross_claim"
+          ]
+        },
+        "amount_settled": {
+          "name": "amount_settled",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The actual monetary value paid or agreed upon for the settlement.",
+          "semantic_type": "money",
+          "business_concept": "Settlement Amount",
+          "aliases": [
+            "paid_amount",
+            "settlement_value",
+            "net_payout"
+          ]
+        },
+        "customer_policy_id": {
+          "name": "customer_policy_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the insurance policy held by the customer associated with this claim.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Policy ID",
+          "aliases": [
+            "policy_number",
+            "policy_id",
+            "customer_policy_ref"
+          ]
+        }
+      }
+    },
+    "claims": {
+      "table": {
+        "name": "claims",
+        "column_count": 6,
+        "summary": "A table recording insurance claims, linking them to specific policies and tracking the timeline from claim submission to settlement along with financial amounts.",
+        "entity": "Insurance Claim",
+        "role": "transaction_table",
+        "aliases": [
+          "claim_records",
+          "insurance_claims",
+          "loss_claims"
+        ]
+      },
+      "columns": {
+        "claim_id": {
+          "name": "claim_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific insurance claim record.",
+          "semantic_type": "identifier",
+          "business_concept": "Claim Reference Number",
+          "aliases": [
+            "claim_number",
+            "claim_ref",
+            "claim_no"
+          ]
+        },
+        "policy_id": {
+          "name": "policy_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A foreign key linking the claim to the specific insurance policy under which it was filed.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Policy Reference Number",
+          "aliases": [
+            "policy_number",
+            "policy_ref",
+            "policy_no"
+          ]
+        },
+        "date_claim_made": {
+          "name": "date_claim_made",
+          "dtype": "date",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The date on which the insurance claim was originally filed or reported.",
+          "semantic_type": "date",
+          "business_concept": "Claim Date",
+          "aliases": [
+            "claim_date",
+            "date_of_loss",
+            "report_date"
+          ]
+        },
+        "date_claim_settled": {
+          "name": "date_claim_settled",
+          "dtype": "date",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The date on which the insurance claim was finalized and payment was processed.",
+          "semantic_type": "date",
+          "business_concept": "Settlement Date",
+          "aliases": [
+            "settlement_date",
+            "close_date",
+            "payment_date"
+          ]
+        },
+        "amount_claimed": {
+          "name": "amount_claimed",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total monetary value requested by the policyholder for the claim.",
+          "semantic_type": "money",
+          "business_concept": "Claim Amount",
+          "aliases": [
+            "requested_amount",
+            "claim_value",
+            "loss_amount"
+          ]
+        },
+        "amount_settled": {
+          "name": "amount_settled",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The actual monetary value paid out by the insurer to settle the claim.",
+          "semantic_type": "money",
+          "business_concept": "Settlement Amount",
+          "aliases": [
+            "paid_amount",
+            "settlement_value",
+            "payout"
+          ]
+        }
+      }
+    }
+  }
+}

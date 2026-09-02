@@ -1,0 +1,959 @@
+{
+  "database": "e_government",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/e_government",
+    "schema_path": "data/Spider/parsed/e_government/schema.json",
+    "tables_dir": "data/Spider/parsed/e_government/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "addresses": {
+      "table": {
+        "name": "addresses",
+        "column_count": 6,
+        "summary": "A table storing detailed shipping or billing address information including street, city, state, and country components.",
+        "entity": "Address",
+        "role": "entity_table",
+        "aliases": [
+          "addr",
+          "ship_address",
+          "billing_address",
+          "location"
+        ]
+      },
+      "columns": {
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each address record.",
+          "semantic_type": "identifier",
+          "business_concept": "Address ID",
+          "aliases": [
+            "id",
+            "addr_id",
+            "address_key"
+          ]
+        },
+        "line_1_number_building": {
+          "name": "line_1_number_building",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The primary street address line containing the building number and street name.",
+          "semantic_type": "address",
+          "business_concept": "Street Address",
+          "aliases": [
+            "street",
+            "line1",
+            "address_line_1",
+            "building"
+          ]
+        },
+        "town_city": {
+          "name": "town_city",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The city, town, or municipality where the address is located.",
+          "semantic_type": "city",
+          "business_concept": "City",
+          "aliases": [
+            "city",
+            "town",
+            "municipality",
+            "locality"
+          ]
+        },
+        "zip_postcode": {
+          "name": "zip_postcode",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The postal code or ZIP code associated with the address.",
+          "semantic_type": "code",
+          "business_concept": "Postal Code",
+          "aliases": [
+            "zip",
+            "postal_code",
+            "postcode",
+            "zip_code"
+          ]
+        },
+        "state_province_county": {
+          "name": "state_province_county",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The state, province, or county designation for the address.",
+          "semantic_type": "category",
+          "business_concept": "State/Province",
+          "aliases": [
+            "state",
+            "province",
+            "region",
+            "county",
+            "state_province"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country where the address is located.",
+          "semantic_type": "country",
+          "business_concept": "Country",
+          "aliases": [
+            "nation",
+            "country_code",
+            "iso_country"
+          ]
+        }
+      }
+    },
+    "forms": {
+      "table": {
+        "name": "forms",
+        "column_count": 6,
+        "summary": "A catalog of government or administrative forms containing metadata such as names, descriptions, types, and associated service identifiers.",
+        "entity": "Form",
+        "role": "lookup_table",
+        "aliases": [
+          "form_catalog",
+          "form_registry",
+          "document_types",
+          "application_forms"
+        ]
+      },
+      "columns": {
+        "form_id": {
+          "name": "form_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each form record in the database.",
+          "semantic_type": "identifier",
+          "business_concept": "Form ID",
+          "aliases": [
+            "form_key",
+            "id",
+            "form_uid"
+          ]
+        },
+        "form_type_code": {
+          "name": "form_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short code representing the complexity or category of the form.",
+          "semantic_type": "code",
+          "business_concept": "Form Complexity Type",
+          "aliases": [
+            "form_category",
+            "form_class",
+            "type_code"
+          ]
+        },
+        "service_id": {
+          "name": "service_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the form to a specific government service or department.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Service ID",
+          "aliases": [
+            "service_key",
+            "dept_id",
+            "service_code"
+          ]
+        },
+        "form_number": {
+          "name": "form_number",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric code assigned to the form, often used for filing or reference.",
+          "semantic_type": "code",
+          "business_concept": "Form Reference Number",
+          "aliases": [
+            "form_code",
+            "doc_number",
+            "reference_id"
+          ]
+        },
+        "form_name": {
+          "name": "form_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The human-readable title of the form.",
+          "semantic_type": "category",
+          "business_concept": "Form Title",
+          "aliases": [
+            "form_title",
+            "name",
+            "document_name"
+          ]
+        },
+        "form_description": {
+          "name": "form_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A detailed text explanation of the form's purpose and usage.",
+          "semantic_type": "description",
+          "business_concept": "Form Description",
+          "aliases": [
+            "form_details",
+            "summary",
+            "notes"
+          ]
+        }
+      }
+    },
+    "individuals": {
+      "table": {
+        "name": "individuals",
+        "column_count": 7,
+        "summary": "A table containing personal identification and contact information for individuals.",
+        "entity": "Individual",
+        "role": "entity_table",
+        "aliases": [
+          "people",
+          "contacts",
+          "users",
+          "personnel"
+        ]
+      },
+      "columns": {
+        "individual_id": {
+          "name": "individual_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each individual record.",
+          "semantic_type": "identifier",
+          "business_concept": "Unique ID",
+          "aliases": [
+            "id",
+            "person_id",
+            "user_id",
+            "pk"
+          ]
+        },
+        "individual_first_name": {
+          "name": "individual_first_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The first name of the individual.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "fname",
+            "fn",
+            "first",
+            "given_name"
+          ]
+        },
+        "individual_middle_name": {
+          "name": "individual_middle_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The middle name of the individual.",
+          "semantic_type": "person_name",
+          "business_concept": "Middle Name",
+          "aliases": [
+            "mname",
+            "mn",
+            "middle",
+            "mid_name"
+          ]
+        },
+        "inidividual_phone": {
+          "name": "inidividual_phone",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The telephone contact number for the individual.",
+          "semantic_type": "phone",
+          "business_concept": "Phone Number",
+          "aliases": [
+            "phone",
+            "tel",
+            "mobile",
+            "contact_phone",
+            "telephone"
+          ]
+        },
+        "individual_email": {
+          "name": "individual_email",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "The email address associated with the individual.",
+          "semantic_type": "email",
+          "business_concept": "Email Address",
+          "aliases": [
+            "email",
+            "e_mail",
+            "contact_email",
+            "user_email"
+          ]
+        },
+        "individual_address": {
+          "name": "individual_address",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The physical mailing address of the individual.",
+          "semantic_type": "address",
+          "business_concept": "Mailing Address",
+          "aliases": [
+            "addr",
+            "address_line",
+            "street_address",
+            "home_address"
+          ]
+        },
+        "individual_last_name": {
+          "name": "individual_last_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The last name (surname) of the individual.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "lname",
+            "ln",
+            "last",
+            "surname",
+            "family_name"
+          ]
+        }
+      }
+    },
+    "organization_contact_individuals": {
+      "table": {
+        "name": "organization_contact_individuals",
+        "column_count": 4,
+        "summary": "Records tracking individual contacts within specific organizations, including start and end dates of the contact period.",
+        "entity": "Contact Event",
+        "role": "transaction_table",
+        "aliases": [
+          "org_contact_log",
+          "individual_contact_history",
+          "contact_sessions"
+        ]
+      },
+      "columns": {
+        "individual_id": {
+          "name": "individual_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the individual being contacted.",
+          "semantic_type": "identifier",
+          "business_concept": "Person ID",
+          "aliases": [
+            "contact_id",
+            "person_id",
+            "user_id"
+          ]
+        },
+        "organization_id": {
+          "name": "organization_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the organization associated with the contact.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Organization ID",
+          "aliases": [
+            "org_id",
+            "company_id",
+            "client_id"
+          ]
+        },
+        "date_contact_from": {
+          "name": "date_contact_from",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The start date and time of the contact period.",
+          "semantic_type": "timestamp",
+          "business_concept": "Contact Start Date",
+          "aliases": [
+            "contact_start",
+            "start_date",
+            "created_at"
+          ]
+        },
+        "date_contact_to": {
+          "name": "date_contact_to",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The end date and time of the contact period, nullable if the contact is ongoing.",
+          "semantic_type": "timestamp",
+          "business_concept": "Contact End Date",
+          "aliases": [
+            "contact_end",
+            "end_date",
+            "closed_at"
+          ]
+        }
+      }
+    },
+    "organizations": {
+      "table": {
+        "name": "organizations",
+        "column_count": 4,
+        "summary": "A table containing core details about political organizations, including their unique identifier, formation date, name, and VAT registration number.",
+        "entity": "Political Organization",
+        "role": "entity_table",
+        "aliases": [
+          "orgs",
+          "political_groups",
+          "parties",
+          "entities"
+        ]
+      },
+      "columns": {
+        "organization_id": {
+          "name": "organization_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each organization record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "org_id",
+            "id",
+            "organization_identifier"
+          ]
+        },
+        "date_formed": {
+          "name": "date_formed",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date on which the organization was officially established.",
+          "semantic_type": "date",
+          "business_concept": "Formation Date",
+          "aliases": [
+            "created_at",
+            "established_date",
+            "incorporation_date",
+            "founded"
+          ]
+        },
+        "organization_name": {
+          "name": "organization_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The official name of the political organization.",
+          "semantic_type": "organization_name",
+          "business_concept": "Entity Name",
+          "aliases": [
+            "name",
+            "org_name",
+            "party_name",
+            "title"
+          ]
+        },
+        "uk_vat_number": {
+          "name": "uk_vat_number",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The UK Value Added Tax registration number assigned to the organization.",
+          "semantic_type": "code",
+          "business_concept": "Tax Identification Number",
+          "aliases": [
+            "vat",
+            "vat_number",
+            "tax_id",
+            "uk_vat"
+          ]
+        }
+      }
+    },
+    "parties": {
+      "table": {
+        "name": "parties",
+        "column_count": 4,
+        "summary": "A master table containing core contact and communication details for various parties, including unique identifiers, payment preferences, phone numbers, and email addresses.",
+        "entity": "Party",
+        "role": "entity_table",
+        "aliases": [
+          "contacts",
+          "customers",
+          "parties_master",
+          "party_contacts"
+        ]
+      },
+      "columns": {
+        "party_id": {
+          "name": "party_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each party record in the system.",
+          "semantic_type": "identifier",
+          "business_concept": "Party ID",
+          "aliases": [
+            "id",
+            "party_key",
+            "pk_party"
+          ]
+        },
+        "payment_method_code": {
+          "name": "payment_method_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The preferred method of payment associated with the party, represented by a short text code.",
+          "semantic_type": "code",
+          "business_concept": "Payment Method",
+          "aliases": [
+            "pay_method",
+            "payment_type",
+            "pm_code"
+          ]
+        },
+        "party_phone": {
+          "name": "party_phone",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The primary or secondary telephone contact number for the party, stored as a string to accommodate various formats.",
+          "semantic_type": "phone",
+          "business_concept": "Phone Number",
+          "aliases": [
+            "phone",
+            "telephone",
+            "contact_phone",
+            "tel"
+          ]
+        },
+        "party_email": {
+          "name": "party_email",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "The electronic mail address associated with the party for communication purposes.",
+          "semantic_type": "email",
+          "business_concept": "Email Address",
+          "aliases": [
+            "email",
+            "e_mail",
+            "contact_email",
+            "email_addr"
+          ]
+        }
+      }
+    },
+    "party_addresses": {
+      "table": {
+        "name": "party_addresses",
+        "column_count": 5,
+        "summary": "Stores historical address records linked to specific parties, tracking the validity period and type of each address.",
+        "entity": "Address",
+        "role": "relationship_table",
+        "aliases": [
+          "party_addresses",
+          "addresses",
+          "address_history",
+          "party_address_log"
+        ]
+      },
+      "columns": {
+        "party_id": {
+          "name": "party_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the party (customer, client, or entity) associated with the address.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Party Identifier",
+          "aliases": [
+            "party",
+            "customer_id",
+            "client_id",
+            "account_id",
+            "id"
+          ]
+        },
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific address record within the system.",
+          "semantic_type": "identifier",
+          "business_concept": "Address Record ID",
+          "aliases": [
+            "addr_id",
+            "address_key",
+            "id"
+          ]
+        },
+        "date_address_from": {
+          "name": "date_address_from",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The start date and time when this address became valid for the party.",
+          "semantic_type": "timestamp",
+          "business_concept": "Address Validity Start Date",
+          "aliases": [
+            "from_date",
+            "start_date",
+            "valid_from",
+            "effective_date"
+          ]
+        },
+        "address_type_code": {
+          "name": "address_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A categorical code indicating the purpose of the address (e.g., residence, billing, delivery).",
+          "semantic_type": "code",
+          "business_concept": "Address Type",
+          "aliases": [
+            "addr_type",
+            "type_code",
+            "address_category",
+            "purpose"
+          ]
+        },
+        "date_address_to": {
+          "name": "date_address_to",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The end date and time when this address ceased to be valid for the party (nullable if currently active).",
+          "semantic_type": "timestamp",
+          "business_concept": "Address Validity End Date",
+          "aliases": [
+            "to_date",
+            "end_date",
+            "valid_to",
+            "expiry_date"
+          ]
+        }
+      }
+    },
+    "party_forms": {
+      "table": {
+        "name": "party_forms",
+        "column_count": 5,
+        "summary": "Records tracking the initiation and completion status of forms submitted by various parties.",
+        "entity": "Form Submission",
+        "role": "transaction_table",
+        "aliases": [
+          "form_submissions",
+          "party_form_records",
+          "form_tracking"
+        ]
+      },
+      "columns": {
+        "party_id": {
+          "name": "party_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the individual or organization that submitted the form.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Party Identifier",
+          "aliases": [
+            "party_key",
+            "user_id",
+            "client_id",
+            "submitter_id"
+          ]
+        },
+        "form_id": {
+          "name": "form_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific form instance or template associated with the submission.",
+          "semantic_type": "identifier",
+          "business_concept": "Form Identifier",
+          "aliases": [
+            "form_key",
+            "document_id",
+            "record_id"
+          ]
+        },
+        "date_completion_started": {
+          "name": "date_completion_started",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp indicating when the party began filling out or submitting the form.",
+          "semantic_type": "timestamp",
+          "business_concept": "Start Time",
+          "aliases": [
+            "start_date",
+            "initiated_at",
+            "created_at",
+            "submission_start"
+          ]
+        },
+        "form_status_code": {
+          "name": "form_status_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The current state of the form submission, indicating whether it is complete, partially done, or not started.",
+          "semantic_type": "status",
+          "business_concept": "Form Status",
+          "aliases": [
+            "status",
+            "form_state",
+            "completion_status",
+            "outcome"
+          ]
+        },
+        "date_fully_completed": {
+          "name": "date_fully_completed",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp indicating when the form was fully completed by the party (nullable if not yet completed).",
+          "semantic_type": "timestamp",
+          "business_concept": "Completion Time",
+          "aliases": [
+            "end_date",
+            "finished_at",
+            "completed_at",
+            "close_date"
+          ]
+        }
+      }
+    },
+    "party_services": {
+      "table": {
+        "name": "party_services",
+        "column_count": 5,
+        "summary": "A transactional table recording service bookings made by customers, including details on the service, the customer, and the timing of the booking.",
+        "entity": "Service Booking",
+        "role": "transaction_table",
+        "aliases": [
+          "bookings",
+          "service_bookings",
+          "appointments",
+          "reservations"
+        ]
+      },
+      "columns": {
+        "booking_id": {
+          "name": "booking_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific service booking record.",
+          "semantic_type": "identifier",
+          "business_concept": "Booking Reference",
+          "aliases": [
+            "id",
+            "booking_ref",
+            "bk_id"
+          ]
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A foreign key linking the booking to a specific customer entity.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer Identifier",
+          "aliases": [
+            "cust_id",
+            "client_id",
+            "user_id"
+          ]
+        },
+        "service_id": {
+          "name": "service_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A foreign key linking the booking to a specific service entity.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Service Identifier",
+          "aliases": [
+            "srv_id",
+            "service_code",
+            "item_id"
+          ]
+        },
+        "service_datetime": {
+          "name": "service_datetime",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The scheduled date and time when the service is intended to be performed.",
+          "semantic_type": "timestamp",
+          "business_concept": "Service Start Time",
+          "aliases": [
+            "start_time",
+            "appointment_time",
+            "service_date",
+            "slot_datetime"
+          ]
+        },
+        "booking_made_date": {
+          "name": "booking_made_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date and time when the booking was created or confirmed in the system.",
+          "semantic_type": "timestamp",
+          "business_concept": "Booking Creation Time",
+          "aliases": [
+            "created_at",
+            "booked_on",
+            "booking_date",
+            "inserted_at"
+          ]
+        }
+      }
+    },
+    "services": {
+      "table": {
+        "name": "services",
+        "column_count": 4,
+        "summary": "A catalog of services categorized by type and name, likely used for administrative or public service management.",
+        "entity": "Service",
+        "role": "lookup_table",
+        "aliases": [
+          "service_catalog",
+          "service_registry",
+          "service_list"
+        ]
+      },
+      "columns": {
+        "service_id": {
+          "name": "service_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each service record.",
+          "semantic_type": "identifier",
+          "business_concept": "Service ID",
+          "aliases": [
+            "svc_id",
+            "id",
+            "service_key"
+          ]
+        },
+        "service_type_code": {
+          "name": "service_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short code representing the category or domain of the service.",
+          "semantic_type": "code",
+          "business_concept": "Service Type",
+          "aliases": [
+            "type_code",
+            "svc_type",
+            "category_code"
+          ]
+        },
+        "service_name": {
+          "name": "service_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The human-readable name of the service.",
+          "semantic_type": "category",
+          "business_concept": "Service Name",
+          "aliases": [
+            "name",
+            "svc_name",
+            "title"
+          ]
+        },
+        "service_descriptio": {
+          "name": "service_descriptio",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A brief description of the service (note: column name appears truncated).",
+          "semantic_type": "description",
+          "business_concept": "Service Description",
+          "aliases": [
+            "description",
+            "desc",
+            "details",
+            "service_desc"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,507 @@
+{
+  "database": "scholar",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/scholar",
+    "schema_path": "data/Spider/parsed/scholar/schema.json",
+    "tables_dir": "data/Spider/parsed/scholar/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "author": {
+      "table": {
+        "name": "author",
+        "column_count": 2,
+        "summary": "Stores information about authors, including their unique identifier and name.",
+        "entity": "Author",
+        "role": "entity_table",
+        "aliases": [
+          "authors",
+          "author_master",
+          "pub_authors"
+        ]
+      },
+      "columns": {
+        "authorid": {
+          "name": "authorid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for each author record.",
+          "semantic_type": "identifier",
+          "business_concept": "Author ID",
+          "aliases": [
+            "author_id",
+            "id",
+            "author_code"
+          ]
+        },
+        "authorname": {
+          "name": "authorname",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The name of the author.",
+          "semantic_type": "person_name",
+          "business_concept": "Author Name",
+          "aliases": [
+            "name",
+            "author_name",
+            "full_name"
+          ]
+        }
+      }
+    },
+    "cite": {
+      "table": {
+        "name": "cite",
+        "column_count": 2,
+        "summary": "A relationship table recording citation links between academic papers.",
+        "entity": "Citation",
+        "role": "relationship_table",
+        "aliases": [
+          "citations",
+          "paper_citations",
+          "bibliography_links",
+          "ref_links"
+        ]
+      },
+      "columns": {
+        "citingpaperid": {
+          "name": "citingpaperid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier of the paper that cites another paper.",
+          "semantic_type": "identifier",
+          "business_concept": "Citing Paper ID",
+          "aliases": [
+            "source_paper_id",
+            "parent_paper_id",
+            "referring_paper_id",
+            "citing_id"
+          ]
+        },
+        "citedpaperid": {
+          "name": "citedpaperid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier of the paper that is being cited.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Cited Paper ID",
+          "aliases": [
+            "target_paper_id",
+            "child_paper_id",
+            "referenced_paper_id",
+            "cited_id"
+          ]
+        }
+      }
+    },
+    "dataset": {
+      "table": {
+        "name": "dataset",
+        "column_count": 2,
+        "summary": "A table containing metadata about datasets, identified by a unique ID and a descriptive name.",
+        "entity": "Dataset",
+        "role": "lookup_table",
+        "aliases": [
+          "datasets",
+          "data_catalog",
+          "dataset_metadata"
+        ]
+      },
+      "columns": {
+        "datasetid": {
+          "name": "datasetid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "A unique integer identifier for each dataset record.",
+          "semantic_type": "identifier",
+          "business_concept": "Dataset ID",
+          "aliases": [
+            "id",
+            "dataset_id",
+            "dataset_pk"
+          ]
+        },
+        "datasetname": {
+          "name": "datasetname",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The descriptive name or title of the dataset.",
+          "semantic_type": "organization_name",
+          "business_concept": "Dataset Name",
+          "aliases": [
+            "name",
+            "dataset_name",
+            "title",
+            "label"
+          ]
+        }
+      }
+    },
+    "journal": {
+      "table": {
+        "name": "journal",
+        "column_count": 2,
+        "summary": "A table storing information about journals, likely representing a master list of publications or accounting ledgers.",
+        "entity": "Journal",
+        "role": "lookup_table",
+        "aliases": [
+          "journals",
+          "journal_master",
+          "pub_journals"
+        ]
+      },
+      "columns": {
+        "journalid": {
+          "name": "journalid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a specific journal record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "journal_id",
+            "journal_code"
+          ]
+        },
+        "journalname": {
+          "name": "journalname",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The name or title of the journal.",
+          "semantic_type": "organization_name",
+          "business_concept": "Journal Title",
+          "aliases": [
+            "name",
+            "title",
+            "journal_title",
+            "pub_name"
+          ]
+        }
+      }
+    },
+    "keyphrase": {
+      "table": {
+        "name": "keyphrase",
+        "column_count": 2,
+        "summary": "A lookup table storing unique keyphrases with their assigned identifiers.",
+        "entity": "Keyphrase",
+        "role": "lookup_table",
+        "aliases": [
+          "keyphrase_lookup",
+          "kp_table",
+          "phrase_dictionary"
+        ]
+      },
+      "columns": {
+        "keyphraseid": {
+          "name": "keyphraseid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "A unique integer identifier assigned to each keyphrase record.",
+          "semantic_type": "identifier",
+          "business_concept": "Keyphrase ID",
+          "aliases": [
+            "kp_id",
+            "keyphrase_id",
+            "id"
+          ]
+        },
+        "keyphrasename": {
+          "name": "keyphrasename",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The textual content or label of the keyphrase.",
+          "semantic_type": "code",
+          "business_concept": "Keyphrase Name",
+          "aliases": [
+            "kp_name",
+            "phrase",
+            "keyphrase",
+            "name"
+          ]
+        }
+      }
+    },
+    "paper": {
+      "table": {
+        "name": "paper",
+        "column_count": 7,
+        "summary": "A table storing metadata and citation statistics for academic papers.",
+        "entity": "academic_paper",
+        "role": "entity_table",
+        "aliases": [
+          "papers",
+          "publications",
+          "article",
+          "research_paper"
+        ]
+      },
+      "columns": {
+        "paperid": {
+          "name": "paperid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a specific paper record.",
+          "semantic_type": "identifier",
+          "business_concept": "paper_id",
+          "aliases": [
+            "id",
+            "paper_id",
+            "pub_id"
+          ]
+        },
+        "title": {
+          "name": "title",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full title of the academic paper.",
+          "semantic_type": "description",
+          "business_concept": "paper_title",
+          "aliases": [
+            "name",
+            "heading",
+            "topic"
+          ]
+        },
+        "venueid": {
+          "name": "venueid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Identifier linking the paper to the conference or venue where it was published.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "conference_id",
+          "aliases": [
+            "venue_id",
+            "conf_id",
+            "event_id"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The year the paper was published.",
+          "semantic_type": "date",
+          "business_concept": "publication_year",
+          "aliases": [
+            "pub_year",
+            "date",
+            "year_published"
+          ]
+        },
+        "numciting": {
+          "name": "numciting",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The number of times this paper has cited other works.",
+          "semantic_type": "quantity",
+          "business_concept": "citation_count",
+          "aliases": [
+            "citations",
+            "refs",
+            "references_count"
+          ]
+        },
+        "numcitedby": {
+          "name": "numcitedby",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The number of times this paper has been cited by other works.",
+          "semantic_type": "quantity",
+          "business_concept": "cited_by_count",
+          "aliases": [
+            "cited",
+            "impact",
+            "times_cited"
+          ]
+        },
+        "journalid": {
+          "name": "journalid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Identifier linking the paper to the journal where it was published (if applicable).",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "journal_id",
+          "aliases": [
+            "journal",
+            "pub_id",
+            "magazine_id"
+          ]
+        }
+      }
+    },
+    "paperdataset": {
+      "table": {
+        "name": "paperdataset",
+        "column_count": 2,
+        "summary": "A dataset linking individual papers to their respective datasets, likely serving as a bridge table for research data management.",
+        "entity": "Paper-Dataset Link",
+        "role": "relationship_table",
+        "aliases": [
+          "paper_dataset_mapping",
+          "paper_to_dataset",
+          "research_paper_links"
+        ]
+      },
+      "columns": {
+        "paperid": {
+          "name": "paperid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a specific research paper within the system.",
+          "semantic_type": "identifier",
+          "business_concept": "Paper ID",
+          "aliases": [
+            "paper_id",
+            "id",
+            "paper_key"
+          ]
+        },
+        "datasetid": {
+          "name": "datasetid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for the dataset to which the paper belongs or is associated with.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Dataset ID",
+          "aliases": [
+            "dataset_id",
+            "id",
+            "dataset_key"
+          ]
+        }
+      }
+    },
+    "paperkeyphrase": {
+      "table": {
+        "name": "paperkeyphrase",
+        "column_count": 2,
+        "summary": "A relationship table linking academic papers to their associated keyphrases.",
+        "entity": "paper_keyphrase_association",
+        "role": "relationship_table",
+        "aliases": [
+          "paper_keyphrase",
+          "paper_keyword",
+          "paper_tag"
+        ]
+      },
+      "columns": {
+        "paperid": {
+          "name": "paperid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a research paper.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "paper_id",
+          "aliases": [
+            "paper_id",
+            "id",
+            "paper_key"
+          ]
+        },
+        "keyphraseid": {
+          "name": "keyphraseid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a specific keyphrase or keyword.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "keyphrase_id",
+          "aliases": [
+            "keyphrase_id",
+            "keyword_id",
+            "tag_id"
+          ]
+        }
+      }
+    },
+    "venue": {
+      "table": {
+        "name": "venue",
+        "column_count": 2,
+        "summary": "Stores information about physical locations or venues.",
+        "entity": "venue",
+        "role": "entity_table",
+        "aliases": [
+          "venues",
+          "locations",
+          "places",
+          "spots"
+        ]
+      },
+      "columns": {
+        "venueid": {
+          "name": "venueid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a specific venue record.",
+          "semantic_type": "identifier",
+          "business_concept": "venue_id",
+          "aliases": [
+            "id",
+            "venue_id",
+            "venue_code"
+          ]
+        },
+        "venuename": {
+          "name": "venuename",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The name of the venue.",
+          "semantic_type": "organization_name",
+          "business_concept": "venue_name",
+          "aliases": [
+            "name",
+            "title",
+            "display_name"
+          ]
+        }
+      }
+    },
+    "writes": {
+      "table": {
+        "name": "writes",
+        "column_count": 2,
+        "summary": "A relationship table linking academic papers to their authors.",
+        "entity": "Paper-Author Association",
+        "role": "relationship_table",
+        "aliases": [
+          "paper_authors",
+          "authorship",
+          "paper_author_links"
+        ]
+      },
+      "columns": {
+        "paperid": {
+          "name": "paperid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a research paper.",
+          "semantic_type": "identifier",
+          "business_concept": "Paper ID",
+          "aliases": [
+            "paper_id",
+            "pub_id",
+            "article_id"
+          ]
+        },
+        "authorid": {
+          "name": "authorid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for an author associated with the paper.",
+          "semantic_type": "identifier",
+          "business_concept": "Author ID",
+          "aliases": [
+            "author_id",
+            "writer_id",
+            "contributor_id"
+          ]
+        }
+      }
+    }
+  }
+}

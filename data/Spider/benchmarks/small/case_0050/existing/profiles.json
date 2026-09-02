@@ -1,0 +1,338 @@
+{
+  "database": "store_product",
+  "tables": {
+    "store": {
+      "table": {
+        "name": "store",
+        "column_count": 6,
+        "summary": "A dataset containing detailed information about various retail locations, including their names, types, physical size, product category counts, and regional rankings.",
+        "entity": "Store",
+        "role": "entity_table",
+        "aliases": [
+          "stores",
+          "locations",
+          "retail_sites",
+          "outlets"
+        ]
+      },
+      "columns": {
+        "store_id": {
+          "name": "store_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each store location.",
+          "semantic_type": "identifier",
+          "business_concept": "Store ID",
+          "aliases": [
+            "id",
+            "store_code",
+            "location_id"
+          ]
+        },
+        "store_name": {
+          "name": "store_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The proper name of the specific store location.",
+          "semantic_type": "organization_name",
+          "business_concept": "Store Name",
+          "aliases": [
+            "name",
+            "location_name",
+            "title"
+          ]
+        },
+        "type": {
+          "name": "type",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The classification or format of the store (e.g., City Mall, Village Store).",
+          "semantic_type": "category",
+          "business_concept": "Store Type",
+          "aliases": [
+            "store_type",
+            "format",
+            "category",
+            "kind"
+          ]
+        },
+        "area_size": {
+          "name": "area_size",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The physical floor area of the store, likely measured in square units.",
+          "semantic_type": "quantity",
+          "business_concept": "Store Area",
+          "aliases": [
+            "size",
+            "area",
+            "sq_ft",
+            "square_footage"
+          ]
+        },
+        "number_of_product_category": {
+          "name": "number_of_product_category",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total count of distinct product categories available at the store.",
+          "semantic_type": "quantity",
+          "business_concept": "Product Category Count",
+          "aliases": [
+            "product_categories",
+            "category_count",
+            "num_categories",
+            "assortment_size"
+          ]
+        },
+        "ranking": {
+          "name": "ranking",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The numerical rank of the store within a specific region or list.",
+          "semantic_type": "code",
+          "business_concept": "Store Rank",
+          "aliases": [
+            "rank",
+            "position",
+            "order",
+            "tier"
+          ]
+        }
+      }
+    },
+    "store_district": {
+      "table": {
+        "name": "store_district",
+        "column_count": 2,
+        "summary": "Defines the hierarchical relationship between individual stores and their assigned administrative districts.",
+        "entity": "Store District Mapping",
+        "role": "lookup_table",
+        "aliases": [
+          "store_district_map",
+          "district_store_lookup",
+          "store_location_hierarchy"
+        ]
+      },
+      "columns": {
+        "store_id": {
+          "name": "store_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific retail store location.",
+          "semantic_type": "identifier",
+          "business_concept": "Store ID",
+          "aliases": [
+            "store_code",
+            "shop_id",
+            "location_id",
+            "outlet_id"
+          ]
+        },
+        "district_id": {
+          "name": "district_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier representing the administrative or operational district to which the store belongs.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "District ID",
+          "aliases": [
+            "district_code",
+            "region_id",
+            "zone_id",
+            "area_id"
+          ]
+        }
+      }
+    },
+    "product": {
+      "table": {
+        "name": "product",
+        "column_count": 7,
+        "summary": "A catalog of optical scanning devices containing technical specifications such as model names, physical dimensions, resolution, speed, and connectivity.",
+        "entity": "product",
+        "role": "lookup_table",
+        "aliases": [
+          "scanners",
+          "scanner_catalog",
+          "device_specs",
+          "optical_scanners"
+        ]
+      },
+      "columns": {
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each scanner product record.",
+          "semantic_type": "identifier",
+          "business_concept": "Product ID",
+          "aliases": [
+            "id",
+            "product_code",
+            "sku",
+            "scanner_id"
+          ]
+        },
+        "product": {
+          "name": "product",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name or model designation of the scanner device.",
+          "semantic_type": "description",
+          "business_concept": "Product Name",
+          "aliases": [
+            "name",
+            "model",
+            "title",
+            "device_name"
+          ]
+        },
+        "dimensions": {
+          "name": "dimensions",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Physical size of the scanner device expressed in millimeters (Width x Height x Depth).",
+          "semantic_type": "unknown",
+          "business_concept": "Physical Dimensions",
+          "aliases": [
+            "size",
+            "measurements",
+            "footprint",
+            "box_size"
+          ]
+        },
+        "dpi": {
+          "name": "dpi",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The optical resolution of the scanner, measured in dots per inch.",
+          "semantic_type": "unknown",
+          "business_concept": "Optical Resolution",
+          "aliases": [
+            "resolution",
+            "scan_quality",
+            "dots_per_inch",
+            "optical_dpi"
+          ]
+        },
+        "pages_per_minute_color": {
+          "name": "pages_per_minute_color",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The scanning speed of the device when processing color pages, measured in pages per minute.",
+          "semantic_type": "quantity",
+          "business_concept": "Scanning Speed (Color)",
+          "aliases": [
+            "ppm_color",
+            "scan_speed",
+            "color_speed",
+            "pages_per_min"
+          ]
+        },
+        "max_page_size": {
+          "name": "max_page_size",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The maximum document size the scanner can accommodate, typically in paper formats like A4 or specific millimeter dimensions.",
+          "semantic_type": "unknown",
+          "business_concept": "Maximum Document Size",
+          "aliases": [
+            "paper_size",
+            "max_sheet",
+            "document_capacity",
+            "feed_size"
+          ]
+        },
+        "interface": {
+          "name": "interface",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The connectivity standard used to connect the scanner to a computer.",
+          "semantic_type": "code",
+          "business_concept": "Connection Interface",
+          "aliases": [
+            "connectivity",
+            "port_type",
+            "connection",
+            "bus_type"
+          ]
+        }
+      }
+    },
+    "store_product": {
+      "table": {
+        "name": "store_product",
+        "column_count": 2,
+        "summary": "A table linking specific products to specific stores, likely representing inventory or product availability.",
+        "entity": "store_product",
+        "role": "relationship_table",
+        "aliases": [
+          "store_product",
+          "product_store",
+          "inventory",
+          "store_inventory"
+        ]
+      },
+      "columns": {
+        "store_id": {
+          "name": "store_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific store location.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Store",
+          "aliases": [
+            "store",
+            "shop_id",
+            "location_id",
+            "branch_id"
+          ]
+        },
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific product item.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Product",
+          "aliases": [
+            "product",
+            "item_id",
+            "sku",
+            "goods_id"
+          ]
+        }
+      }
+    }
+  }
+}

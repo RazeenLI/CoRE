@@ -1,0 +1,287 @@
+{
+  "database": "flight_company",
+  "tables": {
+    "flight": {
+      "table": {
+        "name": "flight",
+        "column_count": 4,
+        "summary": "A historical record of flight events, capturing details such as the vehicle identifier, date, pilot, velocity, altitude, and associated airport and company IDs.",
+        "entity": "Flight",
+        "role": "transaction_table",
+        "aliases": [
+          "flights",
+          "flight_records",
+          "flight_log",
+          "aircraft_movements"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each flight record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Flight Record ID",
+          "aliases": [
+            "flight_id",
+            "record_id",
+            "pk"
+          ]
+        },
+        "pilot": {
+          "name": "pilot",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The name of the pilot operating the vehicle during the flight.",
+          "semantic_type": "person_name",
+          "business_concept": "Pilot Name",
+          "aliases": [
+            "pilot_name",
+            "crew",
+            "operator"
+          ]
+        },
+        "velocity": {
+          "name": "velocity",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The speed of the vehicle during the flight, likely measured in knots or mph.",
+          "semantic_type": "quantity",
+          "business_concept": "Flight Speed",
+          "aliases": [
+            "speed",
+            "velocity_mph",
+            "knots"
+          ]
+        },
+        "altitude": {
+          "name": "altitude",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The height of the vehicle above sea level during the flight.",
+          "semantic_type": "quantity",
+          "business_concept": "Flight Altitude",
+          "aliases": [
+            "height",
+            "elevation",
+            "ft"
+          ]
+        }
+      }
+    },
+    "operate_company": {
+      "table": {
+        "name": "operate_company",
+        "column_count": 6,
+        "summary": "A table containing master data for operating companies, including their names, corporate structure, business activities, incorporation location, and equity shareholding percentages.",
+        "entity": "Operating Company",
+        "role": "lookup_table",
+        "aliases": [
+          "companies",
+          "operating_companies",
+          "airline_companies",
+          "corp_master"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each operating company record.",
+          "semantic_type": "identifier",
+          "business_concept": "Company ID",
+          "aliases": [
+            "company_id",
+            "id",
+            "key"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official name of the operating company.",
+          "semantic_type": "organization_name",
+          "business_concept": "Company Name",
+          "aliases": [
+            "company_name",
+            "full_name",
+            "name"
+          ]
+        },
+        "type": {
+          "name": "type",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The corporate legal structure or relationship type of the company.",
+          "semantic_type": "category",
+          "business_concept": "Corporate Type",
+          "aliases": [
+            "company_type",
+            "legal_form",
+            "structure"
+          ]
+        },
+        "principal_activities": {
+          "name": "principal_activities",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The primary business activity or industry sector of the company.",
+          "semantic_type": "category",
+          "business_concept": "Business Activity",
+          "aliases": [
+            "industry",
+            "sector",
+            "activity",
+            "business_type"
+          ]
+        },
+        "incorporated_in": {
+          "name": "incorporated_in",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The country or jurisdiction where the company was legally incorporated.",
+          "semantic_type": "country",
+          "business_concept": "Country of Incorporation",
+          "aliases": [
+            "country",
+            "jurisdiction",
+            "incorporation_country",
+            "location"
+          ]
+        },
+        "group_equity_shareholding": {
+          "name": "group_equity_shareholding",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The percentage of equity shareholding held by the parent group in this company.",
+          "semantic_type": "quantity",
+          "business_concept": "Equity Shareholding",
+          "aliases": [
+            "equity_percentage",
+            "shareholding",
+            "ownership_pct",
+            "group_ownership"
+          ]
+        }
+      }
+    },
+    "airport": {
+      "table": {
+        "name": "airport",
+        "column_count": 6,
+        "summary": "A reference table containing global airport information including location, identifiers, and names.",
+        "entity": "Airport",
+        "role": "lookup_table",
+        "aliases": [
+          "airports",
+          "airport_info",
+          "aerodromes"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique internal identifier for each airport record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "airport_id",
+            "airport_code",
+            "id"
+          ]
+        },
+        "city": {
+          "name": "city",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The city where the airport is located.",
+          "semantic_type": "city",
+          "business_concept": "Location City",
+          "aliases": [
+            "city_name",
+            "location_city"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The country where the airport is located.",
+          "semantic_type": "country",
+          "business_concept": "Location Country",
+          "aliases": [
+            "country_name",
+            "nation"
+          ]
+        },
+        "iata": {
+          "name": "iata",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The International Air Transport Association (IATA) two-letter or three-letter code for the airport.",
+          "semantic_type": "code",
+          "business_concept": "IATA Code",
+          "aliases": [
+            "iata_code",
+            "iata",
+            "airport_code"
+          ]
+        },
+        "icao": {
+          "name": "icao",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The International Civil Aviation Organization (ICAO) four-letter code for the airport.",
+          "semantic_type": "code",
+          "business_concept": "ICAO Code",
+          "aliases": [
+            "icao_code",
+            "icao",
+            "aircraft_code"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official or common name of the airport.",
+          "semantic_type": "organization_name",
+          "business_concept": "Airport Name",
+          "aliases": [
+            "airport_name",
+            "full_name",
+            "title"
+          ]
+        }
+      }
+    }
+  }
+}

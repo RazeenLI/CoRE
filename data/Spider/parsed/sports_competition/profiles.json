@@ -1,0 +1,488 @@
+{
+  "database": "sports_competition",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/sports_competition",
+    "schema_path": "data/Spider/parsed/sports_competition/schema.json",
+    "tables_dir": "data/Spider/parsed/sports_competition/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "club": {
+      "table": {
+        "name": "club",
+        "column_count": 4,
+        "summary": "A reference table containing information about various clubs, including their identifiers, names, geographic regions, and founding years.",
+        "entity": "Club",
+        "role": "lookup_table",
+        "aliases": [
+          "clubs",
+          "club_master",
+          "organization_clubs"
+        ]
+      },
+      "columns": {
+        "club_id": {
+          "name": "club_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each club record.",
+          "semantic_type": "identifier",
+          "business_concept": "Club ID",
+          "aliases": [
+            "club_code",
+            "id",
+            "club_key"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official name of the club.",
+          "semantic_type": "organization_name",
+          "business_concept": "Club Name",
+          "aliases": [
+            "club_name",
+            "title",
+            "full_name"
+          ]
+        },
+        "region": {
+          "name": "region",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The geographic region or country where the club is located.",
+          "semantic_type": "country",
+          "business_concept": "Region",
+          "aliases": [
+            "country",
+            "location",
+            "territory",
+            "geo_region"
+          ]
+        },
+        "start_year": {
+          "name": "start_year",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The year the club was founded or established.",
+          "semantic_type": "date",
+          "business_concept": "Founding Year",
+          "aliases": [
+            "founded_year",
+            "established",
+            "year_created",
+            "start_date"
+          ]
+        }
+      }
+    },
+    "club_rank": {
+      "table": {
+        "name": "club_rank",
+        "column_count": 6,
+        "summary": "A table storing the competitive rankings and medal counts for various clubs.",
+        "entity": "Club",
+        "role": "lookup_table",
+        "aliases": [
+          "club_rankings",
+          "club_standings",
+          "club_medals"
+        ]
+      },
+      "columns": {
+        "rank": {
+          "name": "rank",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The overall position of the club in the competition.",
+          "semantic_type": "code",
+          "business_concept": "Ranking Position",
+          "aliases": [
+            "position",
+            "order",
+            "standing"
+          ]
+        },
+        "club_id": {
+          "name": "club_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific club.",
+          "semantic_type": "identifier",
+          "business_concept": "Club Identifier",
+          "aliases": [
+            "club_code",
+            "club_key",
+            "id"
+          ]
+        },
+        "gold": {
+          "name": "gold",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The number of gold medals won by the club.",
+          "semantic_type": "quantity",
+          "business_concept": "Gold Medal Count",
+          "aliases": [
+            "gold_medals",
+            "golds",
+            "1st_place_count"
+          ]
+        },
+        "silver": {
+          "name": "silver",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The number of silver medals won by the club.",
+          "semantic_type": "quantity",
+          "business_concept": "Silver Medal Count",
+          "aliases": [
+            "silver_medals",
+            "silvers",
+            "2nd_place_count"
+          ]
+        },
+        "bronze": {
+          "name": "bronze",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The number of bronze medals won by the club.",
+          "semantic_type": "quantity",
+          "business_concept": "Bronze Medal Count",
+          "aliases": [
+            "bronze_medals",
+            "bronzes",
+            "3rd_place_count"
+          ]
+        },
+        "total": {
+          "name": "total",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The aggregate count of all medals (gold, silver, and bronze) won by the club.",
+          "semantic_type": "quantity",
+          "business_concept": "Total Medal Count",
+          "aliases": [
+            "total_medals",
+            "medal_sum",
+            "all_medals"
+          ]
+        }
+      }
+    },
+    "competition": {
+      "table": {
+        "name": "competition",
+        "column_count": 4,
+        "summary": "A dataset recording details of various sports competitions, including their unique identifier, year, type, and host country.",
+        "entity": "Competition",
+        "role": "entity_table",
+        "aliases": [
+          "competitions",
+          "events",
+          "matches",
+          "tournaments"
+        ]
+      },
+      "columns": {
+        "competition_id": {
+          "name": "competition_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific competition record.",
+          "semantic_type": "identifier",
+          "business_concept": "Competition ID",
+          "aliases": [
+            "comp_id",
+            "id",
+            "competition_key"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The calendar year in which the competition took place.",
+          "semantic_type": "date",
+          "business_concept": "Competition Year",
+          "aliases": [
+            "event_year",
+            "year",
+            "competition_year"
+          ]
+        },
+        "competition_type": {
+          "name": "competition_type",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The category or nature of the competition (e.g., Friendly, Official).",
+          "semantic_type": "category",
+          "business_concept": "Competition Type",
+          "aliases": [
+            "type",
+            "match_type",
+            "event_type"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country where the competition was hosted or associated.",
+          "semantic_type": "country",
+          "business_concept": "Host Country",
+          "aliases": [
+            "nation",
+            "location",
+            "host_country"
+          ]
+        }
+      }
+    },
+    "competition_result": {
+      "table": {
+        "name": "competition_result",
+        "column_count": 4,
+        "summary": "Records the outcomes of competitions, including the competition identifier, the two participating clubs, and the final score.",
+        "entity": "Competition Result",
+        "role": "transaction_table",
+        "aliases": [
+          "match_result",
+          "game_outcome",
+          "contest_score"
+        ]
+      },
+      "columns": {
+        "competition_id": {
+          "name": "competition_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific competition or match event.",
+          "semantic_type": "identifier",
+          "business_concept": "Competition ID",
+          "aliases": [
+            "comp_id",
+            "match_id",
+            "event_id"
+          ]
+        },
+        "club_id_1": {
+          "name": "club_id_1",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The unique identifier for the first participating club in the competition.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Club ID (Participant 1)",
+          "aliases": [
+            "club_1_id",
+            "team_1_id",
+            "home_club_id"
+          ]
+        },
+        "club_id_2": {
+          "name": "club_id_2",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The unique identifier for the second participating club in the competition.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Club ID (Participant 2)",
+          "aliases": [
+            "club_2_id",
+            "team_2_id",
+            "away_club_id"
+          ]
+        },
+        "score": {
+          "name": "score",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The final result of the competition, typically represented as a ratio of points or sets between the two participants.",
+          "semantic_type": "code",
+          "business_concept": "Match Score",
+          "aliases": [
+            "result",
+            "final_score",
+            "scoreline"
+          ]
+        }
+      }
+    },
+    "player": {
+      "table": {
+        "name": "player",
+        "column_count": 8,
+        "summary": "A table containing roster and performance statistics for rugby players, including their names, positions, club affiliations, and match metrics.",
+        "entity": "Rugby Player",
+        "role": "entity_table",
+        "aliases": [
+          "players",
+          "roster",
+          "team_players",
+          "rugby_players"
+        ]
+      },
+      "columns": {
+        "player_id": {
+          "name": "player_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each player record.",
+          "semantic_type": "identifier",
+          "business_concept": "Player ID",
+          "aliases": [
+            "id",
+            "pid",
+            "player_number"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the player.",
+          "semantic_type": "person_name",
+          "business_concept": "Player Name",
+          "aliases": [
+            "full_name",
+            "first_name",
+            "last_name",
+            "player_name"
+          ]
+        },
+        "position": {
+          "name": "position",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The specific playing position of the player within the team.",
+          "semantic_type": "category",
+          "business_concept": "Player Position",
+          "aliases": [
+            "pos",
+            "role",
+            "formation_position"
+          ]
+        },
+        "club_id": {
+          "name": "club_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A foreign key referencing the club or team the player is associated with.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Club ID",
+          "aliases": [
+            "team_id",
+            "club_code",
+            "organization_id"
+          ]
+        },
+        "apps": {
+          "name": "apps",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The number of matches the player has appeared in.",
+          "semantic_type": "quantity",
+          "business_concept": "Matches Played",
+          "aliases": [
+            "matches",
+            "games",
+            "appearances",
+            "caps"
+          ]
+        },
+        "tries": {
+          "name": "tries",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The number of tries (a type of scoring play) scored by the player.",
+          "semantic_type": "quantity",
+          "business_concept": "Tries Scored",
+          "aliases": [
+            "try_count",
+            "scoring_tries"
+          ]
+        },
+        "goals": {
+          "name": "goals",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The number of goals scored by the player, often represented as a ratio or count.",
+          "semantic_type": "quantity",
+          "business_concept": "Goals Scored",
+          "aliases": [
+            "goal_count",
+            "conversions",
+            "penalties"
+          ]
+        },
+        "points": {
+          "name": "points",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total points accumulated by the player based on their scoring activities.",
+          "semantic_type": "money",
+          "business_concept": "Total Points",
+          "aliases": [
+            "pts",
+            "score",
+            "total_score"
+          ]
+        }
+      }
+    }
+  }
+}

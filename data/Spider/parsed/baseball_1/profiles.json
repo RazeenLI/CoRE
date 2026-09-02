@@ -1,0 +1,5659 @@
+{
+  "database": "baseball_1",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/baseball_1",
+    "schema_path": "data/Spider/parsed/baseball_1/schema.json",
+    "tables_dir": "data/Spider/parsed/baseball_1/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "all_star": {
+      "table": {
+        "name": "all_star",
+        "column_count": 8,
+        "summary": "A dataset recording the participation of Major League Baseball players in the All-Star Game, including their team, league, game details, and starting position.",
+        "entity": "All-Star Game Participation",
+        "role": "transaction_table",
+        "aliases": [
+          "all_star_game",
+          "mlb_all_star",
+          "all_star_history"
+        ]
+      },
+      "columns": {
+        "player_id": {
+          "name": "player_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific player in the database, formatted as a last name abbreviation followed by birth year and gender.",
+          "semantic_type": "identifier",
+          "business_concept": "Player ID",
+          "aliases": [
+            "player",
+            "pid",
+            "athlete_id"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the All-Star Game took place.",
+          "semantic_type": "date",
+          "business_concept": "Event Year",
+          "aliases": [
+            "event_year",
+            "game_year",
+            "yr"
+          ]
+        },
+        "game_num": {
+          "name": "game_num",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The sequential number of the All-Star Game within a specific year (e.g., 1 for the first game, 2 for the second).",
+          "semantic_type": "quantity",
+          "business_concept": "Game Sequence Number",
+          "aliases": [
+            "game_number",
+            "seq",
+            "match_num"
+          ]
+        },
+        "game_id": {
+          "name": "game_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "A unique composite identifier for a specific All-Star Game instance, typically encoding the league, year, and date.",
+          "semantic_type": "identifier",
+          "business_concept": "Game Instance ID",
+          "aliases": [
+            "game_identifier",
+            "als_id",
+            "match_id"
+          ]
+        },
+        "team_id": {
+          "name": "team_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The abbreviation of the team the player represented in the All-Star Game.",
+          "semantic_type": "organization_name",
+          "business_concept": "Team Abbreviation",
+          "aliases": [
+            "team",
+            "club",
+            "franchise",
+            "team_abbr"
+          ]
+        },
+        "league_id": {
+          "name": "league_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The league (American League or National League) the player represented in the All-Star Game.",
+          "semantic_type": "category",
+          "business_concept": "League Abbreviation",
+          "aliases": [
+            "league",
+            "division",
+            "alliance",
+            "league_abbr"
+          ]
+        },
+        "gp": {
+          "name": "gp",
+          "dtype": "numeric",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of games played by the player in the All-Star Game series (often 1 if they played, 0 if they did not).",
+          "semantic_type": "quantity",
+          "business_concept": "Games Played",
+          "aliases": [
+            "games_played",
+            "games",
+            "g"
+          ]
+        },
+        "starting_pos": {
+          "name": "starting_pos",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The numerical position assigned to the player in the starting lineup for the All-Star Game.",
+          "semantic_type": "category",
+          "business_concept": "Starting Position Number",
+          "aliases": [
+            "pos",
+            "lineup_position",
+            "slot",
+            "start_num"
+          ]
+        }
+      }
+    },
+    "appearances": {
+      "table": {
+        "name": "appearances",
+        "column_count": 21,
+        "summary": "Records of player appearances, games played, and defensive positions for specific teams in a given year, likely from a baseball database.",
+        "entity": "player_season_appearance",
+        "role": "transaction_table",
+        "aliases": [
+          "appearances",
+          "player_games",
+          "season_stats",
+          "player_team_record"
+        ]
+      },
+      "columns": {
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the games were played.",
+          "semantic_type": "date",
+          "business_concept": "season_year",
+          "aliases": [
+            "season",
+            "year_id",
+            "game_year"
+          ]
+        },
+        "team_id": {
+          "name": "team_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the team the player was associated with during the season.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "team_identifier",
+          "aliases": [
+            "team_code",
+            "franchise_id",
+            "club_id"
+          ]
+        },
+        "league_id": {
+          "name": "league_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Identifier for the league; currently appears empty in samples.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "league_identifier",
+          "aliases": [
+            "league_code",
+            "competition_id"
+          ]
+        },
+        "player_id": {
+          "name": "player_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the player, formatted as a short code (e.g., lastname01).",
+          "semantic_type": "identifier",
+          "business_concept": "player_reference",
+          "aliases": [
+            "player_code",
+            "athlete_id",
+            "person_id"
+          ]
+        },
+        "g_all": {
+          "name": "g_all",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of games played by the player across all positions.",
+          "semantic_type": "quantity",
+          "business_concept": "total_games_played",
+          "aliases": [
+            "games_total",
+            "g",
+            "games_appearances"
+          ]
+        },
+        "gs": {
+          "name": "gs",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Number of games started by the player; currently empty in samples.",
+          "semantic_type": "quantity",
+          "business_concept": "games_started",
+          "aliases": [
+            "games_started",
+            "gs_count"
+          ]
+        },
+        "g_batting": {
+          "name": "g_batting",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of games in which the player appeared as a batter.",
+          "semantic_type": "quantity",
+          "business_concept": "games_as_batter",
+          "aliases": [
+            "games_batting",
+            "g_bat"
+          ]
+        },
+        "g_defense": {
+          "name": "g_defense",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of games in which the player appeared in a defensive capacity.",
+          "semantic_type": "quantity",
+          "business_concept": "games_as_defender",
+          "aliases": [
+            "games_defense",
+            "g_def"
+          ]
+        },
+        "g_p": {
+          "name": "g_p",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of games played as a pitcher; values are 0 in samples.",
+          "semantic_type": "quantity",
+          "business_concept": "games_as_pitcher",
+          "aliases": [
+            "games_pitching",
+            "g_pitch"
+          ]
+        },
+        "g_c": {
+          "name": "g_c",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of games played at the catcher position.",
+          "semantic_type": "quantity",
+          "business_concept": "games_at_catcher",
+          "aliases": [
+            "games_catcher",
+            "g_ca"
+          ]
+        },
+        "g_1b": {
+          "name": "g_1b",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of games played at the first base position.",
+          "semantic_type": "quantity",
+          "business_concept": "games_at_first_base",
+          "aliases": [
+            "games_1b",
+            "games_first_base"
+          ]
+        },
+        "g_2b": {
+          "name": "g_2b",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of games played at the second base position.",
+          "semantic_type": "quantity",
+          "business_concept": "games_at_second_base",
+          "aliases": [
+            "games_2b",
+            "games_second_base"
+          ]
+        },
+        "g_3b": {
+          "name": "g_3b",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of games played at the third base position.",
+          "semantic_type": "quantity",
+          "business_concept": "games_at_third_base",
+          "aliases": [
+            "games_3b",
+            "games_third_base"
+          ]
+        },
+        "g_ss": {
+          "name": "g_ss",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of games played at the shortstop position.",
+          "semantic_type": "quantity",
+          "business_concept": "games_at_shortstop",
+          "aliases": [
+            "games_ss",
+            "games_shortstop"
+          ]
+        },
+        "g_lf": {
+          "name": "g_lf",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of games played in left field.",
+          "semantic_type": "quantity",
+          "business_concept": "games_at_left_field",
+          "aliases": [
+            "games_lf",
+            "games_left_field"
+          ]
+        },
+        "g_cf": {
+          "name": "g_cf",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of games played in center field.",
+          "semantic_type": "quantity",
+          "business_concept": "games_at_center_field",
+          "aliases": [
+            "games_cf",
+            "games_center_field"
+          ]
+        },
+        "g_rf": {
+          "name": "g_rf",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of games played in right field.",
+          "semantic_type": "quantity",
+          "business_concept": "games_at_right_field",
+          "aliases": [
+            "games_rf",
+            "games_right_field"
+          ]
+        },
+        "g_of": {
+          "name": "g_of",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of games played in any outfield position (LF, CF, RF).",
+          "semantic_type": "quantity",
+          "business_concept": "games_outfield_total",
+          "aliases": [
+            "games_of",
+            "games_outfield"
+          ]
+        },
+        "g_dh": {
+          "name": "g_dh",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Number of games played as Designated Hitter; currently empty in samples.",
+          "semantic_type": "quantity",
+          "business_concept": "games_as_dh",
+          "aliases": [
+            "games_dh",
+            "games_designated_hitter"
+          ]
+        },
+        "g_ph": {
+          "name": "g_ph",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Number of games played as a Pinch Hitter; currently empty in samples.",
+          "semantic_type": "quantity",
+          "business_concept": "games_as_ph",
+          "aliases": [
+            "games_ph",
+            "games_pinch_hitter"
+          ]
+        },
+        "g_pr": {
+          "name": "g_pr",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Number of games played as a Pinch Runner; currently empty in samples.",
+          "semantic_type": "quantity",
+          "business_concept": "games_as_pr",
+          "aliases": [
+            "games_pr",
+            "games_pinch_runner"
+          ]
+        }
+      }
+    },
+    "batting": {
+      "table": {
+        "name": "batting",
+        "column_count": 22,
+        "summary": "Historical Major League Baseball batting statistics for individual players across specific seasons, teams, and stints.",
+        "entity": "player_season_batting_record",
+        "role": "transaction_table",
+        "aliases": [
+          "mlb_batting",
+          "player_batting_stats",
+          "baseball_batting",
+          "batting_records"
+        ]
+      },
+      "columns": {
+        "player_id": {
+          "name": "player_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific player within the database.",
+          "semantic_type": "identifier",
+          "business_concept": "Player ID",
+          "aliases": [
+            "pid",
+            "player_code",
+            "key"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the batting statistics were recorded.",
+          "semantic_type": "date",
+          "business_concept": "Season Year",
+          "aliases": [
+            "yr",
+            "season",
+            "year_id"
+          ]
+        },
+        "stint": {
+          "name": "stint",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Indicates the specific period or contract a player had with a team during a season (e.g., 1 for primary stint, 2 for second stint).",
+          "semantic_type": "unknown",
+          "business_concept": "Stint Number",
+          "aliases": [
+            "stint_id",
+            "period"
+          ]
+        },
+        "team_id": {
+          "name": "team_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the team the player was associated with during the recorded season.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Team ID",
+          "aliases": [
+            "tid",
+            "team_code",
+            "franchise"
+          ]
+        },
+        "league_id": {
+          "name": "league_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Identifier for the league (e.g., MLB, NPB) in which the statistics were recorded. Often empty in this specific dataset context.",
+          "semantic_type": "code",
+          "business_concept": "League ID",
+          "aliases": [
+            "lid",
+            "league_code"
+          ]
+        },
+        "g": {
+          "name": "g",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of games the player appeared in during the season.",
+          "semantic_type": "quantity",
+          "business_concept": "Games Played",
+          "aliases": [
+            "gp",
+            "games",
+            "g_total"
+          ]
+        },
+        "ab": {
+          "name": "ab",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of official at-bats.",
+          "semantic_type": "quantity",
+          "business_concept": "At Bats",
+          "aliases": [
+            "at_bats",
+            "ab_total"
+          ]
+        },
+        "r": {
+          "name": "r",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of runs scored by the player.",
+          "semantic_type": "quantity",
+          "business_concept": "Runs Scored",
+          "aliases": [
+            "runs",
+            "r_total"
+          ]
+        },
+        "h": {
+          "name": "h",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of hits achieved.",
+          "semantic_type": "quantity",
+          "business_concept": "Hits",
+          "aliases": [
+            "hits",
+            "h_total"
+          ]
+        },
+        "double": {
+          "name": "double",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of doubles hit.",
+          "semantic_type": "quantity",
+          "business_concept": "Doubles",
+          "aliases": [
+            "2b",
+            "doubles_total"
+          ]
+        },
+        "triple": {
+          "name": "triple",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of triples hit.",
+          "semantic_type": "quantity",
+          "business_concept": "Triples",
+          "aliases": [
+            "3b",
+            "triples_total"
+          ]
+        },
+        "hr": {
+          "name": "hr",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of home runs hit.",
+          "semantic_type": "quantity",
+          "business_concept": "Home Runs",
+          "aliases": [
+            "homeruns",
+            "hrt",
+            "hr_total"
+          ]
+        },
+        "rbi": {
+          "name": "rbi",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of runs batted in.",
+          "semantic_type": "quantity",
+          "business_concept": "Runs Batted In",
+          "aliases": [
+            "rbis",
+            "rbi_total"
+          ]
+        },
+        "sb": {
+          "name": "sb",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of successful stolen bases.",
+          "semantic_type": "quantity",
+          "business_concept": "Stolen Bases",
+          "aliases": [
+            "stolen_bases",
+            "sb_total"
+          ]
+        },
+        "cs": {
+          "name": "cs",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of caught stealing attempts.",
+          "semantic_type": "quantity",
+          "business_concept": "Caught Stealing",
+          "aliases": [
+            "caught_stealing",
+            "cs_total"
+          ]
+        },
+        "bb": {
+          "name": "bb",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of bases on balls (walks) received.",
+          "semantic_type": "quantity",
+          "business_concept": "Walks",
+          "aliases": [
+            "bases_on_balls",
+            "walks",
+            "bb_total"
+          ]
+        },
+        "so": {
+          "name": "so",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of strikeouts.",
+          "semantic_type": "quantity",
+          "business_concept": "Strikeouts",
+          "aliases": [
+            "strikeouts",
+            "so_total"
+          ]
+        },
+        "ibb": {
+          "name": "ibb",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of intentional walks received.",
+          "semantic_type": "quantity",
+          "business_concept": "Intentional Walks",
+          "aliases": [
+            "intentional_walks",
+            "ibb_total"
+          ]
+        },
+        "hbp": {
+          "name": "hbp",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of times hit by a pitch.",
+          "semantic_type": "quantity",
+          "business_concept": "Hit By Pitch",
+          "aliases": [
+            "hbp_total",
+            "hit_by_pitch"
+          ]
+        },
+        "sh": {
+          "name": "sh",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of sacrifice hits.",
+          "semantic_type": "quantity",
+          "business_concept": "Sacrifice Hits",
+          "aliases": [
+            "sacrifice_hits",
+            "sh_total"
+          ]
+        },
+        "sf": {
+          "name": "sf",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of sacrifice flies.",
+          "semantic_type": "quantity",
+          "business_concept": "Sacrifice Flies",
+          "aliases": [
+            "sacrifice_flies",
+            "sf_total"
+          ]
+        },
+        "g_idp": {
+          "name": "g_idp",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of games where the player recorded an infield putout.",
+          "semantic_type": "quantity",
+          "business_concept": "Games with Infield Putouts",
+          "aliases": [
+            "g_idp_total",
+            "games_idp"
+          ]
+        }
+      }
+    },
+    "batting_postseason": {
+      "table": {
+        "name": "batting_postseason",
+        "column_count": 22,
+        "summary": "Historical statistics for individual players during Major League Baseball postseason games, including at-bats, hits, and other offensive metrics.",
+        "entity": "player_game_stat",
+        "role": "transaction_table",
+        "aliases": [
+          "batting_postseason",
+          "mlb_postseason_batting",
+          "playoff_batting_stats",
+          "postseason_hitting"
+        ]
+      },
+      "columns": {
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the postseason game took place.",
+          "semantic_type": "date",
+          "business_concept": "season_year",
+          "aliases": [
+            "yr",
+            "season",
+            "game_year"
+          ]
+        },
+        "round": {
+          "name": "round",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The specific postseason series or round (e.g., World Series) where the game occurred.",
+          "semantic_type": "code",
+          "business_concept": "postseries_type",
+          "aliases": [
+            "series",
+            "stage",
+            "round_type"
+          ]
+        },
+        "player_id": {
+          "name": "player_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the baseball player who recorded the statistics.",
+          "semantic_type": "identifier",
+          "business_concept": "player_reference",
+          "aliases": [
+            "pid",
+            "player_ref",
+            "athlete_id"
+          ]
+        },
+        "team_id": {
+          "name": "team_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The team identifier for the team the player was associated with during the game.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "team_reference",
+          "aliases": [
+            "tid",
+            "team_ref",
+            "club_id"
+          ]
+        },
+        "league_id": {
+          "name": "league_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The league identifier (e.g., American League, National League) for the game.",
+          "semantic_type": "code",
+          "business_concept": "league_reference",
+          "aliases": [
+            "lid",
+            "league_ref",
+            "league_code"
+          ]
+        },
+        "g": {
+          "name": "g",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of games played by the player in this specific postseason series.",
+          "semantic_type": "quantity",
+          "business_concept": "games_played",
+          "aliases": [
+            "gp",
+            "games",
+            "g_total"
+          ]
+        },
+        "ab": {
+          "name": "ab",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of official at-bats recorded for the player in this series.",
+          "semantic_type": "quantity",
+          "business_concept": "at_bats",
+          "aliases": [
+            "at_bats",
+            "ab_total",
+            "plate_appearances"
+          ]
+        },
+        "r": {
+          "name": "r",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of runs scored by the player in this series.",
+          "semantic_type": "quantity",
+          "business_concept": "runs_scored",
+          "aliases": [
+            "runs",
+            "r_total",
+            "run_scored"
+          ]
+        },
+        "h": {
+          "name": "h",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of hits recorded for the player in this series.",
+          "semantic_type": "quantity",
+          "business_concept": "hits",
+          "aliases": [
+            "hit_total",
+            "hits_recorded"
+          ]
+        },
+        "double": {
+          "name": "double",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of doubles hit by the player in this series.",
+          "semantic_type": "quantity",
+          "business_concept": "doubles",
+          "aliases": [
+            "2b",
+            "doubles_total",
+            "2_base_hits"
+          ]
+        },
+        "triple": {
+          "name": "triple",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of triples hit by the player in this series.",
+          "semantic_type": "quantity",
+          "business_concept": "triples",
+          "aliases": [
+            "3b",
+            "triples_total",
+            "3_base_hits"
+          ]
+        },
+        "hr": {
+          "name": "hr",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of home runs hit by the player in this series.",
+          "semantic_type": "quantity",
+          "business_concept": "home_runs",
+          "aliases": [
+            "homeruns",
+            "hrtotal",
+            "hrt"
+          ]
+        },
+        "rbi": {
+          "name": "rbi",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of runs batted in by the player in this series.",
+          "semantic_type": "quantity",
+          "business_concept": "runs_batted_in",
+          "aliases": [
+            "rib",
+            "rbi_total",
+            "runs_driven_in"
+          ]
+        },
+        "sb": {
+          "name": "sb",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of successful stolen bases by the player in this series.",
+          "semantic_type": "quantity",
+          "business_concept": "stolen_bases",
+          "aliases": [
+            "stolen_bases_total",
+            "sb_total",
+            "steals"
+          ]
+        },
+        "cs": {
+          "name": "cs",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "The total number of caught stealing attempts by the player in this series.",
+          "semantic_type": "quantity",
+          "business_concept": "caught_stealing",
+          "aliases": [
+            "caught_stealing_total",
+            "cs_total",
+            "caught_steals"
+          ]
+        },
+        "bb": {
+          "name": "bb",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of bases on balls (walks) received by the player in this series.",
+          "semantic_type": "quantity",
+          "business_concept": "walks",
+          "aliases": [
+            "walks_total",
+            "bb_total",
+            "bases_on_balls"
+          ]
+        },
+        "so": {
+          "name": "so",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of strikeouts recorded for the player in this series.",
+          "semantic_type": "quantity",
+          "business_concept": "strikeouts",
+          "aliases": [
+            "strikeouts_total",
+            "so_total",
+            "strike_outs"
+          ]
+        },
+        "ibb": {
+          "name": "ibb",
+          "dtype": "numeric",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of intentional bases on balls (intentional walks) received by the player in this series.",
+          "semantic_type": "quantity",
+          "business_concept": "intentional_walks",
+          "aliases": [
+            "intentional_walks_total",
+            "ibb_total",
+            "intentional_bases_on_balls"
+          ]
+        },
+        "hbp": {
+          "name": "hbp",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "The total number of times the player was hit by a pitch in this series.",
+          "semantic_type": "quantity",
+          "business_concept": "hit_by_pitch",
+          "aliases": [
+            "hbp_total",
+            "hit_by_pitch_count",
+            "times_hit_by_pitch"
+          ]
+        },
+        "sh": {
+          "name": "sh",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "The total number of sacrifice hits recorded for the player in this series.",
+          "semantic_type": "quantity",
+          "business_concept": "sacrifice_hits",
+          "aliases": [
+            "sh_total",
+            "sacrifice_hits_count",
+            "sacrifice_hits_recorded"
+          ]
+        },
+        "sf": {
+          "name": "sf",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "The total number of sacrifice flies recorded for the player in this series.",
+          "semantic_type": "quantity",
+          "business_concept": "sacrifice_flies",
+          "aliases": [
+            "sf_total",
+            "sacrifice_flies_count",
+            "sacrifice_flies_recorded"
+          ]
+        },
+        "g_idp": {
+          "name": "g_idp",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "The total number of games in which the player recorded an infield putout in this series.",
+          "semantic_type": "quantity",
+          "business_concept": "games_with_infield_putout",
+          "aliases": [
+            "g_idp_total",
+            "games_idp",
+            "games_infield_putout"
+          ]
+        }
+      }
+    },
+    "college": {
+      "table": {
+        "name": "college",
+        "column_count": 5,
+        "summary": "A reference table containing details about various colleges, including their identifiers, full names, and geographic locations.",
+        "entity": "College",
+        "role": "lookup_table",
+        "aliases": [
+          "colleges",
+          "universities",
+          "institutions",
+          "higher_education"
+        ]
+      },
+      "columns": {
+        "college_id": {
+          "name": "college_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique short code identifier for each college.",
+          "semantic_type": "code",
+          "business_concept": "College Identifier",
+          "aliases": [
+            "id",
+            "college_code",
+            "short_code",
+            "abbr"
+          ]
+        },
+        "name_full": {
+          "name": "name_full",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The complete official name of the college or university.",
+          "semantic_type": "organization_name",
+          "business_concept": "College Name",
+          "aliases": [
+            "name",
+            "full_name",
+            "title",
+            "institution_name"
+          ]
+        },
+        "city": {
+          "name": "city",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The city where the college is located.",
+          "semantic_type": "city",
+          "business_concept": "City Location",
+          "aliases": [
+            "city_name",
+            "location_city",
+            "municipality"
+          ]
+        },
+        "state": {
+          "name": "state",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The US state code where the college is located.",
+          "semantic_type": "code",
+          "business_concept": "State Location",
+          "aliases": [
+            "state_code",
+            "state_abbr",
+            "region"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country where the college is located.",
+          "semantic_type": "country",
+          "business_concept": "Country Location",
+          "aliases": [
+            "nation",
+            "country_code",
+            "location_country"
+          ]
+        }
+      }
+    },
+    "fielding": {
+      "table": {
+        "name": "fielding",
+        "column_count": 18,
+        "summary": "A historical record of fielding statistics for baseball players, detailing their performance metrics (games, putouts, assists, errors, etc.) across specific seasons, teams, and positions.",
+        "entity": "player_season_fielding_record",
+        "role": "transaction_table",
+        "aliases": [
+          "fielding_stats",
+          "fielding_history",
+          "player_fielding",
+          "fb_stats"
+        ]
+      },
+      "columns": {
+        "player_id": {
+          "name": "player_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific player within the database.",
+          "semantic_type": "identifier",
+          "business_concept": "Player ID",
+          "aliases": [
+            "player_id",
+            "pid",
+            "key_id"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the fielding statistics were recorded.",
+          "semantic_type": "date",
+          "business_concept": "Season Year",
+          "aliases": [
+            "year",
+            "season",
+            "yr"
+          ]
+        },
+        "stint": {
+          "name": "stint",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "An integer indicating the specific period or stint a player played for a team in a given year (e.g., 1 for the first stint, 2 for a second stint).",
+          "semantic_type": "quantity",
+          "business_concept": "Stint Number",
+          "aliases": [
+            "stint",
+            "period",
+            "stint_id"
+          ]
+        },
+        "team_id": {
+          "name": "team_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the team the player was associated with during the recorded season.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Team ID",
+          "aliases": [
+            "team_id",
+            "team",
+            "club_id",
+            "org_id"
+          ]
+        },
+        "league_id": {
+          "name": "league_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Identifier for the league in which the team competed. Currently appears empty in samples.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "League ID",
+          "aliases": [
+            "league_id",
+            "league",
+            "org_id"
+          ]
+        },
+        "pos": {
+          "name": "pos",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The primary defensive position played by the player during the season.",
+          "semantic_type": "code",
+          "business_concept": "Position",
+          "aliases": [
+            "pos",
+            "position",
+            "fielding_pos"
+          ]
+        },
+        "g": {
+          "name": "g",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of games in which the player appeared in the field.",
+          "semantic_type": "quantity",
+          "business_concept": "Games Played",
+          "aliases": [
+            "g",
+            "games",
+            "gp",
+            "games_fielded"
+          ]
+        },
+        "gs": {
+          "name": "gs",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Number of games started. Currently appears empty in samples.",
+          "semantic_type": "quantity",
+          "business_concept": "Games Started",
+          "aliases": [
+            "gs",
+            "games_started"
+          ]
+        },
+        "inn_outs": {
+          "name": "inn_outs",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total innings played in the field. Currently appears empty in samples.",
+          "semantic_type": "quantity",
+          "business_concept": "Innings Played",
+          "aliases": [
+            "inn_outs",
+            "innings",
+            "inn"
+          ]
+        },
+        "po": {
+          "name": "po",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of putouts recorded for the player.",
+          "semantic_type": "quantity",
+          "business_concept": "Putouts",
+          "aliases": [
+            "po",
+            "putouts"
+          ]
+        },
+        "a": {
+          "name": "a",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of assists recorded for the player.",
+          "semantic_type": "quantity",
+          "business_concept": "Assists",
+          "aliases": [
+            "a",
+            "assists"
+          ]
+        },
+        "e": {
+          "name": "e",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of errors committed by the player.",
+          "semantic_type": "quantity",
+          "business_concept": "Errors",
+          "aliases": [
+            "e",
+            "errors"
+          ]
+        },
+        "dp": {
+          "name": "dp",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of double plays participated in by the player.",
+          "semantic_type": "quantity",
+          "business_concept": "Double Plays",
+          "aliases": [
+            "dp",
+            "double_plays"
+          ]
+        },
+        "pb": {
+          "name": "pb",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Number of passed balls. Currently appears empty in samples.",
+          "semantic_type": "quantity",
+          "business_concept": "Passed Balls",
+          "aliases": [
+            "pb",
+            "passed_balls"
+          ]
+        },
+        "wp": {
+          "name": "wp",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Number of wild pitches. Currently appears empty in samples.",
+          "semantic_type": "quantity",
+          "business_concept": "Wild Pitches",
+          "aliases": [
+            "wp",
+            "wild_pitches"
+          ]
+        },
+        "sb": {
+          "name": "sb",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Number of stolen bases allowed by the player. Currently appears empty in samples.",
+          "semantic_type": "quantity",
+          "business_concept": "Stolen Bases Allowed",
+          "aliases": [
+            "sb",
+            "stolen_bases_allowed"
+          ]
+        },
+        "cs": {
+          "name": "cs",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Number of caught stealings recorded for the player. Currently appears empty in samples.",
+          "semantic_type": "quantity",
+          "business_concept": "Caught Stealings",
+          "aliases": [
+            "cs",
+            "caught_stealings"
+          ]
+        },
+        "zr": {
+          "name": "zr",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "A specific fielding statistic (likely Zone Rating or similar advanced metric). Currently appears empty in samples.",
+          "semantic_type": "quantity",
+          "business_concept": "Zone Rating",
+          "aliases": [
+            "zr",
+            "zone_rating"
+          ]
+        }
+      }
+    },
+    "fielding_outfield": {
+      "table": {
+        "name": "fielding_outfield",
+        "column_count": 6,
+        "summary": "Historical record of Major League Baseball outfield players' stints, tracking their participation years and defensive game counts.",
+        "entity": "player_stint",
+        "role": "transaction_table",
+        "aliases": [
+          "fielding_outfield",
+          "mlb_fielding_outfield",
+          "player_defense_outfield"
+        ]
+      },
+      "columns": {
+        "player_id": {
+          "name": "player_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific player within the database, formatted as a last name prefix followed by birth date and a sequence number.",
+          "semantic_type": "identifier",
+          "business_concept": "player",
+          "aliases": [
+            "player_id",
+            "id",
+            "key",
+            "person_id"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the player was active in the outfield for the recorded stint.",
+          "semantic_type": "date",
+          "business_concept": "season_year",
+          "aliases": [
+            "year",
+            "season",
+            "yr",
+            "date"
+          ]
+        },
+        "stint": {
+          "name": "stint",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A sequential integer indicating the specific period or stint a player spent in the outfield during a given year.",
+          "semantic_type": "quantity",
+          "business_concept": "stint_sequence",
+          "aliases": [
+            "stint",
+            "period",
+            "stint_num",
+            "sequence"
+          ]
+        },
+        "glf": {
+          "name": "glf",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of games played in the outfield as a Left Fielder.",
+          "semantic_type": "quantity",
+          "business_concept": "games_left_field",
+          "aliases": [
+            "glf",
+            "games_left",
+            "lf_games",
+            "games_lf"
+          ]
+        },
+        "gcf": {
+          "name": "gcf",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of games played in the outfield as a Center Fielder.",
+          "semantic_type": "quantity",
+          "business_concept": "games_center_field",
+          "aliases": [
+            "gcf",
+            "games_center",
+            "cf_games",
+            "games_cf"
+          ]
+        },
+        "grf": {
+          "name": "grf",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of games played in the outfield as a Right Fielder.",
+          "semantic_type": "quantity",
+          "business_concept": "games_right_field",
+          "aliases": [
+            "grf",
+            "games_right",
+            "rf_games",
+            "games_rf"
+          ]
+        }
+      }
+    },
+    "fielding_postseason": {
+      "table": {
+        "name": "fielding_postseason",
+        "column_count": 17,
+        "summary": "A dataset recording individual player performance statistics for specific teams during postseason baseball rounds.",
+        "entity": "player_postseason_performance",
+        "role": "transaction_table",
+        "aliases": [
+          "fielding_postseason",
+          "postseason_fielding",
+          "ps_fielding",
+          "fielding_stats_postseason"
+        ]
+      },
+      "columns": {
+        "player_id": {
+          "name": "player_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific player in the database.",
+          "semantic_type": "identifier",
+          "business_concept": "Player ID",
+          "aliases": [
+            "pid",
+            "player_key",
+            "athlete_id"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the postseason performance occurred.",
+          "semantic_type": "date",
+          "business_concept": "Season Year",
+          "aliases": [
+            "yr",
+            "season",
+            "year_id"
+          ]
+        },
+        "team_id": {
+          "name": "team_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the team the player represented during the postseason.",
+          "semantic_type": "organization_name",
+          "business_concept": "Team",
+          "aliases": [
+            "team",
+            "club",
+            "franchise"
+          ]
+        },
+        "league_id": {
+          "name": "league_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the league in which the postseason took place.",
+          "semantic_type": "organization_name",
+          "business_concept": "League",
+          "aliases": [
+            "league",
+            "conf"
+          ]
+        },
+        "round": {
+          "name": "round",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The specific postseason series or round (e.g., World Series) where the stats were recorded.",
+          "semantic_type": "category",
+          "business_concept": "Postseason Round",
+          "aliases": [
+            "series",
+            "stage",
+            "round_id"
+          ]
+        },
+        "pos": {
+          "name": "pos",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The defensive position the player played during the recorded games.",
+          "semantic_type": "category",
+          "business_concept": "Position",
+          "aliases": [
+            "position",
+            "def_pos",
+            "fielding_pos"
+          ]
+        },
+        "g": {
+          "name": "g",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of games the player appeared in during the postseason.",
+          "semantic_type": "quantity",
+          "business_concept": "Games Played",
+          "aliases": [
+            "gp",
+            "games",
+            "games_appearances"
+          ]
+        },
+        "gs": {
+          "name": "gs",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of games the player started in during the postseason.",
+          "semantic_type": "quantity",
+          "business_concept": "Games Started",
+          "aliases": [
+            "gs_count",
+            "games_started"
+          ]
+        },
+        "inn_outs": {
+          "name": "inn_outs",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total innings and outs recorded by the player (typically for pitchers or fielders tracking time on field).",
+          "semantic_type": "quantity",
+          "business_concept": "Innings and Outs",
+          "aliases": [
+            "innings",
+            "inn",
+            "time_on_field"
+          ]
+        },
+        "po": {
+          "name": "po",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of putouts recorded by the player.",
+          "semantic_type": "quantity",
+          "business_concept": "Putouts",
+          "aliases": [
+            "putouts",
+            "po_count"
+          ]
+        },
+        "a": {
+          "name": "a",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of assists recorded by the player.",
+          "semantic_type": "quantity",
+          "business_concept": "Assists",
+          "aliases": [
+            "assists",
+            "a_count"
+          ]
+        },
+        "e": {
+          "name": "e",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of errors committed by the player.",
+          "semantic_type": "quantity",
+          "business_concept": "Errors",
+          "aliases": [
+            "error_count",
+            "errors"
+          ]
+        },
+        "dp": {
+          "name": "dp",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of double plays participated in by the player.",
+          "semantic_type": "quantity",
+          "business_concept": "Double Plays",
+          "aliases": [
+            "dps",
+            "double_plays"
+          ]
+        },
+        "tp": {
+          "name": "tp",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of triple plays participated in by the player.",
+          "semantic_type": "quantity",
+          "business_concept": "Triple Plays",
+          "aliases": [
+            "tps",
+            "triple_plays"
+          ]
+        },
+        "pb": {
+          "name": "pb",
+          "dtype": "numeric",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of passed balls recorded by the player (typically catchers).",
+          "semantic_type": "quantity",
+          "business_concept": "Passed Balls",
+          "aliases": [
+            "passed_balls",
+            "pb_count"
+          ]
+        },
+        "sb": {
+          "name": "sb",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of stolen bases allowed by the player (typically catchers or pitchers).",
+          "semantic_type": "quantity",
+          "business_concept": "Stolen Bases Allowed",
+          "aliases": [
+            "sba",
+            "stolen_bases_allowed"
+          ]
+        },
+        "cs": {
+          "name": "cs",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of caught stealings recorded by the player.",
+          "semantic_type": "quantity",
+          "business_concept": "Caught Stealings",
+          "aliases": [
+            "csa",
+            "caught_stealings"
+          ]
+        }
+      }
+    },
+    "hall_of_fame": {
+      "table": {
+        "name": "hall_of_fame",
+        "column_count": 9,
+        "summary": "Records of individuals inducted into the Baseball Hall of Fame, detailing their voting statistics, induction status, and category.",
+        "entity": "Baseball Hall of Fame Inductee",
+        "role": "entity_table",
+        "aliases": [
+          "hof_inductees",
+          "baseball_hof",
+          "hall_of_fame_players"
+        ]
+      },
+      "columns": {
+        "player_id": {
+          "name": "player_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific player record in the database.",
+          "semantic_type": "identifier",
+          "business_concept": "Player ID",
+          "aliases": [
+            "id",
+            "pk",
+            "player_key"
+          ]
+        },
+        "yearid": {
+          "name": "yearid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The year in which the player was considered for or inducted into the Hall of Fame.",
+          "semantic_type": "date",
+          "business_concept": "Induction Year",
+          "aliases": [
+            "year",
+            "election_year",
+            "induction_year"
+          ]
+        },
+        "votedby": {
+          "name": "votedby",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The organization or group responsible for casting the votes for this specific record.",
+          "semantic_type": "organization_name",
+          "business_concept": "Voting Body",
+          "aliases": [
+            "voter_group",
+            "ballot_source",
+            "voter"
+          ]
+        },
+        "ballots": {
+          "name": "ballots",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of ballots cast by the voting body for this specific election cycle.",
+          "semantic_type": "quantity",
+          "business_concept": "Total Ballots Cast",
+          "aliases": [
+            "total_ballots",
+            "ballot_count",
+            "denominator"
+          ]
+        },
+        "needed": {
+          "name": "needed",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The minimum number of votes required to be inducted into the Hall of Fame for that specific election.",
+          "semantic_type": "quantity",
+          "business_concept": "Votes Required",
+          "aliases": [
+            "threshold",
+            "min_votes",
+            "quota"
+          ]
+        },
+        "votes": {
+          "name": "votes",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of votes received by the player in the specific election.",
+          "semantic_type": "quantity",
+          "business_concept": "Votes Received",
+          "aliases": [
+            "vote_count",
+            "points",
+            "total_votes"
+          ]
+        },
+        "inducted": {
+          "name": "inducted",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Indicates whether the player was successfully inducted into the Hall of Fame.",
+          "semantic_type": "boolean",
+          "business_concept": "Induction Status",
+          "aliases": [
+            "status",
+            "elected",
+            "made_hof",
+            "result"
+          ]
+        },
+        "category": {
+          "name": "category",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The classification of the inductee (e.g., Player, Manager, Executive).",
+          "semantic_type": "category",
+          "business_concept": "Inductee Category",
+          "aliases": [
+            "type",
+            "class",
+            "role_type"
+          ]
+        },
+        "needed_note": {
+          "name": "needed_note",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Additional explanatory text regarding the vote threshold or special circumstances for the election.",
+          "semantic_type": "description",
+          "business_concept": "Threshold Note",
+          "aliases": [
+            "note",
+            "comment",
+            "explanation"
+          ]
+        }
+      }
+    },
+    "home_game": {
+      "table": {
+        "name": "home_game",
+        "column_count": 9,
+        "summary": "A dataset containing historical statistics for home games played by various teams, including dates, attendance, and game counts.",
+        "entity": "home_game",
+        "role": "transaction_table",
+        "aliases": [
+          "home_games",
+          "home_game_stats",
+          "home_match_records"
+        ]
+      },
+      "columns": {
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the home game season or specific games took place.",
+          "semantic_type": "date",
+          "business_concept": "Year",
+          "aliases": [
+            "game_year",
+            "season_year",
+            "yr"
+          ]
+        },
+        "league_id": {
+          "name": "league_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Identifier for the sports league, currently empty in the sample data.",
+          "semantic_type": "code",
+          "business_concept": "League Identifier",
+          "aliases": [
+            "league_code",
+            "league_ref"
+          ]
+        },
+        "team_id": {
+          "name": "team_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the team playing at home, represented by short codes (e.g., BS1, CH1).",
+          "semantic_type": "identifier",
+          "business_concept": "Home Team Identifier",
+          "aliases": [
+            "home_team_id",
+            "team_code",
+            "club_id"
+          ]
+        },
+        "park_id": {
+          "name": "park_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the stadium or venue where the home game was played.",
+          "semantic_type": "identifier",
+          "business_concept": "Venue Identifier",
+          "aliases": [
+            "stadium_id",
+            "park_code",
+            "venue_ref"
+          ]
+        },
+        "span_first": {
+          "name": "span_first",
+          "dtype": "text",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The start date of the game span or the first game in the series.",
+          "semantic_type": "date",
+          "business_concept": "Start Date",
+          "aliases": [
+            "start_date",
+            "first_game_date",
+            "span_start"
+          ]
+        },
+        "span_last": {
+          "name": "span_last",
+          "dtype": "text",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The end date of the game span or the last game in the series.",
+          "semantic_type": "date",
+          "business_concept": "End Date",
+          "aliases": [
+            "end_date",
+            "last_game_date",
+            "span_end"
+          ]
+        },
+        "games": {
+          "name": "games",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of games played within the specified span.",
+          "semantic_type": "quantity",
+          "business_concept": "Total Games Count",
+          "aliases": [
+            "total_games",
+            "game_count",
+            "matches_played"
+          ]
+        },
+        "openings": {
+          "name": "openings",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of games that were opening games (likely home openers) within the span.",
+          "semantic_type": "quantity",
+          "business_concept": "Opening Games Count",
+          "aliases": [
+            "home_openers",
+            "opener_count",
+            "opening_matches"
+          ]
+        },
+        "attendance": {
+          "name": "attendance",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of spectators who attended the games in the span.",
+          "semantic_type": "quantity",
+          "business_concept": "Total Attendance",
+          "aliases": [
+            "total_attendance",
+            "spectator_count",
+            "crowd_size"
+          ]
+        }
+      }
+    },
+    "manager": {
+      "table": {
+        "name": "manager",
+        "column_count": 10,
+        "summary": "Historical record of baseball managers' performance statistics by season, team, and league.",
+        "entity": "Manager",
+        "role": "transaction_table",
+        "aliases": [
+          "manager_stats",
+          "mlb_managers",
+          "manager_history",
+          "team_managers"
+        ]
+      },
+      "columns": {
+        "player_id": {
+          "name": "player_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the manager, formatted as a short code.",
+          "semantic_type": "identifier",
+          "business_concept": "Manager ID",
+          "aliases": [
+            "mgr_id",
+            "manager_code",
+            "player_code"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the managerial statistics were recorded.",
+          "semantic_type": "date",
+          "business_concept": "Season Year",
+          "aliases": [
+            "season_year",
+            "yr",
+            "year_id"
+          ]
+        },
+        "team_id": {
+          "name": "team_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the team the manager was associated with during the season.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Team ID",
+          "aliases": [
+            "team_code",
+            "club_id",
+            "franchise_id"
+          ]
+        },
+        "league_id": {
+          "name": "league_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Identifier for the league the team played in (often empty in this specific dataset context).",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "League ID",
+          "aliases": [
+            "league_code",
+            "league_id"
+          ]
+        },
+        "inseason": {
+          "name": "inseason",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Indicator of whether the statistics are from the regular season (1) or postseason (2).",
+          "semantic_type": "category",
+          "business_concept": "Season Type",
+          "aliases": [
+            "season_type",
+            "game_type",
+            "in_season_flag"
+          ]
+        },
+        "g": {
+          "name": "g",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of games managed or played under the manager's tenure.",
+          "semantic_type": "quantity",
+          "business_concept": "Games Played",
+          "aliases": [
+            "games",
+            "total_games",
+            "g_total"
+          ]
+        },
+        "w": {
+          "name": "w",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of games won by the team under the manager's leadership.",
+          "semantic_type": "quantity",
+          "business_concept": "Wins",
+          "aliases": [
+            "wins",
+            "win_count",
+            "w_total"
+          ]
+        },
+        "l": {
+          "name": "l",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of games lost by the team under the manager's leadership.",
+          "semantic_type": "quantity",
+          "business_concept": "Losses",
+          "aliases": [
+            "losses",
+            "loss_count",
+            "l_total"
+          ]
+        },
+        "rank": {
+          "name": "rank",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The team's standing or rank within the league or division at the end of the season.",
+          "semantic_type": "category",
+          "business_concept": "League Rank",
+          "aliases": [
+            "standing",
+            "division_rank",
+            "league_position"
+          ]
+        },
+        "plyr_mgr": {
+          "name": "plyr_mgr",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Flag indicating if the manager was also a player on the team (Y/N).",
+          "semantic_type": "boolean",
+          "business_concept": "Player Manager Status",
+          "aliases": [
+            "is_player_manager",
+            "player_mgr_flag",
+            "dual_role"
+          ]
+        }
+      }
+    },
+    "manager_award": {
+      "table": {
+        "name": "manager_award",
+        "column_count": 6,
+        "summary": "Records of managers receiving awards in Major League Baseball, including the year, league, and award name.",
+        "entity": "Manager Award",
+        "role": "transaction_table",
+        "aliases": [
+          "manager_awards",
+          "mlb_manager_awards",
+          "bbwa_manager_awards"
+        ]
+      },
+      "columns": {
+        "player_id": {
+          "name": "player_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the manager who received the award, formatted as a short code.",
+          "semantic_type": "identifier",
+          "business_concept": "Manager ID",
+          "aliases": [
+            "manager_id",
+            "person_id",
+            "player_code"
+          ]
+        },
+        "award_id": {
+          "name": "award_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name or title of the specific award received by the manager.",
+          "semantic_type": "description",
+          "business_concept": "Award Name",
+          "aliases": [
+            "award_name",
+            "award_title",
+            "award_description"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the award was given.",
+          "semantic_type": "date",
+          "business_concept": "Award Year",
+          "aliases": [
+            "award_year",
+            "season_year",
+            "year_received"
+          ]
+        },
+        "league_id": {
+          "name": "league_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The Major League Baseball league (American or National) in which the award was won.",
+          "semantic_type": "code",
+          "business_concept": "League",
+          "aliases": [
+            "league",
+            "mlb_league",
+            "division"
+          ]
+        },
+        "tie": {
+          "name": "tie",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Indicator or note regarding if the award was shared (tied) with another recipient.",
+          "semantic_type": "boolean",
+          "business_concept": "Tie Status",
+          "aliases": [
+            "is_tie",
+            "shared_award",
+            "tie_breaker"
+          ]
+        },
+        "notes": {
+          "name": "notes",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Additional textual information or context about the award or the recipient.",
+          "semantic_type": "description",
+          "business_concept": "Award Notes",
+          "aliases": [
+            "comment",
+            "remarks",
+            "additional_info"
+          ]
+        }
+      }
+    },
+    "manager_award_vote": {
+      "table": {
+        "name": "manager_award_vote",
+        "column_count": 7,
+        "summary": "Records of manager award voting results, including points, votes, and rankings for specific years and leagues.",
+        "entity": "Award Vote",
+        "role": "transaction_table",
+        "aliases": [
+          "manager_awards",
+          "manager_votes",
+          "mvp_votes"
+        ]
+      },
+      "columns": {
+        "award_id": {
+          "name": "award_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name or title of the specific award being voted on (e.g., Manager of the Year).",
+          "semantic_type": "category",
+          "business_concept": "Award Title",
+          "aliases": [
+            "award_name",
+            "award_title",
+            "award_category"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the award vote took place.",
+          "semantic_type": "date",
+          "business_concept": "Year",
+          "aliases": [
+            "vote_year",
+            "season_year",
+            "award_year"
+          ]
+        },
+        "league_id": {
+          "name": "league_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The identifier for the sports league (e.g., AL for American League, NL for National League).",
+          "semantic_type": "code",
+          "business_concept": "League",
+          "aliases": [
+            "league_code",
+            "league",
+            "division"
+          ]
+        },
+        "player_id": {
+          "name": "player_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The unique identifier for the player (manager) who received the votes.",
+          "semantic_type": "identifier",
+          "business_concept": "Player ID",
+          "aliases": [
+            "manager_id",
+            "person_id",
+            "candidate_id"
+          ]
+        },
+        "points_won": {
+          "name": "points_won",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of points accumulated by the player in the voting process.",
+          "semantic_type": "quantity",
+          "business_concept": "Points Scored",
+          "aliases": [
+            "total_points",
+            "points",
+            "score"
+          ]
+        },
+        "points_max": {
+          "name": "points_max",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The maximum possible points available in the voting system for that specific award/league.",
+          "semantic_type": "quantity",
+          "business_concept": "Max Points",
+          "aliases": [
+            "max_points",
+            "total_possible_points",
+            "points_available"
+          ]
+        },
+        "votes_first": {
+          "name": "votes_first",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of first-place votes received by the player.",
+          "semantic_type": "quantity",
+          "business_concept": "First Place Votes",
+          "aliases": [
+            "first_place_votes",
+            "top_votes",
+            "rank_1_votes"
+          ]
+        }
+      }
+    },
+    "manager_half": {
+      "table": {
+        "name": "manager_half",
+        "column_count": 10,
+        "summary": "A dataset recording the win-loss records, game counts, and league standings for individual players during specific halves of a baseball season.",
+        "entity": "player_season_record",
+        "role": "transaction_table",
+        "aliases": [
+          "player_half_record",
+          "manager_half",
+          "player_season_half_stats"
+        ]
+      },
+      "columns": {
+        "player_id": {
+          "name": "player_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a baseball player, formatted as a last name followed by a number.",
+          "semantic_type": "identifier",
+          "business_concept": "player",
+          "aliases": [
+            "player",
+            "pid",
+            "player_code"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the season took place.",
+          "semantic_type": "date",
+          "business_concept": "season_year",
+          "aliases": [
+            "yr",
+            "season_year",
+            "year_id"
+          ]
+        },
+        "team_id": {
+          "name": "team_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the team the player was associated with during the season.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "team",
+          "aliases": [
+            "team",
+            "tm",
+            "team_code"
+          ]
+        },
+        "league_id": {
+          "name": "league_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the league in which the team competed (e.g., NL for National League).",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "league",
+          "aliases": [
+            "league",
+            "lg",
+            "league_code"
+          ]
+        },
+        "inseason": {
+          "name": "inseason",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "An integer code representing the specific in-season period or phase.",
+          "semantic_type": "code",
+          "business_concept": "in_season_period",
+          "aliases": [
+            "in_season",
+            "period"
+          ]
+        },
+        "half": {
+          "name": "half",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Indicates which half of the season the record covers (e.g., 1 for first half, 2 for second half).",
+          "semantic_type": "code",
+          "business_concept": "season_half",
+          "aliases": [
+            "half_of_season",
+            "split"
+          ]
+        },
+        "g": {
+          "name": "g",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of games played by the player in the specified period.",
+          "semantic_type": "quantity",
+          "business_concept": "games_played",
+          "aliases": [
+            "games",
+            "gp",
+            "games_total"
+          ]
+        },
+        "w": {
+          "name": "w",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of wins recorded for the player (likely in a managerial or pitching context).",
+          "semantic_type": "quantity",
+          "business_concept": "wins",
+          "aliases": [
+            "wins",
+            "wins_recorded"
+          ]
+        },
+        "l": {
+          "name": "l",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of losses recorded for the player (likely in a managerial or pitching context).",
+          "semantic_type": "quantity",
+          "business_concept": "losses",
+          "aliases": [
+            "losses",
+            "losses_recorded"
+          ]
+        },
+        "rank": {
+          "name": "rank",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The player's or team's standing rank within the league or division.",
+          "semantic_type": "category",
+          "business_concept": "league_rank",
+          "aliases": [
+            "standing",
+            "rank_position",
+            "league_rank"
+          ]
+        }
+      }
+    },
+    "park": {
+      "table": {
+        "name": "park",
+        "column_count": 6,
+        "summary": "A reference table containing details about various parks, including their identifiers, names, aliases, and geographic locations.",
+        "entity": "park",
+        "role": "lookup_table",
+        "aliases": [
+          "parks",
+          "stadiums",
+          "venues",
+          "ballparks"
+        ]
+      },
+      "columns": {
+        "park_id": {
+          "name": "park_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific park or stadium.",
+          "semantic_type": "identifier",
+          "business_concept": "park_id",
+          "aliases": [
+            "id",
+            "park_code",
+            "venue_id"
+          ]
+        },
+        "park_name": {
+          "name": "park_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official or primary name of the park.",
+          "semantic_type": "organization_name",
+          "business_concept": "park_name",
+          "aliases": [
+            "name",
+            "title",
+            "official_name"
+          ]
+        },
+        "park_alias": {
+          "name": "park_alias",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Alternative names, former names, or nicknames for the park, often separated by semicolons.",
+          "semantic_type": "description",
+          "business_concept": "park_alias",
+          "aliases": [
+            "aliases",
+            "former_names",
+            "nicknames",
+            "other_names"
+          ]
+        },
+        "city": {
+          "name": "city",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The city where the park is located.",
+          "semantic_type": "city",
+          "business_concept": "city",
+          "aliases": [
+            "city_name",
+            "municipality"
+          ]
+        },
+        "state": {
+          "name": "state",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The state or province where the park is located.",
+          "semantic_type": "code",
+          "business_concept": "state_code",
+          "aliases": [
+            "state_abbr",
+            "province",
+            "region"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country where the park is located.",
+          "semantic_type": "code",
+          "business_concept": "country_code",
+          "aliases": [
+            "country_abbr",
+            "nation"
+          ]
+        }
+      }
+    },
+    "pitching": {
+      "table": {
+        "name": "pitching",
+        "column_count": 30,
+        "summary": "A historical record of pitching statistics for baseball players, detailing performance metrics such as wins, losses, innings pitched, and strikeouts across specific seasons and teams.",
+        "entity": "pitching_statistics",
+        "role": "transaction_table",
+        "aliases": [
+          "pitching_stats",
+          "pitching_history",
+          "pitching_records",
+          "pitching_log"
+        ]
+      },
+      "columns": {
+        "player_id": {
+          "name": "player_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a baseball player, typically formatted as a last name followed by a birth date.",
+          "semantic_type": "identifier",
+          "business_concept": "player",
+          "aliases": [
+            "pid",
+            "player_code",
+            "athlete_id"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the pitching statistics were recorded.",
+          "semantic_type": "date",
+          "business_concept": "season_year",
+          "aliases": [
+            "yr",
+            "season",
+            "year_id"
+          ]
+        },
+        "stint": {
+          "name": "stint",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "An indicator of whether this is the first stint (1) or a subsequent stint for the player in that year/team combination.",
+          "semantic_type": "boolean",
+          "business_concept": "stint_indicator",
+          "aliases": [
+            "stint_num",
+            "is_first_stint"
+          ]
+        },
+        "team_id": {
+          "name": "team_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the team the player was associated with during the recorded period.",
+          "semantic_type": "organization_name",
+          "business_concept": "team",
+          "aliases": [
+            "team_code",
+            "club_id",
+            "org_id"
+          ]
+        },
+        "league_id": {
+          "name": "league_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Identifier for the league the team played in (often empty in this specific dataset context).",
+          "semantic_type": "organization_name",
+          "business_concept": "league",
+          "aliases": [
+            "league_code",
+            "league_id"
+          ]
+        },
+        "w": {
+          "name": "w",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of wins credited to the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "wins",
+          "aliases": [
+            "wins",
+            "win_count"
+          ]
+        },
+        "l": {
+          "name": "l",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of losses credited to the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "losses",
+          "aliases": [
+            "losses",
+            "loss_count"
+          ]
+        },
+        "g": {
+          "name": "g",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of games in which the pitcher appeared.",
+          "semantic_type": "quantity",
+          "business_concept": "games_played",
+          "aliases": [
+            "games",
+            "game_count"
+          ]
+        },
+        "gs": {
+          "name": "gs",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of games started by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "games_started",
+          "aliases": [
+            "starts",
+            "gs_count"
+          ]
+        },
+        "cg": {
+          "name": "cg",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of complete games pitched by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "complete_games",
+          "aliases": [
+            "complete_games",
+            "cg_count"
+          ]
+        },
+        "sho": {
+          "name": "sho",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of shutouts recorded by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "shutouts",
+          "aliases": [
+            "shutout_count",
+            "sho_count"
+          ]
+        },
+        "sv": {
+          "name": "sv",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of saves recorded by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "saves",
+          "aliases": [
+            "save_count",
+            "sv_count"
+          ]
+        },
+        "ipouts": {
+          "name": "ipouts",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of outs recorded by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "outs_pitched",
+          "aliases": [
+            "outs",
+            "ip_outs"
+          ]
+        },
+        "h": {
+          "name": "h",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of hits allowed by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "hits_allowed",
+          "aliases": [
+            "hits",
+            "hit_count"
+          ]
+        },
+        "er": {
+          "name": "er",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of earned runs allowed by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "earned_runs",
+          "aliases": [
+            "earned_runs",
+            "er_count"
+          ]
+        },
+        "hr": {
+          "name": "hr",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of home runs allowed by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "home_runs_allowed",
+          "aliases": [
+            "homeruns",
+            "hr_count"
+          ]
+        },
+        "bb": {
+          "name": "bb",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of bases on balls (walks) issued by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "walks",
+          "aliases": [
+            "walks",
+            "bb_count"
+          ]
+        },
+        "so": {
+          "name": "so",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of strikeouts recorded by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "strikeouts",
+          "aliases": [
+            "strikeouts",
+            "so_count"
+          ]
+        },
+        "baopp": {
+          "name": "baopp",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Batting average against the pitcher (often empty in this specific dataset).",
+          "semantic_type": "unknown",
+          "business_concept": "batting_average_against",
+          "aliases": [
+            "ba_against",
+            "opp_ba"
+          ]
+        },
+        "era": {
+          "name": "era",
+          "dtype": "numeric",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Earned Run Average, representing the average number of earned runs allowed per nine innings.",
+          "semantic_type": "unknown",
+          "business_concept": "earned_run_average",
+          "aliases": [
+            "era_val",
+            "avg_era"
+          ]
+        },
+        "ibb": {
+          "name": "ibb",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of intentional walks issued by the pitcher (often empty in this specific dataset).",
+          "semantic_type": "unknown",
+          "business_concept": "intentional_walks",
+          "aliases": [
+            "ibb_count",
+            "int_walks"
+          ]
+        },
+        "wp": {
+          "name": "wp",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of wild pitches thrown by the pitcher (often empty in this specific dataset).",
+          "semantic_type": "unknown",
+          "business_concept": "wild_pitches",
+          "aliases": [
+            "wp_count",
+            "wild_pitch"
+          ]
+        },
+        "hbp": {
+          "name": "hbp",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of hit batters by the pitcher (often empty in this specific dataset).",
+          "semantic_type": "unknown",
+          "business_concept": "hit_batters",
+          "aliases": [
+            "hbp_count",
+            "hit_pitcher"
+          ]
+        },
+        "bk": {
+          "name": "bk",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of balks committed by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "balks",
+          "aliases": [
+            "balk_count",
+            "bk_count"
+          ]
+        },
+        "bfp": {
+          "name": "bfp",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of batters faced by the pitcher (often empty in this specific dataset).",
+          "semantic_type": "unknown",
+          "business_concept": "batters_faced",
+          "aliases": [
+            "batters_faced",
+            "bf_count"
+          ]
+        },
+        "gf": {
+          "name": "gf",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of games finished by the pitcher (often empty in this specific dataset).",
+          "semantic_type": "unknown",
+          "business_concept": "games_finished",
+          "aliases": [
+            "games_finished",
+            "gf_count"
+          ]
+        },
+        "r": {
+          "name": "r",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of runs allowed by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "runs_allowed",
+          "aliases": [
+            "runs",
+            "run_count"
+          ]
+        },
+        "sh": {
+          "name": "sh",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of sacrifice hits (often empty in this specific dataset).",
+          "semantic_type": "unknown",
+          "business_concept": "sacrifice_hits",
+          "aliases": [
+            "sh_count",
+            "sac_hits"
+          ]
+        },
+        "sf": {
+          "name": "sf",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of sacrifice flies (often empty in this specific dataset).",
+          "semantic_type": "unknown",
+          "business_concept": "sacrifice_flies",
+          "aliases": [
+            "sf_count",
+            "sac_flies"
+          ]
+        },
+        "g_idp": {
+          "name": "g_idp",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of games with an infield putout (often empty in this specific dataset).",
+          "semantic_type": "unknown",
+          "business_concept": "games_idp",
+          "aliases": [
+            "g_idp_count",
+            "idp_games"
+          ]
+        }
+      }
+    },
+    "pitching_postseason": {
+      "table": {
+        "name": "pitching_postseason",
+        "column_count": 30,
+        "summary": "Historical pitching statistics for Major League Baseball players during postseason games.",
+        "entity": "pitching_game",
+        "role": "transaction_table",
+        "aliases": [
+          "pitching_postseason",
+          "mlb_pitching_postseason",
+          "postseason_pitching",
+          "playoff_pitching"
+        ]
+      },
+      "columns": {
+        "player_id": {
+          "name": "player_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the baseball player who pitched.",
+          "semantic_type": "identifier",
+          "business_concept": "player",
+          "aliases": [
+            "pid",
+            "player",
+            "athlete_id"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the game took place.",
+          "semantic_type": "date",
+          "business_concept": "time_period",
+          "aliases": [
+            "yr",
+            "season_year",
+            "game_year"
+          ]
+        },
+        "round": {
+          "name": "round",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The specific round of the postseason tournament (e.g., World Series).",
+          "semantic_type": "code",
+          "business_concept": "tournament_round",
+          "aliases": [
+            "series",
+            "stage",
+            "round_id"
+          ]
+        },
+        "team_id": {
+          "name": "team_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the team the player represented in this game.",
+          "semantic_type": "identifier",
+          "business_concept": "organization",
+          "aliases": [
+            "tid",
+            "team",
+            "club_id"
+          ]
+        },
+        "league_id": {
+          "name": "league_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the league in which the game was played (e.g., National League).",
+          "semantic_type": "code",
+          "business_concept": "league",
+          "aliases": [
+            "lid",
+            "league",
+            "division"
+          ]
+        },
+        "w": {
+          "name": "w",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of wins credited to the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "pitching_win",
+          "aliases": [
+            "wins",
+            "win_count",
+            "wins_postseason"
+          ]
+        },
+        "l": {
+          "name": "l",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of losses credited to the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "pitching_loss",
+          "aliases": [
+            "losses",
+            "loss_count",
+            "losses_postseason"
+          ]
+        },
+        "g": {
+          "name": "g",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of games pitched by the player.",
+          "semantic_type": "quantity",
+          "business_concept": "games_pitched",
+          "aliases": [
+            "games",
+            "gp",
+            "games_postseason"
+          ]
+        },
+        "gs": {
+          "name": "gs",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of games started by the player.",
+          "semantic_type": "quantity",
+          "business_concept": "games_started",
+          "aliases": [
+            "starts",
+            "gs_count",
+            "starts_postseason"
+          ]
+        },
+        "cg": {
+          "name": "cg",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of complete games pitched by the player.",
+          "semantic_type": "quantity",
+          "business_concept": "complete_games",
+          "aliases": [
+            "complete_games",
+            "cg_count",
+            "complete_games_postseason"
+          ]
+        },
+        "sho": {
+          "name": "sho",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of shutouts pitched by the player.",
+          "semantic_type": "quantity",
+          "business_concept": "shutouts",
+          "aliases": [
+            "shutouts",
+            "sho_count",
+            "shutouts_postseason"
+          ]
+        },
+        "sv": {
+          "name": "sv",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of saves recorded by the player.",
+          "semantic_type": "quantity",
+          "business_concept": "saves",
+          "aliases": [
+            "save_count",
+            "saves_postseason"
+          ]
+        },
+        "ipouts": {
+          "name": "ipouts",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of outs recorded by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "outs_pitched",
+          "aliases": [
+            "outs",
+            "total_outs",
+            "outs_postseason"
+          ]
+        },
+        "h": {
+          "name": "h",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of hits allowed by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "hits_allowed",
+          "aliases": [
+            "hits",
+            "hit_count",
+            "hits_allowed_postseason"
+          ]
+        },
+        "er": {
+          "name": "er",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of earned runs allowed by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "earned_runs",
+          "aliases": [
+            "earned_runs",
+            "er_count",
+            "runs_allowed_postseason"
+          ]
+        },
+        "hr": {
+          "name": "hr",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of home runs allowed by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "home_runs_allowed",
+          "aliases": [
+            "homeruns",
+            "hr_count",
+            "homeruns_allowed_postseason"
+          ]
+        },
+        "bb": {
+          "name": "bb",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of bases on balls (walks) issued by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "walks",
+          "aliases": [
+            "walks",
+            "bb_count",
+            "bases_on_balls_postseason"
+          ]
+        },
+        "so": {
+          "name": "so",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of strikeouts recorded by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "strikeouts",
+          "aliases": [
+            "strikeouts",
+            "so_count",
+            "strikeouts_postseason"
+          ]
+        },
+        "baopp": {
+          "name": "baopp",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Batting average against the pitcher (often empty in raw datasets).",
+          "semantic_type": "unknown",
+          "business_concept": "batting_average_against",
+          "aliases": [
+            "ba",
+            "opp_ba",
+            "batting_avg_against"
+          ]
+        },
+        "era": {
+          "name": "era",
+          "dtype": "numeric",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Earned Run Average for the pitcher.",
+          "semantic_type": "money",
+          "business_concept": "era",
+          "aliases": [
+            "earned_run_avg",
+            "era_postseason"
+          ]
+        },
+        "ibb": {
+          "name": "ibb",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Number of intentional walks issued by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "intentional_walks",
+          "aliases": [
+            "intentional_walks",
+            "ibb_count",
+            "ibb_postseason"
+          ]
+        },
+        "wp": {
+          "name": "wp",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Number of wild pitches thrown by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "wild_pitches",
+          "aliases": [
+            "wild_pitches",
+            "wp_count",
+            "wild_pitches_postseason"
+          ]
+        },
+        "hbp": {
+          "name": "hbp",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Number of hit batters recorded by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "hit_batters",
+          "aliases": [
+            "hit_batters",
+            "hbp_count",
+            "hit_batters_postseason"
+          ]
+        },
+        "bk": {
+          "name": "bk",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Number of balks committed by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "balks",
+          "aliases": [
+            "balks",
+            "bk_count",
+            "balks_postseason"
+          ]
+        },
+        "bfp": {
+          "name": "bfp",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of batters faced by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "batters_faced",
+          "aliases": [
+            "batters_faced",
+            "bf",
+            "bfp_count",
+            "batters_faced_postseason"
+          ]
+        },
+        "gf": {
+          "name": "gf",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of games finished (relief appearances) by the player.",
+          "semantic_type": "quantity",
+          "business_concept": "games_finished",
+          "aliases": [
+            "games_finished",
+            "gf_count",
+            "relief_appearances_postseason"
+          ]
+        },
+        "r": {
+          "name": "r",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of runs allowed by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "runs_allowed",
+          "aliases": [
+            "runs",
+            "r_count",
+            "runs_allowed_postseason"
+          ]
+        },
+        "sh": {
+          "name": "sh",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Number of sacrifice hits recorded by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "sacrifice_hits",
+          "aliases": [
+            "sacrifice_hits",
+            "sh_count",
+            "sacrifice_hits_postseason"
+          ]
+        },
+        "sf": {
+          "name": "sf",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Number of sacrifice flies recorded by the pitcher.",
+          "semantic_type": "quantity",
+          "business_concept": "sacrifice_flies",
+          "aliases": [
+            "sacrifice_flies",
+            "sf_count",
+            "sacrifice_flies_postseason"
+          ]
+        },
+        "g_idp": {
+          "name": "g_idp",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Number of games where the pitcher recorded an infield putout.",
+          "semantic_type": "quantity",
+          "business_concept": "games_idp",
+          "aliases": [
+            "games_idp",
+            "idp_games",
+            "games_idp_postseason"
+          ]
+        }
+      }
+    },
+    "player": {
+      "table": {
+        "name": "player",
+        "column_count": 24,
+        "summary": "A comprehensive profile of baseball players containing biographical data, physical attributes, career timeline, and external reference IDs.",
+        "entity": "baseball_player",
+        "role": "entity_table",
+        "aliases": [
+          "players",
+          "player_profiles",
+          "mlb_players",
+          "athlete_roster"
+        ]
+      },
+      "columns": {
+        "player_id": {
+          "name": "player_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a player in this specific dataset.",
+          "semantic_type": "identifier",
+          "business_concept": "internal_player_key",
+          "aliases": [
+            "id",
+            "pk",
+            "player_key"
+          ]
+        },
+        "birth_year": {
+          "name": "birth_year",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The year the player was born.",
+          "semantic_type": "date",
+          "business_concept": "birth_year",
+          "aliases": [
+            "byr",
+            "born_yr"
+          ]
+        },
+        "birth_month": {
+          "name": "birth_month",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The month the player was born.",
+          "semantic_type": "date",
+          "business_concept": "birth_month",
+          "aliases": [
+            "bmo",
+            "born_m"
+          ]
+        },
+        "birth_day": {
+          "name": "birth_day",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The day the player was born.",
+          "semantic_type": "date",
+          "business_concept": "birth_day",
+          "aliases": [
+            "bdy",
+            "born_d"
+          ]
+        },
+        "birth_country": {
+          "name": "birth_country",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country where the player was born.",
+          "semantic_type": "country",
+          "business_concept": "birth_country",
+          "aliases": [
+            "bco",
+            "born_country"
+          ]
+        },
+        "birth_state": {
+          "name": "birth_state",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The US state where the player was born.",
+          "semantic_type": "address",
+          "business_concept": "birth_state",
+          "aliases": [
+            "bst",
+            "born_state"
+          ]
+        },
+        "birth_city": {
+          "name": "birth_city",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The city where the player was born.",
+          "semantic_type": "address",
+          "business_concept": "birth_city",
+          "aliases": [
+            "bct",
+            "born_city"
+          ]
+        },
+        "death_year": {
+          "name": "death_year",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The year the player died (nullable for living players).",
+          "semantic_type": "date",
+          "business_concept": "death_year",
+          "aliases": [
+            "dyr",
+            "died_yr"
+          ]
+        },
+        "death_month": {
+          "name": "death_month",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The month the player died (nullable for living players).",
+          "semantic_type": "date",
+          "business_concept": "death_month",
+          "aliases": [
+            "dmo",
+            "died_m"
+          ]
+        },
+        "death_day": {
+          "name": "death_day",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The day the player died (nullable for living players).",
+          "semantic_type": "date",
+          "business_concept": "death_day",
+          "aliases": [
+            "ddy",
+            "died_d"
+          ]
+        },
+        "death_country": {
+          "name": "death_country",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country where the player died.",
+          "semantic_type": "country",
+          "business_concept": "death_country",
+          "aliases": [
+            "dco",
+            "died_country"
+          ]
+        },
+        "death_state": {
+          "name": "death_state",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The US state where the player died.",
+          "semantic_type": "address",
+          "business_concept": "death_state",
+          "aliases": [
+            "dst",
+            "died_state"
+          ]
+        },
+        "death_city": {
+          "name": "death_city",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The city where the player died.",
+          "semantic_type": "address",
+          "business_concept": "death_city",
+          "aliases": [
+            "dct",
+            "died_city"
+          ]
+        },
+        "name_first": {
+          "name": "name_first",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The first name of the player.",
+          "semantic_type": "person_name",
+          "business_concept": "first_name",
+          "aliases": [
+            "fn",
+            "fname",
+            "given_name"
+          ]
+        },
+        "name_last": {
+          "name": "name_last",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The last name of the player.",
+          "semantic_type": "person_name",
+          "business_concept": "last_name",
+          "aliases": [
+            "ln",
+            "lname",
+            "surname"
+          ]
+        },
+        "name_given": {
+          "name": "name_given",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full given name of the player (e.g., First Middle).",
+          "semantic_type": "person_name",
+          "business_concept": "full_given_name",
+          "aliases": [
+            "ng",
+            "full_name"
+          ]
+        },
+        "weight": {
+          "name": "weight",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The player's weight in pounds.",
+          "semantic_type": "quantity",
+          "business_concept": "player_weight",
+          "aliases": [
+            "wt",
+            "weight_lbs"
+          ]
+        },
+        "height": {
+          "name": "height",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The player's height in inches.",
+          "semantic_type": "quantity",
+          "business_concept": "player_height",
+          "aliases": [
+            "ht",
+            "height_in"
+          ]
+        },
+        "bats": {
+          "name": "bats",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The hand the player uses to bat.",
+          "semantic_type": "category",
+          "business_concept": "batting_hand",
+          "aliases": [
+            "bat",
+            "bats"
+          ]
+        },
+        "throws": {
+          "name": "throws",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The hand the player uses to throw.",
+          "semantic_type": "category",
+          "business_concept": "throwing_hand",
+          "aliases": [
+            "th",
+            "throws"
+          ]
+        },
+        "debut": {
+          "name": "debut",
+          "dtype": "text",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The date of the player's first professional game.",
+          "semantic_type": "date",
+          "business_concept": "career_debut_date",
+          "aliases": [
+            "deb",
+            "debut_date"
+          ]
+        },
+        "final_game": {
+          "name": "final_game",
+          "dtype": "text",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The date of the player's last professional game.",
+          "semantic_type": "date",
+          "business_concept": "career_final_date",
+          "aliases": [
+            "fg",
+            "final_date"
+          ]
+        },
+        "retro_id": {
+          "name": "retro_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier from the Retrosheet database.",
+          "semantic_type": "identifier",
+          "business_concept": "retrosheet_player_id",
+          "aliases": [
+            "retro_id",
+            "retro"
+          ]
+        },
+        "bbref_id": {
+          "name": "bbref_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier from the Baseball-Reference database.",
+          "semantic_type": "identifier",
+          "business_concept": "baseball_reference_id",
+          "aliases": [
+            "bbref",
+            "br_id"
+          ]
+        }
+      }
+    },
+    "player_award": {
+      "table": {
+        "name": "player_award",
+        "column_count": 6,
+        "summary": "Records of awards won by baseball players, including the year, league, and specific award type.",
+        "entity": "player_award",
+        "role": "transaction_table",
+        "aliases": [
+          "player_awards",
+          "awards",
+          "player_honors",
+          "baseball_awards"
+        ]
+      },
+      "columns": {
+        "player_id": {
+          "name": "player_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific player, likely following a standard ID format (e.g., last name initials + birth year + sequence).",
+          "semantic_type": "identifier",
+          "business_concept": "player",
+          "aliases": [
+            "player",
+            "athlete_id",
+            "person_id",
+            "p_id"
+          ]
+        },
+        "award_id": {
+          "name": "award_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name or title of the specific award received by the player.",
+          "semantic_type": "category",
+          "business_concept": "award",
+          "aliases": [
+            "award_name",
+            "award_title",
+            "honor_name",
+            "achievement"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the award was won.",
+          "semantic_type": "date",
+          "business_concept": "year",
+          "aliases": [
+            "award_year",
+            "season",
+            "yr",
+            "date_awarded"
+          ]
+        },
+        "league_id": {
+          "name": "league_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The league in which the award was won (e.g., National League, American Association).",
+          "semantic_type": "code",
+          "business_concept": "league",
+          "aliases": [
+            "league",
+            "league_code",
+            "org_id",
+            "division"
+          ]
+        },
+        "tie": {
+          "name": "tie",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Indicates if the award was shared with other players (empty string likely means no tie).",
+          "semantic_type": "boolean",
+          "business_concept": "tie_status",
+          "aliases": [
+            "shared",
+            "co_winner",
+            "tie_breaker",
+            "is_tie"
+          ]
+        },
+        "notes": {
+          "name": "notes",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Additional descriptive text or context regarding the award.",
+          "semantic_type": "description",
+          "business_concept": "notes",
+          "aliases": [
+            "comment",
+            "remarks",
+            "details",
+            "description"
+          ]
+        }
+      }
+    },
+    "player_award_vote": {
+      "table": {
+        "name": "player_award_vote",
+        "column_count": 7,
+        "summary": "Records of votes cast by players for Major League Baseball awards, including the award name, year, league, player, points received, and vote distribution.",
+        "entity": "Award Vote",
+        "role": "transaction_table",
+        "aliases": [
+          "player_award_votes",
+          "mlb_award_votes",
+          "award_balloting",
+          "player_award_points"
+        ]
+      },
+      "columns": {
+        "award_id": {
+          "name": "award_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the specific award being voted on (e.g., Cy Young).",
+          "semantic_type": "category",
+          "business_concept": "Award Name",
+          "aliases": [
+            "award_name",
+            "award_title",
+            "award_type"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the award votes were cast.",
+          "semantic_type": "date",
+          "business_concept": "Season Year",
+          "aliases": [
+            "season_year",
+            "vote_year",
+            "award_year"
+          ]
+        },
+        "league_id": {
+          "name": "league_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The league identifier for the award (e.g., 'ML' for Major League).",
+          "semantic_type": "code",
+          "business_concept": "League",
+          "aliases": [
+            "league_code",
+            "league_abbr",
+            "league_type"
+          ]
+        },
+        "player_id": {
+          "name": "player_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The unique identifier for the player who cast the vote or is the subject of the vote.",
+          "semantic_type": "identifier",
+          "business_concept": "Player ID",
+          "aliases": [
+            "player_code",
+            "player_ref",
+            "athlete_id"
+          ]
+        },
+        "points_won": {
+          "name": "points_won",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of points the player received for this specific award.",
+          "semantic_type": "quantity",
+          "business_concept": "Total Points",
+          "aliases": [
+            "total_points",
+            "points_received",
+            "vote_total"
+          ]
+        },
+        "points_max": {
+          "name": "points_max",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The maximum possible points available for this award in the given year.",
+          "semantic_type": "quantity",
+          "business_concept": "Max Points",
+          "aliases": [
+            "max_points",
+            "points_possible",
+            "total_votes_cast"
+          ]
+        },
+        "votes_first": {
+          "name": "votes_first",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of first-place votes the player received.",
+          "semantic_type": "quantity",
+          "business_concept": "First Place Votes",
+          "aliases": [
+            "first_place_votes",
+            "top_votes",
+            "rank_1_votes"
+          ]
+        }
+      }
+    },
+    "player_college": {
+      "table": {
+        "name": "player_college",
+        "column_count": 3,
+        "summary": "A relationship table linking baseball players to the colleges they attended during specific academic years.",
+        "entity": "player_college_attendance",
+        "role": "relationship_table",
+        "aliases": [
+          "player_college",
+          "college_history",
+          "player_education",
+          "college_career"
+        ]
+      },
+      "columns": {
+        "player_id": {
+          "name": "player_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a baseball player, likely referencing a master player table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Player Identity",
+          "aliases": [
+            "player_key",
+            "player_code",
+            "id_player"
+          ]
+        },
+        "college_id": {
+          "name": "college_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a college or university, likely referencing a master college table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Institution Identity",
+          "aliases": [
+            "college_key",
+            "school_code",
+            "id_college"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The academic year in which the player attended the college.",
+          "semantic_type": "date",
+          "business_concept": "Academic Year",
+          "aliases": [
+            "year_id",
+            "season",
+            "academic_year"
+          ]
+        }
+      }
+    },
+    "postseason": {
+      "table": {
+        "name": "postseason",
+        "column_count": 9,
+        "summary": "Historical record of Major League Baseball postseason series results, including year, round, winning and losing teams, leagues, and series statistics.",
+        "entity": "Postseason Series",
+        "role": "transaction_table",
+        "aliases": [
+          "postseason_results",
+          "playoff_series",
+          "mlb_postseason",
+          "championship_series"
+        ]
+      },
+      "columns": {
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the postseason series took place.",
+          "semantic_type": "date",
+          "business_concept": "Event Year",
+          "aliases": [
+            "season_year",
+            "event_year",
+            "year_id"
+          ]
+        },
+        "round": {
+          "name": "round",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The specific stage of the postseason tournament (e.g., World Series).",
+          "semantic_type": "code",
+          "business_concept": "Tournament Stage",
+          "aliases": [
+            "series_round",
+            "stage",
+            "round_id"
+          ]
+        },
+        "team_id_winner": {
+          "name": "team_id_winner",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The unique identifier for the team that won the series.",
+          "semantic_type": "organization_name",
+          "business_concept": "Winning Team",
+          "aliases": [
+            "winner_team_id",
+            "winning_team_code",
+            "team_winner"
+          ]
+        },
+        "league_id_winner": {
+          "name": "league_id_winner",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The league affiliation of the winning team.",
+          "semantic_type": "organization_name",
+          "business_concept": "Winning League",
+          "aliases": [
+            "winner_league_id",
+            "winning_league_code",
+            "league_winner"
+          ]
+        },
+        "team_id_loser": {
+          "name": "team_id_loser",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The unique identifier for the team that lost the series.",
+          "semantic_type": "organization_name",
+          "business_concept": "Losing Team",
+          "aliases": [
+            "loser_team_id",
+            "losing_team_code",
+            "team_loser"
+          ]
+        },
+        "league_id_loser": {
+          "name": "league_id_loser",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The league affiliation of the losing team.",
+          "semantic_type": "organization_name",
+          "business_concept": "Losing League",
+          "aliases": [
+            "loser_league_id",
+            "losing_league_code",
+            "league_loser"
+          ]
+        },
+        "wins": {
+          "name": "wins",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of games won by the winning team in the series.",
+          "semantic_type": "quantity",
+          "business_concept": "Series Wins",
+          "aliases": [
+            "series_wins",
+            "games_won",
+            "w"
+          ]
+        },
+        "losses": {
+          "name": "losses",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of games lost by the losing team in the series.",
+          "semantic_type": "quantity",
+          "business_concept": "Series Losses",
+          "aliases": [
+            "series_losses",
+            "games_lost",
+            "l"
+          ]
+        },
+        "ties": {
+          "name": "ties",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of games that ended in a tie (historical data, mostly obsolete in modern baseball).",
+          "semantic_type": "quantity",
+          "business_concept": "Series Ties",
+          "aliases": [
+            "series_ties",
+            "games_tied",
+            "t"
+          ]
+        }
+      }
+    },
+    "salary": {
+      "table": {
+        "name": "salary",
+        "column_count": 5,
+        "summary": "A dataset recording the annual salaries of professional baseball players, categorized by team and league.",
+        "entity": "Player Salary Record",
+        "role": "transaction_table",
+        "aliases": [
+          "player_salaries",
+          "baseball_compensation",
+          "mlb_salary_data"
+        ]
+      },
+      "columns": {
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the salary was recorded.",
+          "semantic_type": "date",
+          "business_concept": "Fiscal Year",
+          "aliases": [
+            "yr",
+            "fiscal_year",
+            "season_year"
+          ]
+        },
+        "team_id": {
+          "name": "team_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the baseball team associated with the player.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Team",
+          "aliases": [
+            "team_code",
+            "club_id",
+            "franchise"
+          ]
+        },
+        "league_id": {
+          "name": "league_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the sports league (e.g., National League) the team belongs to.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "League",
+          "aliases": [
+            "league_code",
+            "division",
+            "conference"
+          ]
+        },
+        "player_id": {
+          "name": "player_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the player, typically formatted as a surname followed by a number.",
+          "semantic_type": "identifier",
+          "business_concept": "Player",
+          "aliases": [
+            "player_code",
+            "athlete_id",
+            "roster_id"
+          ]
+        },
+        "salary": {
+          "name": "salary",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The monetary compensation paid to the player for the specified year.",
+          "semantic_type": "money",
+          "business_concept": "Compensation",
+          "aliases": [
+            "pay",
+            "wage",
+            "contract_value",
+            "earnings"
+          ]
+        }
+      }
+    },
+    "team": {
+      "table": {
+        "name": "team",
+        "column_count": 48,
+        "summary": "Historical Major League Baseball team statistics, standings, and franchise information spanning from the early 19th century to the present.",
+        "entity": "Baseball Team",
+        "role": "entity_table",
+        "aliases": [
+          "teams",
+          "mlb_teams",
+          "franchises",
+          "baseball_standings",
+          "team_stats"
+        ]
+      },
+      "columns": {
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the statistics were recorded.",
+          "semantic_type": "date",
+          "business_concept": "Season Year",
+          "aliases": [
+            "season",
+            "yr",
+            "date"
+          ]
+        },
+        "league_id": {
+          "name": "league_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Identifier for the league the team played in (e.g., National League, American League).",
+          "semantic_type": "code",
+          "business_concept": "League Identifier",
+          "aliases": [
+            "league",
+            "lg_id"
+          ]
+        },
+        "team_id": {
+          "name": "team_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the team within the specific dataset version (Lahman's database).",
+          "semantic_type": "identifier",
+          "business_concept": "Team ID (Lahman)",
+          "aliases": [
+            "id",
+            "team_code"
+          ]
+        },
+        "franchise_id": {
+          "name": "franchise_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the franchise entity, tracking the team across different city locations and name changes.",
+          "semantic_type": "identifier",
+          "business_concept": "Franchise ID",
+          "aliases": [
+            "franchise_code",
+            "franch_id"
+          ]
+        },
+        "div_id": {
+          "name": "div_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Identifier for the division the team belongs to.",
+          "semantic_type": "code",
+          "business_concept": "Division ID",
+          "aliases": [
+            "division_id",
+            "div"
+          ]
+        },
+        "rank": {
+          "name": "rank",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The team's standing rank within their league or division.",
+          "semantic_type": "quantity",
+          "business_concept": "League Rank",
+          "aliases": [
+            "standing",
+            "position",
+            "pos"
+          ]
+        },
+        "g": {
+          "name": "g",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of games played by the team.",
+          "semantic_type": "quantity",
+          "business_concept": "Games Played",
+          "aliases": [
+            "games",
+            "gp"
+          ]
+        },
+        "ghome": {
+          "name": "ghome",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Number of games played at the team's home stadium.",
+          "semantic_type": "quantity",
+          "business_concept": "Home Games Played",
+          "aliases": [
+            "home_games",
+            "g_home"
+          ]
+        },
+        "w": {
+          "name": "w",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of games won by the team.",
+          "semantic_type": "quantity",
+          "business_concept": "Wins",
+          "aliases": [
+            "wins",
+            "win"
+          ]
+        },
+        "l": {
+          "name": "l",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of games lost by the team.",
+          "semantic_type": "quantity",
+          "business_concept": "Losses",
+          "aliases": [
+            "losses",
+            "lose",
+            "l"
+          ]
+        },
+        "div_win": {
+          "name": "div_win",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Indicator or count of division championships won.",
+          "semantic_type": "code",
+          "business_concept": "Division Win Status",
+          "aliases": [
+            "div_champ",
+            "div_title"
+          ]
+        },
+        "wc_win": {
+          "name": "wc_win",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Indicator or count of World Series championships won.",
+          "semantic_type": "code",
+          "business_concept": "World Series Win Status",
+          "aliases": [
+            "world_series",
+            "ws_champ"
+          ]
+        },
+        "lg_win": {
+          "name": "lg_win",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Indicator or count of League Championships won.",
+          "semantic_type": "code",
+          "business_concept": "League Win Status",
+          "aliases": [
+            "league_champ",
+            "lg_title"
+          ]
+        },
+        "ws_win": {
+          "name": "ws_win",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Indicator or count of World Series wins (duplicate of wc_win).",
+          "semantic_type": "code",
+          "business_concept": "World Series Win Status",
+          "aliases": [
+            "world_series",
+            "ws_champ"
+          ]
+        },
+        "r": {
+          "name": "r",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of runs scored by the team.",
+          "semantic_type": "quantity",
+          "business_concept": "Runs Scored",
+          "aliases": [
+            "runs",
+            "rs"
+          ]
+        },
+        "ab": {
+          "name": "ab",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of at-bats for the team's batters.",
+          "semantic_type": "quantity",
+          "business_concept": "At Bats",
+          "aliases": [
+            "at_bats",
+            "abats"
+          ]
+        },
+        "h": {
+          "name": "h",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of hits recorded by the team's batters.",
+          "semantic_type": "quantity",
+          "business_concept": "Hits",
+          "aliases": [
+            "hit"
+          ]
+        },
+        "double": {
+          "name": "double",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of doubles hit by the team's batters.",
+          "semantic_type": "quantity",
+          "business_concept": "Doubles",
+          "aliases": [
+            "2b"
+          ]
+        },
+        "triple": {
+          "name": "triple",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of triples hit by the team's batters.",
+          "semantic_type": "quantity",
+          "business_concept": "Triples",
+          "aliases": [
+            "3b"
+          ]
+        },
+        "hr": {
+          "name": "hr",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of home runs hit by the team's batters.",
+          "semantic_type": "quantity",
+          "business_concept": "Home Runs",
+          "aliases": [
+            "homeruns",
+            "homer",
+            "hr"
+          ]
+        },
+        "bb": {
+          "name": "bb",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of bases on balls (walks) issued to the team's batters.",
+          "semantic_type": "quantity",
+          "business_concept": "Walks",
+          "aliases": [
+            "bases_on_balls",
+            "walks",
+            "wb"
+          ]
+        },
+        "so": {
+          "name": "so",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of strikeouts recorded by the team's pitchers.",
+          "semantic_type": "quantity",
+          "business_concept": "Strikeouts",
+          "aliases": [
+            "strikeouts",
+            "k"
+          ]
+        },
+        "sb": {
+          "name": "sb",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of stolen bases by the team's baserunners.",
+          "semantic_type": "quantity",
+          "business_concept": "Stolen Bases",
+          "aliases": [
+            "stolen_bases",
+            "st"
+          ]
+        },
+        "cs": {
+          "name": "cs",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of caught stealings by the team's baserunners.",
+          "semantic_type": "quantity",
+          "business_concept": "Caught Stealing",
+          "aliases": [
+            "caught_stealing",
+            "cs"
+          ]
+        },
+        "hbp": {
+          "name": "hbp",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of hit by pitches issued to the team's batters.",
+          "semantic_type": "quantity",
+          "business_concept": "Hit By Pitch",
+          "aliases": [
+            "hit_by_pitch",
+            "hbp"
+          ]
+        },
+        "sf": {
+          "name": "sf",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of sacrifice flies recorded by the team.",
+          "semantic_type": "quantity",
+          "business_concept": "Sacrifice Flies",
+          "aliases": [
+            "sac_fly",
+            "sf"
+          ]
+        },
+        "ra": {
+          "name": "ra",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of runs allowed (scored against) by the team.",
+          "semantic_type": "quantity",
+          "business_concept": "Runs Allowed",
+          "aliases": [
+            "runs_allowed",
+            "ra"
+          ]
+        },
+        "er": {
+          "name": "er",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of earned runs allowed by the team's pitchers.",
+          "semantic_type": "quantity",
+          "business_concept": "Earned Runs",
+          "aliases": [
+            "earned_runs",
+            "er"
+          ]
+        },
+        "era": {
+          "name": "era",
+          "dtype": "numeric",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Earned Run Average, a measure of a team's pitching effectiveness.",
+          "semantic_type": "money",
+          "business_concept": "Team ERA",
+          "aliases": [
+            "era"
+          ]
+        },
+        "cg": {
+          "name": "cg",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of complete games pitched by the team's pitchers.",
+          "semantic_type": "quantity",
+          "business_concept": "Complete Games",
+          "aliases": [
+            "complete_games",
+            "cg"
+          ]
+        },
+        "sho": {
+          "name": "sho",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Indicator or count of shutouts recorded by the team's pitchers.",
+          "semantic_type": "boolean",
+          "business_concept": "Shutouts",
+          "aliases": [
+            "shutouts",
+            "sho"
+          ]
+        },
+        "sv": {
+          "name": "sv",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of saves recorded by the team's relief pitchers.",
+          "semantic_type": "quantity",
+          "business_concept": "Saves",
+          "aliases": [
+            "saves",
+            "sv"
+          ]
+        },
+        "ipouts": {
+          "name": "ipouts",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of outs recorded by the team's pitchers.",
+          "semantic_type": "quantity",
+          "business_concept": "Pitcher Outs",
+          "aliases": [
+            "outs_pitched",
+            "ip_outs"
+          ]
+        },
+        "ha": {
+          "name": "ha",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of home runs allowed by the team's pitchers.",
+          "semantic_type": "quantity",
+          "business_concept": "Home Runs Allowed",
+          "aliases": [
+            "homeruns_allowed",
+            "hr_allowed"
+          ]
+        },
+        "hra": {
+          "name": "hra",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of home runs allowed by the team's pitchers.",
+          "semantic_type": "quantity",
+          "business_concept": "Home Runs Allowed",
+          "aliases": [
+            "homeruns_allowed",
+            "hr_allowed"
+          ]
+        },
+        "bba": {
+          "name": "bba",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of bases on balls (walks) allowed by the team's pitchers.",
+          "semantic_type": "quantity",
+          "business_concept": "Walks Allowed",
+          "aliases": [
+            "walks_allowed",
+            "bb_allowed"
+          ]
+        },
+        "soa": {
+          "name": "soa",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of strikeouts allowed by the team's pitchers.",
+          "semantic_type": "quantity",
+          "business_concept": "Strikeouts Allowed",
+          "aliases": [
+            "strikeouts_allowed",
+            "k_allowed"
+          ]
+        },
+        "e": {
+          "name": "e",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of errors committed by the team's fielders.",
+          "semantic_type": "quantity",
+          "business_concept": "Errors",
+          "aliases": [
+            "fielding_errors",
+            "err"
+          ]
+        },
+        "dp": {
+          "name": "dp",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of double plays turned by the team's fielders.",
+          "semantic_type": "quantity",
+          "business_concept": "Double Plays",
+          "aliases": [
+            "double_plays",
+            "dp"
+          ]
+        },
+        "fp": {
+          "name": "fp",
+          "dtype": "numeric",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Fielding Percentage, a measure of the team's defensive efficiency.",
+          "semantic_type": "money",
+          "business_concept": "Fielding Percentage",
+          "aliases": [
+            "fielding_pct",
+            "fpct"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official name of the team during that season.",
+          "semantic_type": "organization_name",
+          "business_concept": "Team Name",
+          "aliases": [
+            "team_name",
+            "full_name"
+          ]
+        },
+        "park": {
+          "name": "park",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the stadium where the team played.",
+          "semantic_type": "address",
+          "business_concept": "Stadium Name",
+          "aliases": [
+            "stadium",
+            "venue",
+            "ballpark"
+          ]
+        },
+        "attendance": {
+          "name": "attendance",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of fans who attended the team's home games.",
+          "semantic_type": "quantity",
+          "business_concept": "Total Attendance",
+          "aliases": [
+            "fans",
+            "crowd"
+          ]
+        },
+        "bpf": {
+          "name": "bpf",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Batting Park Factor, a metric indicating how favorable the home park is for batting.",
+          "semantic_type": "quantity",
+          "business_concept": "Batting Park Factor",
+          "aliases": [
+            "park_factor_batting",
+            "bpf"
+          ]
+        },
+        "ppf": {
+          "name": "ppf",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Pitching Park Factor, a metric indicating how favorable the home park is for pitching.",
+          "semantic_type": "quantity",
+          "business_concept": "Pitching Park Factor",
+          "aliases": [
+            "park_factor_pitching",
+            "ppf"
+          ]
+        },
+        "team_id_br": {
+          "name": "team_id_br",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Retrosheet team identifier code.",
+          "semantic_type": "code",
+          "business_concept": "Team ID (Retrosheet)",
+          "aliases": [
+            "id_retro",
+            "team_code_retro"
+          ]
+        },
+        "team_id_lahman45": {
+          "name": "team_id_lahman45",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Lahman Baseball Database team identifier code.",
+          "semantic_type": "code",
+          "business_concept": "Team ID (Lahman)",
+          "aliases": [
+            "id_lahman",
+            "team_code_lahman"
+          ]
+        },
+        "team_id_retro": {
+          "name": "team_id_retro",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Retrosheet team identifier code (duplicate of team_id_br).",
+          "semantic_type": "code",
+          "business_concept": "Team ID (Retrosheet)",
+          "aliases": [
+            "id_retro",
+            "team_code_retro"
+          ]
+        }
+      }
+    },
+    "team_franchise": {
+      "table": {
+        "name": "team_franchise",
+        "column_count": 4,
+        "summary": "A reference table containing information about sports franchises, including their identifiers, full names, active status, and National Association affiliations.",
+        "entity": "Sports Franchise",
+        "role": "lookup_table",
+        "aliases": [
+          "franchises",
+          "teams",
+          "sport_teams",
+          "mlb_franchises"
+        ]
+      },
+      "columns": {
+        "franchise_id": {
+          "name": "franchise_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique short code identifier for a specific sports franchise.",
+          "semantic_type": "identifier",
+          "business_concept": "Franchise Identifier",
+          "aliases": [
+            "franchise_code",
+            "team_code",
+            "short_code",
+            "id"
+          ]
+        },
+        "franchise_name": {
+          "name": "franchise_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full official name of the sports franchise.",
+          "semantic_type": "organization_name",
+          "business_concept": "Franchise Name",
+          "aliases": [
+            "team_name",
+            "full_name",
+            "official_name"
+          ]
+        },
+        "active": {
+          "name": "active",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A flag indicating whether the franchise is currently active.",
+          "semantic_type": "boolean",
+          "business_concept": "Active Status",
+          "aliases": [
+            "is_active",
+            "status",
+            "active_flag",
+            "current"
+          ]
+        },
+        "na_assoc": {
+          "name": "na_assoc",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The code representing the franchise's association with a National Association (e.g., PNA, BNA).",
+          "semantic_type": "code",
+          "business_concept": "National Association Affiliation",
+          "aliases": [
+            "na_code",
+            "association_code",
+            "league_code",
+            "affiliation"
+          ]
+        }
+      }
+    },
+    "team_half": {
+      "table": {
+        "name": "team_half",
+        "column_count": 10,
+        "summary": "Historical record of Major League Baseball team performance statistics for each half of the season (first and second halves) across different years, leagues, and divisions.",
+        "entity": "Baseball Team Season Half Record",
+        "role": "entity_table",
+        "aliases": [
+          "team_season_half_stats",
+          "mlb_team_half_performance",
+          "team_record_half"
+        ]
+      },
+      "columns": {
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the season took place.",
+          "semantic_type": "date",
+          "business_concept": "Season Year",
+          "aliases": [
+            "season_year",
+            "yr",
+            "calendar_year"
+          ]
+        },
+        "league_id": {
+          "name": "league_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the league the team belongs to (e.g., National League or American League).",
+          "semantic_type": "code",
+          "business_concept": "League",
+          "aliases": [
+            "league",
+            "lg",
+            "league_code"
+          ]
+        },
+        "team_id": {
+          "name": "team_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the baseball team.",
+          "semantic_type": "identifier",
+          "business_concept": "Team",
+          "aliases": [
+            "team",
+            "franchise",
+            "club_id"
+          ]
+        },
+        "half": {
+          "name": "half",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Indicates which half of the season the record represents (1 for first half, 2 for second half).",
+          "semantic_type": "code",
+          "business_concept": "Season Half",
+          "aliases": [
+            "half_of_season",
+            "period",
+            "split"
+          ]
+        },
+        "div_id": {
+          "name": "div_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the division the team belongs to within the league.",
+          "semantic_type": "code",
+          "business_concept": "Division",
+          "aliases": [
+            "division",
+            "div",
+            "division_code"
+          ]
+        },
+        "div_win": {
+          "name": "div_win",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the division the team won (if applicable) or a placeholder for non-winning teams.",
+          "semantic_type": "code",
+          "business_concept": "Division Winner",
+          "aliases": [
+            "division_winner",
+            "div_won",
+            "winning_division"
+          ]
+        },
+        "rank": {
+          "name": "rank",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The team's standing or rank within their division or league.",
+          "semantic_type": "quantity",
+          "business_concept": "Team Rank",
+          "aliases": [
+            "division_rank",
+            "standing",
+            "pos"
+          ]
+        },
+        "g": {
+          "name": "g",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of games played by the team in this half of the season.",
+          "semantic_type": "quantity",
+          "business_concept": "Games Played",
+          "aliases": [
+            "games_played",
+            "gp",
+            "games"
+          ]
+        },
+        "w": {
+          "name": "w",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of games won by the team in this half of the season.",
+          "semantic_type": "quantity",
+          "business_concept": "Games Won",
+          "aliases": [
+            "wins",
+            "win_count",
+            "wins_record"
+          ]
+        },
+        "l": {
+          "name": "l",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of games lost by the team in this half of the season.",
+          "semantic_type": "quantity",
+          "business_concept": "Games Lost",
+          "aliases": [
+            "losses",
+            "loss_count",
+            "losses_record"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,210 @@
+{
+  "database": "school_finance",
+  "tables": {
+    "budget": {
+      "table": {
+        "name": "budget",
+        "column_count": 7,
+        "summary": "A table containing budget allocation and expenditure data for different schools across various years, including calculated percentages of budgeted versus invested amounts.",
+        "entity": "School Budget Record",
+        "role": "entity_table",
+        "aliases": [
+          "school_budgets",
+          "budget_data",
+          "annual_budgets"
+        ]
+      },
+      "columns": {
+        "school_id": {
+          "name": "school_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific school entity.",
+          "semantic_type": "identifier",
+          "business_concept": "School Identifier",
+          "aliases": [
+            "school_code",
+            "id",
+            "school_key"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The fiscal or calendar year to which the budget data applies.",
+          "semantic_type": "date",
+          "business_concept": "Fiscal Year",
+          "aliases": [
+            "fy",
+            "year_code",
+            "reporting_year"
+          ]
+        },
+        "budgeted": {
+          "name": "budgeted",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total amount of money allocated or planned for the school in a given year.",
+          "semantic_type": "money",
+          "business_concept": "Allocated Budget",
+          "aliases": [
+            "planned_amount",
+            "allocated",
+            "budget_total"
+          ]
+        },
+        "total_budget_percent_budgeted": {
+          "name": "total_budget_percent_budgeted",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "A calculated metric representing the percentage of the total budget that was budgeted, likely normalized or scaled.",
+          "semantic_type": "quantity",
+          "business_concept": "Budget Utilization Ratio (Budgeted)",
+          "aliases": [
+            "percent_budgeted",
+            "budget_ratio",
+            "budget_pct"
+          ]
+        },
+        "invested": {
+          "name": "invested",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total amount of money actually spent or utilized by the school in a given year.",
+          "semantic_type": "money",
+          "business_concept": "Actual Expenditure",
+          "aliases": [
+            "spent",
+            "actual_amount",
+            "expenditure",
+            "utilized"
+          ]
+        },
+        "total_budget_percent_invested": {
+          "name": "total_budget_percent_invested",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "A calculated metric representing the percentage of the total budget that was actually invested/spent.",
+          "semantic_type": "quantity",
+          "business_concept": "Budget Utilization Ratio (Invested)",
+          "aliases": [
+            "percent_invested",
+            "spend_ratio",
+            "invest_pct"
+          ]
+        },
+        "budget_invested_percent": {
+          "name": "budget_invested_percent",
+          "dtype": "text",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "A calculated percentage showing the relationship between the invested amount and the budgeted amount (e.g., (Invested / Budgeted) * 100).",
+          "semantic_type": "quantity",
+          "business_concept": "Budget vs. Actual Variance Percentage",
+          "aliases": [
+            "variance_pct",
+            "efficiency_pct",
+            "budget_actual_pct"
+          ]
+        }
+      }
+    },
+    "endowment": {
+      "table": {
+        "name": "endowment",
+        "column_count": 4,
+        "summary": "A table recording financial endowments, linking specific monetary amounts to donors and associated schools.",
+        "entity": "Endowment",
+        "role": "transaction_table",
+        "aliases": [
+          "endowments",
+          "donations",
+          "funding_records",
+          "grant_records"
+        ]
+      },
+      "columns": {
+        "endowment_id": {
+          "name": "endowment_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each endowment record.",
+          "semantic_type": "identifier",
+          "business_concept": "Endowment ID",
+          "aliases": [
+            "id",
+            "endow_id",
+            "record_id"
+          ]
+        },
+        "school_id": {
+          "name": "school_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the endowment to a specific school.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "School ID",
+          "aliases": [
+            "school_code",
+            "institution_id",
+            "org_id"
+          ]
+        },
+        "donator_name": {
+          "name": "donator_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Name of the organization or entity providing the endowment.",
+          "semantic_type": "organization_name",
+          "business_concept": "Donor Name",
+          "aliases": [
+            "donor",
+            "contributor",
+            "funder",
+            "entity_name"
+          ]
+        },
+        "amount": {
+          "name": "amount",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary value of the endowment.",
+          "semantic_type": "money",
+          "business_concept": "Endowment Amount",
+          "aliases": [
+            "value",
+            "sum",
+            "contribution_amount",
+            "funding"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "database": "pilot_record",
+  "tables": {
+    "aircraft": {
+      "table": {
+        "name": "aircraft",
+        "column_count": 7,
+        "summary": "A catalog of aircraft models and their technical specifications, including manufacturer, model variants, fleet series ranges, powertrain details, and fuel types.",
+        "entity": "Aircraft Model",
+        "role": "lookup_table",
+        "aliases": [
+          "aircraft_catalog",
+          "vehicle_specs",
+          "bus_models",
+          "fleet_inventory"
+        ]
+      },
+      "columns": {
+        "aircraft_id": {
+          "name": "aircraft_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific aircraft model entry in the database.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "aircraft_code",
+            "model_id"
+          ]
+        },
+        "order_year": {
+          "name": "order_year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The year in which the aircraft model was ordered or became available.",
+          "semantic_type": "date",
+          "business_concept": "Order Year",
+          "aliases": [
+            "year",
+            "order_date",
+            "model_year"
+          ]
+        },
+        "manufacturer": {
+          "name": "manufacturer",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The name of the company that manufactures the aircraft.",
+          "semantic_type": "organization_name",
+          "business_concept": "Manufacturer",
+          "aliases": [
+            "maker",
+            "brand",
+            "vendor"
+          ]
+        },
+        "model": {
+          "name": "model",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The specific name or designation of the aircraft model, often including variant details.",
+          "semantic_type": "category",
+          "business_concept": "Model Name",
+          "aliases": [
+            "model_name",
+            "variant",
+            "product_name"
+          ]
+        },
+        "fleet_series": {
+          "name": "fleet_series",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The range of vehicle numbers assigned to this model within a fleet, indicating production batches or numbering sequences.",
+          "semantic_type": "code",
+          "business_concept": "Fleet Series Range",
+          "aliases": [
+            "series",
+            "numbering_range",
+            "batch_code"
+          ]
+        },
+        "powertrain": {
+          "name": "powertrain",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The specific engine and transmission combination used in the aircraft.",
+          "semantic_type": "description",
+          "business_concept": "Powertrain Specification",
+          "aliases": [
+            "engine",
+            "transmission",
+            "drivetrain",
+            "motor_specs"
+          ]
+        },
+        "fuel_propulsion": {
+          "name": "fuel_propulsion",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The type of fuel and propulsion system used by the aircraft.",
+          "semantic_type": "category",
+          "business_concept": "Fuel Type",
+          "aliases": [
+            "fuel_type",
+            "propulsion_type",
+            "engine_fuel"
+          ]
+        }
+      }
+    },
+    "pilot_record": {
+      "table": {
+        "name": "pilot_record",
+        "column_count": 4,
+        "summary": "A log of flight activities or training sessions linking specific pilots to specific aircraft on specific dates.",
+        "entity": "flight_record",
+        "role": "transaction_table",
+        "aliases": [
+          "pilot_log",
+          "flight_log",
+          "training_record",
+          "pilot_activity"
+        ]
+      },
+      "columns": {
+        "record_id": {
+          "name": "record_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific row in the pilot record table.",
+          "semantic_type": "identifier",
+          "business_concept": "primary_key",
+          "aliases": [
+            "id",
+            "pk",
+            "row_id"
+          ]
+        },
+        "pilot_id": {
+          "name": "pilot_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the record to a specific pilot entity.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "pilot_reference",
+          "aliases": [
+            "pilot_ref",
+            "pilot_code",
+            "pilot_key"
+          ]
+        },
+        "aircraft_id": {
+          "name": "aircraft_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the record to a specific aircraft entity.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "aircraft_reference",
+          "aliases": [
+            "aircraft_ref",
+            "aircraft_code",
+            "plane_id"
+          ]
+        },
+        "date": {
+          "name": "date",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The calendar date on which the pilot activity or flight occurred.",
+          "semantic_type": "date",
+          "business_concept": "event_date",
+          "aliases": [
+            "flight_date",
+            "activity_date",
+            "log_date"
+          ]
+        }
+      }
+    }
+  }
+}

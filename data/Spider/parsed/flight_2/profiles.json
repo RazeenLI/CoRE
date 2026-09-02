@@ -1,0 +1,258 @@
+{
+  "database": "flight_2",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/flight_2",
+    "schema_path": "data/Spider/parsed/flight_2/schema.json",
+    "tables_dir": "data/Spider/parsed/flight_2/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "airlines": {
+      "table": {
+        "name": "airlines",
+        "column_count": 4,
+        "summary": "A reference table containing master data for commercial airlines, including their full names, standard abbreviations, and country of origin.",
+        "entity": "Airline",
+        "role": "lookup_table",
+        "aliases": [
+          "airlines_master",
+          "carrier_lookup",
+          "airline_reference"
+        ]
+      },
+      "columns": {
+        "uid": {
+          "name": "uid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique internal identifier for each airline record.",
+          "semantic_type": "identifier",
+          "business_concept": "Airline ID",
+          "aliases": [
+            "airline_id",
+            "id",
+            "carrier_id"
+          ]
+        },
+        "airline": {
+          "name": "airline",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full legal or common name of the airline company.",
+          "semantic_type": "organization_name",
+          "business_concept": "Airline Name",
+          "aliases": [
+            "full_name",
+            "carrier_name",
+            "company_name"
+          ]
+        },
+        "abbreviation": {
+          "name": "abbreviation",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The standard IATA or ICAO two- or three-letter code used to identify the airline.",
+          "semantic_type": "code",
+          "business_concept": "Airline Code",
+          "aliases": [
+            "iata_code",
+            "icao_code",
+            "carrier_code",
+            "short_code"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country where the airline is headquartered or registered, represented by a short code.",
+          "semantic_type": "country",
+          "business_concept": "Country of Origin",
+          "aliases": [
+            "country_code",
+            "iso_country",
+            "headquarters_country"
+          ]
+        }
+      }
+    },
+    "airports": {
+      "table": {
+        "name": "airports",
+        "column_count": 5,
+        "summary": "A reference table containing information about airports, including their codes, names, locations, and countries.",
+        "entity": "Airport",
+        "role": "lookup_table",
+        "aliases": [
+          "airports",
+          "airport_data",
+          "airport_reference"
+        ]
+      },
+      "columns": {
+        "city": {
+          "name": "city",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The city where the airport is located.",
+          "semantic_type": "city",
+          "business_concept": "Location of the airport",
+          "aliases": [
+            "city_name",
+            "location_city",
+            "municipality"
+          ]
+        },
+        "airportcode": {
+          "name": "airportcode",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The unique three-letter IATA code identifying the airport.",
+          "semantic_type": "code",
+          "business_concept": "Airport identifier",
+          "aliases": [
+            "iata_code",
+            "airport_id",
+            "icao_code"
+          ]
+        },
+        "airportname": {
+          "name": "airportname",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official name of the airport.",
+          "semantic_type": "organization_name",
+          "business_concept": "Airport name",
+          "aliases": [
+            "name",
+            "airport_title",
+            "facility_name"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the country where the airport is located.",
+          "semantic_type": "country",
+          "business_concept": "Country of location",
+          "aliases": [
+            "nation",
+            "country_name",
+            "sovereign_state"
+          ]
+        },
+        "countryabbrev": {
+          "name": "countryabbrev",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The two-letter ISO code representing the country.",
+          "semantic_type": "code",
+          "business_concept": "Country code",
+          "aliases": [
+            "iso_code",
+            "country_code",
+            "cc"
+          ]
+        }
+      }
+    },
+    "flights": {
+      "table": {
+        "name": "flights",
+        "column_count": 4,
+        "summary": "A dataset containing flight route information, linking specific airline identifiers to flight numbers and their origin and destination airports.",
+        "entity": "Flight",
+        "role": "transaction_table",
+        "aliases": [
+          "flights",
+          "flight_data",
+          "airline_flights"
+        ]
+      },
+      "columns": {
+        "airline": {
+          "name": "airline",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the airline operating the flight.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Airline ID",
+          "aliases": [
+            "airline_id",
+            "carrier_code",
+            "carrier"
+          ]
+        },
+        "flightno": {
+          "name": "flightno",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific flight number.",
+          "semantic_type": "code",
+          "business_concept": "Flight Number",
+          "aliases": [
+            "flight_number",
+            "flight_id",
+            "fltno"
+          ]
+        },
+        "sourceairport": {
+          "name": "sourceairport",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The airport code representing the departure location of the flight.",
+          "semantic_type": "code",
+          "business_concept": "Origin Airport",
+          "aliases": [
+            "origin",
+            "dep_airport",
+            "from_airport",
+            "src"
+          ]
+        },
+        "destairport": {
+          "name": "destairport",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The airport code representing the arrival location of the flight.",
+          "semantic_type": "code",
+          "business_concept": "Destination Airport",
+          "aliases": [
+            "destination",
+            "arr_airport",
+            "to_airport",
+            "dst"
+          ]
+        }
+      }
+    }
+  }
+}

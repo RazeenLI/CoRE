@@ -1,0 +1,310 @@
+{
+  "database": "voter_2",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/voter_2",
+    "schema_path": "data/Spider/parsed/voter_2/schema.json",
+    "tables_dir": "data/Spider/parsed/voter_2/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "student": {
+      "table": {
+        "name": "student",
+        "column_count": 8,
+        "summary": "A table containing demographic and academic information for students, including personal details, age, gender, major, advisor assignment, and location.",
+        "entity": "Student",
+        "role": "entity_table",
+        "aliases": [
+          "students",
+          "student_info",
+          "enrolled_students"
+        ]
+      },
+      "columns": {
+        "stuid": {
+          "name": "stuid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each student record.",
+          "semantic_type": "identifier",
+          "business_concept": "Student ID",
+          "aliases": [
+            "student_id",
+            "id",
+            "sid"
+          ]
+        },
+        "lname": {
+          "name": "lname",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The last name or surname of the student.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "last_name",
+            "surname",
+            "family_name",
+            "ln"
+          ]
+        },
+        "fname": {
+          "name": "fname",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The first name or given name of the student.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "first_name",
+            "given_name",
+            "fn"
+          ]
+        },
+        "age": {
+          "name": "age",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The current age of the student in years.",
+          "semantic_type": "quantity",
+          "business_concept": "Age",
+          "aliases": [
+            "years_old",
+            "age_in_years"
+          ]
+        },
+        "sex": {
+          "name": "sex",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The gender of the student.",
+          "semantic_type": "code",
+          "business_concept": "Gender",
+          "aliases": [
+            "gender",
+            "sex_code",
+            "g"
+          ]
+        },
+        "major": {
+          "name": "major",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "An integer code representing the student's field of study.",
+          "semantic_type": "code",
+          "business_concept": "Academic Major",
+          "aliases": [
+            "major_code",
+            "field_of_study",
+            "program"
+          ]
+        },
+        "advisor": {
+          "name": "advisor",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "An integer code representing the assigned academic advisor.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Advisor ID",
+          "aliases": [
+            "advisor_id",
+            "faculty_id",
+            "supervisor"
+          ]
+        },
+        "city_code": {
+          "name": "city_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A three-letter code representing the city where the student resides or is located.",
+          "semantic_type": "code",
+          "business_concept": "City Code",
+          "aliases": [
+            "city",
+            "location_code",
+            "residence_code"
+          ]
+        }
+      }
+    },
+    "voting_record": {
+      "table": {
+        "name": "voting_record",
+        "column_count": 9,
+        "summary": "Records of student voting participation in various school elections, including dates, election cycles, and votes cast for specific office holders.",
+        "entity": "Student",
+        "role": "transaction_table",
+        "aliases": [
+          "student_votes",
+          "election_participation",
+          "voting_log"
+        ]
+      },
+      "columns": {
+        "stuid": {
+          "name": "stuid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the student who cast the vote.",
+          "semantic_type": "identifier",
+          "business_concept": "Student ID",
+          "aliases": [
+            "student_id",
+            "stu_id",
+            "id"
+          ]
+        },
+        "registration_date": {
+          "name": "registration_date",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The date on which the student registered to vote in the election.",
+          "semantic_type": "date",
+          "business_concept": "Voter Registration Date",
+          "aliases": [
+            "reg_date",
+            "vote_reg_date",
+            "enrollment_date"
+          ]
+        },
+        "election_cycle": {
+          "name": "election_cycle",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The specific term or cycle of the election (e.g., Spring, Fall).",
+          "semantic_type": "category",
+          "business_concept": "Election Cycle",
+          "aliases": [
+            "cycle",
+            "term",
+            "election_period"
+          ]
+        },
+        "president_vote": {
+          "name": "president_vote",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The ID or code of the candidate selected for the position of President.",
+          "semantic_type": "code",
+          "business_concept": "President Candidate Vote",
+          "aliases": [
+            "pres_vote",
+            "pres_candidate_id",
+            "pres_selection"
+          ]
+        },
+        "vice_president_vote": {
+          "name": "vice_president_vote",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The ID or code of the candidate selected for the position of Vice President.",
+          "semantic_type": "code",
+          "business_concept": "Vice President Candidate Vote",
+          "aliases": [
+            "vp_vote",
+            "vp_candidate_id",
+            "vp_selection"
+          ]
+        },
+        "secretary_vote": {
+          "name": "secretary_vote",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The ID or code of the candidate selected for the position of Secretary.",
+          "semantic_type": "code",
+          "business_concept": "Secretary Candidate Vote",
+          "aliases": [
+            "sec_vote",
+            "sec_candidate_id",
+            "sec_selection"
+          ]
+        },
+        "treasurer_vote": {
+          "name": "treasurer_vote",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The ID or code of the candidate selected for the position of Treasurer.",
+          "semantic_type": "code",
+          "business_concept": "Treasurer Candidate Vote",
+          "aliases": [
+            "treas_vote",
+            "treas_candidate_id",
+            "treas_selection"
+          ]
+        },
+        "class_president_vote": {
+          "name": "class_president_vote",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The ID or code of the candidate selected for the position of Class President.",
+          "semantic_type": "code",
+          "business_concept": "Class President Candidate Vote",
+          "aliases": [
+            "cp_vote",
+            "cp_candidate_id",
+            "class_pres_selection"
+          ]
+        },
+        "class_senator_vote": {
+          "name": "class_senator_vote",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The ID or code of the candidate selected for the position of Class Senator.",
+          "semantic_type": "code",
+          "business_concept": "Class Senator Candidate Vote",
+          "aliases": [
+            "cs_vote",
+            "cs_candidate_id",
+            "class_senator_selection"
+          ]
+        }
+      }
+    }
+  }
+}

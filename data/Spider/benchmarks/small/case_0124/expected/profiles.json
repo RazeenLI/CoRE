@@ -1,0 +1,408 @@
+{
+  "database": "railway",
+  "tables": {
+    "railway_manage": {
+      "table": {
+        "name": "railway_manage",
+        "column_count": 3,
+        "summary": "A table recording management assignments for railway segments, linking specific railway IDs to managers and operational years.",
+        "entity": "Railway Management Record",
+        "role": "relationship_table",
+        "aliases": [
+          "railway_management",
+          "railway_assignments",
+          "railway_manager_log"
+        ]
+      },
+      "columns": {
+        "railway_id": {
+          "name": "railway_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific railway segment or line.",
+          "semantic_type": "identifier",
+          "business_concept": "Railway Segment ID",
+          "aliases": [
+            "railway_code",
+            "line_id",
+            "track_id"
+          ]
+        },
+        "manager_id": {
+          "name": "manager_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the person or entity responsible for managing the railway segment.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Manager ID",
+          "aliases": [
+            "manager_code",
+            "supervisor_id",
+            "admin_id"
+          ]
+        },
+        "from_year": {
+          "name": "from_year",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The starting year of the management period or operational record for the railway segment.",
+          "semantic_type": "date",
+          "business_concept": "Start Year",
+          "aliases": [
+            "year_start",
+            "effective_year",
+            "fiscal_year"
+          ]
+        }
+      }
+    },
+    "train": {
+      "table": {
+        "name": "train",
+        "column_count": 6,
+        "summary": "A dataset containing details of various train routes, including train identifiers, names, origin stations, arrival times, and railway zone IDs.",
+        "entity": "Train Route",
+        "role": "entity_table",
+        "aliases": [
+          "train_details",
+          "train_schedule",
+          "train_routes",
+          "train_info"
+        ]
+      },
+      "columns": {
+        "train_id": {
+          "name": "train_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique integer identifier for each record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "train_pk",
+            "row_id"
+          ]
+        },
+        "train_num": {
+          "name": "train_num",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A numeric code representing the specific train number.",
+          "semantic_type": "code",
+          "business_concept": "Train Number",
+          "aliases": [
+            "train_number",
+            "num",
+            "no"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official name of the train service.",
+          "semantic_type": "category",
+          "business_concept": "Train Name",
+          "aliases": [
+            "train_name",
+            "title",
+            "service_name"
+          ]
+        },
+        "from": {
+          "name": "from",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the originating station or city for the train.",
+          "semantic_type": "organization_name",
+          "business_concept": "Origin Station",
+          "aliases": [
+            "origin",
+            "source",
+            "dep_station",
+            "from_station"
+          ]
+        },
+        "arrival": {
+          "name": "arrival",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The scheduled arrival time at the destination station.",
+          "semantic_type": "timestamp",
+          "business_concept": "Arrival Time",
+          "aliases": [
+            "arr_time",
+            "arrival_time",
+            "time_arr"
+          ]
+        },
+        "railway_id": {
+          "name": "railway_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "An integer code representing the railway zone or region associated with the train.",
+          "semantic_type": "code",
+          "business_concept": "Railway Zone ID",
+          "aliases": [
+            "zone_id",
+            "rail_zone",
+            "region_code"
+          ]
+        }
+      }
+    },
+    "railway": {
+      "table": {
+        "name": "railway",
+        "column_count": 7,
+        "summary": "A catalog of steam locomotives detailing their construction history, specifications, and preservation locations.",
+        "entity": "Locomotive",
+        "role": "entity_table",
+        "aliases": [
+          "locomotives",
+          "steam_locomotives",
+          "railway_stock",
+          "loco_catalog"
+        ]
+      },
+      "columns": {
+        "railway_id": {
+          "name": "railway_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique numeric identifier for each locomotive record.",
+          "semantic_type": "identifier",
+          "business_concept": "Locomotive ID",
+          "aliases": [
+            "id",
+            "loco_id",
+            "primary_key"
+          ]
+        },
+        "railway": {
+          "name": "railway",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The railway company that originally built or owned the locomotive.",
+          "semantic_type": "organization_name",
+          "business_concept": "Owner Railway",
+          "aliases": [
+            "owner",
+            "builder_railway",
+            "company",
+            "railway_company"
+          ]
+        },
+        "builder": {
+          "name": "builder",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The specific works or factory where the locomotive was constructed.",
+          "semantic_type": "organization_name",
+          "business_concept": "Manufacturing Works",
+          "aliases": [
+            "works",
+            "factory",
+            "manufacturer",
+            "built_by"
+          ]
+        },
+        "built": {
+          "name": "built",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The year the locomotive was built, sometimes including additional notes about rebuilding.",
+          "semantic_type": "date",
+          "business_concept": "Construction Year",
+          "aliases": [
+            "year_built",
+            "construction_date",
+            "built_year"
+          ]
+        },
+        "wheels": {
+          "name": "wheels",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The wheel arrangement of the locomotive (e.g., 4-4-0).",
+          "semantic_type": "code",
+          "business_concept": "Wheel Arrangement",
+          "aliases": [
+            "wheel_arrangement",
+            "wheeldesign",
+            "axle_config"
+          ]
+        },
+        "location": {
+          "name": "location",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The current or historical location where the locomotive is preserved or stored.",
+          "semantic_type": "city",
+          "business_concept": "Preservation Location",
+          "aliases": [
+            "site",
+            "museum",
+            "current_location",
+            "depot"
+          ]
+        },
+        "objectnumber": {
+          "name": "objectnumber",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique reference number assigned to the locomotive, often following a specific museum or registry format.",
+          "semantic_type": "code",
+          "business_concept": "Registry Number",
+          "aliases": [
+            "ref_number",
+            "museum_number",
+            "object_ref",
+            "stock_number"
+          ]
+        }
+      }
+    },
+    "manager": {
+      "table": {
+        "name": "manager",
+        "column_count": 6,
+        "summary": "A table containing demographic and career statistics for professional golfers, including their names, nationalities, career start years, ages, and competitive levels.",
+        "entity": "Golf Player",
+        "role": "entity_table",
+        "aliases": [
+          "golfers",
+          "players",
+          "manager_golfers",
+          "pro_golfers"
+        ]
+      },
+      "columns": {
+        "manager_id": {
+          "name": "manager_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each record in the table, likely representing a specific player or manager entry.",
+          "semantic_type": "identifier",
+          "business_concept": "Unique ID",
+          "aliases": [
+            "id",
+            "player_id",
+            "pk",
+            "key"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the individual associated with the record.",
+          "semantic_type": "person_name",
+          "business_concept": "Full Name",
+          "aliases": [
+            "first_name",
+            "last_name",
+            "full_name",
+            "player_name"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The nation of origin or primary representation for the individual.",
+          "semantic_type": "country",
+          "business_concept": "Nationality",
+          "aliases": [
+            "nationality",
+            "nation",
+            "origin",
+            "home_country"
+          ]
+        },
+        "working_year_starts": {
+          "name": "working_year_starts",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The year the individual began their professional career or the specific period being analyzed.",
+          "semantic_type": "date",
+          "business_concept": "Career Start Year",
+          "aliases": [
+            "start_year",
+            "career_start",
+            "year_started",
+            "pro_year"
+          ]
+        },
+        "age": {
+          "name": "age",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The current age of the individual at the time of the record.",
+          "semantic_type": "quantity",
+          "business_concept": "Age",
+          "aliases": [
+            "years_old",
+            "current_age",
+            "age_in_years"
+          ]
+        },
+        "level": {
+          "name": "level",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A numeric indicator representing the competitive tier, ranking, or classification of the individual.",
+          "semantic_type": "category",
+          "business_concept": "Competitive Level",
+          "aliases": [
+            "rank",
+            "tier",
+            "class",
+            "rating",
+            "division"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,7 +1,9 @@
 from evaluation.aggregate_result import summarize_dataset_results
 from evaluation.evaluator import compute_task_state_metrics
 from evaluation.metrics import (
+    compute_decision_action_consistency,
     compute_fact_set_metrics,
+    compute_rdb_complexity_features,
     extract_constraint_facts,
     extract_schema_facts,
 )
@@ -84,6 +86,50 @@ def test_task_state_retry_metrics() -> None:
     assert result["retry_count"] == 1
     assert result["retried"] is True
     assert result["retry_exhausted"] is False
+
+
+def test_decision_action_consistency() -> None:
+    assert compute_decision_action_consistency(
+        {
+            "source_decision": "create_table",
+            "table_actions": [{"action": "create", "table": "new_table"}],
+        }
+    )["consistent"] is True
+    assert compute_decision_action_consistency(
+        {
+            "source_decision": "insert_table",
+            "table_actions": [{"action": "create", "table": "new_table"}],
+        }
+    )["consistent"] is False
+
+
+def test_rdb_complexity_features() -> None:
+    rdb = {
+        "schema": {
+            "tables": {
+                "child": {"columns": {"a": {}, "b": {}}},
+                "parent": {"columns": {"id": {}}},
+            }
+        },
+        "constraints": {
+            "constraints": {
+                "primary_keys": {"child": ["a", "b"]},
+                "foreign_keys": {
+                    "child": [{
+                        "columns": ["a"],
+                        "referenced_table": "parent",
+                        "referenced_columns": ["id"],
+                    }]
+                },
+            }
+        },
+    }
+    incoming = {"schema": {"tables": {"incoming": {"columns": {"x": {}}}}}}
+    result = compute_rdb_complexity_features(rdb, incoming)
+    assert result["existing_attribute_count"] == 3
+    assert result["incoming_attribute_count"] == 1
+    assert result["existing_foreign_key_count"] == 1
+    assert result["composite_pk_count"] == 1
 
 
 def test_aggregate_new_metrics() -> None:

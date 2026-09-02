@@ -1,0 +1,415 @@
+{
+  "database": "city_record",
+  "tables": {
+    "city": {
+      "table": {
+        "name": "city",
+        "column_count": 2,
+        "summary": "A reference table containing demographic and economic data for major Chinese cities, including population and GDP figures alongside various naming conventions.",
+        "entity": "City",
+        "role": "lookup_table",
+        "aliases": [
+          "cities",
+          "city_data",
+          "urban_stats",
+          "china_cities"
+        ]
+      },
+      "columns": {
+        "city_id": {
+          "name": "city_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each city record.",
+          "semantic_type": "identifier",
+          "business_concept": "City Primary Key",
+          "aliases": [
+            "id",
+            "city_code",
+            "cid"
+          ]
+        },
+        "gdp": {
+          "name": "gdp",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The Gross Domestic Product value for the city, likely in billions of currency units.",
+          "semantic_type": "money",
+          "business_concept": "City GDP",
+          "aliases": [
+            "gd",
+            "economic_output",
+            "revenue",
+            "gdp_value"
+          ]
+        }
+      }
+    },
+    "match": {
+      "table": {
+        "name": "match",
+        "column_count": 6,
+        "summary": "A record of football matches including details such as date, venue, score, result, and competition type.",
+        "entity": "Match",
+        "role": "entity_table",
+        "aliases": [
+          "matches",
+          "game_results",
+          "fixture_records",
+          "soccer_matches"
+        ]
+      },
+      "columns": {
+        "match_id": {
+          "name": "match_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific match record.",
+          "semantic_type": "identifier",
+          "business_concept": "Match ID",
+          "aliases": [
+            "id",
+            "match_number",
+            "game_id"
+          ]
+        },
+        "date": {
+          "name": "date",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The calendar date on which the match took place.",
+          "semantic_type": "date",
+          "business_concept": "Match Date",
+          "aliases": [
+            "match_date",
+            "event_date",
+            "game_date"
+          ]
+        },
+        "venue": {
+          "name": "venue",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The location where the match was held, including stadium name and city/country.",
+          "semantic_type": "address",
+          "business_concept": "Stadium Location",
+          "aliases": [
+            "stadium",
+            "location",
+            "ground",
+            "city"
+          ]
+        },
+        "score": {
+          "name": "score",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The final scoreline of the match.",
+          "semantic_type": "code",
+          "business_concept": "Final Score",
+          "aliases": [
+            "final_score",
+            "result_score",
+            "match_score"
+          ]
+        },
+        "result": {
+          "name": "result",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The outcome of the match based on the score (e.g., 2-0, 5-1). Note: In this dataset, the values appear identical to 'score', suggesting it might be redundant or specifically formatted for result display.",
+          "semantic_type": "code",
+          "business_concept": "Match Result",
+          "aliases": [
+            "outcome",
+            "final_result",
+            "scoreline"
+          ]
+        },
+        "competition": {
+          "name": "competition",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The tournament or competition in which the match occurred.",
+          "semantic_type": "category",
+          "business_concept": "Competition Name",
+          "aliases": [
+            "tournament",
+            "league",
+            "event",
+            "competition_name"
+          ]
+        }
+      }
+    },
+    "hosting_city": {
+      "table": {
+        "name": "hosting_city",
+        "column_count": 3,
+        "summary": "A lookup table mapping years to specific host city identifiers, likely used in an event or tournament context.",
+        "entity": "host_city_mapping",
+        "role": "lookup_table",
+        "aliases": [
+          "host_city_lookup",
+          "year_city_map",
+          "event_hosting_city"
+        ]
+      },
+      "columns": {
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year associated with the hosting city record.",
+          "semantic_type": "date",
+          "business_concept": "event_year",
+          "aliases": [
+            "event_year",
+            "calendar_year",
+            "yr"
+          ]
+        },
+        "match_id": {
+          "name": "match_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific match or game instance within the context of the hosting city.",
+          "semantic_type": "identifier",
+          "business_concept": "match_reference",
+          "aliases": [
+            "match_ref",
+            "game_id",
+            "event_id"
+          ]
+        },
+        "host_city": {
+          "name": "host_city",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "An integer code representing the city where the event or match takes place.",
+          "semantic_type": "code",
+          "business_concept": "host_location_code",
+          "aliases": [
+            "city_code",
+            "location_id",
+            "venue_code"
+          ]
+        }
+      }
+    },
+    "temperature": {
+      "table": {
+        "name": "temperature",
+        "column_count": 12,
+        "summary": "Stores average monthly temperature data for various cities.",
+        "entity": "city_temperature_record",
+        "role": "entity_table",
+        "aliases": [
+          "city_temps",
+          "monthly_temps",
+          "temp_by_city"
+        ]
+      },
+      "columns": {
+        "city_id": {
+          "name": "city_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific city.",
+          "semantic_type": "identifier",
+          "business_concept": "City Identifier",
+          "aliases": [
+            "city_code",
+            "city_key",
+            "location_id"
+          ]
+        },
+        "jan": {
+          "name": "jan",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Average temperature in January.",
+          "semantic_type": "quantity",
+          "business_concept": "January Temperature",
+          "aliases": [
+            "temp_jan",
+            "avg_jan",
+            "jan_temp"
+          ]
+        },
+        "feb": {
+          "name": "feb",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Average temperature in February.",
+          "semantic_type": "quantity",
+          "business_concept": "February Temperature",
+          "aliases": [
+            "temp_feb",
+            "avg_feb",
+            "feb_temp"
+          ]
+        },
+        "mar": {
+          "name": "mar",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Average temperature in March.",
+          "semantic_type": "quantity",
+          "business_concept": "March Temperature",
+          "aliases": [
+            "temp_mar",
+            "avg_mar",
+            "mar_temp"
+          ]
+        },
+        "apr": {
+          "name": "apr",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Average temperature in April.",
+          "semantic_type": "quantity",
+          "business_concept": "April Temperature",
+          "aliases": [
+            "temp_apr",
+            "avg_apr",
+            "apr_temp"
+          ]
+        },
+        "jun": {
+          "name": "jun",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Average temperature in June.",
+          "semantic_type": "quantity",
+          "business_concept": "June Temperature",
+          "aliases": [
+            "temp_jun",
+            "avg_jun",
+            "jun_temp"
+          ]
+        },
+        "jul": {
+          "name": "jul",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Average temperature in July.",
+          "semantic_type": "quantity",
+          "business_concept": "July Temperature",
+          "aliases": [
+            "temp_jul",
+            "avg_jul",
+            "jul_temp"
+          ]
+        },
+        "aug": {
+          "name": "aug",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Average temperature in August.",
+          "semantic_type": "quantity",
+          "business_concept": "August Temperature",
+          "aliases": [
+            "temp_aug",
+            "avg_aug",
+            "aug_temp"
+          ]
+        },
+        "sep": {
+          "name": "sep",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Average temperature in September.",
+          "semantic_type": "quantity",
+          "business_concept": "September Temperature",
+          "aliases": [
+            "temp_sep",
+            "avg_sep",
+            "sep_temp"
+          ]
+        },
+        "oct": {
+          "name": "oct",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Average temperature in October.",
+          "semantic_type": "quantity",
+          "business_concept": "October Temperature",
+          "aliases": [
+            "temp_oct",
+            "avg_oct",
+            "oct_temp"
+          ]
+        },
+        "nov": {
+          "name": "nov",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Average temperature in November.",
+          "semantic_type": "quantity",
+          "business_concept": "November Temperature",
+          "aliases": [
+            "temp_nov",
+            "avg_nov",
+            "nov_temp"
+          ]
+        },
+        "dec": {
+          "name": "dec",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Average temperature in December.",
+          "semantic_type": "quantity",
+          "business_concept": "December Temperature",
+          "aliases": [
+            "temp_dec",
+            "avg_dec",
+            "dec_temp"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,253 @@
+{
+  "database": "candidate_poll",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/candidate_poll",
+    "schema_path": "data/Spider/parsed/candidate_poll/schema.json",
+    "tables_dir": "data/Spider/parsed/candidate_poll/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "candidate": {
+      "table": {
+        "name": "candidate",
+        "column_count": 8,
+        "summary": "A dataset containing polling results for various candidates, including support, consideration, opposition, and uncertainty rates from different sources and dates.",
+        "entity": "polling_result",
+        "role": "transaction_table",
+        "aliases": [
+          "polls",
+          "candidate_polls",
+          "survey_results"
+        ]
+      },
+      "columns": {
+        "candidate_id": {
+          "name": "candidate_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific candidate within the dataset.",
+          "semantic_type": "identifier",
+          "business_concept": "candidate_reference",
+          "aliases": [
+            "id",
+            "candidate_ref"
+          ]
+        },
+        "people_id": {
+          "name": "people_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the candidate to a broader people or entity registry.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "person_reference",
+          "aliases": [
+            "person_id",
+            "pid",
+            "entity_id"
+          ]
+        },
+        "poll_source": {
+          "name": "poll_source",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The organization or media outlet that conducted the poll.",
+          "semantic_type": "organization_name",
+          "business_concept": "polling_organization",
+          "aliases": [
+            "source",
+            "poller",
+            "agency"
+          ]
+        },
+        "date": {
+          "name": "date",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The time period during which the poll was conducted.",
+          "semantic_type": "date",
+          "business_concept": "poll_date",
+          "aliases": [
+            "survey_date",
+            "period",
+            "date_range"
+          ]
+        },
+        "support_rate": {
+          "name": "support_rate",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The proportion of respondents who support the candidate.",
+          "semantic_type": "quantity",
+          "business_concept": "support_percentage",
+          "aliases": [
+            "support_pct",
+            "approval",
+            "yes_rate"
+          ]
+        },
+        "consider_rate": {
+          "name": "consider_rate",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The proportion of respondents who consider the candidate as a viable option.",
+          "semantic_type": "quantity",
+          "business_concept": "consideration_percentage",
+          "aliases": [
+            "consider_pct",
+            "viability",
+            "thinking_of"
+          ]
+        },
+        "oppose_rate": {
+          "name": "oppose_rate",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The proportion of respondents who oppose the candidate.",
+          "semantic_type": "quantity",
+          "business_concept": "opposition_percentage",
+          "aliases": [
+            "oppose_pct",
+            "disapproval",
+            "no_rate"
+          ]
+        },
+        "unsure_rate": {
+          "name": "unsure_rate",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The proportion of respondents who are undecided or unsure about the candidate.",
+          "semantic_type": "quantity",
+          "business_concept": "undecided_percentage",
+          "aliases": [
+            "unsure_pct",
+            "undecided",
+            "neutral_rate"
+          ]
+        }
+      }
+    },
+    "people": {
+      "table": {
+        "name": "people",
+        "column_count": 6,
+        "summary": "A table containing demographic and physical statistics for a set of individuals.",
+        "entity": "person",
+        "role": "entity_table",
+        "aliases": [
+          "personnel",
+          "individuals",
+          "players",
+          "staff"
+        ]
+      },
+      "columns": {
+        "people_id": {
+          "name": "people_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Person ID",
+          "aliases": [
+            "id",
+            "person_id",
+            "pk"
+          ]
+        },
+        "sex": {
+          "name": "sex",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Gender classification of the individual.",
+          "semantic_type": "code",
+          "business_concept": "Gender",
+          "aliases": [
+            "gender",
+            "sex_code",
+            "g"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Full name of the individual.",
+          "semantic_type": "person_name",
+          "business_concept": "Full Name",
+          "aliases": [
+            "full_name",
+            "first_name",
+            "last_name",
+            "name_str"
+          ]
+        },
+        "date_of_birth": {
+          "name": "date_of_birth",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The date on which the individual was born.",
+          "semantic_type": "date",
+          "business_concept": "Date of Birth",
+          "aliases": [
+            "dob",
+            "birth_date",
+            "born",
+            "bdate"
+          ]
+        },
+        "height": {
+          "name": "height",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Physical height of the individual in centimeters.",
+          "semantic_type": "quantity",
+          "business_concept": "Height",
+          "aliases": [
+            "ht",
+            "height_cm",
+            "stature"
+          ]
+        },
+        "weight": {
+          "name": "weight",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Physical weight of the individual in kilograms.",
+          "semantic_type": "quantity",
+          "business_concept": "Weight",
+          "aliases": [
+            "wt",
+            "weight_kg",
+            "mass"
+          ]
+        }
+      }
+    }
+  }
+}

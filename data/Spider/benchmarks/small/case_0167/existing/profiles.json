@@ -1,0 +1,226 @@
+{
+  "database": "e_learning",
+  "tables": {
+    "student_course_enrolment": {
+      "table": {
+        "name": "student_course_enrolment",
+        "column_count": 3,
+        "summary": "Records the enrollment and completion details of students in various courses, including timestamps for both events.",
+        "entity": "student_course_enrolment",
+        "role": "transaction_table",
+        "aliases": [
+          "student_course_enrolment",
+          "course_enrolments",
+          "student_courses",
+          "enrolment_records"
+        ]
+      },
+      "columns": {
+        "registration_id": {
+          "name": "registration_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each specific enrollment record.",
+          "semantic_type": "identifier",
+          "business_concept": "enrollment_registration_id",
+          "aliases": [
+            "reg_id",
+            "enrolment_id",
+            "record_id"
+          ]
+        },
+        "student_id": {
+          "name": "student_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier linking the record to a specific student.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "student_identifier",
+          "aliases": [
+            "student_code",
+            "stu_id",
+            "student_ref"
+          ]
+        },
+        "course_id": {
+          "name": "course_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier linking the record to a specific course.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "course_identifier",
+          "aliases": [
+            "course_code",
+            "c_id",
+            "course_ref"
+          ]
+        }
+      }
+    },
+    "student_tests_taken": {
+      "table": {
+        "name": "student_tests_taken",
+        "column_count": 3,
+        "summary": "Records of individual tests taken by students, including the date of the test and the result achieved.",
+        "entity": "test_record",
+        "role": "transaction_table",
+        "aliases": [
+          "student_test_history",
+          "test_results_log",
+          "exam_records"
+        ]
+      },
+      "columns": {
+        "registration_id": {
+          "name": "registration_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the student associated with the test record.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "student_identifier",
+          "aliases": [
+            "student_id",
+            "reg_id",
+            "student_registration"
+          ]
+        },
+        "date_test_taken": {
+          "name": "date_test_taken",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The specific date and time when the student completed the test.",
+          "semantic_type": "timestamp",
+          "business_concept": "test_completion_time",
+          "aliases": [
+            "test_date",
+            "exam_date",
+            "test_timestamp",
+            "date_taken"
+          ]
+        },
+        "test_result": {
+          "name": "test_result",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The outcome of the test, indicating whether the student passed or failed.",
+          "semantic_type": "status",
+          "business_concept": "test_outcome",
+          "aliases": [
+            "result",
+            "exam_result",
+            "pass_fail",
+            "score_status"
+          ]
+        }
+      }
+    },
+    "courses": {
+      "table": {
+        "name": "courses",
+        "column_count": 5,
+        "summary": "A table containing metadata and details about various academic courses, including their identifiers, authors, subjects, names, and descriptions.",
+        "entity": "Course",
+        "role": "entity_table",
+        "aliases": [
+          "course_master",
+          "course_catalog",
+          "curriculum"
+        ]
+      },
+      "columns": {
+        "course_id": {
+          "name": "course_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific course record.",
+          "semantic_type": "identifier",
+          "business_concept": "Course ID",
+          "aliases": [
+            "cid",
+            "course_no",
+            "id"
+          ]
+        },
+        "author_id": {
+          "name": "author_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the course to its instructor or creator.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Instructor ID",
+          "aliases": [
+            "instructor_id",
+            "prof_id",
+            "teacher_id",
+            "creator_id"
+          ]
+        },
+        "subject_id": {
+          "name": "subject_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the course to a specific academic subject or department.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Subject ID",
+          "aliases": [
+            "dept_id",
+            "category_id",
+            "discipline_id"
+          ]
+        },
+        "course_name": {
+          "name": "course_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The official title or name of the course.",
+          "semantic_type": "code",
+          "business_concept": "Course Title",
+          "aliases": [
+            "title",
+            "name",
+            "course_title"
+          ]
+        },
+        "course_description": {
+          "name": "course_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A textual summary or detailed explanation of the course content.",
+          "semantic_type": "description",
+          "business_concept": "Course Description",
+          "aliases": [
+            "desc",
+            "summary",
+            "overview",
+            "details"
+          ]
+        }
+      }
+    }
+  }
+}

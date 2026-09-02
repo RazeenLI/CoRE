@@ -1,0 +1,228 @@
+{
+  "database": "ship_mission",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/ship_mission",
+    "schema_path": "data/Spider/parsed/ship_mission/schema.json",
+    "tables_dir": "data/Spider/parsed/ship_mission/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "mission": {
+      "table": {
+        "name": "mission",
+        "column_count": 7,
+        "summary": "A catalog of naval vessels (missions) detailing their identification, launch history, operational specifications, and final status.",
+        "entity": "Naval Vessel",
+        "role": "entity_table",
+        "aliases": [
+          "ships",
+          "vessels",
+          "naval_assets",
+          "fleet_registry"
+        ]
+      },
+      "columns": {
+        "mission_id": {
+          "name": "mission_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each vessel record in the database.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "vessel_id",
+            "ship_id_pk"
+          ]
+        },
+        "ship_id": {
+          "name": "ship_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference identifier linking to a specific ship entity, potentially from a separate ships table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Ship Reference",
+          "aliases": [
+            "ship_ref",
+            "vessel_ref",
+            "external_ship_id"
+          ]
+        },
+        "code": {
+          "name": "code",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Official designation or name of the vessel, including historical notes.",
+          "semantic_type": "code",
+          "business_concept": "Vessel Name/Designation",
+          "aliases": [
+            "name",
+            "vessel_name",
+            "designation",
+            "hull_name"
+          ]
+        },
+        "launched_year": {
+          "name": "launched_year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year the vessel was launched or commissioned.",
+          "semantic_type": "date",
+          "business_concept": "Launch Date",
+          "aliases": [
+            "launch_date",
+            "commissioned_year",
+            "built_year"
+          ]
+        },
+        "location": {
+          "name": "location",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The country or specific region associated with the vessel's origin or operation.",
+          "semantic_type": "country",
+          "business_concept": "Origin/Operational Location",
+          "aliases": [
+            "country",
+            "origin",
+            "home_port",
+            "flag_state"
+          ]
+        },
+        "speed_knots": {
+          "name": "speed_knots",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The maximum speed of the vessel measured in knots.",
+          "semantic_type": "quantity",
+          "business_concept": "Maximum Speed",
+          "aliases": [
+            "max_speed",
+            "velocity",
+            "knots"
+          ]
+        },
+        "fate": {
+          "name": "fate",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Description of the vessel's end-of-life status or historical outcome.",
+          "semantic_type": "description",
+          "business_concept": "Disposal Status",
+          "aliases": [
+            "status",
+            "end_status",
+            "disposal",
+            "history"
+          ]
+        }
+      }
+    },
+    "ship": {
+      "table": {
+        "name": "ship",
+        "column_count": 5,
+        "summary": "A catalog of ships containing their identification, names, classifications, nationalities, and tonnage.",
+        "entity": "ship",
+        "role": "entity_table",
+        "aliases": [
+          "vessel",
+          "ships",
+          "ships_catalog",
+          "ship_registry"
+        ]
+      },
+      "columns": {
+        "ship_id": {
+          "name": "ship_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each ship record.",
+          "semantic_type": "identifier",
+          "business_concept": "ship_id",
+          "aliases": [
+            "id",
+            "ship_code",
+            "vessel_id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The proper name given to the ship.",
+          "semantic_type": "organization_name",
+          "business_concept": "ship_name",
+          "aliases": [
+            "vessel_name",
+            "name",
+            "title"
+          ]
+        },
+        "type": {
+          "name": "type",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The classification or function of the ship (e.g., cargo, battle).",
+          "semantic_type": "category",
+          "business_concept": "ship_type",
+          "aliases": [
+            "class",
+            "vessel_type",
+            "category",
+            "kind"
+          ]
+        },
+        "nationality": {
+          "name": "nationality",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The country of registration or origin for the ship.",
+          "semantic_type": "country",
+          "business_concept": "ship_nationality",
+          "aliases": [
+            "country",
+            "flag_state",
+            "origin",
+            "nationality"
+          ]
+        },
+        "tonnage": {
+          "name": "tonnage",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The measure of the volume or capacity of the ship.",
+          "semantic_type": "quantity",
+          "business_concept": "ship_tonnage",
+          "aliases": [
+            "tonnage",
+            "gross_tonnage",
+            "net_tonnage",
+            "capacity"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,205 @@
+{
+  "database": "voter_1",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/voter_1",
+    "schema_path": "data/Spider/parsed/voter_1/schema.json",
+    "tables_dir": "data/Spider/parsed/voter_1/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "area_code_state": {
+      "table": {
+        "name": "area_code_state",
+        "column_count": 2,
+        "summary": "A reference table mapping US area codes to their corresponding state abbreviations.",
+        "entity": "Area Code - State Mapping",
+        "role": "lookup_table",
+        "aliases": [
+          "area_code_state_map",
+          "state_area_codes",
+          "us_area_code_lookup"
+        ]
+      },
+      "columns": {
+        "area_code": {
+          "name": "area_code",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The unique three-digit telephone exchange code assigned to a specific geographic region.",
+          "semantic_type": "code",
+          "business_concept": "Telecommunications Area Code",
+          "aliases": [
+            "ac",
+            "area",
+            "tel_code",
+            "exchange_code"
+          ]
+        },
+        "state": {
+          "name": "state",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The two-letter postal abbreviation representing the US state or territory associated with the area code.",
+          "semantic_type": "code",
+          "business_concept": "US State Abbreviation",
+          "aliases": [
+            "st",
+            "state_abbr",
+            "postal_code",
+            "region"
+          ]
+        }
+      }
+    },
+    "contestants": {
+      "table": {
+        "name": "contestants",
+        "column_count": 2,
+        "summary": "A table containing basic identification and name information for participants in a contest or competition.",
+        "entity": "Contestant",
+        "role": "entity_table",
+        "aliases": [
+          "contestants",
+          "participants",
+          "competitors",
+          "contestant_list"
+        ]
+      },
+      "columns": {
+        "contestant_number": {
+          "name": "contestant_number",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each contestant.",
+          "semantic_type": "identifier",
+          "business_concept": "Unique Contestant ID",
+          "aliases": [
+            "id",
+            "contest_id",
+            "participant_number",
+            "entry_number"
+          ]
+        },
+        "contestant_name": {
+          "name": "contestant_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full name of the contestant.",
+          "semantic_type": "person_name",
+          "business_concept": "Contestant Full Name",
+          "aliases": [
+            "name",
+            "full_name",
+            "participant_name",
+            "competitor_name"
+          ]
+        }
+      }
+    },
+    "votes": {
+      "table": {
+        "name": "votes",
+        "column_count": 5,
+        "summary": "Records of votes cast by phone numbers for specific contestants in different US states.",
+        "entity": "Vote",
+        "role": "transaction_table",
+        "aliases": [
+          "voting_records",
+          "phone_votes",
+          "contestant_votes"
+        ]
+      },
+      "columns": {
+        "vote_id": {
+          "name": "vote_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each vote record.",
+          "semantic_type": "identifier",
+          "business_concept": "Vote ID",
+          "aliases": [
+            "id",
+            "vote_key",
+            "primary_key"
+          ]
+        },
+        "phone_number": {
+          "name": "phone_number",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The telephone number of the voter who cast the vote.",
+          "semantic_type": "phone",
+          "business_concept": "Voter Phone Number",
+          "aliases": [
+            "caller_id",
+            "voter_phone",
+            "subscriber_number"
+          ]
+        },
+        "state": {
+          "name": "state",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The US state associated with the vote or the voter's location.",
+          "semantic_type": "code",
+          "business_concept": "State Code",
+          "aliases": [
+            "state_abbr",
+            "location_code",
+            "us_state"
+          ]
+        },
+        "contestant_number": {
+          "name": "contestant_number",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The unique identifier for the contestant receiving the vote.",
+          "semantic_type": "identifier",
+          "business_concept": "Contestant ID",
+          "aliases": [
+            "contestant_id",
+            "candidate_number",
+            "player_id"
+          ]
+        },
+        "created": {
+          "name": "created",
+          "dtype": "timestamp",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the vote was recorded in the system.",
+          "semantic_type": "timestamp",
+          "business_concept": "Vote Creation Time",
+          "aliases": [
+            "vote_time",
+            "created_at",
+            "timestamp"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,383 @@
+{
+  "database": "formula_1",
+  "tables": {
+    "circuits": {
+      "table": {
+        "name": "circuits",
+        "column_count": 9,
+        "summary": "A reference table containing metadata, location details, and identifiers for Formula 1 racing circuits.",
+        "entity": "racing_circuit",
+        "role": "lookup_table",
+        "aliases": [
+          "f1_circuits",
+          "race_tracks",
+          "gp_circuits",
+          "circuit_reference"
+        ]
+      },
+      "columns": {
+        "circuitid": {
+          "name": "circuitid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each racing circuit.",
+          "semantic_type": "identifier",
+          "business_concept": "Circuit ID",
+          "aliases": [
+            "id",
+            "circuit_key",
+            "track_id"
+          ]
+        },
+        "circuitref": {
+          "name": "circuitref",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "A short, abbreviated name or code for the circuit.",
+          "semantic_type": "code",
+          "business_concept": "Circuit Reference",
+          "aliases": [
+            "ref",
+            "short_name",
+            "abbr"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full official name of the racing circuit.",
+          "semantic_type": "organization_name",
+          "business_concept": "Circuit Name",
+          "aliases": [
+            "full_name",
+            "title",
+            "official_name"
+          ]
+        },
+        "location": {
+          "name": "location",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The city where the circuit is situated.",
+          "semantic_type": "city",
+          "business_concept": "City",
+          "aliases": [
+            "city",
+            "municipality",
+            "town"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country where the circuit is located.",
+          "semantic_type": "country",
+          "business_concept": "Country",
+          "aliases": [
+            "nation",
+            "land",
+            "sovereign_state"
+          ]
+        },
+        "lat": {
+          "name": "lat",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Latitude coordinate of the circuit's location.",
+          "semantic_type": "unknown",
+          "business_concept": "Latitude",
+          "aliases": [
+            "latitude",
+            "lat_coord",
+            "y_coord"
+          ]
+        },
+        "lng": {
+          "name": "lng",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Longitude coordinate of the circuit's location.",
+          "semantic_type": "unknown",
+          "business_concept": "Longitude",
+          "aliases": [
+            "longitude",
+            "lng_coord",
+            "x_coord"
+          ]
+        },
+        "alt": {
+          "name": "alt",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Elevation of the circuit above sea level.",
+          "semantic_type": "unknown",
+          "business_concept": "Elevation",
+          "aliases": [
+            "altitude",
+            "elevation",
+            "height",
+            "meters_above_sea"
+          ]
+        },
+        "url": {
+          "name": "url",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Web link to the circuit's Wikipedia page.",
+          "semantic_type": "unknown",
+          "business_concept": "External Reference",
+          "aliases": [
+            "wiki_url",
+            "link",
+            "homepage",
+            "source_url"
+          ]
+        }
+      }
+    },
+    "constructorresults": {
+      "table": {
+        "name": "constructorresults",
+        "column_count": 5,
+        "summary": "Records the championship points standings for Formula 1 constructors in specific races.",
+        "entity": "ConstructorRaceResult",
+        "role": "transaction_table",
+        "aliases": [
+          "constructor_standings",
+          "team_results",
+          "constructor_points"
+        ]
+      },
+      "columns": {
+        "constructorresultsid": {
+          "name": "constructorresultsid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific constructor's result record in a race.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "constructor_result_id",
+            "cr_id"
+          ]
+        },
+        "raceid": {
+          "name": "raceid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the result to a specific race event.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Race Reference",
+          "aliases": [
+            "race_id",
+            "r_id",
+            "event_id"
+          ]
+        },
+        "constructorid": {
+          "name": "constructorid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the result to a specific constructor (team).",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Constructor Reference",
+          "aliases": [
+            "constructor_id",
+            "team_id",
+            "c_id"
+          ]
+        },
+        "points": {
+          "name": "points",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Total championship points accumulated by the constructor in the race.",
+          "semantic_type": "quantity",
+          "business_concept": "Championship Points",
+          "aliases": [
+            "pts",
+            "score",
+            "points_total"
+          ]
+        },
+        "status": {
+          "name": "status",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Current status of the constructor's participation or result in the race.",
+          "semantic_type": "status",
+          "business_concept": "Race Status",
+          "aliases": [
+            "result_status",
+            "finish_status",
+            "status_code"
+          ]
+        }
+      }
+    },
+    "races": {
+      "table": {
+        "name": "races",
+        "column_count": 8,
+        "summary": "A table containing metadata about Formula One races, including identifiers, dates, locations, and links to external documentation.",
+        "entity": "Race",
+        "role": "entity_table",
+        "aliases": [
+          "f1_races",
+          "grand_prix",
+          "race_events",
+          "racing_schedule"
+        ]
+      },
+      "columns": {
+        "raceid": {
+          "name": "raceid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific race event.",
+          "semantic_type": "identifier",
+          "business_concept": "Race ID",
+          "aliases": [
+            "id",
+            "race_id",
+            "event_id"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the race took place.",
+          "semantic_type": "date",
+          "business_concept": "Race Year",
+          "aliases": [
+            "yr",
+            "calendar_year",
+            "season_year"
+          ]
+        },
+        "round": {
+          "name": "round",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The sequential number of the race within a specific season.",
+          "semantic_type": "quantity",
+          "business_concept": "Race Round Number",
+          "aliases": [
+            "round_num",
+            "race_number",
+            "event_order"
+          ]
+        },
+        "circuitid": {
+          "name": "circuitid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the race track where the event was held.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Circuit ID",
+          "aliases": [
+            "circuit_id",
+            "track_id",
+            "venue_id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official name of the race event.",
+          "semantic_type": "description",
+          "business_concept": "Race Name",
+          "aliases": [
+            "race_name",
+            "event_name",
+            "title"
+          ]
+        },
+        "date": {
+          "name": "date",
+          "dtype": "text",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar date on which the race was held.",
+          "semantic_type": "date",
+          "business_concept": "Race Date",
+          "aliases": [
+            "race_date",
+            "event_date",
+            "hold_date"
+          ]
+        },
+        "time": {
+          "name": "time",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The local time at which the race started.",
+          "semantic_type": "timestamp",
+          "business_concept": "Race Start Time",
+          "aliases": [
+            "start_time",
+            "race_time",
+            "clock_time"
+          ]
+        },
+        "url": {
+          "name": "url",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Web link to the Wikipedia page for the specific race.",
+          "semantic_type": "unknown",
+          "business_concept": "Race Documentation URL",
+          "aliases": [
+            "wiki_url",
+            "link",
+            "reference_url"
+          ]
+        }
+      }
+    }
+  }
+}

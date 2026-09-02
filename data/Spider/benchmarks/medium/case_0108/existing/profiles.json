@@ -1,0 +1,675 @@
+{
+  "database": "formula_1",
+  "tables": {
+    "qualifying": {
+      "table": {
+        "name": "qualifying",
+        "column_count": 6,
+        "summary": "Records of qualifying sessions for motorsport races, detailing driver performance times across different qualifying rounds.",
+        "entity": "Qualifying Session",
+        "role": "transaction_table",
+        "aliases": [
+          "qualifying_results",
+          "quali",
+          "qualifying_times"
+        ]
+      },
+      "columns": {
+        "qualifyid": {
+          "name": "qualifyid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific qualifying session record.",
+          "semantic_type": "identifier",
+          "business_concept": "Qualifying Session ID",
+          "aliases": [
+            "quali_id",
+            "id"
+          ]
+        },
+        "raceid": {
+          "name": "raceid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the qualifying session to a specific race event.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Race ID",
+          "aliases": [
+            "race_id",
+            "r_id"
+          ]
+        },
+        "driverid": {
+          "name": "driverid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the driver participating in the qualifying session.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Driver ID",
+          "aliases": [
+            "driver_id",
+            "d_id"
+          ]
+        },
+        "position": {
+          "name": "position",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The final grid position achieved by the driver in the qualifying session.",
+          "semantic_type": "category",
+          "business_concept": "Qualifying Position",
+          "aliases": [
+            "pos",
+            "grid_position",
+            "q_position"
+          ]
+        },
+        "q1": {
+          "name": "q1",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Fastest lap time recorded during the first qualifying segment.",
+          "semantic_type": "timestamp",
+          "business_concept": "Q1 Time",
+          "aliases": [
+            "q1_time",
+            "quali_1_time",
+            "segment_1_time"
+          ]
+        },
+        "q2": {
+          "name": "q2",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Fastest lap time recorded during the second qualifying segment.",
+          "semantic_type": "timestamp",
+          "business_concept": "Q2 Time",
+          "aliases": [
+            "q2_time",
+            "quali_2_time",
+            "segment_2_time"
+          ]
+        }
+      }
+    },
+    "laptimes": {
+      "table": {
+        "name": "laptimes",
+        "column_count": 6,
+        "summary": "Records individual lap times for drivers in specific races, including position and duration metrics.",
+        "entity": "Race Lap",
+        "role": "transaction_table",
+        "aliases": [
+          "lap_times",
+          "race_laps",
+          "driver_laps"
+        ]
+      },
+      "columns": {
+        "raceid": {
+          "name": "raceid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for the specific race event.",
+          "semantic_type": "identifier",
+          "business_concept": "Race ID",
+          "aliases": [
+            "race_id",
+            "id_race"
+          ]
+        },
+        "driverid": {
+          "name": "driverid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for the driver participating in the race.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Driver ID",
+          "aliases": [
+            "driver_id",
+            "id_driver"
+          ]
+        },
+        "lap": {
+          "name": "lap",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The sequential number of the lap being recorded within the race.",
+          "semantic_type": "quantity",
+          "business_concept": "Lap Number",
+          "aliases": [
+            "lap_number",
+            "lap_num"
+          ]
+        },
+        "position": {
+          "name": "position",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The current ranking of the driver on this specific lap.",
+          "semantic_type": "status",
+          "business_concept": "Lap Position",
+          "aliases": [
+            "pos",
+            "position_num",
+            "rank"
+          ]
+        },
+        "time": {
+          "name": "time",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The duration of the lap formatted as a string (e.g., '1:23.456').",
+          "semantic_type": "unknown",
+          "business_concept": "Lap Time (HH:MM.SSS)",
+          "aliases": [
+            "lap_time",
+            "duration",
+            "time_str"
+          ]
+        },
+        "milliseconds": {
+          "name": "milliseconds",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The total duration of the lap in milliseconds as an integer.",
+          "semantic_type": "quantity",
+          "business_concept": "Lap Time (ms)",
+          "aliases": [
+            "ms",
+            "time_ms",
+            "duration_ms"
+          ]
+        }
+      }
+    },
+    "circuits": {
+      "table": {
+        "name": "circuits",
+        "column_count": 9,
+        "summary": "A reference table containing metadata, location details, and identifiers for Formula 1 racing circuits.",
+        "entity": "racing_circuit",
+        "role": "lookup_table",
+        "aliases": [
+          "f1_circuits",
+          "race_tracks",
+          "gp_circuits",
+          "circuit_reference"
+        ]
+      },
+      "columns": {
+        "circuitid": {
+          "name": "circuitid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each racing circuit.",
+          "semantic_type": "identifier",
+          "business_concept": "Circuit ID",
+          "aliases": [
+            "id",
+            "circuit_key",
+            "track_id"
+          ]
+        },
+        "circuitref": {
+          "name": "circuitref",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "A short, abbreviated name or code for the circuit.",
+          "semantic_type": "code",
+          "business_concept": "Circuit Reference",
+          "aliases": [
+            "ref",
+            "short_name",
+            "abbr"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full official name of the racing circuit.",
+          "semantic_type": "organization_name",
+          "business_concept": "Circuit Name",
+          "aliases": [
+            "full_name",
+            "title",
+            "official_name"
+          ]
+        },
+        "location": {
+          "name": "location",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The city where the circuit is situated.",
+          "semantic_type": "city",
+          "business_concept": "City",
+          "aliases": [
+            "city",
+            "municipality",
+            "town"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country where the circuit is located.",
+          "semantic_type": "country",
+          "business_concept": "Country",
+          "aliases": [
+            "nation",
+            "land",
+            "sovereign_state"
+          ]
+        },
+        "lat": {
+          "name": "lat",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Latitude coordinate of the circuit's location.",
+          "semantic_type": "unknown",
+          "business_concept": "Latitude",
+          "aliases": [
+            "latitude",
+            "lat_coord",
+            "y_coord"
+          ]
+        },
+        "lng": {
+          "name": "lng",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Longitude coordinate of the circuit's location.",
+          "semantic_type": "unknown",
+          "business_concept": "Longitude",
+          "aliases": [
+            "longitude",
+            "lng_coord",
+            "x_coord"
+          ]
+        },
+        "alt": {
+          "name": "alt",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Elevation of the circuit above sea level.",
+          "semantic_type": "unknown",
+          "business_concept": "Elevation",
+          "aliases": [
+            "altitude",
+            "elevation",
+            "height",
+            "meters_above_sea"
+          ]
+        },
+        "url": {
+          "name": "url",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Web link to the circuit's Wikipedia page.",
+          "semantic_type": "unknown",
+          "business_concept": "External Reference",
+          "aliases": [
+            "wiki_url",
+            "link",
+            "homepage",
+            "source_url"
+          ]
+        }
+      }
+    },
+    "constructors": {
+      "table": {
+        "name": "constructors",
+        "column_count": 5,
+        "summary": "A reference table containing information about Formula 1 racing teams, including their unique identifiers, names, nationalities, and external links.",
+        "entity": "Formula 1 Constructor",
+        "role": "lookup_table",
+        "aliases": [
+          "f1_teams",
+          "racing_constructors",
+          "formula_one_teams",
+          "constructor_reference"
+        ]
+      },
+      "columns": {
+        "constructorid": {
+          "name": "constructorid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique numeric identifier for each constructor within the database.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "constructor_id",
+            "team_id",
+            "fk"
+          ]
+        },
+        "constructorref": {
+          "name": "constructorref",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Short code or abbreviation representing the constructor, often used for data normalization or joining.",
+          "semantic_type": "code",
+          "business_concept": "Team Abbreviation",
+          "aliases": [
+            "ref",
+            "team_ref",
+            "short_name",
+            "abbr"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Full official name of the racing constructor/team.",
+          "semantic_type": "organization_name",
+          "business_concept": "Team Name",
+          "aliases": [
+            "team_name",
+            "full_name",
+            "official_name"
+          ]
+        },
+        "nationality": {
+          "name": "nationality",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country of origin or registration for the constructor.",
+          "semantic_type": "country",
+          "business_concept": "Team Nationality",
+          "aliases": [
+            "country",
+            "origin",
+            "nationality_code"
+          ]
+        },
+        "url": {
+          "name": "url",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Web address linking to the constructor's profile on Wikipedia.",
+          "semantic_type": "unknown",
+          "business_concept": "External Reference",
+          "aliases": [
+            "wiki_url",
+            "homepage",
+            "link",
+            "web_address"
+          ]
+        }
+      }
+    },
+    "pitstops": {
+      "table": {
+        "name": "pitstops",
+        "column_count": 7,
+        "summary": "Records of pit stops made by drivers during specific races, including timing and duration details.",
+        "entity": "Pit Stop Event",
+        "role": "transaction_table",
+        "aliases": [
+          "pit_stops",
+          "race_pitstops",
+          "stop_data"
+        ]
+      },
+      "columns": {
+        "raceid": {
+          "name": "raceid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for the race during which the pit stop occurred.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Race Identifier",
+          "aliases": [
+            "race_id",
+            "id_race",
+            "race_number"
+          ]
+        },
+        "driverid": {
+          "name": "driverid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for the driver who made the pit stop.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Driver Identifier",
+          "aliases": [
+            "driver_id",
+            "id_driver",
+            "driver_number"
+          ]
+        },
+        "stop": {
+          "name": "stop",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The sequential number of the pit stop for a specific driver in a race (e.g., 1st stop, 2nd stop).",
+          "semantic_type": "quantity",
+          "business_concept": "Stop Sequence Number",
+          "aliases": [
+            "stop_number",
+            "stop_seq",
+            "pit_stop_num"
+          ]
+        },
+        "lap": {
+          "name": "lap",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The lap number on the track when the pit stop was initiated.",
+          "semantic_type": "quantity",
+          "business_concept": "Lap Number",
+          "aliases": [
+            "lap_number",
+            "lap_num",
+            "current_lap"
+          ]
+        },
+        "time": {
+          "name": "time",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The time of day (HH:MM:SS) when the pit stop occurred.",
+          "semantic_type": "timestamp",
+          "business_concept": "Stop Time",
+          "aliases": [
+            "stop_time",
+            "time_of_day",
+            "clock_time"
+          ]
+        },
+        "duration": {
+          "name": "duration",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The total time taken to complete the pit stop, often stored as a formatted string (e.g., '20.500').",
+          "semantic_type": "unknown",
+          "business_concept": "Pit Stop Duration",
+          "aliases": [
+            "stop_duration",
+            "time_taken",
+            "pit_time"
+          ]
+        },
+        "milliseconds": {
+          "name": "milliseconds",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The precise duration of the pit stop in milliseconds, providing a numeric value for the duration.",
+          "semantic_type": "quantity",
+          "business_concept": "Stop Duration (ms)",
+          "aliases": [
+            "duration_ms",
+            "millis",
+            "stop_ms"
+          ]
+        }
+      }
+    },
+    "driverstandings": {
+      "table": {
+        "name": "driverstandings",
+        "column_count": 7,
+        "summary": "Records the current championship standings for drivers within a specific race, including their points, position, and number of wins.",
+        "entity": "Driver Standings",
+        "role": "transaction_table",
+        "aliases": [
+          "driver_standings",
+          "championship_standings",
+          "race_standings",
+          "driver_rankings"
+        ]
+      },
+      "columns": {
+        "driverstandingsid": {
+          "name": "driverstandingsid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific driver's standing record in a race.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "ds_id",
+            "standings_id",
+            "id"
+          ]
+        },
+        "raceid": {
+          "name": "raceid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the standing record to a specific race event.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Race Reference",
+          "aliases": [
+            "race_id",
+            "r_id",
+            "event_id"
+          ]
+        },
+        "driverid": {
+          "name": "driverid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the standing record to a specific driver.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Driver Reference",
+          "aliases": [
+            "driver_id",
+            "d_id",
+            "pid"
+          ]
+        },
+        "points": {
+          "name": "points",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Total championship points accumulated by the driver in the current race context.",
+          "semantic_type": "quantity",
+          "business_concept": "Championship Points",
+          "aliases": [
+            "pts",
+            "score",
+            "total_points"
+          ]
+        },
+        "position": {
+          "name": "position",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Numerical rank of the driver among all participants in the standings.",
+          "semantic_type": "code",
+          "business_concept": "Ranking Position",
+          "aliases": [
+            "pos",
+            "rank",
+            "place"
+          ]
+        },
+        "positiontext": {
+          "name": "positiontext",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Textual representation of the driver's rank (e.g., '1st', '2nd').",
+          "semantic_type": "code",
+          "business_concept": "Ranking Label",
+          "aliases": [
+            "pos_text",
+            "rank_text",
+            "place_text"
+          ]
+        },
+        "wins": {
+          "name": "wins",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Count of race victories achieved by the driver in the current context.",
+          "semantic_type": "quantity",
+          "business_concept": "Race Wins",
+          "aliases": [
+            "win_count",
+            "victories",
+            "wins_total"
+          ]
+        }
+      }
+    }
+  }
+}

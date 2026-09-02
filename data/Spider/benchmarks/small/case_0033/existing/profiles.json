@@ -1,0 +1,272 @@
+{
+  "database": "behavior_monitoring",
+  "tables": {
+    "teachers": {
+      "table": {
+        "name": "teachers",
+        "column_count": 5,
+        "summary": "A table containing personal contact and demographic information for teachers, including names, gender, and communication details.",
+        "entity": "Teacher",
+        "role": "entity_table",
+        "aliases": [
+          "staff",
+          "faculty",
+          "instructors",
+          "educators"
+        ]
+      },
+      "columns": {
+        "teacher_id": {
+          "name": "teacher_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each teacher record.",
+          "semantic_type": "identifier",
+          "business_concept": "Teacher ID",
+          "aliases": [
+            "tid",
+            "teacher_code",
+            "emp_id"
+          ]
+        },
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key linking the teacher to a specific address record in a separate table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Address Reference",
+          "aliases": [
+            "addr_id",
+            "address_ref",
+            "location_id"
+          ]
+        },
+        "last_name": {
+          "name": "last_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The family name or surname of the teacher.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "lname",
+            "ln",
+            "surname",
+            "family_name"
+          ]
+        },
+        "cell_mobile_number": {
+          "name": "cell_mobile_number",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The mobile phone number associated with the teacher.",
+          "semantic_type": "phone",
+          "business_concept": "Mobile Number",
+          "aliases": [
+            "mobile",
+            "cell",
+            "phone",
+            "cell_phone"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Additional free-text information about the teacher.",
+          "semantic_type": "description",
+          "business_concept": "Additional Details",
+          "aliases": [
+            "notes",
+            "remarks",
+            "extra_info",
+            "bio"
+          ]
+        }
+      }
+    },
+    "assessment_notes": {
+      "table": {
+        "name": "assessment_notes",
+        "column_count": 6,
+        "summary": "A record of assessment notes linking students and teachers with timestamps and optional textual details.",
+        "entity": "Assessment Note",
+        "role": "transaction_table",
+        "aliases": [
+          "assessment_notes",
+          "notes",
+          "teacher_student_notes"
+        ]
+      },
+      "columns": {
+        "notes_id": {
+          "name": "notes_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each assessment note record.",
+          "semantic_type": "identifier",
+          "business_concept": "Note ID",
+          "aliases": [
+            "id",
+            "note_id",
+            "assessment_id"
+          ]
+        },
+        "student_id": {
+          "name": "student_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the note to a specific student.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Student ID",
+          "aliases": [
+            "student",
+            "s_id",
+            "learner_id"
+          ]
+        },
+        "teacher_id": {
+          "name": "teacher_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the note to a specific teacher.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Teacher ID",
+          "aliases": [
+            "teacher",
+            "t_id",
+            "instructor_id"
+          ]
+        },
+        "date_of_notes": {
+          "name": "date_of_notes",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "Timestamp indicating when the assessment note was created or recorded.",
+          "semantic_type": "timestamp",
+          "business_concept": "Note Date",
+          "aliases": [
+            "created_at",
+            "note_date",
+            "timestamp",
+            "datetime"
+          ]
+        },
+        "text_of_notes": {
+          "name": "text_of_notes",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Free-form text content of the assessment note.",
+          "semantic_type": "description",
+          "business_concept": "Note Content",
+          "aliases": [
+            "note_text",
+            "content",
+            "description",
+            "body"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional free-form text details not covered in the main note text.",
+          "semantic_type": "description",
+          "business_concept": "Additional Details",
+          "aliases": [
+            "extra_info",
+            "remarks",
+            "supplementary_details",
+            "comments"
+          ]
+        }
+      }
+    },
+    "students_in_detention": {
+      "table": {
+        "name": "students_in_detention",
+        "column_count": 3,
+        "summary": "Records linking specific students to detention incidents, tracking which students were involved in which disciplinary events.",
+        "entity": "detention_record",
+        "role": "relationship_table",
+        "aliases": [
+          "student_detentions",
+          "detention_log",
+          "disciplinary_incidents"
+        ]
+      },
+      "columns": {
+        "student_id": {
+          "name": "student_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a student enrolled in the institution.",
+          "semantic_type": "identifier",
+          "business_concept": "Student",
+          "aliases": [
+            "student_key",
+            "sch_id",
+            "pupil_id"
+          ]
+        },
+        "detention_id": {
+          "name": "detention_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific detention event or session.",
+          "semantic_type": "identifier",
+          "business_concept": "Detention Event",
+          "aliases": [
+            "detention_key",
+            "session_id",
+            "detention_ref"
+          ]
+        },
+        "incident_id": {
+          "name": "incident_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific incident or violation that led to the detention.",
+          "semantic_type": "identifier",
+          "business_concept": "Incident",
+          "aliases": [
+            "incident_key",
+            "violation_id",
+            "case_id"
+          ]
+        }
+      }
+    }
+  }
+}

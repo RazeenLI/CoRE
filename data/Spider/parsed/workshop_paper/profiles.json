@@ -1,0 +1,232 @@
+{
+  "database": "workshop_paper",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/workshop_paper",
+    "schema_path": "data/Spider/parsed/workshop_paper/schema.json",
+    "tables_dir": "data/Spider/parsed/workshop_paper/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "acceptance": {
+      "table": {
+        "name": "acceptance",
+        "column_count": 3,
+        "summary": "Records the acceptance status of submissions for specific workshops.",
+        "entity": "Submission Result",
+        "role": "transaction_table",
+        "aliases": [
+          "acceptance_results",
+          "submission_status",
+          "workshop_acceptance"
+        ]
+      },
+      "columns": {
+        "submission_id": {
+          "name": "submission_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific submission record.",
+          "semantic_type": "identifier",
+          "business_concept": "Submission ID",
+          "aliases": [
+            "sub_id",
+            "submission_number",
+            "id"
+          ]
+        },
+        "workshop_id": {
+          "name": "workshop_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the submission to a specific workshop event.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Workshop ID",
+          "aliases": [
+            "workshop_number",
+            "event_id",
+            "wk_id"
+          ]
+        },
+        "result": {
+          "name": "result",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The outcome of the submission review process.",
+          "semantic_type": "status",
+          "business_concept": "Acceptance Status",
+          "aliases": [
+            "status",
+            "decision",
+            "outcome",
+            "verdict"
+          ]
+        }
+      }
+    },
+    "submission": {
+      "table": {
+        "name": "submission",
+        "column_count": 4,
+        "summary": "A table recording academic submissions with associated scores, author names, and institution affiliations.",
+        "entity": "Submission",
+        "role": "entity_table",
+        "aliases": [
+          "submissions",
+          "assignment_submissions",
+          "exam_results",
+          "grade_records"
+        ]
+      },
+      "columns": {
+        "submission_id": {
+          "name": "submission_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each submission record.",
+          "semantic_type": "identifier",
+          "business_concept": "Submission ID",
+          "aliases": [
+            "id",
+            "submission_key",
+            "sub_id",
+            "record_id"
+          ]
+        },
+        "scores": {
+          "name": "scores",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The numerical grade or score obtained by the author for the submission.",
+          "semantic_type": "money",
+          "business_concept": "Score",
+          "aliases": [
+            "grade",
+            "points",
+            "mark",
+            "result",
+            "score_value"
+          ]
+        },
+        "author": {
+          "name": "author",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the individual who created or submitted the work.",
+          "semantic_type": "person_name",
+          "business_concept": "Author Name",
+          "aliases": [
+            "student_name",
+            "submitter",
+            "name",
+            "user_name"
+          ]
+        },
+        "college": {
+          "name": "college",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The educational institution or college associated with the author.",
+          "semantic_type": "organization_name",
+          "business_concept": "Institution",
+          "aliases": [
+            "school",
+            "university",
+            "institution",
+            "dept",
+            "affiliation"
+          ]
+        }
+      }
+    },
+    "workshop": {
+      "table": {
+        "name": "workshop",
+        "column_count": 4,
+        "summary": "A record of various workshops, conferences, and qualification events held at specific venues on specific dates.",
+        "entity": "Workshop",
+        "role": "entity_table",
+        "aliases": [
+          "workshops",
+          "events",
+          "conferences",
+          "qualifications"
+        ]
+      },
+      "columns": {
+        "workshop_id": {
+          "name": "workshop_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each workshop record.",
+          "semantic_type": "identifier",
+          "business_concept": "Workshop ID",
+          "aliases": [
+            "id",
+            "workshop_id",
+            "event_id"
+          ]
+        },
+        "date": {
+          "name": "date",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The calendar date on which the workshop took place.",
+          "semantic_type": "date",
+          "business_concept": "Event Date",
+          "aliases": [
+            "event_date",
+            "start_date",
+            "date_held"
+          ]
+        },
+        "venue": {
+          "name": "venue",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The geographic location where the workshop was held.",
+          "semantic_type": "address",
+          "business_concept": "Location",
+          "aliases": [
+            "location",
+            "city",
+            "place",
+            "site"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The title or descriptive name of the workshop or event.",
+          "semantic_type": "description",
+          "business_concept": "Event Name",
+          "aliases": [
+            "title",
+            "event_name",
+            "workshop_name",
+            "topic"
+          ]
+        }
+      }
+    }
+  }
+}

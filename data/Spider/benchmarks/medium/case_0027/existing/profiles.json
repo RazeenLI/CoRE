@@ -1,0 +1,603 @@
+{
+  "database": "hospital_1",
+  "tables": {
+    "patient": {
+      "table": {
+        "name": "patient",
+        "column_count": 2,
+        "summary": "A table containing core demographic and contact information for patients, including identifiers, names, addresses, phone numbers, and insurance details.",
+        "entity": "Patient",
+        "role": "entity_table",
+        "aliases": [
+          "patients",
+          "patient_info",
+          "patient_demographics"
+        ]
+      },
+      "columns": {
+        "ssn": {
+          "name": "ssn",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the patient, likely a Social Security Number or an internal surrogate key formatted as an integer.",
+          "semantic_type": "identifier",
+          "business_concept": "Patient Unique ID",
+          "aliases": [
+            "patient_id",
+            "social_security_number",
+            "ssn",
+            "id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full name of the patient.",
+          "semantic_type": "person_name",
+          "business_concept": "Patient Name",
+          "aliases": [
+            "full_name",
+            "patient_name",
+            "first_name",
+            "last_name"
+          ]
+        }
+      }
+    },
+    "block": {
+      "table": {
+        "name": "block",
+        "column_count": 2,
+        "summary": "A table containing unique identifiers for building blocks, likely representing distinct physical or logical units within a larger system.",
+        "entity": "Building Block",
+        "role": "lookup_table",
+        "aliases": [
+          "blocks",
+          "block_master",
+          "block_reference"
+        ]
+      },
+      "columns": {
+        "blockfloor": {
+          "name": "blockfloor",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A numeric identifier representing the floor level or a specific tier associated with the block.",
+          "semantic_type": "code",
+          "business_concept": "Floor Level",
+          "aliases": [
+            "floor",
+            "level",
+            "block_floor"
+          ]
+        },
+        "blockcode": {
+          "name": "blockcode",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique integer code used to identify a specific block record.",
+          "semantic_type": "identifier",
+          "business_concept": "Block ID",
+          "aliases": [
+            "block_id",
+            "block_number",
+            "blk_code"
+          ]
+        }
+      }
+    },
+    "trained_in": {
+      "table": {
+        "name": "trained_in",
+        "column_count": 4,
+        "summary": "Records the certification status of physicians for specific treatments, including the date of certification and expiration.",
+        "entity": "Physician Treatment Certification",
+        "role": "transaction_table",
+        "aliases": [
+          "physician_certifications",
+          "treatment_certifications",
+          "med_license_records"
+        ]
+      },
+      "columns": {
+        "physician": {
+          "name": "physician",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a medical professional.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Physician ID",
+          "aliases": [
+            "physician_id",
+            "doctor_id",
+            "provider_id",
+            "med_id"
+          ]
+        },
+        "treatment": {
+          "name": "treatment",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific medical procedure or service.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Treatment Code",
+          "aliases": [
+            "treatment_id",
+            "procedure_id",
+            "service_code",
+            "cpt_code"
+          ]
+        },
+        "certificationdate": {
+          "name": "certificationdate",
+          "dtype": "datetime",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The date on which the physician was certified to perform the treatment.",
+          "semantic_type": "date",
+          "business_concept": "Certification Start Date",
+          "aliases": [
+            "cert_date",
+            "issue_date",
+            "valid_from"
+          ]
+        },
+        "certificationexpires": {
+          "name": "certificationexpires",
+          "dtype": "datetime",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The date on which the physician's certification for the treatment becomes invalid.",
+          "semantic_type": "date",
+          "business_concept": "Certification Expiration Date",
+          "aliases": [
+            "exp_date",
+            "valid_until",
+            "expiry_date"
+          ]
+        }
+      }
+    },
+    "physician": {
+      "table": {
+        "name": "physician",
+        "column_count": 4,
+        "summary": "A table containing core identity and professional information for physicians, including their unique employee ID, full name, job title, and social security number.",
+        "entity": "Physician",
+        "role": "entity_table",
+        "aliases": [
+          "doctors",
+          "medical_staff",
+          "physicians",
+          "staff"
+        ]
+      },
+      "columns": {
+        "employeeid": {
+          "name": "employeeid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each physician within the organization's HR system.",
+          "semantic_type": "identifier",
+          "business_concept": "Employee ID",
+          "aliases": [
+            "emp_id",
+            "id",
+            "staff_id",
+            "employee_number"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full legal name of the physician.",
+          "semantic_type": "person_name",
+          "business_concept": "Full Name",
+          "aliases": [
+            "full_name",
+            "first_name",
+            "last_name",
+            "doctor_name"
+          ]
+        },
+        "position": {
+          "name": "position",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The professional job title or rank held by the physician within the medical hierarchy.",
+          "semantic_type": "category",
+          "business_concept": "Job Title",
+          "aliases": [
+            "title",
+            "role",
+            "designation",
+            "rank"
+          ]
+        },
+        "ssn": {
+          "name": "ssn",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The Social Security Number used to uniquely identify the individual for tax and legal purposes.",
+          "semantic_type": "code",
+          "business_concept": "Social Security Number",
+          "aliases": [
+            "ssn",
+            "social_security",
+            "social_sec",
+            "tax_id"
+          ]
+        }
+      }
+    },
+    "stay": {
+      "table": {
+        "name": "stay",
+        "column_count": 5,
+        "summary": "Records of patient hospital stays including admission and discharge dates, patient identifiers, and room assignments.",
+        "entity": "Hospital Stay",
+        "role": "transaction_table",
+        "aliases": [
+          "stays",
+          "admissions",
+          "patient_stays",
+          "hospital_stays"
+        ]
+      },
+      "columns": {
+        "stayid": {
+          "name": "stayid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific hospital stay record.",
+          "semantic_type": "identifier",
+          "business_concept": "Stay ID",
+          "aliases": [
+            "stay_id",
+            "admission_id",
+            "record_id"
+          ]
+        },
+        "patient": {
+          "name": "patient",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier linking the stay to a specific patient.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Patient ID",
+          "aliases": [
+            "patient_id",
+            "pat_id",
+            "mrn"
+          ]
+        },
+        "room": {
+          "name": "room",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the hospital room assigned to the patient during the stay.",
+          "semantic_type": "code",
+          "business_concept": "Room Number",
+          "aliases": [
+            "room_number",
+            "room_id",
+            "ward_room"
+          ]
+        },
+        "staystart": {
+          "name": "staystart",
+          "dtype": "datetime",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The date and time when the patient was admitted to the hospital.",
+          "semantic_type": "timestamp",
+          "business_concept": "Admission Date",
+          "aliases": [
+            "admission_date",
+            "stay_start_date",
+            "check_in_date"
+          ]
+        },
+        "stayend": {
+          "name": "stayend",
+          "dtype": "datetime",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The date and time when the patient was discharged from the hospital.",
+          "semantic_type": "timestamp",
+          "business_concept": "Discharge Date",
+          "aliases": [
+            "discharge_date",
+            "stay_end_date",
+            "check_out_date"
+          ]
+        }
+      }
+    },
+    "appointment": {
+      "table": {
+        "name": "appointment",
+        "column_count": 7,
+        "summary": "Records scheduling details for medical appointments including patient, physician, and room information.",
+        "entity": "Appointment",
+        "role": "transaction_table",
+        "aliases": [
+          "appointments",
+          "visits",
+          "schedules",
+          "medical_appointments"
+        ]
+      },
+      "columns": {
+        "appointmentid": {
+          "name": "appointmentid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific appointment record.",
+          "semantic_type": "identifier",
+          "business_concept": "Appointment ID",
+          "aliases": [
+            "id",
+            "appointment_id",
+            "apt_id"
+          ]
+        },
+        "patient": {
+          "name": "patient",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the appointment to a specific patient.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Patient ID",
+          "aliases": [
+            "patient_id",
+            "pid",
+            "patient_code"
+          ]
+        },
+        "prepnurse": {
+          "name": "prepnurse",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the nurse responsible for preparing the patient for the appointment.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Prep Nurse ID",
+          "aliases": [
+            "nurse_id",
+            "prep_nurse_id",
+            "nurse_code"
+          ]
+        },
+        "physician": {
+          "name": "physician",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the physician conducting the appointment.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Physician ID",
+          "aliases": [
+            "doctor_id",
+            "phys_id",
+            "provider_id"
+          ]
+        },
+        "start": {
+          "name": "start",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The scheduled start time of the appointment.",
+          "semantic_type": "timestamp",
+          "business_concept": "Appointment Start Time",
+          "aliases": [
+            "start_time",
+            "apt_start",
+            "scheduled_start"
+          ]
+        },
+        "end": {
+          "name": "end",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The scheduled end time of the appointment.",
+          "semantic_type": "timestamp",
+          "business_concept": "Appointment End Time",
+          "aliases": [
+            "end_time",
+            "apt_end",
+            "scheduled_end"
+          ]
+        },
+        "examinationroom": {
+          "name": "examinationroom",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The code or identifier for the room where the appointment takes place.",
+          "semantic_type": "code",
+          "business_concept": "Examination Room Code",
+          "aliases": [
+            "room_id",
+            "room_code",
+            "exam_room",
+            "location"
+          ]
+        }
+      }
+    },
+    "prescribes": {
+      "table": {
+        "name": "prescribes",
+        "column_count": 6,
+        "summary": "Records of medication prescriptions issued by physicians to patients, including dosage and appointment details.",
+        "entity": "Prescription",
+        "role": "transaction_table",
+        "aliases": [
+          "prescriptions",
+          "rx",
+          "medication_orders",
+          "drug_prescriptions"
+        ]
+      },
+      "columns": {
+        "physician": {
+          "name": "physician",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the doctor who issued the prescription.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Physician ID",
+          "aliases": [
+            "doctor_id",
+            "provider_id",
+            "prescriber_id",
+            "physician_id"
+          ]
+        },
+        "patient": {
+          "name": "patient",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the patient receiving the medication.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Patient ID",
+          "aliases": [
+            "patient_id",
+            "member_id",
+            "subscriber_id",
+            "beneficiary_id"
+          ]
+        },
+        "medication": {
+          "name": "medication",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific drug prescribed.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Medication ID",
+          "aliases": [
+            "drug_id",
+            "product_id",
+            "rx_code",
+            "npi_id"
+          ]
+        },
+        "date": {
+          "name": "date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the prescription was written or the appointment occurred.",
+          "semantic_type": "timestamp",
+          "business_concept": "Prescription Date",
+          "aliases": [
+            "rx_date",
+            "order_date",
+            "appointment_date",
+            "created_at"
+          ]
+        },
+        "appointment": {
+          "name": "appointment",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the prescription to a specific medical appointment visit.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Appointment ID",
+          "aliases": [
+            "visit_id",
+            "encounter_id",
+            "claim_id",
+            "visit_number"
+          ]
+        },
+        "dose": {
+          "name": "dose",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The quantity or dosage of the medication prescribed per unit.",
+          "semantic_type": "quantity",
+          "business_concept": "Dosage",
+          "aliases": [
+            "dosage",
+            "amount",
+            "quantity_prescribed",
+            "strength"
+          ]
+        }
+      }
+    }
+  }
+}

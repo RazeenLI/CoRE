@@ -1,0 +1,216 @@
+{
+  "database": "journal_committee",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/journal_committee",
+    "schema_path": "data/Spider/parsed/journal_committee/schema.json",
+    "tables_dir": "data/Spider/parsed/journal_committee/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "editor": {
+      "table": {
+        "name": "editor",
+        "column_count": 3,
+        "summary": "A table containing demographic information about individuals, including their unique identifier, full name, and age.",
+        "entity": "Person",
+        "role": "entity_table",
+        "aliases": [
+          "staff",
+          "users",
+          "employees",
+          "people",
+          "personnel"
+        ]
+      },
+      "columns": {
+        "editor_id": {
+          "name": "editor_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "editor_uid",
+            "pk_editor"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the person, typically consisting of first and last names.",
+          "semantic_type": "person_name",
+          "business_concept": "Full Name",
+          "aliases": [
+            "full_name",
+            "first_name",
+            "last_name",
+            "display_name"
+          ]
+        },
+        "age": {
+          "name": "age",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The current age of the person in years.",
+          "semantic_type": "quantity",
+          "business_concept": "Age",
+          "aliases": [
+            "years_old",
+            "age_years"
+          ]
+        }
+      }
+    },
+    "journal": {
+      "table": {
+        "name": "journal",
+        "column_count": 4,
+        "summary": "A record of sports game events, specifically NFL games, capturing the date, participating teams, and sales figures.",
+        "entity": "Game Event",
+        "role": "transaction_table",
+        "aliases": [
+          "games",
+          "match_results",
+          "football_games",
+          "nfl_records"
+        ]
+      },
+      "columns": {
+        "journal_id": {
+          "name": "journal_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each game record in the journal.",
+          "semantic_type": "identifier",
+          "business_concept": "Game ID",
+          "aliases": [
+            "game_id",
+            "match_id",
+            "record_id"
+          ]
+        },
+        "date": {
+          "name": "date",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The calendar date on which the game took place.",
+          "semantic_type": "date",
+          "business_concept": "Game Date",
+          "aliases": [
+            "game_date",
+            "match_date",
+            "event_date"
+          ]
+        },
+        "theme": {
+          "name": "theme",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Describes the matchup, including the home and away teams.",
+          "semantic_type": "description",
+          "business_concept": "Matchup",
+          "aliases": [
+            "teams",
+            "opponents",
+            "home_away_teams",
+            "game_description"
+          ]
+        },
+        "sales": {
+          "name": "sales",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of tickets sold or revenue generated for the game.",
+          "semantic_type": "quantity",
+          "business_concept": "Ticket Sales",
+          "aliases": [
+            "tickets_sold",
+            "revenue",
+            "attendance",
+            "sales_count"
+          ]
+        }
+      }
+    },
+    "journal_committee": {
+      "table": {
+        "name": "journal_committee",
+        "column_count": 3,
+        "summary": "A table defining the relationship between journals, editors, and the specific type of work (e.g., article, photo) associated with that editor-journal pairing.",
+        "entity": "Journal Committee Assignment",
+        "role": "relationship_table",
+        "aliases": [
+          "journal_editor_work",
+          "editor_journal_assignment",
+          "committee_work_log"
+        ]
+      },
+      "columns": {
+        "editor_id": {
+          "name": "editor_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for an editor or committee member.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Editor Identifier",
+          "aliases": [
+            "editor_uid",
+            "editor_code",
+            "person_id"
+          ]
+        },
+        "journal_id": {
+          "name": "journal_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific journal or publication.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Journal Identifier",
+          "aliases": [
+            "journal_uid",
+            "journal_code",
+            "pub_id"
+          ]
+        },
+        "work_type": {
+          "name": "work_type",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The category or format of the work being reviewed or managed by the editor for the journal.",
+          "semantic_type": "category",
+          "business_concept": "Work Category",
+          "aliases": [
+            "work_category",
+            "submission_type",
+            "content_type"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -309,6 +309,51 @@ def profile_one_table(
     )
 
 
+def profile_one_table_in_column_chunks(
+    profiler: ProfilerAgent,
+    database_name: str,
+    table_name: str,
+    table_schema: dict[str, Any],
+    tables_dir: Path,
+    sample_num: int,
+    chunk_size: int = 6,
+) -> dict[str, Any]:
+    """Profile a wide table in smaller LLM outputs and merge the columns."""
+    columns = table_schema.get("columns", {})
+    if not isinstance(columns, dict) or not columns:
+        raise ValueError(f"No columns found for {database_name}.{table_name}")
+
+    column_names = list(columns)
+    merged: dict[str, Any] | None = None
+    for start in range(0, len(column_names), chunk_size):
+        names = column_names[start : start + chunk_size]
+        chunk_schema = dict(table_schema)
+        chunk_schema["columns"] = {name: columns[name] for name in names}
+        if isinstance(table_schema.get("column_order"), list):
+            chunk_schema["column_order"] = names
+        chunk_profile = profile_one_table(
+            profiler=profiler,
+            database_name=database_name,
+            table_name=table_name,
+            table_schema=chunk_schema,
+            tables_dir=tables_dir,
+            sample_num=sample_num,
+        )
+        if merged is None:
+            merged = chunk_profile
+            merged["table"]["column_count"] = len(column_names)
+        else:
+            merged["columns"].update(chunk_profile.get("columns", {}))
+
+    if merged is None:
+        raise RuntimeError(f"Chunked profiling produced no result for {table_name}")
+    merged["columns"] = {
+        name: merged["columns"][name]
+        for name in column_names
+    }
+    return merged
+
+
 def profile_all_tables(
     parsed_dir: Path,
     output_path: Path,
@@ -318,6 +363,7 @@ def profile_all_tables(
     no_llm: bool = False,
     profiler: ProfilerAgent | None = None,
     llm_enabled: bool | None = None,
+    max_attempts_per_table: int = 3,
 ) -> dict[str, Any]:
     schema_path = parsed_dir / "schema.json"
     tables_dir = parsed_dir / "tables"
@@ -354,20 +400,76 @@ def profile_all_tables(
         "tables": {},
     }
 
+    partial_path = output_path.with_name(f"{output_path.stem}.partial{output_path.suffix}")
+    if partial_path.is_file():
+        partial = load_json(partial_path)
+        partial_source = partial.get("source", {})
+        if (
+            partial.get("database") == database_name
+            and partial_source.get("sample_num") == sample_num
+            and partial_source.get("llm_enabled") == bool(llm_enabled)
+            and partial_source.get("model_name") == (model_name if llm_enabled else None)
+        ):
+            output["tables"] = {
+                table_name: table_profile
+                for table_name, table_profile in partial.get("tables", {}).items()
+                if table_name in tables
+            }
+
     for table_name, table_schema in tables.items():
         if not isinstance(table_schema, dict):
             raise ValueError(f"Invalid schema for table {table_name!r}: expected object.")
+        if table_name in output["tables"]:
+            continue
 
-        output["tables"][table_name] = profile_one_table(
-            profiler=profiler,
-            database_name=database_name,
-            table_name=table_name,
-            table_schema=table_schema,
-            tables_dir=tables_dir,
-            sample_num=sample_num,
-        )
+        last_error: Exception | None = None
+        for attempt in range(1, max_attempts_per_table + 1):
+            try:
+                output["tables"][table_name] = profile_one_table(
+                    profiler=profiler,
+                    database_name=database_name,
+                    table_name=table_name,
+                    table_schema=table_schema,
+                    tables_dir=tables_dir,
+                    sample_num=sample_num,
+                )
+                save_json(output, partial_path)
+                last_error = None
+                break
+            except Exception as error:
+                last_error = error
+                print(
+                    f"[Warning] Profiling {database_name}.{table_name} failed "
+                    f"on attempt {attempt}/{max_attempts_per_table}: {error}",
+                    file=sys.stderr,
+                    flush=True,
+                )
+        if last_error is not None:
+            print(
+                f"[Warning] Falling back to column-chunked profiling for "
+                f"{database_name}.{table_name}.",
+                file=sys.stderr,
+                flush=True,
+            )
+            try:
+                output["tables"][table_name] = profile_one_table_in_column_chunks(
+                    profiler=profiler,
+                    database_name=database_name,
+                    table_name=table_name,
+                    table_schema=table_schema,
+                    tables_dir=tables_dir,
+                    sample_num=sample_num,
+                )
+                save_json(output, partial_path)
+            except Exception as chunk_error:
+                raise RuntimeError(
+                    f"Failed to profile {database_name}.{table_name} after "
+                    f"{max_attempts_per_table} full-table attempts and chunked "
+                    f"fallback. Partial progress: {partial_path}"
+                ) from chunk_error
 
     save_json(output, output_path)
+    partial_path.unlink(missing_ok=True)
     return output
 
 
@@ -408,6 +510,12 @@ def parse_args() -> argparse.Namespace:
         "--skip-existing",
         action="store_true",
         help="Skip an existing output file in --parsed-root mode.",
+    )
+    parser.add_argument(
+        "--max-attempts-per-table",
+        type=int,
+        default=3,
+        help="Retry an invalid or failed Profiler response before stopping.",
     )
 
     parser.add_argument(
@@ -453,6 +561,7 @@ def main() -> None:
             device_map=args.device_map,
             sample_num=args.sample_num,
             no_llm=args.no_llm,
+            max_attempts_per_table=args.max_attempts_per_table,
         )
         print(f"table_profiles: {output_path}")
         print(f"database:       {result['database']}")
@@ -491,6 +600,7 @@ def main() -> None:
             no_llm=args.no_llm,
             profiler=shared_profiler,
             llm_enabled=llm_client is not None,
+            max_attempts_per_table=args.max_attempts_per_table,
         )
         completed += 1
         print(

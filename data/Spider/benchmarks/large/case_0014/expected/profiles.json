@@ -1,0 +1,1148 @@
+{
+  "database": "behavior_monitoring",
+  "tables": {
+    "detention": {
+      "table": {
+        "name": "detention",
+        "column_count": 7,
+        "summary": "Records of student detention incidents including type, assigned teacher, and start/end times.",
+        "entity": "Detention Incident",
+        "role": "transaction_table",
+        "aliases": [
+          "detention_records",
+          "disciplinary_actions",
+          "detention_log"
+        ]
+      },
+      "columns": {
+        "detention_id": {
+          "name": "detention_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific detention record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "detention_pk",
+            "record_id"
+          ]
+        },
+        "detention_type_code": {
+          "name": "detention_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Categorical code indicating the nature of the detention (e.g., after school, break time).",
+          "semantic_type": "code",
+          "business_concept": "Detention Category",
+          "aliases": [
+            "type",
+            "detention_category",
+            "reason_code"
+          ]
+        },
+        "teacher_id": {
+          "name": "teacher_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier of the teacher assigned to supervise or administer the detention.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Staff Reference",
+          "aliases": [
+            "teacher_ref",
+            "supervisor_id",
+            "staff_id"
+          ]
+        },
+        "datetime_detention_start": {
+          "name": "datetime_detention_start",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the detention period began.",
+          "semantic_type": "timestamp",
+          "business_concept": "Start Time",
+          "aliases": [
+            "start_time",
+            "detention_start",
+            "time_in"
+          ]
+        },
+        "datetime_detention_end": {
+          "name": "datetime_detention_end",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the detention period ended.",
+          "semantic_type": "timestamp",
+          "business_concept": "End Time",
+          "aliases": [
+            "end_time",
+            "detention_end",
+            "time_out"
+          ]
+        },
+        "detention_summary": {
+          "name": "detention_summary",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A brief textual description or summary of the detention incident.",
+          "semantic_type": "description",
+          "business_concept": "Incident Summary",
+          "aliases": [
+            "notes",
+            "summary",
+            "brief"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional unstructured details regarding the detention incident.",
+          "semantic_type": "description",
+          "business_concept": "Additional Information",
+          "aliases": [
+            "extra_info",
+            "remarks",
+            "details"
+          ]
+        }
+      }
+    },
+    "behavior_incident": {
+      "table": {
+        "name": "behavior_incident",
+        "column_count": 8,
+        "summary": "Records of behavioral incidents involving students, including type, timing, and resolution recommendations.",
+        "entity": "Behavioral Incident",
+        "role": "transaction_table",
+        "aliases": [
+          "behavior_incidents",
+          "student_incidents",
+          "incident_log"
+        ]
+      },
+      "columns": {
+        "incident_id": {
+          "name": "incident_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific behavioral incident record.",
+          "semantic_type": "identifier",
+          "business_concept": "Incident ID",
+          "aliases": [
+            "id",
+            "incident_number",
+            "case_id"
+          ]
+        },
+        "incident_type_code": {
+          "name": "incident_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Categorical code representing the nature of the incident (e.g., noise, violence).",
+          "semantic_type": "code",
+          "business_concept": "Incident Type",
+          "aliases": [
+            "type",
+            "incident_category",
+            "event_type"
+          ]
+        },
+        "student_id": {
+          "name": "student_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier linking the incident to a specific student.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Student ID",
+          "aliases": [
+            "student_number",
+            "scholar_id",
+            "pupil_id"
+          ]
+        },
+        "date_incident_start": {
+          "name": "date_incident_start",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the behavioral incident began.",
+          "semantic_type": "timestamp",
+          "business_concept": "Incident Start Time",
+          "aliases": [
+            "start_time",
+            "incident_date",
+            "occurred_at"
+          ]
+        },
+        "date_incident_end": {
+          "name": "date_incident_end",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the behavioral incident concluded.",
+          "semantic_type": "timestamp",
+          "business_concept": "Incident End Time",
+          "aliases": [
+            "end_time",
+            "resolved_at",
+            "incident_end"
+          ]
+        },
+        "incident_summary": {
+          "name": "incident_summary",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A brief textual description of the incident details.",
+          "semantic_type": "description",
+          "business_concept": "Incident Description",
+          "aliases": [
+            "summary",
+            "notes",
+            "incident_details"
+          ]
+        },
+        "recommendations": {
+          "name": "recommendations",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Suggested actions or interventions resulting from the incident.",
+          "semantic_type": "description",
+          "business_concept": "Action Plan",
+          "aliases": [
+            "action",
+            "intervention",
+            "next_steps"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional contextual information not covered in the summary.",
+          "semantic_type": "description",
+          "business_concept": "Additional Notes",
+          "aliases": [
+            "extra_info",
+            "remarks",
+            "supplementary_details"
+          ]
+        }
+      }
+    },
+    "ref_detention_type": {
+      "table": {
+        "name": "ref_detention_type",
+        "column_count": 2,
+        "summary": "A reference table defining various types of detention periods, likely used in an educational or institutional scheduling context.",
+        "entity": "Detention Type",
+        "role": "lookup_table",
+        "aliases": [
+          "detention_types",
+          "ref_detention",
+          "detention_category"
+        ]
+      },
+      "columns": {
+        "detention_type_code": {
+          "name": "detention_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique alphanumeric identifier representing a specific type of detention period.",
+          "semantic_type": "code",
+          "business_concept": "Detention Type Identifier",
+          "aliases": [
+            "detention_code",
+            "type_code",
+            "dt_code"
+          ]
+        },
+        "detention_type_description": {
+          "name": "detention_type_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A human-readable text description explaining the nature or timing of the detention type.",
+          "semantic_type": "description",
+          "business_concept": "Detention Type Description",
+          "aliases": [
+            "detention_desc",
+            "type_description",
+            "dt_desc"
+          ]
+        }
+      }
+    },
+    "students": {
+      "table": {
+        "name": "students",
+        "column_count": 10,
+        "summary": "A table containing personal details, contact information, and rental history for university students.",
+        "entity": "Student",
+        "role": "entity_table",
+        "aliases": [
+          "student_info",
+          "student_records",
+          "enrolled_students"
+        ]
+      },
+      "columns": {
+        "student_id": {
+          "name": "student_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each student record.",
+          "semantic_type": "identifier",
+          "business_concept": "Student ID",
+          "aliases": [
+            "sid",
+            "uid",
+            "student_number"
+          ]
+        },
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the student to a specific address record in a related table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Address Reference",
+          "aliases": [
+            "addr_id",
+            "address_ref"
+          ]
+        },
+        "first_name": {
+          "name": "first_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The given name of the student.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "fname",
+            "fn",
+            "given_name"
+          ]
+        },
+        "middle_name": {
+          "name": "middle_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The middle name of the student.",
+          "semantic_type": "person_name",
+          "business_concept": "Middle Name",
+          "aliases": [
+            "mname",
+            "mn",
+            "mid_name"
+          ]
+        },
+        "last_name": {
+          "name": "last_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The family name or surname of the student.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "lname",
+            "ln",
+            "surname",
+            "family_name"
+          ]
+        },
+        "cell_mobile_number": {
+          "name": "cell_mobile_number",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The mobile phone number associated with the student.",
+          "semantic_type": "phone",
+          "business_concept": "Mobile Number",
+          "aliases": [
+            "mobile",
+            "cell",
+            "phone",
+            "cell_phone"
+          ]
+        },
+        "email_address": {
+          "name": "email_address",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "The email address of the student.",
+          "semantic_type": "email",
+          "business_concept": "Email Address",
+          "aliases": [
+            "email",
+            "e_mail",
+            "contact_email"
+          ]
+        },
+        "date_first_rental": {
+          "name": "date_first_rental",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp indicating when the student's first rental period began.",
+          "semantic_type": "timestamp",
+          "business_concept": "First Rental Date",
+          "aliases": [
+            "rental_start",
+            "first_rental_date",
+            "start_date"
+          ]
+        },
+        "date_left_university": {
+          "name": "date_left_university",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp indicating when the student graduated or left the university.",
+          "semantic_type": "timestamp",
+          "business_concept": "Graduation Date",
+          "aliases": [
+            "grad_date",
+            "leave_date",
+            "end_date",
+            "completion_date"
+          ]
+        },
+        "other_student_details": {
+          "name": "other_student_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional textual information about the student that does not fit into standard fields.",
+          "semantic_type": "description",
+          "business_concept": "Additional Notes",
+          "aliases": [
+            "notes",
+            "remarks",
+            "extra_info",
+            "comments"
+          ]
+        }
+      }
+    },
+    "addresses": {
+      "table": {
+        "name": "addresses",
+        "column_count": 9,
+        "summary": "Stores detailed physical mailing addresses including street lines, city, state, country, and postal codes.",
+        "entity": "Address",
+        "role": "entity_table",
+        "aliases": [
+          "addr",
+          "address_info",
+          "mailing_address",
+          "location"
+        ]
+      },
+      "columns": {
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each address record.",
+          "semantic_type": "identifier",
+          "business_concept": "Address ID",
+          "aliases": [
+            "id",
+            "addr_id",
+            "address_key"
+          ]
+        },
+        "line_1": {
+          "name": "line_1",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The primary street address line, typically containing the building number and street name.",
+          "semantic_type": "address",
+          "business_concept": "Street Address Line 1",
+          "aliases": [
+            "street",
+            "addr_line1",
+            "line1",
+            "address_line_1"
+          ]
+        },
+        "line_2": {
+          "name": "line_2",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Secondary address line, often used for apartment numbers, suite numbers, or floor designations.",
+          "semantic_type": "address",
+          "business_concept": "Street Address Line 2",
+          "aliases": [
+            "apt",
+            "suite",
+            "addr_line2",
+            "line2",
+            "address_line_2",
+            "secondary_address"
+          ]
+        },
+        "line_3": {
+          "name": "line_3",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Tertiary address line, used for additional details like building names or PO Box extensions.",
+          "semantic_type": "address",
+          "business_concept": "Street Address Line 3",
+          "aliases": [
+            "addr_line3",
+            "line3",
+            "address_line_3",
+            "building_name"
+          ]
+        },
+        "city": {
+          "name": "city",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The name of the city or municipality where the address is located.",
+          "semantic_type": "city",
+          "business_concept": "City",
+          "aliases": [
+            "city_name",
+            "municipality",
+            "town",
+            "locality"
+          ]
+        },
+        "zip_postcode": {
+          "name": "zip_postcode",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The postal code or ZIP code associated with the address.",
+          "semantic_type": "code",
+          "business_concept": "Postal Code",
+          "aliases": [
+            "zip",
+            "postal_code",
+            "postcode",
+            "zip_code"
+          ]
+        },
+        "state_province_county": {
+          "name": "state_province_county",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The administrative subdivision (state, province, or county) containing the address.",
+          "semantic_type": "address",
+          "business_concept": "State/Province/County",
+          "aliases": [
+            "state",
+            "province",
+            "county",
+            "region",
+            "subdivision"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country where the address is located.",
+          "semantic_type": "country",
+          "business_concept": "Country",
+          "aliases": [
+            "nation",
+            "country_code",
+            "iso_country"
+          ]
+        },
+        "other_address_details": {
+          "name": "other_address_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional free-text information about the address not covered by standard fields.",
+          "semantic_type": "description",
+          "business_concept": "Address Notes",
+          "aliases": [
+            "notes",
+            "details",
+            "extra_info",
+            "address_comments"
+          ]
+        }
+      }
+    },
+    "students_in_detention": {
+      "table": {
+        "name": "students_in_detention",
+        "column_count": 3,
+        "summary": "Records linking specific students to detention incidents, tracking which students were involved in which disciplinary events.",
+        "entity": "detention_record",
+        "role": "relationship_table",
+        "aliases": [
+          "student_detentions",
+          "detention_log",
+          "disciplinary_incidents"
+        ]
+      },
+      "columns": {
+        "student_id": {
+          "name": "student_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a student enrolled in the institution.",
+          "semantic_type": "identifier",
+          "business_concept": "Student",
+          "aliases": [
+            "student_key",
+            "sch_id",
+            "pupil_id"
+          ]
+        },
+        "detention_id": {
+          "name": "detention_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific detention event or session.",
+          "semantic_type": "identifier",
+          "business_concept": "Detention Event",
+          "aliases": [
+            "detention_key",
+            "session_id",
+            "detention_ref"
+          ]
+        },
+        "incident_id": {
+          "name": "incident_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific incident or violation that led to the detention.",
+          "semantic_type": "identifier",
+          "business_concept": "Incident",
+          "aliases": [
+            "incident_key",
+            "violation_id",
+            "case_id"
+          ]
+        }
+      }
+    },
+    "teachers": {
+      "table": {
+        "name": "teachers",
+        "column_count": 9,
+        "summary": "A table containing personal contact and demographic information for teachers, including names, gender, and communication details.",
+        "entity": "Teacher",
+        "role": "entity_table",
+        "aliases": [
+          "staff",
+          "faculty",
+          "instructors",
+          "educators"
+        ]
+      },
+      "columns": {
+        "teacher_id": {
+          "name": "teacher_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each teacher record.",
+          "semantic_type": "identifier",
+          "business_concept": "Teacher ID",
+          "aliases": [
+            "tid",
+            "teacher_code",
+            "emp_id"
+          ]
+        },
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key linking the teacher to a specific address record in a separate table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Address Reference",
+          "aliases": [
+            "addr_id",
+            "address_ref",
+            "location_id"
+          ]
+        },
+        "first_name": {
+          "name": "first_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The given name of the teacher.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "fname",
+            "fn",
+            "given_name"
+          ]
+        },
+        "middle_name": {
+          "name": "middle_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The middle name of the teacher.",
+          "semantic_type": "person_name",
+          "business_concept": "Middle Name",
+          "aliases": [
+            "mname",
+            "mn",
+            "mid_name"
+          ]
+        },
+        "last_name": {
+          "name": "last_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The family name or surname of the teacher.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "lname",
+            "ln",
+            "surname",
+            "family_name"
+          ]
+        },
+        "gender": {
+          "name": "gender",
+          "dtype": "string",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Indicates the gender of the teacher, stored as a single character or numeric code.",
+          "semantic_type": "boolean",
+          "business_concept": "Gender",
+          "aliases": [
+            "sex",
+            "gender_code",
+            "g"
+          ]
+        },
+        "cell_mobile_number": {
+          "name": "cell_mobile_number",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The mobile phone number associated with the teacher.",
+          "semantic_type": "phone",
+          "business_concept": "Mobile Number",
+          "aliases": [
+            "mobile",
+            "cell",
+            "phone",
+            "cell_phone"
+          ]
+        },
+        "email_address": {
+          "name": "email_address",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "The email address of the teacher.",
+          "semantic_type": "email",
+          "business_concept": "Email Address",
+          "aliases": [
+            "email",
+            "e_mail",
+            "mail"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Additional free-text information about the teacher.",
+          "semantic_type": "description",
+          "business_concept": "Additional Details",
+          "aliases": [
+            "notes",
+            "remarks",
+            "extra_info",
+            "bio"
+          ]
+        }
+      }
+    },
+    "assessment_notes": {
+      "table": {
+        "name": "assessment_notes",
+        "column_count": 6,
+        "summary": "A record of assessment notes linking students and teachers with timestamps and optional textual details.",
+        "entity": "Assessment Note",
+        "role": "transaction_table",
+        "aliases": [
+          "assessment_notes",
+          "notes",
+          "teacher_student_notes"
+        ]
+      },
+      "columns": {
+        "notes_id": {
+          "name": "notes_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each assessment note record.",
+          "semantic_type": "identifier",
+          "business_concept": "Note ID",
+          "aliases": [
+            "id",
+            "note_id",
+            "assessment_id"
+          ]
+        },
+        "student_id": {
+          "name": "student_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the note to a specific student.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Student ID",
+          "aliases": [
+            "student",
+            "s_id",
+            "learner_id"
+          ]
+        },
+        "teacher_id": {
+          "name": "teacher_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the note to a specific teacher.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Teacher ID",
+          "aliases": [
+            "teacher",
+            "t_id",
+            "instructor_id"
+          ]
+        },
+        "date_of_notes": {
+          "name": "date_of_notes",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "Timestamp indicating when the assessment note was created or recorded.",
+          "semantic_type": "timestamp",
+          "business_concept": "Note Date",
+          "aliases": [
+            "created_at",
+            "note_date",
+            "timestamp",
+            "datetime"
+          ]
+        },
+        "text_of_notes": {
+          "name": "text_of_notes",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Free-form text content of the assessment note.",
+          "semantic_type": "description",
+          "business_concept": "Note Content",
+          "aliases": [
+            "note_text",
+            "content",
+            "description",
+            "body"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional free-form text details not covered in the main note text.",
+          "semantic_type": "description",
+          "business_concept": "Additional Details",
+          "aliases": [
+            "extra_info",
+            "remarks",
+            "supplementary_details",
+            "comments"
+          ]
+        }
+      }
+    },
+    "ref_incident_type": {
+      "table": {
+        "name": "ref_incident_type",
+        "column_count": 2,
+        "summary": "A reference table defining standard categories and descriptions for various types of incidents.",
+        "entity": "Incident Type",
+        "role": "lookup_table",
+        "aliases": [
+          "incident_category",
+          "incident_classification",
+          "event_type_ref"
+        ]
+      },
+      "columns": {
+        "incident_type_code": {
+          "name": "incident_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique, short alphanumeric identifier used to represent a specific incident type.",
+          "semantic_type": "code",
+          "business_concept": "Incident Type Identifier",
+          "aliases": [
+            "incident_code",
+            "type_code",
+            "incident_id"
+          ]
+        },
+        "incident_type_description": {
+          "name": "incident_type_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A human-readable text explanation of what the incident type represents.",
+          "semantic_type": "description",
+          "business_concept": "Incident Type Definition",
+          "aliases": [
+            "incident_desc",
+            "type_description",
+            "incident_name"
+          ]
+        }
+      }
+    },
+    "student_addresses": {
+      "table": {
+        "name": "student_addresses",
+        "column_count": 6,
+        "summary": "Records the historical address history for students, including rental costs and address types.",
+        "entity": "student_address",
+        "role": "transaction_table",
+        "aliases": [
+          "student_addresses",
+          "student_address_history",
+          "rental_addresses"
+        ]
+      },
+      "columns": {
+        "student_id": {
+          "name": "student_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier linking the address record to a specific student.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Student ID",
+          "aliases": [
+            "student_id",
+            "sid",
+            "student_key"
+          ]
+        },
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific address record within this history table.",
+          "semantic_type": "identifier",
+          "business_concept": "Address Record ID",
+          "aliases": [
+            "address_id",
+            "addr_id",
+            "address_key"
+          ]
+        },
+        "date_address_from": {
+          "name": "date_address_from",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The start date when the student began residing at this address.",
+          "semantic_type": "timestamp",
+          "business_concept": "Move-in Date",
+          "aliases": [
+            "date_address_from",
+            "start_date",
+            "from_date",
+            "move_in_date"
+          ]
+        },
+        "date_address_to": {
+          "name": "date_address_to",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The end date when the student stopped residing at this address; null indicates the current address.",
+          "semantic_type": "timestamp",
+          "business_concept": "Move-out Date",
+          "aliases": [
+            "date_address_to",
+            "end_date",
+            "to_date",
+            "move_out_date"
+          ]
+        },
+        "monthly_rental": {
+          "name": "monthly_rental",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monthly rental cost associated with this specific address.",
+          "semantic_type": "money",
+          "business_concept": "Monthly Rent",
+          "aliases": [
+            "monthly_rental",
+            "rent",
+            "monthly_cost",
+            "rent_amount"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Categorical description of the property type (e.g., house, apartment).",
+          "semantic_type": "category",
+          "business_concept": "Property Type",
+          "aliases": [
+            "other_details",
+            "property_type",
+            "address_type",
+            "housing_type"
+          ]
+        }
+      }
+    },
+    "ref_address_types": {
+      "table": {
+        "name": "ref_address_types",
+        "column_count": 2,
+        "summary": "A reference table defining standard categories for addresses, used to classify different types of locations associated with an entity.",
+        "entity": "Address Type",
+        "role": "lookup_table",
+        "aliases": [
+          "address_category",
+          "addr_type_ref",
+          "address_classification"
+        ]
+      },
+      "columns": {
+        "address_type_code": {
+          "name": "address_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique, short alphanumeric identifier representing a specific address category.",
+          "semantic_type": "code",
+          "business_concept": "Address Type Identifier",
+          "aliases": [
+            "addr_code",
+            "type_code",
+            "address_id"
+          ]
+        },
+        "address_type_description": {
+          "name": "address_type_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A human-readable text explanation of what the address type represents.",
+          "semantic_type": "description",
+          "business_concept": "Address Type Definition",
+          "aliases": [
+            "addr_desc",
+            "type_description",
+            "address_label"
+          ]
+        }
+      }
+    }
+  }
+}

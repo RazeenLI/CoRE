@@ -1,0 +1,240 @@
+{
+  "database": "entertainment_awards",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/entertainment_awards",
+    "schema_path": "data/Spider/parsed/entertainment_awards/schema.json",
+    "tables_dir": "data/Spider/parsed/entertainment_awards/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "artwork": {
+      "table": {
+        "name": "artwork",
+        "column_count": 3,
+        "summary": "A catalog of musical pieces or segments used in television programs, specifically variety shows.",
+        "entity": "Musical Work / TV Segment",
+        "role": "lookup_table",
+        "aliases": [
+          "music_catalog",
+          "tv_music_list",
+          "program_tracks"
+        ]
+      },
+      "columns": {
+        "artwork_id": {
+          "name": "artwork_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific musical piece or segment within the database.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "artwork_pk",
+            "track_id"
+          ]
+        },
+        "type": {
+          "name": "type",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Categorizes the musical piece by its function within a TV program (e.g., background music, presenter music).",
+          "semantic_type": "category",
+          "business_concept": "Music Usage Context",
+          "aliases": [
+            "category",
+            "usage_type",
+            "segment_type"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The title of the song, track, or musical segment.",
+          "semantic_type": "unknown",
+          "business_concept": "Song Title",
+          "aliases": [
+            "title",
+            "track_name",
+            "song_name",
+            "piece_name"
+          ]
+        }
+      }
+    },
+    "festival_detail": {
+      "table": {
+        "name": "festival_detail",
+        "column_count": 6,
+        "summary": "A table containing details about various awards festivals, including their names, chairpersons, locations, years, and audience sizes.",
+        "entity": "Festival",
+        "role": "entity_table",
+        "aliases": [
+          "festival_details",
+          "awards_festivals",
+          "event_details"
+        ]
+      },
+      "columns": {
+        "festival_id": {
+          "name": "festival_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each festival record.",
+          "semantic_type": "identifier",
+          "business_concept": "Festival ID",
+          "aliases": [
+            "id",
+            "festival_code",
+            "fk_festival"
+          ]
+        },
+        "festival_name": {
+          "name": "festival_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official name of the award festival.",
+          "semantic_type": "organization_name",
+          "business_concept": "Festival Name",
+          "aliases": [
+            "name",
+            "title",
+            "award_name"
+          ]
+        },
+        "chair_name": {
+          "name": "chair_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the person serving as the chairperson for the festival.",
+          "semantic_type": "person_name",
+          "business_concept": "Chairperson Name",
+          "aliases": [
+            "chair",
+            "chairperson",
+            "head_chair"
+          ]
+        },
+        "location": {
+          "name": "location",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The country where the festival takes place.",
+          "semantic_type": "country",
+          "business_concept": "Festival Location",
+          "aliases": [
+            "country",
+            "venue_country",
+            "host_country"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the festival occurred.",
+          "semantic_type": "date",
+          "business_concept": "Event Year",
+          "aliases": [
+            "event_year",
+            "year_held",
+            "edition_year"
+          ]
+        },
+        "num_of_audience": {
+          "name": "num_of_audience",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of people who attended the festival.",
+          "semantic_type": "quantity",
+          "business_concept": "Audience Count",
+          "aliases": [
+            "attendance",
+            "audience_size",
+            "attendees"
+          ]
+        }
+      }
+    },
+    "nomination": {
+      "table": {
+        "name": "nomination",
+        "column_count": 3,
+        "summary": "Records the outcome of nominations for specific artworks at various festivals.",
+        "entity": "Nomination",
+        "role": "transaction_table",
+        "aliases": [
+          "nominations",
+          "award_nominations",
+          "festival_nominations"
+        ]
+      },
+      "columns": {
+        "artwork_id": {
+          "name": "artwork_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the artwork being nominated.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Artwork Identifier",
+          "aliases": [
+            "artwork",
+            "work_id",
+            "piece_id"
+          ]
+        },
+        "festival_id": {
+          "name": "festival_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the festival where the nomination occurred.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Festival Identifier",
+          "aliases": [
+            "festival",
+            "event_id",
+            "show_id"
+          ]
+        },
+        "result": {
+          "name": "result",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The outcome of the nomination, indicating whether the artwork was selected or won an award.",
+          "semantic_type": "status",
+          "business_concept": "Nomination Outcome",
+          "aliases": [
+            "outcome",
+            "status",
+            "award_status",
+            "decision"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,550 @@
+{
+  "database": "tracking_software_problems",
+  "tables": {
+    "staff": {
+      "table": {
+        "name": "staff",
+        "column_count": 4,
+        "summary": "A table containing basic identification and name information for staff members.",
+        "entity": "staff",
+        "role": "entity_table",
+        "aliases": [
+          "employees",
+          "personnel",
+          "workers",
+          "staff_list"
+        ]
+      },
+      "columns": {
+        "staff_id": {
+          "name": "staff_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each staff member.",
+          "semantic_type": "identifier",
+          "business_concept": "Staff ID",
+          "aliases": [
+            "id",
+            "staff_number",
+            "emp_id",
+            "employee_id"
+          ]
+        },
+        "staff_first_name": {
+          "name": "staff_first_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The first name of the staff member.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "first_name",
+            "fname",
+            "fn",
+            "given_name"
+          ]
+        },
+        "staff_last_name": {
+          "name": "staff_last_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The last name of the staff member.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "last_name",
+            "lname",
+            "ln",
+            "surname"
+          ]
+        },
+        "other_staff_details": {
+          "name": "other_staff_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short code or status indicator associated with the staff member, likely representing a role, department, or employment status.",
+          "semantic_type": "code",
+          "business_concept": "Staff Status Code",
+          "aliases": [
+            "status_code",
+            "role_code",
+            "dept_code",
+            "employee_type"
+          ]
+        }
+      }
+    },
+    "product": {
+      "table": {
+        "name": "product",
+        "column_count": 3,
+        "summary": "A table containing basic product identifiers and names, likely used for cataloging or reference purposes.",
+        "entity": "product",
+        "role": "entity_table",
+        "aliases": [
+          "products",
+          "item",
+          "catalog"
+        ]
+      },
+      "columns": {
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each product record.",
+          "semantic_type": "identifier",
+          "business_concept": "Product ID",
+          "aliases": [
+            "id",
+            "pid",
+            "sku"
+          ]
+        },
+        "product_name": {
+          "name": "product_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The name or label of the product.",
+          "semantic_type": "description",
+          "business_concept": "Product Name",
+          "aliases": [
+            "name",
+            "title",
+            "label"
+          ]
+        },
+        "product_details": {
+          "name": "product_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Additional short information or code associated with the product.",
+          "semantic_type": "code",
+          "business_concept": "Product Details Code",
+          "aliases": [
+            "details",
+            "info",
+            "code"
+          ]
+        }
+      }
+    },
+    "problem_category_codes": {
+      "table": {
+        "name": "problem_category_codes",
+        "column_count": 2,
+        "summary": "A reference table defining standard codes and descriptions for various problem categories within a system.",
+        "entity": "Problem Category",
+        "role": "lookup_table",
+        "aliases": [
+          "problem_categories",
+          "issue_types",
+          "category_codes",
+          "defect_categories"
+        ]
+      },
+      "columns": {
+        "problem_category_code": {
+          "name": "problem_category_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique alphanumeric identifier representing a specific type of problem or issue.",
+          "semantic_type": "code",
+          "business_concept": "Problem Category Identifier",
+          "aliases": [
+            "category_code",
+            "issue_code",
+            "problem_id",
+            "type_code"
+          ]
+        },
+        "problem_category_description": {
+          "name": "problem_category_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A textual explanation detailing the scope or nature of the problem category.",
+          "semantic_type": "description",
+          "business_concept": "Problem Category Definition",
+          "aliases": [
+            "category_desc",
+            "issue_description",
+            "problem_details",
+            "type_description"
+          ]
+        }
+      }
+    },
+    "problem_log": {
+      "table": {
+        "name": "problem_log",
+        "column_count": 9,
+        "summary": "A log table recording individual problem entries, including assignment details, categorization, status, and timestamps.",
+        "entity": "Problem Log Entry",
+        "role": "transaction_table",
+        "aliases": [
+          "problem_logs",
+          "issue_logs",
+          "support_tickets",
+          "bug_reports"
+        ]
+      },
+      "columns": {
+        "problem_log_id": {
+          "name": "problem_log_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each log entry record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "log_id",
+            "entry_id"
+          ]
+        },
+        "assigned_to_staff_id": {
+          "name": "assigned_to_staff_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the log entry to the staff member assigned to handle it.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Assigned Staff Reference",
+          "aliases": [
+            "staff_id",
+            "assigned_by",
+            "user_id",
+            "agent_id"
+          ]
+        },
+        "problem_id": {
+          "name": "problem_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the log entry to the specific problem or issue it belongs to.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Problem Reference",
+          "aliases": [
+            "issue_id",
+            "ticket_id",
+            "bug_id",
+            "problem_ref"
+          ]
+        },
+        "problem_category_code": {
+          "name": "problem_category_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Categorical code or label defining the type of the problem (e.g., Middleware, GUI).",
+          "semantic_type": "category",
+          "business_concept": "Problem Category",
+          "aliases": [
+            "category",
+            "type",
+            "issue_type",
+            "problem_type"
+          ]
+        },
+        "problem_status_code": {
+          "name": "problem_status_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Current state or status of the problem (e.g., Solved, Reported).",
+          "semantic_type": "status",
+          "business_concept": "Problem Status",
+          "aliases": [
+            "status",
+            "state",
+            "issue_status",
+            "resolution_status"
+          ]
+        },
+        "log_entry_date": {
+          "name": "log_entry_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "Timestamp indicating when the log entry was created or updated.",
+          "semantic_type": "timestamp",
+          "business_concept": "Log Timestamp",
+          "aliases": [
+            "created_at",
+            "updated_at",
+            "date",
+            "timestamp",
+            "entry_time"
+          ]
+        },
+        "log_entry_description": {
+          "name": "log_entry_description",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Brief textual description or note associated with the log entry.",
+          "semantic_type": "description",
+          "business_concept": "Entry Description",
+          "aliases": [
+            "notes",
+            "comment",
+            "details",
+            "message",
+            "summary"
+          ]
+        },
+        "log_entry_fix": {
+          "name": "log_entry_fix",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Description of the fix or action taken to resolve the issue.",
+          "semantic_type": "description",
+          "business_concept": "Fix Description",
+          "aliases": [
+            "resolution",
+            "fix_notes",
+            "action_taken",
+            "solution"
+          ]
+        },
+        "other_log_details": {
+          "name": "other_log_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Additional miscellaneous details or flags related to the log entry.",
+          "semantic_type": "description",
+          "business_concept": "Additional Details",
+          "aliases": [
+            "extra_info",
+            "flags",
+            "metadata",
+            "remarks"
+          ]
+        }
+      }
+    },
+    "problems": {
+      "table": {
+        "name": "problems",
+        "column_count": 8,
+        "summary": "A record of reported problems or incidents, tracking their status from reporting to closure, including responsible staff and product associations.",
+        "entity": "Problem",
+        "role": "transaction_table",
+        "aliases": [
+          "incidents",
+          "issues",
+          "tickets",
+          "complaints",
+          "errors"
+        ]
+      },
+      "columns": {
+        "problem_id": {
+          "name": "problem_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific problem record.",
+          "semantic_type": "identifier",
+          "business_concept": "Problem ID",
+          "aliases": [
+            "id",
+            "pk",
+            "issue_id"
+          ]
+        },
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the problem to a specific product.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Product ID",
+          "aliases": [
+            "product",
+            "prod_id",
+            "item_id"
+          ]
+        },
+        "closure_authorised_by_staff_id": {
+          "name": "closure_authorised_by_staff_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier of the staff member who authorized the closure of the problem.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Approver Staff ID",
+          "aliases": [
+            "closed_by",
+            "approver_id",
+            "staff_id"
+          ]
+        },
+        "reported_by_staff_id": {
+          "name": "reported_by_staff_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier of the staff member who reported the problem.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Reporter Staff ID",
+          "aliases": [
+            "reporter",
+            "created_by",
+            "staff_id"
+          ]
+        },
+        "date_problem_reported": {
+          "name": "date_problem_reported",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "Timestamp when the problem was initially reported.",
+          "semantic_type": "timestamp",
+          "business_concept": "Report Date",
+          "aliases": [
+            "created_at",
+            "report_date",
+            "opened_at"
+          ]
+        },
+        "date_problem_closed": {
+          "name": "date_problem_closed",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "Timestamp when the problem was closed (may be null if open).",
+          "semantic_type": "timestamp",
+          "business_concept": "Close Date",
+          "aliases": [
+            "closed_at",
+            "resolved_date",
+            "completed_at"
+          ]
+        },
+        "problem_description": {
+          "name": "problem_description",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Short code or label describing the type of problem.",
+          "semantic_type": "code",
+          "business_concept": "Problem Type",
+          "aliases": [
+            "type",
+            "category",
+            "issue_type",
+            "desc"
+          ]
+        },
+        "other_problem_details": {
+          "name": "other_problem_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Short code or label containing additional details about the problem.",
+          "semantic_type": "code",
+          "business_concept": "Additional Details",
+          "aliases": [
+            "details",
+            "notes",
+            "extra_info"
+          ]
+        }
+      }
+    },
+    "problem_status_codes": {
+      "table": {
+        "name": "problem_status_codes",
+        "column_count": 2,
+        "summary": "A reference table defining the possible states and descriptions of problem records.",
+        "entity": "Problem Status",
+        "role": "lookup_table",
+        "aliases": [
+          "problem_status_lookup",
+          "status_codes",
+          "issue_status_ref"
+        ]
+      },
+      "columns": {
+        "problem_status_code": {
+          "name": "problem_status_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique alphanumeric identifier representing the current state of a problem.",
+          "semantic_type": "code",
+          "business_concept": "Problem Status Code",
+          "aliases": [
+            "status_code",
+            "problem_code",
+            "state_code"
+          ]
+        },
+        "problem_status_description": {
+          "name": "problem_status_description",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A human-readable text explanation of what the status code signifies.",
+          "semantic_type": "description",
+          "business_concept": "Problem Status Description",
+          "aliases": [
+            "status_desc",
+            "problem_description",
+            "state_text"
+          ]
+        }
+      }
+    }
+  }
+}

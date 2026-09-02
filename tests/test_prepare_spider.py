@@ -51,3 +51,27 @@ def test_write_parsed_database_extracts_schema_constraints_and_rows(tmp_path):
         }
     ]
     assert rows == [{"invoiceid": "10", "customerid": "1", "total": "12.5"}]
+
+
+def test_write_parsed_database_repairs_non_utf8_text(tmp_path):
+    sqlite_path = tmp_path / "legacy.sqlite"
+    connection = sqlite3.connect(sqlite_path)
+    connection.execute("CREATE TABLE Person (PersonId INTEGER PRIMARY KEY, LastName TEXT)")
+    connection.execute("INSERT INTO Person VALUES (1, CAST(X'5065F161' AS TEXT))")
+    connection.commit()
+    connection.close()
+
+    output_dir = tmp_path / "parsed" / "legacy"
+    summary = write_parsed_database(sqlite_path, output_dir)
+
+    with (output_dir / "tables" / "person.csv").open(newline="", encoding="utf-8") as file:
+        rows = list(csv.DictReader(file))
+
+    assert rows[0]["lastname"] == "Peña"
+    assert summary["warnings"] == [
+        {
+            "kind": "non_utf8_text_repaired",
+            "value_count": 1,
+            "fallback_encodings": ["windows-1252"],
+        }
+    ]

@@ -1,0 +1,334 @@
+{
+  "database": "program_share",
+  "tables": {
+    "broadcast": {
+      "table": {
+        "name": "broadcast",
+        "column_count": 3,
+        "summary": "A table defining broadcast schedules or slots, linking specific television channels to programs at particular times of the day.",
+        "entity": "BroadcastSlot",
+        "role": "lookup_table",
+        "aliases": [
+          "broadcast_schedule",
+          "tv_schedule",
+          "program_slot",
+          "channel_program_mapping"
+        ]
+      },
+      "columns": {
+        "channel_id": {
+          "name": "channel_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a television or media channel.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Channel",
+          "aliases": [
+            "channel",
+            "tv_channel",
+            "station_id",
+            "network_id"
+          ]
+        },
+        "program_id": {
+          "name": "program_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific program or show.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Program",
+          "aliases": [
+            "program",
+            "show_id",
+            "episode_id",
+            "content_id"
+          ]
+        },
+        "time_of_day": {
+          "name": "time_of_day",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The general time period during the day when the program is scheduled to air.",
+          "semantic_type": "category",
+          "business_concept": "TimeSlot",
+          "aliases": [
+            "air_time",
+            "period",
+            "time_period",
+            "slot_time"
+          ]
+        }
+      }
+    },
+    "channel": {
+      "table": {
+        "name": "channel",
+        "column_count": 5,
+        "summary": "A reference table containing metadata and performance metrics for various television channels.",
+        "entity": "television_channel",
+        "role": "lookup_table",
+        "aliases": [
+          "tv_channels",
+          "channels",
+          "broadcast_channels"
+        ]
+      },
+      "columns": {
+        "channel_id": {
+          "name": "channel_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each television channel.",
+          "semantic_type": "identifier",
+          "business_concept": "Channel ID",
+          "aliases": [
+            "id",
+            "channel_code",
+            "channel_key"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official display name of the television channel.",
+          "semantic_type": "organization_name",
+          "business_concept": "Channel Name",
+          "aliases": [
+            "channel_name",
+            "title",
+            "display_name"
+          ]
+        },
+        "owner": {
+          "name": "owner",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The organization or network group that owns or operates the channel.",
+          "semantic_type": "organization_name",
+          "business_concept": "Channel Owner",
+          "aliases": [
+            "owner_org",
+            "network",
+            "parent_company",
+            "group"
+          ]
+        },
+        "share_in_percent": {
+          "name": "share_in_percent",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The market share percentage of the channel.",
+          "semantic_type": "quantity",
+          "business_concept": "Market Share",
+          "aliases": [
+            "market_share",
+            "share",
+            "audience_share"
+          ]
+        },
+        "rating_in_percent": {
+          "name": "rating_in_percent",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The audience rating percentage of the channel.",
+          "semantic_type": "quantity",
+          "business_concept": "Channel Rating",
+          "aliases": [
+            "rating",
+            "audience_rating",
+            "viewership_rating"
+          ]
+        }
+      }
+    },
+    "broadcast_share": {
+      "table": {
+        "name": "broadcast_share",
+        "column_count": 4,
+        "summary": "Records the audience share percentage for specific TV programs broadcast on various channels on specific dates.",
+        "entity": "Broadcast Share Record",
+        "role": "transaction_table",
+        "aliases": [
+          "broadcast_metrics",
+          "tv_share_data",
+          "program_share_log"
+        ]
+      },
+      "columns": {
+        "channel_id": {
+          "name": "channel_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the television channel broadcasting the program.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Channel Identifier",
+          "aliases": [
+            "channel",
+            "tv_channel",
+            "station_id"
+          ]
+        },
+        "program_id": {
+          "name": "program_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific television program being broadcast.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Program Identifier",
+          "aliases": [
+            "program",
+            "show_id",
+            "episode_id"
+          ]
+        },
+        "date": {
+          "name": "date",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The date on which the program was broadcast, formatted as Day,Month.",
+          "semantic_type": "date",
+          "business_concept": "Broadcast Date",
+          "aliases": [
+            "air_date",
+            "broadcast_day",
+            "date_of_broadcast"
+          ]
+        },
+        "share_in_percent": {
+          "name": "share_in_percent",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The percentage of the total audience watching this specific program relative to all programs watched on that channel or in the market.",
+          "semantic_type": "quantity",
+          "business_concept": "Audience Share Percentage",
+          "aliases": [
+            "share_pct",
+            "rating_share",
+            "audience_share"
+          ]
+        }
+      }
+    },
+    "program": {
+      "table": {
+        "name": "program",
+        "column_count": 5,
+        "summary": "A catalog of television programs including their names, origins, launch years, and ownership details.",
+        "entity": "television_program",
+        "role": "entity_table",
+        "aliases": [
+          "tv_programs",
+          "shows",
+          "programs_catalog",
+          "broadcast_programs"
+        ]
+      },
+      "columns": {
+        "program_id": {
+          "name": "program_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each television program record.",
+          "semantic_type": "identifier",
+          "business_concept": "Program ID",
+          "aliases": [
+            "id",
+            "program_code",
+            "pk"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The title or name of the television program.",
+          "semantic_type": "category",
+          "business_concept": "Program Title",
+          "aliases": [
+            "title",
+            "show_name",
+            "program_name",
+            "name"
+          ]
+        },
+        "origin": {
+          "name": "origin",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The region or province where the program originates.",
+          "semantic_type": "country",
+          "business_concept": "Program Origin",
+          "aliases": [
+            "region",
+            "province",
+            "source_region",
+            "origin_area"
+          ]
+        },
+        "launch": {
+          "name": "launch",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The year the program was first launched or broadcast.",
+          "semantic_type": "date",
+          "business_concept": "Launch Year",
+          "aliases": [
+            "start_year",
+            "launch_year",
+            "first_broadcast",
+            "year"
+          ]
+        },
+        "owner": {
+          "name": "owner",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The broadcasting organization or media group that owns the program.",
+          "semantic_type": "organization_name",
+          "business_concept": "Media Owner",
+          "aliases": [
+            "owner_org",
+            "broadcaster",
+            "media_group",
+            "parent_company"
+          ]
+        }
+      }
+    }
+  }
+}

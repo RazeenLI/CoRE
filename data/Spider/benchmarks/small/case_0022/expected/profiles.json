@@ -1,0 +1,366 @@
+{
+  "database": "dog_kennels",
+  "tables": {
+    "treatments": {
+      "table": {
+        "name": "treatments",
+        "column_count": 6,
+        "summary": "Records of veterinary treatments performed on dogs, including details about the treatment type, date, cost, and associated professionals.",
+        "entity": "Treatment",
+        "role": "transaction_table",
+        "aliases": [
+          "treatments",
+          "vet_treatments",
+          "dog_treatments",
+          "service_records"
+        ]
+      },
+      "columns": {
+        "treatment_id": {
+          "name": "treatment_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific treatment record.",
+          "semantic_type": "identifier",
+          "business_concept": "Treatment ID",
+          "aliases": [
+            "treatment_key",
+            "id",
+            "treatment_number"
+          ]
+        },
+        "dog_id": {
+          "name": "dog_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the specific dog that received the treatment.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Dog ID",
+          "aliases": [
+            "dog_key",
+            "patient_id",
+            "animal_id"
+          ]
+        },
+        "professional_id": {
+          "name": "professional_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the veterinary professional who performed the treatment.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Professional ID",
+          "aliases": [
+            "vet_id",
+            "staff_id",
+            "provider_id"
+          ]
+        },
+        "treatment_type_code": {
+          "name": "treatment_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Alphanumeric code representing the category or type of service provided.",
+          "semantic_type": "code",
+          "business_concept": "Treatment Type",
+          "aliases": [
+            "service_code",
+            "treatment_category",
+            "procedure_code"
+          ]
+        },
+        "date_of_treatment": {
+          "name": "date_of_treatment",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The specific date and time when the treatment was administered.",
+          "semantic_type": "timestamp",
+          "business_concept": "Treatment Date",
+          "aliases": [
+            "treatment_date",
+            "service_date",
+            "visit_date"
+          ]
+        },
+        "cost_of_treatment": {
+          "name": "cost_of_treatment",
+          "dtype": "decimal",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The monetary amount charged for the specific treatment.",
+          "semantic_type": "money",
+          "business_concept": "Treatment Cost",
+          "aliases": [
+            "treatment_cost",
+            "price",
+            "charge",
+            "amount"
+          ]
+        }
+      }
+    },
+    "sizes": {
+      "table": {
+        "name": "sizes",
+        "column_count": 2,
+        "summary": "Stores standardized size definitions including their unique codes and human-readable descriptions.",
+        "entity": "Size",
+        "role": "lookup_table",
+        "aliases": [
+          "size_master",
+          "size_reference",
+          "product_sizes"
+        ]
+      },
+      "columns": {
+        "size_code": {
+          "name": "size_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique alphanumeric identifier representing a specific size category.",
+          "semantic_type": "code",
+          "business_concept": "Size Identifier",
+          "aliases": [
+            "size_id",
+            "size_key",
+            "size_ref"
+          ]
+        },
+        "size_description": {
+          "name": "size_description",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A human-readable text label describing the size category.",
+          "semantic_type": "description",
+          "business_concept": "Size Label",
+          "aliases": [
+            "size_name",
+            "size_label",
+            "size_text"
+          ]
+        }
+      }
+    },
+    "treatment_types": {
+      "table": {
+        "name": "treatment_types",
+        "column_count": 2,
+        "summary": "A reference table defining standard categories of medical or veterinary treatments with unique codes and human-readable descriptions.",
+        "entity": "Treatment Type",
+        "role": "lookup_table",
+        "aliases": [
+          "treatment_categories",
+          "procedure_types",
+          "service_codes",
+          "medical_procedures"
+        ]
+      },
+      "columns": {
+        "treatment_type_code": {
+          "name": "treatment_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique alphanumeric identifier used to reference a specific type of treatment.",
+          "semantic_type": "code",
+          "business_concept": "Treatment Code",
+          "aliases": [
+            "treatment_id",
+            "procedure_code",
+            "svc_code",
+            "treatment_key"
+          ]
+        },
+        "treatment_type_description": {
+          "name": "treatment_type_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A textual explanation of the treatment type associated with the code.",
+          "semantic_type": "description",
+          "business_concept": "Treatment Description",
+          "aliases": [
+            "treatment_name",
+            "procedure_name",
+            "service_desc",
+            "treatment_label"
+          ]
+        }
+      }
+    },
+    "owners": {
+      "table": {
+        "name": "owners",
+        "column_count": 10,
+        "summary": "A table containing personal contact and address information for individual owners.",
+        "entity": "Owner",
+        "role": "entity_table",
+        "aliases": [
+          "owner_contacts",
+          "owner_addresses",
+          "person_details"
+        ]
+      },
+      "columns": {
+        "owner_id": {
+          "name": "owner_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each owner record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "owner_pk",
+            "uid"
+          ]
+        },
+        "first_name": {
+          "name": "first_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The given name of the owner.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "fname",
+            "fn",
+            "given_name"
+          ]
+        },
+        "last_name": {
+          "name": "last_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The family name of the owner.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "lname",
+            "ln",
+            "surname"
+          ]
+        },
+        "street": {
+          "name": "street",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The street address line including number, name, and unit type.",
+          "semantic_type": "address",
+          "business_concept": "Street Address",
+          "aliases": [
+            "addr_line1",
+            "street_address",
+            "address_line"
+          ]
+        },
+        "city": {
+          "name": "city",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The city where the owner resides.",
+          "semantic_type": "city",
+          "business_concept": "City",
+          "aliases": [
+            "city_name",
+            "municipality"
+          ]
+        },
+        "state": {
+          "name": "state",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The state or province of the owner's residence.",
+          "semantic_type": "address",
+          "business_concept": "State",
+          "aliases": [
+            "state_code",
+            "state_name",
+            "province"
+          ]
+        },
+        "zip_code": {
+          "name": "zip_code",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The postal code for the owner's address.",
+          "semantic_type": "address",
+          "business_concept": "Postal Code",
+          "aliases": [
+            "zip",
+            "postal",
+            "zipcode"
+          ]
+        },
+        "email_address": {
+          "name": "email_address",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "The email contact address for the owner.",
+          "semantic_type": "email",
+          "business_concept": "Email Address",
+          "aliases": [
+            "email",
+            "e_mail",
+            "contact_email"
+          ]
+        },
+        "home_phone": {
+          "name": "home_phone",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The landline or home telephone number for the owner.",
+          "semantic_type": "phone",
+          "business_concept": "Home Phone",
+          "aliases": [
+            "home_tel",
+            "landline",
+            "residential_phone"
+          ]
+        },
+        "cell_number": {
+          "name": "cell_number",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The mobile telephone number for the owner.",
+          "semantic_type": "phone",
+          "business_concept": "Mobile Phone",
+          "aliases": [
+            "mobile",
+            "cell",
+            "phone",
+            "cell_phone"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,378 @@
+{
+  "database": "match_season",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/match_season",
+    "schema_path": "data/Spider/parsed/match_season/schema.json",
+    "tables_dir": "data/Spider/parsed/match_season/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "country": {
+      "table": {
+        "name": "country",
+        "column_count": 4,
+        "summary": "A reference table containing fundamental information about countries, including their names, capitals, and official native languages.",
+        "entity": "Country",
+        "role": "lookup_table",
+        "aliases": [
+          "countries",
+          "nation",
+          "nations",
+          "world_countries"
+        ]
+      },
+      "columns": {
+        "country_id": {
+          "name": "country_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each country record.",
+          "semantic_type": "identifier",
+          "business_concept": "Country ID",
+          "aliases": [
+            "id",
+            "country_code",
+            "cid"
+          ]
+        },
+        "country_name": {
+          "name": "country_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full official name of the country.",
+          "semantic_type": "organization_name",
+          "business_concept": "Country Name",
+          "aliases": [
+            "name",
+            "full_name",
+            "country"
+          ]
+        },
+        "capital": {
+          "name": "capital",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The name of the capital city of the country.",
+          "semantic_type": "city",
+          "business_concept": "Capital City",
+          "aliases": [
+            "capital_city",
+            "capital_name",
+            "main_city"
+          ]
+        },
+        "official_native_language": {
+          "name": "official_native_language",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official native language spoken in the country.",
+          "semantic_type": "description",
+          "business_concept": "Official Language",
+          "aliases": [
+            "language",
+            "native_language",
+            "official_lang"
+          ]
+        }
+      }
+    },
+    "match_season": {
+      "table": {
+        "name": "match_season",
+        "column_count": 8,
+        "summary": "A dataset recording player selections in Major League Soccer (MLS) drafts across various seasons, including player details, positions, nationalities, teams, and draft specifics.",
+        "entity": "MLS Draft Entry",
+        "role": "entity_table",
+        "aliases": [
+          "mls_draft_records",
+          "player_draft_history",
+          "season_draft_log"
+        ]
+      },
+      "columns": {
+        "season": {
+          "name": "season",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The calendar year in which the draft took place.",
+          "semantic_type": "date",
+          "business_concept": "Draft Year",
+          "aliases": [
+            "year",
+            "season_year",
+            "draft_year"
+          ]
+        },
+        "player": {
+          "name": "player",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the athlete selected in the draft.",
+          "semantic_type": "person_name",
+          "business_concept": "Player Name",
+          "aliases": [
+            "athlete_name",
+            "full_name",
+            "player_fullname"
+          ]
+        },
+        "position": {
+          "name": "position",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The primary playing position of the athlete.",
+          "semantic_type": "category",
+          "business_concept": "Player Position",
+          "aliases": [
+            "pos",
+            "role",
+            "field_position"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A numeric code representing the nation of origin for the player.",
+          "semantic_type": "code",
+          "business_concept": "Nationality Code",
+          "aliases": [
+            "nation_code",
+            "country_code",
+            "fifa_code"
+          ]
+        },
+        "team": {
+          "name": "team",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A numeric code representing the club that selected the player.",
+          "semantic_type": "code",
+          "business_concept": "Drafting Team Code",
+          "aliases": [
+            "club_code",
+            "franchise_code",
+            "selecting_team_id"
+          ]
+        },
+        "draft_pick_number": {
+          "name": "draft_pick_number",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The sequential order in which the player was selected within the specific draft class.",
+          "semantic_type": "quantity",
+          "business_concept": "Draft Pick Order",
+          "aliases": [
+            "pick",
+            "selection_order",
+            "round_pick"
+          ]
+        },
+        "draft_class": {
+          "name": "draft_class",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The specific name or type of the draft event (e.g., College Draft, SuperDraft).",
+          "semantic_type": "category",
+          "business_concept": "Draft Event Type",
+          "aliases": [
+            "draft_type",
+            "event_name",
+            "draft_category"
+          ]
+        },
+        "college": {
+          "name": "college",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the university or college the player attended prior to being drafted.",
+          "semantic_type": "organization_name",
+          "business_concept": "Educational Institution",
+          "aliases": [
+            "university",
+            "school",
+            "alma_mater"
+          ]
+        }
+      }
+    },
+    "player": {
+      "table": {
+        "name": "player",
+        "column_count": 7,
+        "summary": "A table containing statistics and career details for table tennis players, including their names, years of activity, win-loss records across different formats, and team affiliations.",
+        "entity": "player",
+        "role": "entity_table",
+        "aliases": [
+          "players",
+          "player_stats",
+          "tennis_players",
+          "athlete_records"
+        ]
+      },
+      "columns": {
+        "player_id": {
+          "name": "player_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each player record.",
+          "semantic_type": "identifier",
+          "business_concept": "Player ID",
+          "aliases": [
+            "id",
+            "pk",
+            "player_number"
+          ]
+        },
+        "player": {
+          "name": "player",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the player, often including a reference number in parentheses.",
+          "semantic_type": "person_name",
+          "business_concept": "Player Name",
+          "aliases": [
+            "name",
+            "full_name",
+            "athlete_name"
+          ]
+        },
+        "years_played": {
+          "name": "years_played",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The duration of the player's career or specific period of activity, formatted with years and counts.",
+          "semantic_type": "date",
+          "business_concept": "Career Duration",
+          "aliases": [
+            "career_years",
+            "active_years",
+            "years_active"
+          ]
+        },
+        "total_wl": {
+          "name": "total_wl",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The aggregate win-loss record for the player across all matches.",
+          "semantic_type": "quantity",
+          "business_concept": "Total Win-Loss Record",
+          "aliases": [
+            "overall_record",
+            "total_matches",
+            "wins_losses"
+          ]
+        },
+        "singles_wl": {
+          "name": "singles_wl",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The win-loss record specifically for singles matches.",
+          "semantic_type": "quantity",
+          "business_concept": "Singles Win-Loss Record",
+          "aliases": [
+            "singles_record",
+            "singles_wins_losses"
+          ]
+        },
+        "doubles_wl": {
+          "name": "doubles_wl",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The win-loss record specifically for doubles matches.",
+          "semantic_type": "quantity",
+          "business_concept": "Doubles Win-Loss Record",
+          "aliases": [
+            "doubles_record",
+            "doubles_wins_losses"
+          ]
+        },
+        "team": {
+          "name": "team",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A numeric code representing the team or organization the player is affiliated with.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Team ID",
+          "aliases": [
+            "team_id",
+            "club_id",
+            "organization_code"
+          ]
+        }
+      }
+    },
+    "team": {
+      "table": {
+        "name": "team",
+        "column_count": 2,
+        "summary": "A table containing records of teams and individuals, likely representing sports teams and their associated players or staff.",
+        "entity": "Team",
+        "role": "entity_table",
+        "aliases": [
+          "teams",
+          "team_list",
+          "club"
+        ]
+      },
+      "columns": {
+        "team_id": {
+          "name": "team_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each row in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "team_pk",
+            "key"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the entity, which appears to be either a sports team or a person's name.",
+          "semantic_type": "unknown",
+          "business_concept": "Entity Name",
+          "aliases": [
+            "entity_name",
+            "title",
+            "full_name"
+          ]
+        }
+      }
+    }
+  }
+}

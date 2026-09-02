@@ -1,0 +1,267 @@
+{
+  "database": "phone_market",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/phone_market",
+    "schema_path": "data/Spider/parsed/phone_market/schema.json",
+    "tables_dir": "data/Spider/parsed/phone_market/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "market": {
+      "table": {
+        "name": "market",
+        "column_count": 5,
+        "summary": "A dataset containing statistical profiles of various markets, including their geographic location, size metrics, and relative ranking.",
+        "entity": "Market",
+        "role": "entity_table",
+        "aliases": [
+          "markets",
+          "market_data",
+          "market_stats"
+        ]
+      },
+      "columns": {
+        "market_id": {
+          "name": "market_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each market record.",
+          "semantic_type": "identifier",
+          "business_concept": "Market ID",
+          "aliases": [
+            "id",
+            "market_code",
+            "market_key"
+          ]
+        },
+        "district": {
+          "name": "district",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The geographic region or administrative area where the market is located.",
+          "semantic_type": "organization_name",
+          "business_concept": "Geographic District",
+          "aliases": [
+            "region",
+            "province",
+            "area",
+            "location"
+          ]
+        },
+        "num_of_employees": {
+          "name": "num_of_employees",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total count of employees working within the market.",
+          "semantic_type": "quantity",
+          "business_concept": "Headcount",
+          "aliases": [
+            "employee_count",
+            "staff_size",
+            "total_employees"
+          ]
+        },
+        "num_of_shops": {
+          "name": "num_of_shops",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total number of retail outlets or shops operating within the market.",
+          "semantic_type": "quantity",
+          "business_concept": "Store Count",
+          "aliases": [
+            "shop_count",
+            "outlet_count",
+            "store_size"
+          ]
+        },
+        "ranking": {
+          "name": "ranking",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The ordinal position of the market based on a specific metric (e.g., size, revenue).",
+          "semantic_type": "code",
+          "business_concept": "Market Rank",
+          "aliases": [
+            "rank",
+            "position",
+            "order"
+          ]
+        }
+      }
+    },
+    "phone": {
+      "table": {
+        "name": "phone",
+        "column_count": 5,
+        "summary": "A catalog of mobile phone models including their specifications, carriers, and pricing.",
+        "entity": "mobile_phone_model",
+        "role": "lookup_table",
+        "aliases": [
+          "phones",
+          "device_catalog",
+          "product_inventory"
+        ]
+      },
+      "columns": {
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The specific model name of the mobile phone (e.g., IPhone 5s).",
+          "semantic_type": "category",
+          "business_concept": "product_model_name",
+          "aliases": [
+            "model",
+            "device_name",
+            "product_name"
+          ]
+        },
+        "phone_id": {
+          "name": "phone_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique integer identifier for each phone record.",
+          "semantic_type": "identifier",
+          "business_concept": "primary_key",
+          "aliases": [
+            "id",
+            "pk",
+            "phone_uid"
+          ]
+        },
+        "memory_in_g": {
+          "name": "memory_in_g",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The internal storage capacity of the phone in gigabytes.",
+          "semantic_type": "quantity",
+          "business_concept": "storage_capacity",
+          "aliases": [
+            "storage",
+            "ram",
+            "internal_memory",
+            "capacity_gb"
+          ]
+        },
+        "carrier": {
+          "name": "carrier",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The telecommunications carrier associated with the phone model.",
+          "semantic_type": "organization_name",
+          "business_concept": "service_provider",
+          "aliases": [
+            "network",
+            "provider",
+            "carrier_name",
+            "operator"
+          ]
+        },
+        "price": {
+          "name": "price",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary cost of the phone.",
+          "semantic_type": "money",
+          "business_concept": "unit_price",
+          "aliases": [
+            "cost",
+            "amount",
+            "sale_price",
+            "price_usd"
+          ]
+        }
+      }
+    },
+    "phone_market": {
+      "table": {
+        "name": "phone_market",
+        "column_count": 3,
+        "summary": "A table tracking the inventory stock levels for specific phone models across different markets.",
+        "entity": "Phone Market Inventory",
+        "role": "transaction_table",
+        "aliases": [
+          "phone_stock",
+          "market_inventory",
+          "phone_market_stock"
+        ]
+      },
+      "columns": {
+        "market_id": {
+          "name": "market_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific market or region.",
+          "semantic_type": "identifier",
+          "business_concept": "Market ID",
+          "aliases": [
+            "market_code",
+            "region_id",
+            "market_key"
+          ]
+        },
+        "phone_id": {
+          "name": "phone_id",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific phone model or SKU.",
+          "semantic_type": "identifier",
+          "business_concept": "Phone ID",
+          "aliases": [
+            "phone_code",
+            "product_id",
+            "sku",
+            "device_id"
+          ]
+        },
+        "num_of_stock": {
+          "name": "num_of_stock",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The current quantity of phones available in stock for a given market and phone combination.",
+          "semantic_type": "quantity",
+          "business_concept": "Stock Quantity",
+          "aliases": [
+            "stock_count",
+            "inventory_count",
+            "available_units",
+            "qty"
+          ]
+        }
+      }
+    }
+  }
+}

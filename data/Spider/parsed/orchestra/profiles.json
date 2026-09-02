@@ -1,0 +1,419 @@
+{
+  "database": "orchestra",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/orchestra",
+    "schema_path": "data/Spider/parsed/orchestra/schema.json",
+    "tables_dir": "data/Spider/parsed/orchestra/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "conductor": {
+      "table": {
+        "name": "conductor",
+        "column_count": 5,
+        "summary": "A table containing demographic and professional details of musical conductors.",
+        "entity": "Conductor",
+        "role": "entity_table",
+        "aliases": [
+          "conductors",
+          "music_conductors",
+          "orchestra_leaders"
+        ]
+      },
+      "columns": {
+        "conductor_id": {
+          "name": "conductor_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each conductor record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "conductor_pk",
+            "uid"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the conductor.",
+          "semantic_type": "person_name",
+          "business_concept": "Full Name",
+          "aliases": [
+            "full_name",
+            "first_name",
+            "last_name",
+            "name_str"
+          ]
+        },
+        "age": {
+          "name": "age",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The current age of the conductor in years.",
+          "semantic_type": "quantity",
+          "business_concept": "Age",
+          "aliases": [
+            "years_old",
+            "age_years"
+          ]
+        },
+        "nationality": {
+          "name": "nationality",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country of origin or citizenship of the conductor.",
+          "semantic_type": "country",
+          "business_concept": "Nationality",
+          "aliases": [
+            "country",
+            "citizenship",
+            "origin",
+            "nationality_code"
+          ]
+        },
+        "year_of_work": {
+          "name": "year_of_work",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The year the conductor was active or began their career.",
+          "semantic_type": "date",
+          "business_concept": "Start Year",
+          "aliases": [
+            "start_year",
+            "career_year",
+            "active_year",
+            "year"
+          ]
+        }
+      }
+    },
+    "orchestra": {
+      "table": {
+        "name": "orchestra",
+        "column_count": 6,
+        "summary": "A reference table containing metadata about various orchestras, including their names, founding years, associated record companies, and major record formats.",
+        "entity": "Orchestra",
+        "role": "lookup_table",
+        "aliases": [
+          "orchestras",
+          "orchestra_metadata",
+          "symphony_ensembles"
+        ]
+      },
+      "columns": {
+        "orchestra_id": {
+          "name": "orchestra_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each orchestra record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "orch_id",
+            "orchestra_pk"
+          ]
+        },
+        "orchestra": {
+          "name": "orchestra",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the orchestra.",
+          "semantic_type": "organization_name",
+          "business_concept": "Organization Name",
+          "aliases": [
+            "name",
+            "full_name",
+            "ensemble_name"
+          ]
+        },
+        "conductor_id": {
+          "name": "conductor_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking to a conductor record (likely in a separate table).",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Conductor Reference",
+          "aliases": [
+            "conductor_pk",
+            "conductor_ref",
+            "leader_id"
+          ]
+        },
+        "record_company": {
+          "name": "record_company",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the record label associated with the orchestra.",
+          "semantic_type": "organization_name",
+          "business_concept": "Record Label",
+          "aliases": [
+            "label",
+            "record_label",
+            "publisher"
+          ]
+        },
+        "year_of_founded": {
+          "name": "year_of_founded",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The year the orchestra was established.",
+          "semantic_type": "date",
+          "business_concept": "Founding Year",
+          "aliases": [
+            "founded",
+            "established",
+            "year_est"
+          ]
+        },
+        "major_record_format": {
+          "name": "major_record_format",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The primary physical or digital format of the orchestra's recordings.",
+          "semantic_type": "category",
+          "business_concept": "Media Format",
+          "aliases": [
+            "format",
+            "media_type",
+            "release_format"
+          ]
+        }
+      }
+    },
+    "performance": {
+      "table": {
+        "name": "performance",
+        "column_count": 7,
+        "summary": "Records weekly performance metrics, including ratings, rankings, and market share, for various entities (likely orchestras) across different audition types.",
+        "entity": "Performance Record",
+        "role": "transaction_table",
+        "aliases": [
+          "performance_metrics",
+          "weekly_performance",
+          "audition_results"
+        ]
+      },
+      "columns": {
+        "performance_id": {
+          "name": "performance_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each performance record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "perf_id",
+            "id",
+            "pk"
+          ]
+        },
+        "orchestra_id": {
+          "name": "orchestra_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the performance to a specific orchestra.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Orchestra Reference",
+          "aliases": [
+            "orch_id",
+            "org_id",
+            "fk_orchestra"
+          ]
+        },
+        "type": {
+          "name": "type",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Categorization of the performance event, specifically indicating the audition round.",
+          "semantic_type": "category",
+          "business_concept": "Event Type / Audition Round",
+          "aliases": [
+            "event_type",
+            "round",
+            "category"
+          ]
+        },
+        "date": {
+          "name": "date",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The date on which the performance or audition took place.",
+          "semantic_type": "date",
+          "business_concept": "Event Date",
+          "aliases": [
+            "event_date",
+            "date_of_performance",
+            "dt"
+          ]
+        },
+        "official_ratings_(millions)": {
+          "name": "official_ratings_(millions)",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The official rating score for the performance, scaled in millions.",
+          "semantic_type": "quantity",
+          "business_concept": "Performance Rating",
+          "aliases": [
+            "rating",
+            "score",
+            "official_score"
+          ]
+        },
+        "weekly_rank": {
+          "name": "weekly_rank",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The ranking position of the performance within a specific week.",
+          "semantic_type": "code",
+          "business_concept": "Weekly Rank",
+          "aliases": [
+            "rank",
+            "position",
+            "weekly_position"
+          ]
+        },
+        "share": {
+          "name": "share",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The percentage share or market share associated with the performance.",
+          "semantic_type": "quantity",
+          "business_concept": "Market Share / Percentage",
+          "aliases": [
+            "market_share",
+            "pct",
+            "percentage"
+          ]
+        }
+      }
+    },
+    "show": {
+      "table": {
+        "name": "show",
+        "column_count": 5,
+        "summary": "A record of football matches showing venue, match outcome, and attendance figures.",
+        "entity": "Match",
+        "role": "transaction_table",
+        "aliases": [
+          "matches",
+          "game_results",
+          "fixture_results"
+        ]
+      },
+      "columns": {
+        "show_id": {
+          "name": "show_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the match record.",
+          "semantic_type": "identifier",
+          "business_concept": "Match ID",
+          "aliases": [
+            "match_id",
+            "game_id",
+            "fixture_id"
+          ]
+        },
+        "performance_id": {
+          "name": "performance_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the team's performance or entry in this match.",
+          "semantic_type": "identifier",
+          "business_concept": "Performance ID",
+          "aliases": [
+            "team_id",
+            "player_id",
+            "participant_id"
+          ]
+        },
+        "if_first_show": {
+          "name": "if_first_show",
+          "dtype": "boolean",
+          "value_patterns": [],
+          "meaning": "Indicates whether the match was played at the home team's primary stadium.",
+          "semantic_type": "boolean",
+          "business_concept": "Home Ground Indicator",
+          "aliases": [
+            "is_home_venue",
+            "home_ground",
+            "primary_stadium"
+          ]
+        },
+        "result": {
+          "name": "result",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The outcome of the match, represented as a boolean (True/False).",
+          "semantic_type": "boolean",
+          "business_concept": "Match Result",
+          "aliases": [
+            "outcome",
+            "win_loss",
+            "match_status"
+          ]
+        },
+        "attendance": {
+          "name": "attendance",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The number of spectators present at the match.",
+          "semantic_type": "quantity",
+          "business_concept": "Spectator Count",
+          "aliases": [
+            "crowd_size",
+            "spectators",
+            "capacity_used"
+          ]
+        }
+      }
+    }
+  }
+}

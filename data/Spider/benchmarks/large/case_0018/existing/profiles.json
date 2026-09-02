@@ -1,0 +1,1032 @@
+{
+  "database": "student_transcripts_tracking",
+  "tables": {
+    "departments": {
+      "table": {
+        "name": "departments",
+        "column_count": 4,
+        "summary": "A table storing information about organizational departments, including their unique identifiers, names, and descriptions.",
+        "entity": "Department",
+        "role": "entity_table",
+        "aliases": [
+          "dept",
+          "depts",
+          "org_units",
+          "units"
+        ]
+      },
+      "columns": {
+        "department_id": {
+          "name": "department_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each department record.",
+          "semantic_type": "identifier",
+          "business_concept": "Department ID",
+          "aliases": [
+            "dept_id",
+            "id",
+            "department_code"
+          ]
+        },
+        "department_name": {
+          "name": "department_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The official name of the department.",
+          "semantic_type": "organization_name",
+          "business_concept": "Department Name",
+          "aliases": [
+            "dept_name",
+            "name",
+            "title"
+          ]
+        },
+        "department_description": {
+          "name": "department_description",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A textual description of the department's function or scope.",
+          "semantic_type": "description",
+          "business_concept": "Department Description",
+          "aliases": [
+            "dept_desc",
+            "description",
+            "details",
+            "about"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional miscellaneous information about the department, currently appearing empty in samples.",
+          "semantic_type": "description",
+          "business_concept": "Other Details",
+          "aliases": [
+            "extra_info",
+            "misc",
+            "notes"
+          ]
+        }
+      }
+    },
+    "student_enrolment_courses": {
+      "table": {
+        "name": "student_enrolment_courses",
+        "column_count": 3,
+        "summary": "A junction table linking students to their enrolled courses, recording the specific enrollment instance.",
+        "entity": "Student Course Enrollment",
+        "role": "relationship_table",
+        "aliases": [
+          "student_courses",
+          "enrollments",
+          "course_registrations"
+        ]
+      },
+      "columns": {
+        "student_course_id": {
+          "name": "student_course_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the specific combination of a student and a course within this table.",
+          "semantic_type": "identifier",
+          "business_concept": "Enrollment Record ID",
+          "aliases": [
+            "enrollment_id",
+            "student_course_key",
+            "unique_enrollment"
+          ]
+        },
+        "course_id": {
+          "name": "course_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A foreign key referencing the specific course the student is enrolled in.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Course Identifier",
+          "aliases": [
+            "course_key",
+            "c_id",
+            "course_ref"
+          ]
+        },
+        "student_enrolment_id": {
+          "name": "student_enrolment_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the student's enrollment record, likely serving as the primary key for the student's participation in the course system.",
+          "semantic_type": "identifier",
+          "business_concept": "Student Enrollment ID",
+          "aliases": [
+            "enrollment_key",
+            "student_enroll_ref",
+            "enrollment_num"
+          ]
+        }
+      }
+    },
+    "student_enrolment": {
+      "table": {
+        "name": "student_enrolment",
+        "column_count": 5,
+        "summary": "Records the enrollment status of students in specific degree programs during particular semesters.",
+        "entity": "Student Enrollment",
+        "role": "relationship_table",
+        "aliases": [
+          "student_enrolment",
+          "enrolments",
+          "student_courses",
+          "degree_registrations"
+        ]
+      },
+      "columns": {
+        "student_enrolment_id": {
+          "name": "student_enrolment_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific enrollment record.",
+          "semantic_type": "identifier",
+          "business_concept": "Enrollment Record ID",
+          "aliases": [
+            "enrolment_id",
+            "record_id",
+            "id"
+          ]
+        },
+        "degree_program_id": {
+          "name": "degree_program_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the enrollment to a specific academic degree program.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Degree Program",
+          "aliases": [
+            "program_id",
+            "course_id",
+            "major_id",
+            "degree_id"
+          ]
+        },
+        "semester_id": {
+          "name": "semester_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the enrollment to a specific academic term or semester.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Academic Semester",
+          "aliases": [
+            "term_id",
+            "semester",
+            "session_id",
+            "period_id"
+          ]
+        },
+        "student_id": {
+          "name": "student_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the enrollment to a specific student.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Student",
+          "aliases": [
+            "student",
+            "user_id",
+            "person_id",
+            "enrollee_id"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Optional text field containing additional information about the enrollment, currently appearing empty in samples.",
+          "semantic_type": "description",
+          "business_concept": "Enrollment Notes",
+          "aliases": [
+            "notes",
+            "remarks",
+            "comments",
+            "extra_info"
+          ]
+        }
+      }
+    },
+    "addresses": {
+      "table": {
+        "name": "addresses",
+        "column_count": 9,
+        "summary": "Stores comprehensive physical mailing address information including street lines, city, state, country, and postal codes.",
+        "entity": "Address",
+        "role": "entity_table",
+        "aliases": [
+          "addr",
+          "mailing_address",
+          "location",
+          "contact_address"
+        ]
+      },
+      "columns": {
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each address record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Address ID",
+          "aliases": [
+            "id",
+            "addr_id",
+            "address_key"
+          ]
+        },
+        "line_1": {
+          "name": "line_1",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The primary street address line, typically containing the building number and street name.",
+          "semantic_type": "address",
+          "business_concept": "Street Address Line 1",
+          "aliases": [
+            "street",
+            "addr_line1",
+            "primary_address"
+          ]
+        },
+        "line_2": {
+          "name": "line_2",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Secondary address line, usually containing apartment, suite, or unit numbers.",
+          "semantic_type": "address",
+          "business_concept": "Street Address Line 2",
+          "aliases": [
+            "apt",
+            "suite",
+            "addr_line2",
+            "unit"
+          ]
+        },
+        "line_3": {
+          "name": "line_3",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Tertiary address line, often used for additional details like PO Box or floor, but frequently empty.",
+          "semantic_type": "address",
+          "business_concept": "Street Address Line 3",
+          "aliases": [
+            "addr_line3",
+            "pobox",
+            "floor"
+          ]
+        },
+        "city": {
+          "name": "city",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The name of the city where the address is located.",
+          "semantic_type": "city",
+          "business_concept": "City",
+          "aliases": [
+            "city_name",
+            "municipality",
+            "locality"
+          ]
+        },
+        "zip_postcode": {
+          "name": "zip_postcode",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The postal code or ZIP code associated with the address.",
+          "semantic_type": "code",
+          "business_concept": "Postal Code",
+          "aliases": [
+            "zip",
+            "postal_code",
+            "postcode",
+            "zip_code"
+          ]
+        },
+        "state_province_county": {
+          "name": "state_province_county",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The administrative subdivision (state, province, or county) containing the address.",
+          "semantic_type": "code",
+          "business_concept": "State/Province",
+          "aliases": [
+            "state",
+            "province",
+            "region",
+            "admin_division"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The country where the address is located.",
+          "semantic_type": "country",
+          "business_concept": "Country",
+          "aliases": [
+            "nation",
+            "country_name",
+            "iso_country"
+          ]
+        },
+        "other_address_details": {
+          "name": "other_address_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional free-text information about the address not covered by standard fields.",
+          "semantic_type": "description",
+          "business_concept": "Address Notes",
+          "aliases": [
+            "notes",
+            "details",
+            "extra_info"
+          ]
+        }
+      }
+    },
+    "semesters": {
+      "table": {
+        "name": "semesters",
+        "column_count": 4,
+        "summary": "Stores metadata and identifiers for academic semesters, including unique IDs, names, and descriptive codes.",
+        "entity": "Academic Semester",
+        "role": "lookup_table",
+        "aliases": [
+          "semesters",
+          "academic_semesters",
+          "term_list",
+          "school_terms"
+        ]
+      },
+      "columns": {
+        "semester_id": {
+          "name": "semester_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each semester record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "semester_key",
+            "term_id",
+            "sk"
+          ]
+        },
+        "semester_name": {
+          "name": "semester_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Human-readable name of the semester, typically including the season and year.",
+          "semantic_type": "description",
+          "business_concept": "Semester Name",
+          "aliases": [
+            "name",
+            "term_name",
+            "display_name",
+            "label"
+          ]
+        },
+        "semester_description": {
+          "name": "semester_description",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Short code or abbreviation representing the semester type or category.",
+          "semantic_type": "code",
+          "business_concept": "Semester Code",
+          "aliases": [
+            "code",
+            "abbr",
+            "type_code",
+            "short_code"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional textual information or notes about the semester, currently appearing empty in samples.",
+          "semantic_type": "description",
+          "business_concept": "Additional Notes",
+          "aliases": [
+            "notes",
+            "extra_info",
+            "remarks",
+            "details"
+          ]
+        }
+      }
+    },
+    "students": {
+      "table": {
+        "name": "students",
+        "column_count": 12,
+        "summary": "A table containing personal identification, contact information, and registration history for students.",
+        "entity": "Student",
+        "role": "entity_table",
+        "aliases": [
+          "student_info",
+          "enrolled_students",
+          "personnel"
+        ]
+      },
+      "columns": {
+        "student_id": {
+          "name": "student_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each student record.",
+          "semantic_type": "identifier",
+          "business_concept": "Student ID",
+          "aliases": [
+            "id",
+            "student_number",
+            "usr_id"
+          ]
+        },
+        "current_address_id": {
+          "name": "current_address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key referencing the student's current residential address.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Current Address Reference",
+          "aliases": [
+            "curr_addr_id",
+            "current_address_ref"
+          ]
+        },
+        "permanent_address_id": {
+          "name": "permanent_address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key referencing the student's permanent or home address.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Permanent Address Reference",
+          "aliases": [
+            "perm_addr_id",
+            "home_address_ref"
+          ]
+        },
+        "first_name": {
+          "name": "first_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The given name of the student.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "fname",
+            "fn",
+            "given_name"
+          ]
+        },
+        "middle_name": {
+          "name": "middle_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The middle name of the student.",
+          "semantic_type": "person_name",
+          "business_concept": "Middle Name",
+          "aliases": [
+            "mname",
+            "mn",
+            "mid_name"
+          ]
+        },
+        "last_name": {
+          "name": "last_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The family name or surname of the student.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "lname",
+            "ln",
+            "surname",
+            "family_name"
+          ]
+        },
+        "cell_mobile_number": {
+          "name": "cell_mobile_number",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The student's mobile phone number.",
+          "semantic_type": "phone",
+          "business_concept": "Mobile Number",
+          "aliases": [
+            "mobile",
+            "cell",
+            "phone_number",
+            "cell_phone"
+          ]
+        },
+        "email_address": {
+          "name": "email_address",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "The student's email contact address.",
+          "semantic_type": "email",
+          "business_concept": "Email Address",
+          "aliases": [
+            "email",
+            "e_mail",
+            "contact_email"
+          ]
+        },
+        "ssn": {
+          "name": "ssn",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Social Security Number or national ID for the student.",
+          "semantic_type": "code",
+          "business_concept": "Social Security Number",
+          "aliases": [
+            "ssn",
+            "social_security",
+            "national_id",
+            "tax_id"
+          ]
+        },
+        "date_first_registered": {
+          "name": "date_first_registered",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the student was first registered in the system.",
+          "semantic_type": "timestamp",
+          "business_concept": "Registration Date",
+          "aliases": [
+            "reg_date",
+            "created_at",
+            "join_date",
+            "start_date"
+          ]
+        },
+        "date_left": {
+          "name": "date_left",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the student left the institution or program.",
+          "semantic_type": "timestamp",
+          "business_concept": "Departure Date",
+          "aliases": [
+            "grad_date",
+            "left_date",
+            "end_date",
+            "withdrawal_date"
+          ]
+        },
+        "other_student_details": {
+          "name": "other_student_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Additional descriptive text or notes about the student.",
+          "semantic_type": "description",
+          "business_concept": "Student Notes",
+          "aliases": [
+            "notes",
+            "comments",
+            "remarks",
+            "extra_info"
+          ]
+        }
+      }
+    },
+    "degree_programs": {
+      "table": {
+        "name": "degree_programs",
+        "column_count": 5,
+        "summary": "Stores information about various academic degree programs, including their identifiers, associated departments, and summary details.",
+        "entity": "Degree Program",
+        "role": "entity_table",
+        "aliases": [
+          "programs",
+          "degrees",
+          "academic_programs",
+          "study_programs"
+        ]
+      },
+      "columns": {
+        "degree_program_id": {
+          "name": "degree_program_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific degree program record.",
+          "semantic_type": "identifier",
+          "business_concept": "Program ID",
+          "aliases": [
+            "program_id",
+            "id",
+            "degree_id"
+          ]
+        },
+        "department_id": {
+          "name": "department_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key linking the degree program to its parent academic department.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Department ID",
+          "aliases": [
+            "dept_id",
+            "department_code",
+            "org_id"
+          ]
+        },
+        "degree_summary_name": {
+          "name": "degree_summary_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The short name or title of the degree (e.g., Bachelor, Master).",
+          "semantic_type": "code",
+          "business_concept": "Degree Level",
+          "aliases": [
+            "degree_type",
+            "level",
+            "qualification_name"
+          ]
+        },
+        "degree_summary_description": {
+          "name": "degree_summary_description",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A brief textual description or code representing the degree summary.",
+          "semantic_type": "description",
+          "business_concept": "Degree Description",
+          "aliases": [
+            "degree_desc",
+            "summary_text",
+            "program_description"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional miscellaneous information about the program, currently appearing empty in samples.",
+          "semantic_type": "description",
+          "business_concept": "Additional Details",
+          "aliases": [
+            "extra_info",
+            "notes",
+            "remarks"
+          ]
+        }
+      }
+    },
+    "courses": {
+      "table": {
+        "name": "courses",
+        "column_count": 4,
+        "summary": "A table containing basic identifiers and short codes for various courses, likely representing a simplified or internal catalog.",
+        "entity": "Course",
+        "role": "entity_table",
+        "aliases": [
+          "course_catalog",
+          "course_list",
+          "class_list"
+        ]
+      },
+      "columns": {
+        "course_id": {
+          "name": "course_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each course record.",
+          "semantic_type": "identifier",
+          "business_concept": "Course ID",
+          "aliases": [
+            "id",
+            "course_code",
+            "cid"
+          ]
+        },
+        "course_name": {
+          "name": "course_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short alphanumeric code representing the subject or name of the course.",
+          "semantic_type": "code",
+          "business_concept": "Course Name/Subject Code",
+          "aliases": [
+            "name",
+            "subject",
+            "code",
+            "title"
+          ]
+        },
+        "course_description": {
+          "name": "course_description",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short alphanumeric code or placeholder representing the description of the course.",
+          "semantic_type": "code",
+          "business_concept": "Course Description Code",
+          "aliases": [
+            "desc",
+            "details",
+            "summary"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A field containing empty strings, likely reserved for additional metadata or currently unused.",
+          "semantic_type": "unknown",
+          "business_concept": "Additional Information",
+          "aliases": [
+            "extra_info",
+            "notes",
+            "metadata"
+          ]
+        }
+      }
+    },
+    "transcript_contents": {
+      "table": {
+        "name": "transcript_contents",
+        "column_count": 2,
+        "summary": "Stores the mapping between students and their specific course transcripts, linking a student's enrollment to a unique transcript record.",
+        "entity": "Student Course Enrollment",
+        "role": "relationship_table",
+        "aliases": [
+          "student_transcript_map",
+          "course_transcript_link",
+          "enrollment_transcripts"
+        ]
+      },
+      "columns": {
+        "student_course_id": {
+          "name": "student_course_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A composite or unique identifier representing the specific enrollment of a student in a particular course.",
+          "semantic_type": "identifier",
+          "business_concept": "Student Course Enrollment ID",
+          "aliases": [
+            "student_course_key",
+            "enrollment_id",
+            "sc_id"
+          ]
+        },
+        "transcript_id": {
+          "name": "transcript_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the academic transcript record associated with the specific student-course enrollment.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Transcript Record ID",
+          "aliases": [
+            "transcript_key",
+            "transcript_ref",
+            "tid"
+          ]
+        }
+      }
+    },
+    "transcripts": {
+      "table": {
+        "name": "transcripts",
+        "column_count": 3,
+        "summary": "A table storing metadata and timestamps for various transcripts, likely from a media or communication system.",
+        "entity": "transcript",
+        "role": "entity_table",
+        "aliases": [
+          "transcript_metadata",
+          "transcript_log",
+          "recordings"
+        ]
+      },
+      "columns": {
+        "transcript_id": {
+          "name": "transcript_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each transcript record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "transcript_uid",
+            "recording_id"
+          ]
+        },
+        "transcript_date": {
+          "name": "transcript_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date and time when the transcript was created or the event occurred.",
+          "semantic_type": "timestamp",
+          "business_concept": "Creation Time",
+          "aliases": [
+            "created_at",
+            "recorded_date",
+            "event_time"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional descriptive information about the transcript, though currently empty in samples.",
+          "semantic_type": "description",
+          "business_concept": "Notes",
+          "aliases": [
+            "notes",
+            "metadata",
+            "extra_info"
+          ]
+        }
+      }
+    },
+    "sections": {
+      "table": {
+        "name": "sections",
+        "column_count": 5,
+        "summary": "A table defining the structure of academic sections, linking them to specific courses and providing brief identifiers and descriptions.",
+        "entity": "Academic Section",
+        "role": "entity_table",
+        "aliases": [
+          "course_sections",
+          "class_sections",
+          "section_master"
+        ]
+      },
+      "columns": {
+        "section_id": {
+          "name": "section_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific section record.",
+          "semantic_type": "identifier",
+          "business_concept": "Section ID",
+          "aliases": [
+            "id",
+            "section_key",
+            "sec_id"
+          ]
+        },
+        "course_id": {
+          "name": "course_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key referencing the course to which this section belongs.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Course ID",
+          "aliases": [
+            "course_key",
+            "cid",
+            "course_ref"
+          ]
+        },
+        "section_name": {
+          "name": "section_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Short alphanumeric code or label used to identify the section (e.g., 'A', 'B').",
+          "semantic_type": "code",
+          "business_concept": "Section Code",
+          "aliases": [
+            "section_code",
+            "sec_code",
+            "section_label"
+          ]
+        },
+        "section_description": {
+          "name": "section_description",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Brief textual description or notes regarding the section.",
+          "semantic_type": "description",
+          "business_concept": "Section Description",
+          "aliases": [
+            "desc",
+            "notes",
+            "section_notes"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional miscellaneous information, currently appearing empty in samples.",
+          "semantic_type": "description",
+          "business_concept": "Additional Details",
+          "aliases": [
+            "extra_info",
+            "misc",
+            "remarks"
+          ]
+        }
+      }
+    }
+  }
+}

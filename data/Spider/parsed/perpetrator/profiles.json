@@ -1,0 +1,246 @@
+{
+  "database": "perpetrator",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/perpetrator",
+    "schema_path": "data/Spider/parsed/perpetrator/schema.json",
+    "tables_dir": "data/Spider/parsed/perpetrator/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "people": {
+      "table": {
+        "name": "people",
+        "column_count": 5,
+        "summary": "A table containing demographic and physical attributes for a set of individuals.",
+        "entity": "Person",
+        "role": "entity_table",
+        "aliases": [
+          "person",
+          "individuals",
+          "users",
+          "contacts"
+        ]
+      },
+      "columns": {
+        "people_id": {
+          "name": "people_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "pk",
+            "person_id",
+            "pid"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the individual.",
+          "semantic_type": "person_name",
+          "business_concept": "Full Name",
+          "aliases": [
+            "full_name",
+            "first_name",
+            "last_name",
+            "name_first_last"
+          ]
+        },
+        "height": {
+          "name": "height",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The physical height of the individual, likely measured in meters.",
+          "semantic_type": "quantity",
+          "business_concept": "Height",
+          "aliases": [
+            "ht",
+            "height_m",
+            "stature"
+          ]
+        },
+        "weight": {
+          "name": "weight",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The physical weight of the individual, likely measured in kilograms.",
+          "semantic_type": "quantity",
+          "business_concept": "Weight",
+          "aliases": [
+            "wt",
+            "weight_kg",
+            "mass"
+          ]
+        },
+        "home town": {
+          "name": "home town",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The city and state where the individual resides.",
+          "semantic_type": "address",
+          "business_concept": "Home Address",
+          "aliases": [
+            "city",
+            "location",
+            "residence",
+            "address_city_state",
+            "town"
+          ]
+        }
+      }
+    },
+    "perpetrator": {
+      "table": {
+        "name": "perpetrator",
+        "column_count": 8,
+        "summary": "A dataset recording historical violent incidents or conflicts, detailing the perpetrator, location, date, and casualty counts.",
+        "entity": "violent_incident",
+        "role": "transaction_table",
+        "aliases": [
+          "conflict_events",
+          "mass_casualty_incidents",
+          "perpetrator_records",
+          "historical_attacks"
+        ]
+      },
+      "columns": {
+        "perpetrator_id": {
+          "name": "perpetrator_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific record or perpetrator instance in this table.",
+          "semantic_type": "identifier",
+          "business_concept": "primary_key",
+          "aliases": [
+            "pk",
+            "id",
+            "record_id"
+          ]
+        },
+        "people_id": {
+          "name": "people_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking to a specific person involved in the incident, likely the perpetrator or a key figure.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "person_reference",
+          "aliases": [
+            "person_ref",
+            "actor_id",
+            "perpetrator_ref"
+          ]
+        },
+        "date": {
+          "name": "date",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The date or date range when the incident occurred, stored as a text string.",
+          "semantic_type": "date",
+          "business_concept": "incident_date",
+          "aliases": [
+            "event_date",
+            "occurred_on",
+            "datetime"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The specific year in which the incident took place.",
+          "semantic_type": "date",
+          "business_concept": "incident_year",
+          "aliases": [
+            "event_year",
+            "occurred_year"
+          ]
+        },
+        "location": {
+          "name": "location",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The city or specific place where the incident occurred.",
+          "semantic_type": "city",
+          "business_concept": "incident_location",
+          "aliases": [
+            "city",
+            "place",
+            "venue",
+            "site"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The country where the incident took place.",
+          "semantic_type": "country",
+          "business_concept": "incident_country",
+          "aliases": [
+            "nation",
+            "land",
+            "geo_country"
+          ]
+        },
+        "killed": {
+          "name": "killed",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of people killed in the incident.",
+          "semantic_type": "quantity",
+          "business_concept": "casualties_dead",
+          "aliases": [
+            "deaths",
+            "fatalities",
+            "dead_count",
+            "killed_count"
+          ]
+        },
+        "injured": {
+          "name": "injured",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of people injured in the incident.",
+          "semantic_type": "quantity",
+          "business_concept": "casualties_injured",
+          "aliases": [
+            "wounded",
+            "injuries",
+            "injured_count",
+            "casualties"
+          ]
+        }
+      }
+    }
+  }
+}

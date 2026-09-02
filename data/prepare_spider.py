@@ -46,10 +46,39 @@ def unique_normalized_names(names: list[str], object_kind: str, database: str) -
     return mapping
 
 
+def resolve_original_name(mapping: dict[str, str], requested: str | None) -> str | None:
+    if requested is None:
+        return None
+    if requested in mapping:
+        return requested
+    matches = [original for original in mapping if original.casefold() == requested.casefold()]
+    return matches[0] if len(matches) == 1 else None
+
+
 def inspect_database(
     sqlite_path: Path,
-) -> tuple[dict[str, Any], dict[str, Any], dict[str, list[dict[str, Any]]]]:
+) -> tuple[
+    dict[str, Any],
+    dict[str, Any],
+    dict[str, list[dict[str, Any]]],
+    list[dict[str, Any]],
+]:
+    decoding_repairs: list[str] = []
+
+    def decode_sqlite_text(raw: bytes) -> str:
+        try:
+            return raw.decode("utf-8")
+        except UnicodeDecodeError:
+            try:
+                value = raw.decode("windows-1252")
+                decoding_repairs.append("windows-1252")
+                return value
+            except UnicodeDecodeError:
+                decoding_repairs.append("replacement")
+                return raw.decode("utf-8", errors="replace")
+
     connection = sqlite3.connect(f"file:{sqlite_path.resolve()}?mode=ro", uri=True)
+    connection.text_factory = decode_sqlite_text
     connection.row_factory = sqlite3.Row
     try:
         original_tables = [
@@ -75,6 +104,7 @@ def inspect_database(
         rows_by_table: dict[str, list[dict[str, Any]]] = {}
         column_maps: dict[str, dict[str, str]] = {}
         primary_keys: dict[str, list[str]] = {}
+        warnings: list[dict[str, Any]] = []
 
         for original_table in original_tables:
             table = table_names[original_table]
@@ -119,8 +149,18 @@ def inspect_database(
             for fk_rows in grouped_fks.values():
                 fk_rows.sort(key=lambda row: int(row["seq"]))
                 referenced_original = fk_rows[0]["table"]
-                if referenced_original not in table_names:
+                resolved_table = resolve_original_name(table_names, referenced_original)
+                if resolved_table is None:
+                    warnings.append(
+                        {
+                            "kind": "invalid_foreign_key",
+                            "source_table": table,
+                            "referenced_table": referenced_original,
+                            "reason": "referenced table does not exist",
+                        }
+                    )
                     continue
+                referenced_original = resolved_table
                 referenced_table = table_names[referenced_original]
                 referenced_map = column_maps[referenced_original]
                 referenced_pk = primary_keys[referenced_original]
@@ -134,7 +174,21 @@ def inspect_database(
                             break
                         referenced_columns.append(referenced_pk[index])
                     else:
-                        referenced_columns.append(referenced_map[referenced_column])
+                        resolved_column = resolve_original_name(referenced_map, referenced_column)
+                        if resolved_column is None:
+                            warnings.append(
+                                {
+                                    "kind": "invalid_foreign_key",
+                                    "source_table": table,
+                                    "source_columns": source_columns,
+                                    "referenced_table": referenced_table,
+                                    "referenced_columns": [fk_row["to"] for fk_row in fk_rows],
+                                    "reason": "referenced column does not exist",
+                                }
+                            )
+                            referenced_columns = []
+                            break
+                        referenced_columns.append(referenced_map[resolved_column])
                 if not referenced_columns:
                     continue
                 constraints["constraints"]["foreign_keys"].setdefault(table, []).append(
@@ -160,7 +214,15 @@ def inspect_database(
                 key = "unique_constraints" if index_row["unique"] else "indexes"
                 constraints["constraints"][key].setdefault(table, []).append(index_columns)
 
-        return schema, constraints, rows_by_table
+        if decoding_repairs:
+            warnings.append(
+                {
+                    "kind": "non_utf8_text_repaired",
+                    "value_count": len(decoding_repairs),
+                    "fallback_encodings": sorted(set(decoding_repairs)),
+                }
+            )
+        return schema, constraints, rows_by_table, warnings
     finally:
         connection.close()
 
@@ -183,7 +245,7 @@ def write_parsed_database(
     if output_dir.exists() and overwrite:
         shutil.rmtree(output_dir)
 
-    schema, constraints, rows_by_table = inspect_database(sqlite_path)
+    schema, constraints, rows_by_table, warnings = inspect_database(sqlite_path)
     tables_dir = output_dir / "tables"
     tables_dir.mkdir(parents=True, exist_ok=True)
     (output_dir / "schema.json").write_text(
@@ -201,14 +263,20 @@ def write_parsed_database(
             for row in rows_by_table[table]:
                 writer.writerow({column: csv_value(row.get(column)) for column in columns})
 
-    return {
+    summary = {
         "database": schema["database"],
         "sqlite_path": str(sqlite_path),
         "output_dir": str(output_dir),
         "table_count": len(schema["tables"]),
         "column_count": sum(len(table["columns"]) for table in schema["tables"].values()),
         "row_count": sum(len(rows) for rows in rows_by_table.values()),
+        "warning_count": len(warnings),
+        "warnings": warnings,
     }
+    (output_dir / "import_metadata.json").write_text(
+        json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    return summary
 
 
 def main() -> None:
@@ -217,6 +285,11 @@ def main() -> None:
     parser.add_argument("--output-root", type=Path, default=Path("data/Spider/parsed"))
     parser.add_argument("--database", action="append", default=[], help="Database name to import; repeatable.")
     parser.add_argument("--overwrite", action="store_true")
+    parser.add_argument(
+        "--skip-existing",
+        action="store_true",
+        help="Skip databases that already contain schema.json and constraints.json.",
+    )
     args = parser.parse_args()
 
     selected = set(args.database)
@@ -230,18 +303,51 @@ def main() -> None:
         raise FileNotFoundError(f"No SQLite databases found under {args.input_root}")
 
     summaries = []
+    imported_count = 0
+    skipped_databases: list[str] = []
     for index, sqlite_path in enumerate(sqlite_paths, start=1):
         output_dir = args.output_root / sqlite_path.stem
+        if (
+            args.skip_existing
+            and (output_dir / "schema.json").is_file()
+            and (output_dir / "constraints.json").is_file()
+        ):
+            skipped_databases.append(sqlite_path.stem)
+            metadata_path = output_dir / "import_metadata.json"
+            if metadata_path.is_file():
+                summaries.append(json.loads(metadata_path.read_text(encoding="utf-8")))
+            else:
+                summaries.append(
+                    {
+                        "database": sqlite_path.stem,
+                        "output_dir": str(output_dir),
+                        "status": "skipped_existing_without_import_metadata",
+                    }
+                )
+            print(f"[{index}/{len(sqlite_paths)}] skip {sqlite_path.stem}")
+            continue
         summary = write_parsed_database(sqlite_path, output_dir, overwrite=args.overwrite)
         summaries.append(summary)
+        imported_count += 1
         print(
             f"[{index}/{len(sqlite_paths)}] {sqlite_path.stem}: "
-            f"tables={summary['table_count']} rows={summary['row_count']}"
+            f"tables={summary['table_count']} rows={summary['row_count']} "
+            f"warnings={summary['warning_count']}"
         )
 
     args.output_root.mkdir(parents=True, exist_ok=True)
     (args.output_root / "import_summary.json").write_text(
-        json.dumps({"database_count": len(summaries), "databases": summaries}, indent=2) + "\n",
+        json.dumps(
+            {
+                "discovered_database_count": len(sqlite_paths),
+                "imported_database_count": imported_count,
+                "skipped_database_count": len(skipped_databases),
+                "skipped_databases": skipped_databases,
+                "databases": summaries,
+            },
+            indent=2,
+        )
+        + "\n",
         encoding="utf-8",
     )
 

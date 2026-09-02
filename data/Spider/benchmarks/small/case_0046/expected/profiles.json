@@ -1,0 +1,416 @@
+{
+  "database": "product_catalog",
+  "tables": {
+    "catalogs": {
+      "table": {
+        "name": "catalogs",
+        "column_count": 5,
+        "summary": "A table storing metadata about various product catalogs, including their names, publishers, and publication history.",
+        "entity": "Catalog",
+        "role": "entity_table",
+        "aliases": [
+          "catalogs",
+          "catalog_metadata",
+          "product_catalogs"
+        ]
+      },
+      "columns": {
+        "catalog_id": {
+          "name": "catalog_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each catalog entry.",
+          "semantic_type": "identifier",
+          "business_concept": "Catalog ID",
+          "aliases": [
+            "id",
+            "catalog_number",
+            "catalog_key"
+          ]
+        },
+        "catalog_name": {
+          "name": "catalog_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The name of the catalog.",
+          "semantic_type": "description",
+          "business_concept": "Catalog Name",
+          "aliases": [
+            "name",
+            "title",
+            "catalog_title"
+          ]
+        },
+        "catalog_publisher": {
+          "name": "catalog_publisher",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The organization or entity that published the catalog.",
+          "semantic_type": "organization_name",
+          "business_concept": "Publisher",
+          "aliases": [
+            "publisher",
+            "author",
+            "company",
+            "vendor"
+          ]
+        },
+        "date_of_publication": {
+          "name": "date_of_publication",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date when the catalog was originally published.",
+          "semantic_type": "timestamp",
+          "business_concept": "Publication Date",
+          "aliases": [
+            "pub_date",
+            "created_at",
+            "issue_date",
+            "release_date"
+          ]
+        },
+        "date_of_latest_revision": {
+          "name": "date_of_latest_revision",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date when the catalog was last updated or revised.",
+          "semantic_type": "timestamp",
+          "business_concept": "Last Updated Date",
+          "aliases": [
+            "updated_at",
+            "revision_date",
+            "last_modified",
+            "edit_date"
+          ]
+        }
+      }
+    },
+    "catalog_contents_additional_attributes": {
+      "table": {
+        "name": "catalog_contents_additional_attributes",
+        "column_count": 4,
+        "summary": "Stores additional boolean or numeric attributes associated with specific catalog entries at various hierarchy levels.",
+        "entity": "catalog_entry_attribute",
+        "role": "lookup_table",
+        "aliases": [
+          "catalog_extra_attrs",
+          "product_additional_props",
+          "item_attribute_details"
+        ]
+      },
+      "columns": {
+        "catalog_entry_id": {
+          "name": "catalog_entry_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the catalog entry to which the attribute belongs.",
+          "semantic_type": "identifier",
+          "business_concept": "catalog_entry_id",
+          "aliases": [
+            "entry_id",
+            "product_id",
+            "item_id",
+            "catalog_id"
+          ]
+        },
+        "catalog_level_number": {
+          "name": "catalog_level_number",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Numeric representation of the hierarchy level (e.g., category depth) for the catalog entry.",
+          "semantic_type": "code",
+          "business_concept": "hierarchy_level",
+          "aliases": [
+            "level",
+            "depth",
+            "category_level",
+            "tier"
+          ]
+        },
+        "attribute_id": {
+          "name": "attribute_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific attribute being stored in this row.",
+          "semantic_type": "identifier",
+          "business_concept": "attribute_id",
+          "aliases": [
+            "attr_id",
+            "prop_id",
+            "feature_id",
+            "key_id"
+          ]
+        },
+        "attribute_value": {
+          "name": "attribute_value",
+          "dtype": "string",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The value of the attribute, appearing to be binary (0/1) or short codes based on samples.",
+          "semantic_type": "boolean",
+          "business_concept": "attribute_value",
+          "aliases": [
+            "attr_val",
+            "prop_value",
+            "flag",
+            "status_value"
+          ]
+        }
+      }
+    },
+    "catalog_contents": {
+      "table": {
+        "name": "catalog_contents",
+        "column_count": 14,
+        "summary": "A catalog table storing product entries with hierarchical relationships, pricing in multiple currencies, and physical dimensions.",
+        "entity": "Product",
+        "role": "entity_table",
+        "aliases": [
+          "catalog",
+          "products",
+          "items",
+          "inventory"
+        ]
+      },
+      "columns": {
+        "catalog_entry_id": {
+          "name": "catalog_entry_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific entry in the catalog.",
+          "semantic_type": "identifier",
+          "business_concept": "Product ID",
+          "aliases": [
+            "id",
+            "entry_id",
+            "catalog_id",
+            "sku"
+          ]
+        },
+        "catalog_level_number": {
+          "name": "catalog_level_number",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Numeric value representing the hierarchical level of the entry within the catalog structure.",
+          "semantic_type": "code",
+          "business_concept": "Hierarchy Level",
+          "aliases": [
+            "level",
+            "depth",
+            "category_level"
+          ]
+        },
+        "parent_entry_id": {
+          "name": "parent_entry_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the ID of the parent entry in the hierarchical structure.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Parent Product ID",
+          "aliases": [
+            "parent_id",
+            "supergroup_id",
+            "category_id"
+          ]
+        },
+        "previous_entry_id": {
+          "name": "previous_entry_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the ID of the preceding entry in a specific sequence or list.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Previous Item ID",
+          "aliases": [
+            "prev_id",
+            "prev_entry",
+            "prior_id"
+          ]
+        },
+        "next_entry_id": {
+          "name": "next_entry_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the ID of the succeeding entry in a specific sequence or list.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Next Item ID",
+          "aliases": [
+            "next_id",
+            "next_entry",
+            "succ_id"
+          ]
+        },
+        "catalog_entry_name": {
+          "name": "catalog_entry_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The display name or title of the catalog entry.",
+          "semantic_type": "person_name",
+          "business_concept": "Product Name",
+          "aliases": [
+            "name",
+            "title",
+            "product_name",
+            "item_name"
+          ]
+        },
+        "product_stock_number": {
+          "name": "product_stock_number",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Internal stock keeping code or identifier for the product.",
+          "semantic_type": "code",
+          "business_concept": "Stock Number",
+          "aliases": [
+            "stock_no",
+            "sku",
+            "part_number",
+            "item_code"
+          ]
+        },
+        "price_in_dollars": {
+          "name": "price_in_dollars",
+          "dtype": "double",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The price of the product in US Dollars.",
+          "semantic_type": "money",
+          "business_concept": "Price USD",
+          "aliases": [
+            "price_usd",
+            "cost_dollars",
+            "us_price"
+          ]
+        },
+        "price_in_euros": {
+          "name": "price_in_euros",
+          "dtype": "double",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The price of the product in Euros.",
+          "semantic_type": "money",
+          "business_concept": "Price EUR",
+          "aliases": [
+            "price_eur",
+            "cost_euros",
+            "eu_price"
+          ]
+        },
+        "price_in_pounds": {
+          "name": "price_in_pounds",
+          "dtype": "double",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The price of the product in British Pounds.",
+          "semantic_type": "money",
+          "business_concept": "Price GBP",
+          "aliases": [
+            "price_gbp",
+            "cost_pounds",
+            "uk_price"
+          ]
+        },
+        "capacity": {
+          "name": "capacity",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A numeric value representing the capacity or volume of the item.",
+          "semantic_type": "quantity",
+          "business_concept": "Capacity",
+          "aliases": [
+            "cap",
+            "volume",
+            "size"
+          ]
+        },
+        "length": {
+          "name": "length",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A numeric value representing the length dimension of the item.",
+          "semantic_type": "quantity",
+          "business_concept": "Length",
+          "aliases": [
+            "len",
+            "l",
+            "dimension_length"
+          ]
+        },
+        "height": {
+          "name": "height",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A numeric value representing the height dimension of the item.",
+          "semantic_type": "quantity",
+          "business_concept": "Height",
+          "aliases": [
+            "hgt",
+            "h",
+            "dimension_height"
+          ]
+        },
+        "width": {
+          "name": "width",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A numeric value representing the width dimension of the item.",
+          "semantic_type": "quantity",
+          "business_concept": "Width",
+          "aliases": [
+            "wid",
+            "w",
+            "dimension_width"
+          ]
+        }
+      }
+    }
+  }
+}

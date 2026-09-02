@@ -1,0 +1,761 @@
+{
+  "database": "bike_1",
+  "tables": {
+    "station": {
+      "table": {
+        "name": "station",
+        "column_count": 7,
+        "summary": "A dataset containing detailed information about various transit stations, including their names, geographic coordinates, capacity, location, and installation dates.",
+        "entity": "Transit Station",
+        "role": "entity_table",
+        "aliases": [
+          "stations",
+          "station_info",
+          "station_details",
+          "bus_rail_stations"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each station record.",
+          "semantic_type": "identifier",
+          "business_concept": "Station ID",
+          "aliases": [
+            "station_id",
+            "station_code",
+            "station_key"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full official name of the transit station.",
+          "semantic_type": "organization_name",
+          "business_concept": "Station Name",
+          "aliases": [
+            "station_name",
+            "full_name",
+            "title"
+          ]
+        },
+        "lat": {
+          "name": "lat",
+          "dtype": "numeric",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Latitude coordinate representing the north-south position of the station.",
+          "semantic_type": "unknown",
+          "business_concept": "Latitude",
+          "aliases": [
+            "latitude",
+            "lat_coord",
+            "north_south"
+          ]
+        },
+        "long": {
+          "name": "long",
+          "dtype": "numeric",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Longitude coordinate representing the east-west position of the station.",
+          "semantic_type": "unknown",
+          "business_concept": "Longitude",
+          "aliases": [
+            "longitude",
+            "long_coord",
+            "east_west"
+          ]
+        },
+        "dock_count": {
+          "name": "dock_count",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of parking docks or bays available at the station.",
+          "semantic_type": "quantity",
+          "business_concept": "Dock Count",
+          "aliases": [
+            "parking_docks",
+            "bay_count",
+            "dock_capacity"
+          ]
+        },
+        "city": {
+          "name": "city",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The city where the station is located.",
+          "semantic_type": "city",
+          "business_concept": "City",
+          "aliases": [
+            "location_city",
+            "municipality",
+            "urban_area"
+          ]
+        },
+        "installation_date": {
+          "name": "installation_date",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The date when the station was originally installed or opened.",
+          "semantic_type": "date",
+          "business_concept": "Installation Date",
+          "aliases": [
+            "open_date",
+            "commission_date",
+            "built_date",
+            "start_date"
+          ]
+        }
+      }
+    },
+    "status": {
+      "table": {
+        "name": "status",
+        "column_count": 4,
+        "summary": "Records the real-time availability status of bicycles and docks at various stations at specific points in time.",
+        "entity": "Station Status Record",
+        "role": "transaction_table",
+        "aliases": [
+          "station_status",
+          "bike_availability",
+          "dock_status",
+          "station_inventory"
+        ]
+      },
+      "columns": {
+        "station_id": {
+          "name": "station_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific bike station location.",
+          "semantic_type": "identifier",
+          "business_concept": "Station Location ID",
+          "aliases": [
+            "station_code",
+            "station_number",
+            "loc_id"
+          ]
+        },
+        "bikes_available": {
+          "name": "bikes_available",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The current count of bicycles available for rent at the station.",
+          "semantic_type": "quantity",
+          "business_concept": "Available Bikes Count",
+          "aliases": [
+            "bike_count",
+            "bikes_on_hand",
+            "available_bikes"
+          ]
+        },
+        "docks_available": {
+          "name": "docks_available",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The current count of empty docking stations available for parking bicycles at the station.",
+          "semantic_type": "quantity",
+          "business_concept": "Available Docks Count",
+          "aliases": [
+            "dock_count",
+            "empty_docks",
+            "available_docks"
+          ]
+        },
+        "time": {
+          "name": "time",
+          "dtype": "text",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp indicating when the status snapshot was recorded.",
+          "semantic_type": "timestamp",
+          "business_concept": "Status Update Time",
+          "aliases": [
+            "recorded_at",
+            "snapshot_time",
+            "last_updated"
+          ]
+        }
+      }
+    },
+    "weather": {
+      "table": {
+        "name": "weather",
+        "column_count": 24,
+        "summary": "A dataset containing daily weather observations including temperature, humidity, pressure, wind, and precipitation metrics.",
+        "entity": "Daily Weather Observation",
+        "role": "entity_table",
+        "aliases": [
+          "weather_data",
+          "daily_weather",
+          "climate_records",
+          "atmospheric_conditions"
+        ]
+      },
+      "columns": {
+        "date": {
+          "name": "date",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The date on which the weather observation was recorded.",
+          "semantic_type": "date",
+          "business_concept": "Observation Date",
+          "aliases": [
+            "obs_date",
+            "record_date",
+            "day"
+          ]
+        },
+        "max_temperature_f": {
+          "name": "max_temperature_f",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The highest air temperature recorded in degrees Fahrenheit for the day.",
+          "semantic_type": "quantity",
+          "business_concept": "Maximum Temperature",
+          "aliases": [
+            "max_temp",
+            "high",
+            "tmax"
+          ]
+        },
+        "mean_temperature_f": {
+          "name": "mean_temperature_f",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The average air temperature recorded in degrees Fahrenheit for the day.",
+          "semantic_type": "quantity",
+          "business_concept": "Average Temperature",
+          "aliases": [
+            "avg_temp",
+            "mean_temp",
+            "tavg"
+          ]
+        },
+        "min_temperature_f": {
+          "name": "min_temperature_f",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The lowest air temperature recorded in degrees Fahrenheit for the day.",
+          "semantic_type": "quantity",
+          "business_concept": "Minimum Temperature",
+          "aliases": [
+            "min_temp",
+            "low",
+            "tmin"
+          ]
+        },
+        "max_dew_point_f": {
+          "name": "max_dew_point_f",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The highest dew point temperature recorded in degrees Fahrenheit for the day.",
+          "semantic_type": "quantity",
+          "business_concept": "Maximum Dew Point",
+          "aliases": [
+            "max_dp",
+            "high_dew"
+          ]
+        },
+        "mean_dew_point_f": {
+          "name": "mean_dew_point_f",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The average dew point temperature recorded in degrees Fahrenheit for the day.",
+          "semantic_type": "quantity",
+          "business_concept": "Average Dew Point",
+          "aliases": [
+            "avg_dp",
+            "mean_dew"
+          ]
+        },
+        "min_dew_point_f": {
+          "name": "min_dew_point_f",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The lowest dew point temperature recorded in degrees Fahrenheit for the day.",
+          "semantic_type": "quantity",
+          "business_concept": "Minimum Dew Point",
+          "aliases": [
+            "min_dp",
+            "low_dew"
+          ]
+        },
+        "max_humidity": {
+          "name": "max_humidity",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The highest relative humidity percentage recorded for the day.",
+          "semantic_type": "quantity",
+          "business_concept": "Maximum Humidity",
+          "aliases": [
+            "max_hum",
+            "high_humidity"
+          ]
+        },
+        "mean_humidity": {
+          "name": "mean_humidity",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The average relative humidity percentage recorded for the day.",
+          "semantic_type": "quantity",
+          "business_concept": "Average Humidity",
+          "aliases": [
+            "avg_hum",
+            "mean_humidity"
+          ]
+        },
+        "min_humidity": {
+          "name": "min_humidity",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The lowest relative humidity percentage recorded for the day.",
+          "semantic_type": "quantity",
+          "business_concept": "Minimum Humidity",
+          "aliases": [
+            "min_hum",
+            "low_humidity"
+          ]
+        },
+        "max_sea_level_pressure_inches": {
+          "name": "max_sea_level_pressure_inches",
+          "dtype": "numeric",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The highest sea level atmospheric pressure recorded in inches of mercury for the day.",
+          "semantic_type": "quantity",
+          "business_concept": "Maximum Sea Level Pressure",
+          "aliases": [
+            "max_slp",
+            "high_pressure"
+          ]
+        },
+        "mean_sea_level_pressure_inches": {
+          "name": "mean_sea_level_pressure_inches",
+          "dtype": "numeric",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The average sea level atmospheric pressure recorded in inches of mercury for the day.",
+          "semantic_type": "quantity",
+          "business_concept": "Average Sea Level Pressure",
+          "aliases": [
+            "avg_slp",
+            "mean_pressure"
+          ]
+        },
+        "min_sea_level_pressure_inches": {
+          "name": "min_sea_level_pressure_inches",
+          "dtype": "numeric",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The lowest sea level atmospheric pressure recorded in inches of mercury for the day.",
+          "semantic_type": "quantity",
+          "business_concept": "Minimum Sea Level Pressure",
+          "aliases": [
+            "min_slp",
+            "low_pressure"
+          ]
+        },
+        "max_visibility_miles": {
+          "name": "max_visibility_miles",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The highest visibility distance recorded in miles for the day.",
+          "semantic_type": "quantity",
+          "business_concept": "Maximum Visibility",
+          "aliases": [
+            "max_vis",
+            "high_visibility"
+          ]
+        },
+        "mean_visibility_miles": {
+          "name": "mean_visibility_miles",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The average visibility distance recorded in miles for the day.",
+          "semantic_type": "quantity",
+          "business_concept": "Average Visibility",
+          "aliases": [
+            "avg_vis",
+            "mean_visibility"
+          ]
+        },
+        "min_visibility_miles": {
+          "name": "min_visibility_miles",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The lowest visibility distance recorded in miles for the day.",
+          "semantic_type": "quantity",
+          "business_concept": "Minimum Visibility",
+          "aliases": [
+            "min_vis",
+            "low_visibility"
+          ]
+        },
+        "max_wind_speed_mph": {
+          "name": "max_wind_speed_mph",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The highest wind speed recorded in miles per hour for the day.",
+          "semantic_type": "quantity",
+          "business_concept": "Maximum Wind Speed",
+          "aliases": [
+            "max_wind",
+            "high_wind"
+          ]
+        },
+        "mean_wind_speed_mph": {
+          "name": "mean_wind_speed_mph",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The average wind speed recorded in miles per hour for the day.",
+          "semantic_type": "quantity",
+          "business_concept": "Average Wind Speed",
+          "aliases": [
+            "avg_wind",
+            "mean_wind"
+          ]
+        },
+        "max_gust_speed_mph": {
+          "name": "max_gust_speed_mph",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The highest wind gust speed recorded in miles per hour for the day.",
+          "semantic_type": "quantity",
+          "business_concept": "Maximum Gust Speed",
+          "aliases": [
+            "max_gust",
+            "peak_gust"
+          ]
+        },
+        "precipitation_inches": {
+          "name": "precipitation_inches",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total amount of precipitation recorded in inches for the day.",
+          "semantic_type": "quantity",
+          "business_concept": "Daily Precipitation",
+          "aliases": [
+            "precip",
+            "rainfall",
+            "total_precip"
+          ]
+        },
+        "cloud_cover": {
+          "name": "cloud_cover",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The percentage of sky covered by clouds recorded for the day.",
+          "semantic_type": "quantity",
+          "business_concept": "Cloud Cover Percentage",
+          "aliases": [
+            "clouds",
+            "sky_cover"
+          ]
+        },
+        "events": {
+          "name": "events",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Textual notes or descriptions of significant weather events or conditions.",
+          "semantic_type": "description",
+          "business_concept": "Weather Notes",
+          "aliases": [
+            "notes",
+            "comments",
+            "remarks"
+          ]
+        },
+        "wind_dir_degrees": {
+          "name": "wind_dir_degrees",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The direction from which the wind is blowing, measured in degrees.",
+          "semantic_type": "code",
+          "business_concept": "Wind Direction",
+          "aliases": [
+            "wind_dir",
+            "wind_direction",
+            "dir"
+          ]
+        },
+        "zip_code": {
+          "name": "zip_code",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The US Postal Service zip code identifying the location of the observation.",
+          "semantic_type": "identifier",
+          "business_concept": "Location Identifier",
+          "aliases": [
+            "zip",
+            "postal_code",
+            "location_id"
+          ]
+        }
+      }
+    },
+    "trip": {
+      "table": {
+        "name": "trip",
+        "column_count": 11,
+        "summary": "Records individual bicycle rental trips including start/end locations, duration, and user subscription details.",
+        "entity": "trip",
+        "role": "transaction_table",
+        "aliases": [
+          "rental_trips",
+          "bike_trips",
+          "ride_logs",
+          "trip_data"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each trip record.",
+          "semantic_type": "identifier",
+          "business_concept": "trip_id",
+          "aliases": [
+            "trip_id",
+            "rental_id",
+            "record_id"
+          ]
+        },
+        "duration": {
+          "name": "duration",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The length of time the bicycle was rented, likely in seconds.",
+          "semantic_type": "quantity",
+          "business_concept": "trip_duration",
+          "aliases": [
+            "ride_duration",
+            "trip_length",
+            "duration_seconds"
+          ]
+        },
+        "start_date": {
+          "name": "start_date",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The timestamp when the bicycle rental began.",
+          "semantic_type": "timestamp",
+          "business_concept": "start_time",
+          "aliases": [
+            "start_datetime",
+            "rental_start",
+            "trip_start"
+          ]
+        },
+        "start_station_name": {
+          "name": "start_station_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the station where the rental started.",
+          "semantic_type": "organization_name",
+          "business_concept": "start_station",
+          "aliases": [
+            "origin_station",
+            "pickup_station",
+            "start_loc"
+          ]
+        },
+        "start_station_id": {
+          "name": "start_station_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The unique identifier for the starting station.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "start_station_id",
+          "aliases": [
+            "origin_id",
+            "pickup_station_id",
+            "start_station_code"
+          ]
+        },
+        "end_date": {
+          "name": "end_date",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The timestamp when the bicycle rental ended.",
+          "semantic_type": "timestamp",
+          "business_concept": "end_time",
+          "aliases": [
+            "end_datetime",
+            "rental_end",
+            "trip_end"
+          ]
+        },
+        "end_station_name": {
+          "name": "end_station_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the station where the rental ended.",
+          "semantic_type": "organization_name",
+          "business_concept": "end_station",
+          "aliases": [
+            "destination_station",
+            "dropoff_station",
+            "end_loc"
+          ]
+        },
+        "end_station_id": {
+          "name": "end_station_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The unique identifier for the ending station.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "end_station_id",
+          "aliases": [
+            "destination_id",
+            "dropoff_station_id",
+            "end_station_code"
+          ]
+        },
+        "bike_id": {
+          "name": "bike_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The unique identifier for the specific bicycle used in the trip.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "bike_identifier",
+          "aliases": [
+            "bike_number",
+            "vehicle_id",
+            "bike_code"
+          ]
+        },
+        "subscription_type": {
+          "name": "subscription_type",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The type of subscription or account status of the user who made the trip.",
+          "semantic_type": "category",
+          "business_concept": "user_subscription",
+          "aliases": [
+            "account_type",
+            "plan_type",
+            "user_status"
+          ]
+        },
+        "zip_code": {
+          "name": "zip_code",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The postal code associated with the trip, likely the user's home or pickup location.",
+          "semantic_type": "code",
+          "business_concept": "user_zip_code",
+          "aliases": [
+            "postal_code",
+            "zip",
+            "user_location_code"
+          ]
+        }
+      }
+    }
+  }
+}

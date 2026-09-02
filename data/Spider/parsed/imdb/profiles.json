@@ -1,0 +1,1141 @@
+{
+  "database": "imdb",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/imdb",
+    "schema_path": "data/Spider/parsed/imdb/schema.json",
+    "tables_dir": "data/Spider/parsed/imdb/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "actor": {
+      "table": {
+        "name": "actor",
+        "column_count": 6,
+        "summary": "A table containing demographic and biographical information about actors.",
+        "entity": "Actor",
+        "role": "entity_table",
+        "aliases": [
+          "actors",
+          "cast_members",
+          "performers"
+        ]
+      },
+      "columns": {
+        "aid": {
+          "name": "aid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for each actor record.",
+          "semantic_type": "identifier",
+          "business_concept": "Actor ID",
+          "aliases": [
+            "actor_id",
+            "id",
+            "aid"
+          ]
+        },
+        "gender": {
+          "name": "gender",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The gender classification of the actor.",
+          "semantic_type": "category",
+          "business_concept": "Gender",
+          "aliases": [
+            "sex",
+            "gender_code"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the actor.",
+          "semantic_type": "person_name",
+          "business_concept": "Actor Name",
+          "aliases": [
+            "full_name",
+            "actor_name",
+            "display_name"
+          ]
+        },
+        "nationality": {
+          "name": "nationality",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The country of citizenship or origin for the actor.",
+          "semantic_type": "country",
+          "business_concept": "Nationality",
+          "aliases": [
+            "citizenship",
+            "origin_country"
+          ]
+        },
+        "birth_city": {
+          "name": "birth_city",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The city where the actor was born.",
+          "semantic_type": "city",
+          "business_concept": "Birth City",
+          "aliases": [
+            "city_of_birth",
+            "born_in"
+          ]
+        },
+        "birth_year": {
+          "name": "birth_year",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The year in which the actor was born.",
+          "semantic_type": "date",
+          "business_concept": "Birth Year",
+          "aliases": [
+            "born_year",
+            "year_of_birth",
+            "dob_year"
+          ]
+        }
+      }
+    },
+    "cast": {
+      "table": {
+        "name": "cast",
+        "column_count": 4,
+        "summary": "A table defining the roles assigned to specific users within specific projects or applications.",
+        "entity": "cast_member",
+        "role": "relationship_table",
+        "aliases": [
+          "cast_members",
+          "user_roles",
+          "project_assignments",
+          "team_memberships"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for the cast record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "cast_id",
+            "record_id",
+            "pk"
+          ]
+        },
+        "msid": {
+          "name": "msid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Identifier for the member (user) participating in the cast.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Member ID",
+          "aliases": [
+            "member_id",
+            "user_id",
+            "ms_id"
+          ]
+        },
+        "aid": {
+          "name": "aid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Identifier for the application, project, or show the member is cast in.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Application ID",
+          "aliases": [
+            "app_id",
+            "project_id",
+            "show_id",
+            "aid"
+          ]
+        },
+        "role": {
+          "name": "role",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Numeric code representing the specific role or function of the member.",
+          "semantic_type": "code",
+          "business_concept": "Role Code",
+          "aliases": [
+            "role_code",
+            "function_id",
+            "position_id"
+          ]
+        }
+      }
+    },
+    "classification": {
+      "table": {
+        "name": "classification",
+        "column_count": 3,
+        "summary": "A table containing unique identifiers, likely serving as a lookup or relationship table to link different entity types.",
+        "entity": "classification",
+        "role": "lookup_table",
+        "aliases": [
+          "classifications",
+          "cls",
+          "id_map"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Primary unique identifier for each row in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "row_id",
+          "aliases": [
+            "pk",
+            "primary_key",
+            "rowid"
+          ]
+        },
+        "msid": {
+          "name": "msid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Identifier for a specific entity type, likely 'Member' or 'Master' entity, used to link this classification to a member record.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "member_id",
+          "aliases": [
+            "member_id",
+            "ms_id",
+            "master_id"
+          ]
+        },
+        "gid": {
+          "name": "gid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Identifier for a specific entity type, likely 'Group' or 'Global' entity, used to link this classification to a group record.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "group_id",
+          "aliases": [
+            "group_id",
+            "g_id",
+            "global_id"
+          ]
+        }
+      }
+    },
+    "company": {
+      "table": {
+        "name": "company",
+        "column_count": 3,
+        "summary": "A table containing basic information about companies, including their unique identifier, name, and country of origin.",
+        "entity": "Company",
+        "role": "entity_table",
+        "aliases": [
+          "companies",
+          "orgs",
+          "organizations",
+          "firms",
+          "businesses"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for each company record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Company ID",
+          "aliases": [
+            "company_id",
+            "cid",
+            "uid"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official name of the company.",
+          "semantic_type": "organization_name",
+          "business_concept": "Company Name",
+          "aliases": [
+            "company_name",
+            "org_name",
+            "title",
+            "full_name"
+          ]
+        },
+        "country_code": {
+          "name": "country_code",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The ISO country code indicating the country where the company is located or registered.",
+          "semantic_type": "country",
+          "business_concept": "Country of Origin",
+          "aliases": [
+            "cc",
+            "iso_code",
+            "nation",
+            "location_code"
+          ]
+        }
+      }
+    },
+    "copyright": {
+      "table": {
+        "name": "copyright",
+        "column_count": 3,
+        "summary": "A table storing copyright records with internal identifiers and potential foreign key references to other entities.",
+        "entity": "Copyright",
+        "role": "entity_table",
+        "aliases": [
+          "copyrights",
+          "copyright_records",
+          "ip_rights"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Primary key uniquely identifying a specific copyright record.",
+          "semantic_type": "identifier",
+          "business_concept": "Unique Copyright ID",
+          "aliases": [
+            "copyright_id",
+            "pk",
+            "uid"
+          ]
+        },
+        "msid": {
+          "name": "msid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Foreign key or reference ID linking to another entity, likely a Media or Source entity.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Media Source ID",
+          "aliases": [
+            "media_id",
+            "source_id",
+            "ms_id"
+          ]
+        },
+        "cid": {
+          "name": "cid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Foreign key or reference ID linking to another entity, likely a Content or Category entity.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Content ID",
+          "aliases": [
+            "content_id",
+            "cat_id",
+            "c_id"
+          ]
+        }
+      }
+    },
+    "directed_by": {
+      "table": {
+        "name": "directed_by",
+        "column_count": 3,
+        "summary": "A relationship table linking movies to their directors.",
+        "entity": "movie_director_relationship",
+        "role": "relationship_table",
+        "aliases": [
+          "movie_directors",
+          "directors",
+          "film_directors"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Primary key uniquely identifying a specific movie-director relationship record.",
+          "semantic_type": "identifier",
+          "business_concept": "relationship_id",
+          "aliases": [
+            "record_id",
+            "rel_id",
+            "pk"
+          ]
+        },
+        "msid": {
+          "name": "msid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Foreign key referencing the movie (or media) entity.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "movie_id",
+          "aliases": [
+            "movie_id",
+            "film_id",
+            "media_id",
+            "m_id"
+          ]
+        },
+        "did": {
+          "name": "did",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Foreign key referencing the director (person) entity.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "director_id",
+          "aliases": [
+            "director_id",
+            "person_id",
+            "d_id"
+          ]
+        }
+      }
+    },
+    "director": {
+      "table": {
+        "name": "director",
+        "column_count": 6,
+        "summary": "A table containing demographic and biographical information about film directors.",
+        "entity": "Director",
+        "role": "entity_table",
+        "aliases": [
+          "directors",
+          "film_directors",
+          "director_info"
+        ]
+      },
+      "columns": {
+        "did": {
+          "name": "did",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for each director record.",
+          "semantic_type": "identifier",
+          "business_concept": "Director ID",
+          "aliases": [
+            "director_id",
+            "id",
+            "primary_key"
+          ]
+        },
+        "gender": {
+          "name": "gender",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The gender of the director.",
+          "semantic_type": "category",
+          "business_concept": "Director Gender",
+          "aliases": [
+            "sex",
+            "gender_code"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the director.",
+          "semantic_type": "person_name",
+          "business_concept": "Director Name",
+          "aliases": [
+            "full_name",
+            "director_name",
+            "first_name",
+            "last_name"
+          ]
+        },
+        "nationality": {
+          "name": "nationality",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The country of citizenship or origin of the director.",
+          "semantic_type": "country",
+          "business_concept": "Director Nationality",
+          "aliases": [
+            "citizenship",
+            "origin",
+            "country_of_birth"
+          ]
+        },
+        "birth_city": {
+          "name": "birth_city",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The city where the director was born.",
+          "semantic_type": "city",
+          "business_concept": "Birth City",
+          "aliases": [
+            "city_of_birth",
+            "born_in"
+          ]
+        },
+        "birth_year": {
+          "name": "birth_year",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The year in which the director was born.",
+          "semantic_type": "date",
+          "business_concept": "Birth Year",
+          "aliases": [
+            "born_year",
+            "year_of_birth",
+            "dob_year"
+          ]
+        }
+      }
+    },
+    "genre": {
+      "table": {
+        "name": "genre",
+        "column_count": 2,
+        "summary": "A reference table defining music or media genres.",
+        "entity": "Genre",
+        "role": "lookup_table",
+        "aliases": [
+          "genres",
+          "genre_list",
+          "music_genres"
+        ]
+      },
+      "columns": {
+        "gid": {
+          "name": "gid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a specific genre record.",
+          "semantic_type": "identifier",
+          "business_concept": "Genre ID",
+          "aliases": [
+            "genre_id",
+            "gid",
+            "id"
+          ]
+        },
+        "genre": {
+          "name": "genre",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name or label of the genre.",
+          "semantic_type": "category",
+          "business_concept": "Genre Name",
+          "aliases": [
+            "name",
+            "genre_name",
+            "type",
+            "category_name"
+          ]
+        }
+      }
+    },
+    "keyword": {
+      "table": {
+        "name": "keyword",
+        "column_count": 2,
+        "summary": "A lookup table containing a list of unique keywords.",
+        "entity": "keyword",
+        "role": "lookup_table",
+        "aliases": [
+          "keywords",
+          "keyword_list",
+          "tag_dictionary"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for each keyword record.",
+          "semantic_type": "identifier",
+          "business_concept": "primary_key",
+          "aliases": [
+            "keyword_id",
+            "id"
+          ]
+        },
+        "keyword": {
+          "name": "keyword",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The text string representing the keyword or tag.",
+          "semantic_type": "category",
+          "business_concept": "tag",
+          "aliases": [
+            "name",
+            "term",
+            "label",
+            "tag_name"
+          ]
+        }
+      }
+    },
+    "made_by": {
+      "table": {
+        "name": "made_by",
+        "column_count": 3,
+        "summary": "A relationship table linking entities via IDs, likely representing a 'made by' association.",
+        "entity": "made_by",
+        "role": "relationship_table",
+        "aliases": [
+          "maker",
+          "created_by",
+          "author"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Primary key uniquely identifying a row in the made_by relationship table.",
+          "semantic_type": "identifier",
+          "business_concept": "unique_record_id",
+          "aliases": [
+            "row_id",
+            "record_id",
+            "pk"
+          ]
+        },
+        "msid": {
+          "name": "msid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Foreign key referencing the ID of the maker (person or entity) who created the item.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "maker_id",
+          "aliases": [
+            "maker_id",
+            "creator_id",
+            "author_id",
+            "person_id"
+          ]
+        },
+        "pid": {
+          "name": "pid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Foreign key referencing the ID of the product or item that was made.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "product_id",
+          "aliases": [
+            "product_id",
+            "item_id",
+            "object_id",
+            "target_id"
+          ]
+        }
+      }
+    },
+    "movie": {
+      "table": {
+        "name": "movie",
+        "column_count": 5,
+        "summary": "A catalog of movies containing their unique identifiers, titles, release years, alternative titles, and production budgets.",
+        "entity": "movie",
+        "role": "entity_table",
+        "aliases": [
+          "films",
+          "movies",
+          "film_catalog",
+          "movie_list"
+        ]
+      },
+      "columns": {
+        "mid": {
+          "name": "mid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a specific movie record.",
+          "semantic_type": "identifier",
+          "business_concept": "movie_id",
+          "aliases": [
+            "movie_id",
+            "id",
+            "film_id",
+            "movie_code"
+          ]
+        },
+        "title": {
+          "name": "title",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The primary official name of the movie.",
+          "semantic_type": "description",
+          "business_concept": "movie_title",
+          "aliases": [
+            "name",
+            "film_title",
+            "main_title"
+          ]
+        },
+        "release_year": {
+          "name": "release_year",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The year the movie was released to the public.",
+          "semantic_type": "date",
+          "business_concept": "release_date",
+          "aliases": [
+            "year",
+            "release_date",
+            "pub_date",
+            "date_released"
+          ]
+        },
+        "title_aka": {
+          "name": "title_aka",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Alternative names or titles under which the movie has been known.",
+          "semantic_type": "description",
+          "business_concept": "alternative_title",
+          "aliases": [
+            "aka",
+            "alternate_title",
+            "other_names",
+            "known_as"
+          ]
+        },
+        "budget": {
+          "name": "budget",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The estimated or actual financial cost of producing the movie.",
+          "semantic_type": "money",
+          "business_concept": "production_budget",
+          "aliases": [
+            "cost",
+            "production_cost",
+            "budget_amount",
+            "estimated_budget"
+          ]
+        }
+      }
+    },
+    "producer": {
+      "table": {
+        "name": "producer",
+        "column_count": 6,
+        "summary": "A table containing demographic and biographical information about producers, including their identity, origin, and birth details.",
+        "entity": "Producer",
+        "role": "entity_table",
+        "aliases": [
+          "producers",
+          "artist_producers",
+          "music_producers"
+        ]
+      },
+      "columns": {
+        "pid": {
+          "name": "pid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for each producer record.",
+          "semantic_type": "identifier",
+          "business_concept": "Producer ID",
+          "aliases": [
+            "producer_id",
+            "id",
+            "pk"
+          ]
+        },
+        "gender": {
+          "name": "gender",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The gender classification of the producer.",
+          "semantic_type": "category",
+          "business_concept": "Gender",
+          "aliases": [
+            "sex",
+            "gender_code"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name or stage name of the producer.",
+          "semantic_type": "person_name",
+          "business_concept": "Producer Name",
+          "aliases": [
+            "full_name",
+            "artist_name",
+            "display_name"
+          ]
+        },
+        "nationality": {
+          "name": "nationality",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The country of citizenship or origin for the producer.",
+          "semantic_type": "country",
+          "business_concept": "Nationality",
+          "aliases": [
+            "citizenship",
+            "country_of_origin",
+            "nationality_code"
+          ]
+        },
+        "birth_city": {
+          "name": "birth_city",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The city where the producer was born.",
+          "semantic_type": "city",
+          "business_concept": "Birth City",
+          "aliases": [
+            "city_of_birth",
+            "born_in"
+          ]
+        },
+        "birth_year": {
+          "name": "birth_year",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The year in which the producer was born.",
+          "semantic_type": "date",
+          "business_concept": "Birth Year",
+          "aliases": [
+            "born_year",
+            "year_of_birth",
+            "dob_year"
+          ]
+        }
+      }
+    },
+    "tags": {
+      "table": {
+        "name": "tags",
+        "column_count": 3,
+        "summary": "A relationship table linking multiple entities via a many-to-many association, likely representing tags or categories assigned to items.",
+        "entity": "TagAssociation",
+        "role": "relationship_table",
+        "aliases": [
+          "tag_mapping",
+          "item_tags",
+          "tag_links"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Primary key uniquely identifying each row in the relationship table.",
+          "semantic_type": "identifier",
+          "business_concept": "Unique Record ID",
+          "aliases": [
+            "tag_id",
+            "link_id",
+            "row_id"
+          ]
+        },
+        "msid": {
+          "name": "msid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Foreign key referencing the ID of the first entity (e.g., Main Item ID) associated with this tag.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Main Entity Identifier",
+          "aliases": [
+            "main_id",
+            "parent_id",
+            "item_id",
+            "source_id"
+          ]
+        },
+        "kid": {
+          "name": "kid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Foreign key referencing the ID of the second entity (e.g., Tag ID) associated with this link.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Tag Identifier",
+          "aliases": [
+            "tag_id",
+            "child_id",
+            "category_id",
+            "label_id"
+          ]
+        }
+      }
+    },
+    "tv_series": {
+      "table": {
+        "name": "tv_series",
+        "column_count": 7,
+        "summary": "A catalog of television series containing metadata such as titles, release years, episode counts, and production budgets.",
+        "entity": "television_series",
+        "role": "entity_table",
+        "aliases": [
+          "tv_shows",
+          "series_catalog",
+          "shows"
+        ]
+      },
+      "columns": {
+        "sid": {
+          "name": "sid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for each television series record.",
+          "semantic_type": "identifier",
+          "business_concept": "series_id",
+          "aliases": [
+            "id",
+            "series_id",
+            "show_id"
+          ]
+        },
+        "title": {
+          "name": "title",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The primary official name of the television series.",
+          "semantic_type": "description",
+          "business_concept": "series_title",
+          "aliases": [
+            "name",
+            "show_name",
+            "series_name"
+          ]
+        },
+        "release_year": {
+          "name": "release_year",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The year the television series was first released or premiered.",
+          "semantic_type": "date",
+          "business_concept": "release_year",
+          "aliases": [
+            "year",
+            "premiere_year",
+            "start_year"
+          ]
+        },
+        "num_of_seasons": {
+          "name": "num_of_seasons",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The total count of seasons produced for the series.",
+          "semantic_type": "quantity",
+          "business_concept": "season_count",
+          "aliases": [
+            "seasons",
+            "total_seasons",
+            "season_count"
+          ]
+        },
+        "num_of_episodes": {
+          "name": "num_of_episodes",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The total count of episodes produced across all seasons.",
+          "semantic_type": "quantity",
+          "business_concept": "episode_count",
+          "aliases": [
+            "episodes",
+            "total_episodes",
+            "ep_count"
+          ]
+        },
+        "title_aka": {
+          "name": "title_aka",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Alternative names or titles under which the series is known.",
+          "semantic_type": "description",
+          "business_concept": "alternative_title",
+          "aliases": [
+            "aka",
+            "alt_title",
+            "other_names",
+            "alternate_names"
+          ]
+        },
+        "budget": {
+          "name": "budget",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The estimated or actual financial cost to produce the series.",
+          "semantic_type": "money",
+          "business_concept": "production_budget",
+          "aliases": [
+            "cost",
+            "production_cost",
+            "budget_amount"
+          ]
+        }
+      }
+    },
+    "writer": {
+      "table": {
+        "name": "writer",
+        "column_count": 7,
+        "summary": "A table containing demographic and production statistics for writers.",
+        "entity": "writer",
+        "role": "entity_table",
+        "aliases": [
+          "writers",
+          "author",
+          "screenwriter",
+          "creator"
+        ]
+      },
+      "columns": {
+        "wid": {
+          "name": "wid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for each writer record.",
+          "semantic_type": "identifier",
+          "business_concept": "Writer ID",
+          "aliases": [
+            "writer_id",
+            "id",
+            "uid"
+          ]
+        },
+        "gender": {
+          "name": "gender",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The gender classification of the writer.",
+          "semantic_type": "category",
+          "business_concept": "Gender",
+          "aliases": [
+            "sex",
+            "gender_code"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The full name of the writer.",
+          "semantic_type": "person_name",
+          "business_concept": "Writer Name",
+          "aliases": [
+            "full_name",
+            "author_name",
+            "display_name"
+          ]
+        },
+        "nationality": {
+          "name": "nationality",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The nationality of the writer, stored as an integer code.",
+          "semantic_type": "code",
+          "business_concept": "Nationality",
+          "aliases": [
+            "country_code",
+            "citizenship",
+            "nation"
+          ]
+        },
+        "num_of_episodes": {
+          "name": "num_of_episodes",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The total count of episodes written by the writer.",
+          "semantic_type": "quantity",
+          "business_concept": "Episode Count",
+          "aliases": [
+            "episode_count",
+            "total_episodes",
+            "episodes_written"
+          ]
+        },
+        "birth_city": {
+          "name": "birth_city",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The city where the writer was born.",
+          "semantic_type": "city",
+          "business_concept": "Birth City",
+          "aliases": [
+            "city_of_birth",
+            "born_city",
+            "hometown"
+          ]
+        },
+        "birth_year": {
+          "name": "birth_year",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The year the writer was born.",
+          "semantic_type": "date",
+          "business_concept": "Birth Year",
+          "aliases": [
+            "born_year",
+            "year_of_birth",
+            "dob_year"
+          ]
+        }
+      }
+    },
+    "written_by": {
+      "table": {
+        "name": "written_by",
+        "column_count": 3,
+        "summary": "A relationship table linking written works to their authors and media sources.",
+        "entity": "Written Work Authorship",
+        "role": "relationship_table",
+        "aliases": [
+          "written_by",
+          "authorship",
+          "work_author_link"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Primary key or unique identifier for the specific authorship record.",
+          "semantic_type": "identifier",
+          "business_concept": "Record ID",
+          "aliases": [
+            "record_id",
+            "pk",
+            "row_id"
+          ]
+        },
+        "msid": {
+          "name": "msid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Identifier for the media source or platform associated with the written work.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Media Source ID",
+          "aliases": [
+            "media_id",
+            "source_id",
+            "ms_id"
+          ]
+        },
+        "wid": {
+          "name": "wid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Identifier for the written work (e.g., book, article, script).",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Work ID",
+          "aliases": [
+            "work_id",
+            "book_id",
+            "article_id",
+            "w_id"
+          ]
+        }
+      }
+    }
+  }
+}

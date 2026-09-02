@@ -1,0 +1,264 @@
+{
+  "database": "products_for_hire",
+  "tables": {
+    "products_booked": {
+      "table": {
+        "name": "products_booked",
+        "column_count": 6,
+        "summary": "A table recording booking details for specific products, including return status, late return status, and aggregated booking metrics.",
+        "entity": "product_booking",
+        "role": "transaction_table",
+        "aliases": [
+          "booked_products",
+          "product_bookings",
+          "booking_details"
+        ]
+      },
+      "columns": {
+        "booking_id": {
+          "name": "booking_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific booking record.",
+          "semantic_type": "identifier",
+          "business_concept": "booking_reference",
+          "aliases": [
+            "bk_id",
+            "booking_ref",
+            "id"
+          ]
+        },
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the booking to a specific product.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "product_reference",
+          "aliases": [
+            "prod_id",
+            "product_ref",
+            "item_id"
+          ]
+        },
+        "returned_yn": {
+          "name": "returned_yn",
+          "dtype": "string",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Indicates whether the product has been returned (1 for yes, 0 for no).",
+          "semantic_type": "boolean",
+          "business_concept": "return_status",
+          "aliases": [
+            "is_returned",
+            "return_flag",
+            "returned"
+          ]
+        },
+        "returned_late_yn": {
+          "name": "returned_late_yn",
+          "dtype": "string",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Indicates whether the product was returned after the due date (1 for yes, 0 for no).",
+          "semantic_type": "boolean",
+          "business_concept": "late_return_status",
+          "aliases": [
+            "is_late_return",
+            "late_return_flag",
+            "overdue_return"
+          ]
+        },
+        "booked_count": {
+          "name": "booked_count",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of units or instances booked for this product entry.",
+          "semantic_type": "quantity",
+          "business_concept": "booking_quantity",
+          "aliases": [
+            "qty_booked",
+            "count",
+            "units"
+          ]
+        },
+        "booked_amount": {
+          "name": "booked_amount",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total monetary value associated with the booking.",
+          "semantic_type": "money",
+          "business_concept": "booking_value",
+          "aliases": [
+            "total_amount",
+            "price",
+            "value",
+            "cost"
+          ]
+        }
+      }
+    },
+    "view_product_availability": {
+      "table": {
+        "name": "view_product_availability",
+        "column_count": 4,
+        "summary": "A view tracking the availability status of products at specific points in time, linking product entities to booking records.",
+        "entity": "Product Availability Record",
+        "role": "transaction_table",
+        "aliases": [
+          "product_availability_view",
+          "product_stock_status",
+          "booking_product_status"
+        ]
+      },
+      "columns": {
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific product.",
+          "semantic_type": "identifier",
+          "business_concept": "Product ID",
+          "aliases": [
+            "prod_id",
+            "product_code",
+            "item_id"
+          ]
+        },
+        "booking_id": {
+          "name": "booking_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific booking or transaction record.",
+          "semantic_type": "identifier",
+          "business_concept": "Booking ID",
+          "aliases": [
+            "book_id",
+            "reservation_id",
+            "order_id"
+          ]
+        },
+        "status_date": {
+          "name": "status_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp indicating when the availability status was recorded or updated.",
+          "semantic_type": "timestamp",
+          "business_concept": "Status Date",
+          "aliases": [
+            "record_date",
+            "update_time",
+            "snapshot_date"
+          ]
+        },
+        "available_yn": {
+          "name": "available_yn",
+          "dtype": "string",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A boolean flag indicating whether the product is currently available, stored as a numeric string.",
+          "semantic_type": "boolean",
+          "business_concept": "Availability Flag",
+          "aliases": [
+            "is_available",
+            "stock_status",
+            "avail_flag"
+          ]
+        }
+      }
+    },
+    "discount_coupons": {
+      "table": {
+        "name": "discount_coupons",
+        "column_count": 3,
+        "summary": "Stores information about issued discount coupons, including their unique identifier, issuance timestamp, and monetary value.",
+        "entity": "Discount Coupon",
+        "role": "entity_table",
+        "aliases": [
+          "coupons",
+          "discounts",
+          "promo_codes",
+          "coupon_master"
+        ]
+      },
+      "columns": {
+        "coupon_id": {
+          "name": "coupon_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each discount coupon record.",
+          "semantic_type": "identifier",
+          "business_concept": "Coupon ID",
+          "aliases": [
+            "id",
+            "coupon_code",
+            "code_id"
+          ]
+        },
+        "date_issued": {
+          "name": "date_issued",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The specific date and time when the coupon was generated or issued.",
+          "semantic_type": "timestamp",
+          "business_concept": "Issuance Date",
+          "aliases": [
+            "created_at",
+            "issue_date",
+            "creation_time",
+            "issued_on"
+          ]
+        },
+        "coupon_amount": {
+          "name": "coupon_amount",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary value or discount amount associated with the coupon.",
+          "semantic_type": "money",
+          "business_concept": "Coupon Value",
+          "aliases": [
+            "amount",
+            "discount_value",
+            "face_value",
+            "coupon_value"
+          ]
+        }
+      }
+    }
+  }
+}

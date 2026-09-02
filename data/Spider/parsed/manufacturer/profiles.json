@@ -1,0 +1,257 @@
+{
+  "database": "manufacturer",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/manufacturer",
+    "schema_path": "data/Spider/parsed/manufacturer/schema.json",
+    "tables_dir": "data/Spider/parsed/manufacturer/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "furniture": {
+      "table": {
+        "name": "furniture",
+        "column_count": 4,
+        "summary": "A catalog of furniture items containing their identifiers, names, component counts, and market rates.",
+        "entity": "Furniture Item",
+        "role": "entity_table",
+        "aliases": [
+          "furniture_catalog",
+          "furniture_inventory",
+          "furniture_list"
+        ]
+      },
+      "columns": {
+        "furniture_id": {
+          "name": "furniture_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each furniture item in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Product ID",
+          "aliases": [
+            "id",
+            "sku",
+            "item_id",
+            "furn_id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The common name or title of the furniture item.",
+          "semantic_type": "category",
+          "business_concept": "Product Name",
+          "aliases": [
+            "title",
+            "description",
+            "label",
+            "furniture_name"
+          ]
+        },
+        "num_of_component": {
+          "name": "num_of_component",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of parts or components that make up the furniture item.",
+          "semantic_type": "quantity",
+          "business_concept": "Component Count",
+          "aliases": [
+            "part_count",
+            "piece_count",
+            "assembly_size",
+            "num_parts"
+          ]
+        },
+        "market_rate": {
+          "name": "market_rate",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The current market price or value of the furniture item.",
+          "semantic_type": "money",
+          "business_concept": "Price",
+          "aliases": [
+            "price",
+            "cost",
+            "value",
+            "rate",
+            "market_price"
+          ]
+        }
+      }
+    },
+    "furniture_manufacte": {
+      "table": {
+        "name": "furniture_manufacte",
+        "column_count": 3,
+        "summary": "A table containing pricing information for furniture items produced by various manufacturers.",
+        "entity": "Furniture Item",
+        "role": "entity_table",
+        "aliases": [
+          "furniture_pricing",
+          "product_prices",
+          "furniture_catalog"
+        ]
+      },
+      "columns": {
+        "manufacturer_id": {
+          "name": "manufacturer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the manufacturer of the furniture item.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Manufacturer",
+          "aliases": [
+            "mfr_id",
+            "manuf_id",
+            "supplier_id"
+          ]
+        },
+        "furniture_id": {
+          "name": "furniture_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific furniture item.",
+          "semantic_type": "identifier",
+          "business_concept": "Furniture Product",
+          "aliases": [
+            "prod_id",
+            "item_id",
+            "sku"
+          ]
+        },
+        "price_in_dollar": {
+          "name": "price_in_dollar",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary cost of the furniture item in US dollars.",
+          "semantic_type": "money",
+          "business_concept": "Price",
+          "aliases": [
+            "price",
+            "cost",
+            "unit_price",
+            "amount"
+          ]
+        }
+      }
+    },
+    "manufacturer": {
+      "table": {
+        "name": "manufacturer",
+        "column_count": 5,
+        "summary": "A reference table containing master data for manufacturing companies, including their identifiers, names, establishment years, and operational scale metrics.",
+        "entity": "Manufacturer",
+        "role": "lookup_table",
+        "aliases": [
+          "manufacturers",
+          "companies",
+          "makers",
+          "brands"
+        ]
+      },
+      "columns": {
+        "manufacturer_id": {
+          "name": "manufacturer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each manufacturer record.",
+          "semantic_type": "identifier",
+          "business_concept": "Manufacturer ID",
+          "aliases": [
+            "id",
+            "manufacturer_code",
+            "mfr_id",
+            "key"
+          ]
+        },
+        "open_year": {
+          "name": "open_year",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The calendar year in which the manufacturer was established or began operations.",
+          "semantic_type": "date",
+          "business_concept": "Year of Establishment",
+          "aliases": [
+            "founded_year",
+            "established",
+            "start_year",
+            "incorporation_year"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official or common name of the manufacturing company.",
+          "semantic_type": "organization_name",
+          "business_concept": "Company Name",
+          "aliases": [
+            "company_name",
+            "mfr_name",
+            "brand_name",
+            "title"
+          ]
+        },
+        "num_of_factories": {
+          "name": "num_of_factories",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total count of physical manufacturing facilities owned or operated by the company.",
+          "semantic_type": "quantity",
+          "business_concept": "Factory Count",
+          "aliases": [
+            "factory_count",
+            "plant_count",
+            "num_factories",
+            "facility_count"
+          ]
+        },
+        "num_of_shops": {
+          "name": "num_of_shops",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total count of retail outlets or sales locations associated with the company.",
+          "semantic_type": "quantity",
+          "business_concept": "Shop Count",
+          "aliases": [
+            "shop_count",
+            "store_count",
+            "retail_locations",
+            "outlet_count"
+          ]
+        }
+      }
+    }
+  }
+}

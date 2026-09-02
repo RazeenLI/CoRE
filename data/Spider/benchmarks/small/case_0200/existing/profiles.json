@@ -1,0 +1,240 @@
+{
+  "database": "csu_1",
+  "tables": {
+    "campuses": {
+      "table": {
+        "name": "campuses",
+        "column_count": 5,
+        "summary": "A reference table containing metadata about various California State University campuses, including their names, geographic locations, counties, and founding years.",
+        "entity": "Campus",
+        "role": "lookup_table",
+        "aliases": [
+          "csu_campuses",
+          "universities",
+          "campus_locations",
+          "state_universities"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each campus record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "campus_id",
+            "id",
+            "uuid"
+          ]
+        },
+        "campus": {
+          "name": "campus",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full official name of the university or college.",
+          "semantic_type": "organization_name",
+          "business_concept": "Organization Name",
+          "aliases": [
+            "name",
+            "university_name",
+            "school_name",
+            "full_name"
+          ]
+        },
+        "location": {
+          "name": "location",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The city where the campus is physically situated.",
+          "semantic_type": "city",
+          "business_concept": "City",
+          "aliases": [
+            "city",
+            "municipality",
+            "site_city"
+          ]
+        },
+        "county": {
+          "name": "county",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The county in which the campus is located.",
+          "semantic_type": "unknown",
+          "business_concept": "County",
+          "aliases": [
+            "county_name",
+            "administrative_county",
+            "region"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The year the campus was founded or established.",
+          "semantic_type": "date",
+          "business_concept": "Founding Year",
+          "aliases": [
+            "founded",
+            "established",
+            "year_established",
+            "start_year"
+          ]
+        }
+      }
+    },
+    "faculty": {
+      "table": {
+        "name": "faculty",
+        "column_count": 3,
+        "summary": "A table containing aggregated statistics for faculty members, likely representing the number of students or some other metric per campus and year.",
+        "entity": "faculty_statistics",
+        "role": "transaction_table",
+        "aliases": [
+          "faculty_stats",
+          "faculty_counts",
+          "campus_faculty_metrics"
+        ]
+      },
+      "columns": {
+        "campus": {
+          "name": "campus",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "An integer code representing a specific university campus or location.",
+          "semantic_type": "code",
+          "business_concept": "Campus ID",
+          "aliases": [
+            "campus_id",
+            "location_code",
+            "site_id"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The academic year for which the data is recorded.",
+          "semantic_type": "date",
+          "business_concept": "Academic Year",
+          "aliases": [
+            "year_id",
+            "academic_year",
+            "report_year"
+          ]
+        },
+        "faculty": {
+          "name": "faculty",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "A numeric value representing a count or metric associated with the faculty for the given campus and year.",
+          "semantic_type": "quantity",
+          "business_concept": "Faculty Count / Metric",
+          "aliases": [
+            "count",
+            "total",
+            "value",
+            "metric"
+          ]
+        }
+      }
+    },
+    "enrollments": {
+      "table": {
+        "name": "enrollments",
+        "column_count": 4,
+        "summary": "Historical enrollment statistics aggregated by campus and academic year.",
+        "entity": "Campus Enrollment Record",
+        "role": "lookup_table",
+        "aliases": [
+          "enrollment_stats",
+          "campus_enrollments",
+          "ay_enrollment"
+        ]
+      },
+      "columns": {
+        "campus": {
+          "name": "campus",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier representing a specific campus location.",
+          "semantic_type": "code",
+          "business_concept": "Campus ID",
+          "aliases": [
+            "campus_id",
+            "campus_code",
+            "location_id"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The academic year for which the enrollment data is recorded.",
+          "semantic_type": "date",
+          "business_concept": "Academic Year",
+          "aliases": [
+            "ay",
+            "academic_year",
+            "school_year"
+          ]
+        },
+        "totalenrollment_ay": {
+          "name": "totalenrollment_ay",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total count of students enrolled during the specified academic year.",
+          "semantic_type": "quantity",
+          "business_concept": "Total Enrollment Count",
+          "aliases": [
+            "total_students",
+            "headcount",
+            "enrollment_count"
+          ]
+        },
+        "fte_ay": {
+          "name": "fte_ay",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total Full-Time Equivalent student count during the specified academic year.",
+          "semantic_type": "quantity",
+          "business_concept": "Full-Time Equivalent Enrollment",
+          "aliases": [
+            "fte",
+            "full_time_equivalents",
+            "weighted_enrollment"
+          ]
+        }
+      }
+    }
+  }
+}

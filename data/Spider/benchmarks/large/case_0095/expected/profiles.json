@@ -1,0 +1,1016 @@
+{
+  "database": "customer_deliveries",
+  "tables": {
+    "actual_orders": {
+      "table": {
+        "name": "actual_orders",
+        "column_count": 4,
+        "summary": "A transactional table recording the final status and timing of specific orders, likely within an e-commerce or logistics system.",
+        "entity": "Order",
+        "role": "transaction_table",
+        "aliases": [
+          "orders",
+          "order_details",
+          "order_log",
+          "completed_orders"
+        ]
+      },
+      "columns": {
+        "actual_order_id": {
+          "name": "actual_order_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific order record in this table.",
+          "semantic_type": "identifier",
+          "business_concept": "Order ID",
+          "aliases": [
+            "order_id",
+            "id",
+            "actual_id"
+          ]
+        },
+        "order_status_code": {
+          "name": "order_status_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short string code representing the current state of the order.",
+          "semantic_type": "status",
+          "business_concept": "Order Status",
+          "aliases": [
+            "status",
+            "order_status",
+            "state"
+          ]
+        },
+        "regular_order_id": {
+          "name": "regular_order_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A reference identifier linking this record to a primary or regular order in another system or table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Source Order ID",
+          "aliases": [
+            "source_order_id",
+            "parent_order_id",
+            "regular_id"
+          ]
+        },
+        "actual_order_date": {
+          "name": "actual_order_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the order was finalized or recorded in this system.",
+          "semantic_type": "timestamp",
+          "business_concept": "Order Date",
+          "aliases": [
+            "order_date",
+            "created_at",
+            "timestamp"
+          ]
+        }
+      }
+    },
+    "customer_addresses": {
+      "table": {
+        "name": "customer_addresses",
+        "column_count": 5,
+        "summary": "Stores historical records of addresses associated with customers, including the type of address and the validity period.",
+        "entity": "Customer Address History",
+        "role": "relationship_table",
+        "aliases": [
+          "customer_addresses",
+          "addr_history",
+          "cust_addr_log"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier linking the address record to a specific customer.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer Identifier",
+          "aliases": [
+            "cust_id",
+            "customer_key",
+            "client_id"
+          ]
+        },
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific address record within the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Address Record ID",
+          "aliases": [
+            "addr_id",
+            "address_key",
+            "record_id"
+          ]
+        },
+        "date_from": {
+          "name": "date_from",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The start date and time when the address became valid for the customer.",
+          "semantic_type": "timestamp",
+          "business_concept": "Address Validity Start Date",
+          "aliases": [
+            "valid_from",
+            "start_date",
+            "effective_date"
+          ]
+        },
+        "address_type": {
+          "name": "address_type",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Categorization of the address, such as a house, flat, or office.",
+          "semantic_type": "category",
+          "business_concept": "Address Classification",
+          "aliases": [
+            "addr_type",
+            "type",
+            "address_category"
+          ]
+        },
+        "date_to": {
+          "name": "date_to",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The end date and time when the address ceased to be valid (nullable, indicating current active records).",
+          "semantic_type": "timestamp",
+          "business_concept": "Address Validity End Date",
+          "aliases": [
+            "valid_to",
+            "end_date",
+            "expiry_date"
+          ]
+        }
+      }
+    },
+    "customers": {
+      "table": {
+        "name": "customers",
+        "column_count": 6,
+        "summary": "A table containing core demographic and contact information for registered customers, including their unique ID, name, payment method preference, and registration date.",
+        "entity": "Customer",
+        "role": "entity_table",
+        "aliases": [
+          "customer_master",
+          "client_info",
+          "user_profile",
+          "account_holder"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each customer record.",
+          "semantic_type": "identifier",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "id",
+            "customer_number",
+            "client_id"
+          ]
+        },
+        "payment_method": {
+          "name": "payment_method",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The preferred payment card type or method associated with the customer.",
+          "semantic_type": "code",
+          "business_concept": "Payment Method",
+          "aliases": [
+            "pay_type",
+            "card_type",
+            "payment_card",
+            "billing_method"
+          ]
+        },
+        "customer_name": {
+          "name": "customer_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full legal name of the customer.",
+          "semantic_type": "person_name",
+          "business_concept": "Customer Name",
+          "aliases": [
+            "name",
+            "full_name",
+            "cust_name",
+            "client_name"
+          ]
+        },
+        "customer_phone": {
+          "name": "customer_phone",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The primary telephone contact number for the customer.",
+          "semantic_type": "phone",
+          "business_concept": "Phone Number",
+          "aliases": [
+            "phone",
+            "telephone",
+            "mobile",
+            "contact_phone",
+            "tel"
+          ]
+        },
+        "customer_email": {
+          "name": "customer_email",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "The primary email address for the customer.",
+          "semantic_type": "email",
+          "business_concept": "Email Address",
+          "aliases": [
+            "email",
+            "e_mail",
+            "contact_email",
+            "user_email"
+          ]
+        },
+        "date_became_customer": {
+          "name": "date_became_customer",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp indicating when the customer was first registered or acquired.",
+          "semantic_type": "timestamp",
+          "business_concept": "Registration Date",
+          "aliases": [
+            "created_at",
+            "signup_date",
+            "join_date",
+            "reg_date",
+            "customer_since"
+          ]
+        }
+      }
+    },
+    "addresses": {
+      "table": {
+        "name": "addresses",
+        "column_count": 6,
+        "summary": "Stores detailed location information including street address, city, state, and country.",
+        "entity": "Address",
+        "role": "entity_table",
+        "aliases": [
+          "addr",
+          "locations",
+          "shipping_addresses",
+          "billing_addresses"
+        ]
+      },
+      "columns": {
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each address record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "addr_id",
+            "address_key"
+          ]
+        },
+        "address_details": {
+          "name": "address_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full street address including number, street name, and suite/apartment number.",
+          "semantic_type": "address",
+          "business_concept": "Street Address",
+          "aliases": [
+            "street",
+            "full_address",
+            "line1",
+            "addr_line"
+          ]
+        },
+        "city": {
+          "name": "city",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The name of the city where the address is located.",
+          "semantic_type": "city",
+          "business_concept": "City Name",
+          "aliases": [
+            "city_name",
+            "municipality",
+            "town"
+          ]
+        },
+        "zip_postcode": {
+          "name": "zip_postcode",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The postal or zip code associated with the address.",
+          "semantic_type": "code",
+          "business_concept": "Postal Code",
+          "aliases": [
+            "zip",
+            "postal_code",
+            "postcode",
+            "zip_code"
+          ]
+        },
+        "state_province_county": {
+          "name": "state_province_county",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The state, province, or county name where the address is located.",
+          "semantic_type": "code",
+          "business_concept": "State/Province",
+          "aliases": [
+            "state",
+            "province",
+            "region",
+            "state_code",
+            "county"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country where the address is located.",
+          "semantic_type": "country",
+          "business_concept": "Country Name",
+          "aliases": [
+            "nation",
+            "country_code",
+            "iso_country"
+          ]
+        }
+      }
+    },
+    "actual_order_products": {
+      "table": {
+        "name": "actual_order_products",
+        "column_count": 2,
+        "summary": "A transactional table linking specific orders to the products contained within them.",
+        "entity": "Order Product Line Item",
+        "role": "transaction_table",
+        "aliases": [
+          "order_items",
+          "order_products",
+          "actual_order_items",
+          "order_product_details"
+        ]
+      },
+      "columns": {
+        "actual_order_id": {
+          "name": "actual_order_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the parent order associated with this product line item.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Order ID",
+          "aliases": [
+            "order_id",
+            "parent_order_id",
+            "order_number",
+            "actual_order"
+          ]
+        },
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific product included in this order line item.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Product ID",
+          "aliases": [
+            "item_id",
+            "product_code",
+            "sku",
+            "product_number",
+            "item_code"
+          ]
+        }
+      }
+    },
+    "regular_order_products": {
+      "table": {
+        "name": "regular_order_products",
+        "column_count": 2,
+        "summary": "A table linking regular orders to their constituent products, recording the specific product items included in each order.",
+        "entity": "Order Product Line Item",
+        "role": "relationship_table",
+        "aliases": [
+          "order_products",
+          "regular_order_items",
+          "order_product_details",
+          "order_product_mapping"
+        ]
+      },
+      "columns": {
+        "regular_order_id": {
+          "name": "regular_order_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific regular order, used to link this row to the main order header table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Order ID",
+          "aliases": [
+            "order_id",
+            "regular_order",
+            "ord_id",
+            "order_number"
+          ]
+        },
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific product, used to link this row to the product catalog or inventory table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Product ID",
+          "aliases": [
+            "prod_id",
+            "product_code",
+            "item_id",
+            "sku"
+          ]
+        }
+      }
+    },
+    "order_deliveries": {
+      "table": {
+        "name": "order_deliveries",
+        "column_count": 6,
+        "summary": "Records tracking the status, timing, and logistics details of individual order deliveries, including assigned drivers and vehicles.",
+        "entity": "Delivery",
+        "role": "transaction_table",
+        "aliases": [
+          "deliveries",
+          "order_deliveries",
+          "delivery_log",
+          "shipment_status"
+        ]
+      },
+      "columns": {
+        "location_code": {
+          "name": "location_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The specific physical address or location where the delivery is taking place or has been completed.",
+          "semantic_type": "address",
+          "business_concept": "Delivery Location",
+          "aliases": [
+            "address",
+            "pickup_location",
+            "dropoff_address",
+            "site_code"
+          ]
+        },
+        "actual_order_id": {
+          "name": "actual_order_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier linking this delivery record to the specific customer order it fulfills.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Order Reference",
+          "aliases": [
+            "order_id",
+            "parent_order",
+            "reference_order"
+          ]
+        },
+        "delivery_status_code": {
+          "name": "delivery_status_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The current state of the delivery process, such as being ready, in transit, or completed.",
+          "semantic_type": "status",
+          "business_concept": "Delivery Status",
+          "aliases": [
+            "status",
+            "delivery_state",
+            "shipment_status"
+          ]
+        },
+        "driver_employee_id": {
+          "name": "driver_employee_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The unique identifier for the employee assigned to perform the delivery.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Driver ID",
+          "aliases": [
+            "driver_id",
+            "employee_id",
+            "courier_id"
+          ]
+        },
+        "truck_id": {
+          "name": "truck_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The unique identifier for the vehicle used to transport the goods for this delivery.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Vehicle ID",
+          "aliases": [
+            "vehicle_id",
+            "truck_number",
+            "fleet_id"
+          ]
+        },
+        "delivery_date": {
+          "name": "delivery_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp indicating when the delivery event occurred or was scheduled.",
+          "semantic_type": "timestamp",
+          "business_concept": "Delivery Time",
+          "aliases": [
+            "delivery_time",
+            "event_date",
+            "completed_at"
+          ]
+        }
+      }
+    },
+    "products": {
+      "table": {
+        "name": "products",
+        "column_count": 4,
+        "summary": "A catalog of available products with their identifiers, names, prices, and condition descriptions.",
+        "entity": "Product",
+        "role": "entity_table",
+        "aliases": [
+          "product_catalog",
+          "inventory",
+          "merchandise",
+          "items"
+        ]
+      },
+      "columns": {
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each product record.",
+          "semantic_type": "identifier",
+          "business_concept": "Product ID",
+          "aliases": [
+            "id",
+            "pid",
+            "sku",
+            "product_code"
+          ]
+        },
+        "product_name": {
+          "name": "product_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Short name or category label for the product.",
+          "semantic_type": "category",
+          "business_concept": "Product Name",
+          "aliases": [
+            "name",
+            "title",
+            "category_name",
+            "item_name"
+          ]
+        },
+        "product_price": {
+          "name": "product_price",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary value or cost associated with the product.",
+          "semantic_type": "money",
+          "business_concept": "Price",
+          "aliases": [
+            "price",
+            "cost",
+            "amount",
+            "unit_price"
+          ]
+        },
+        "product_description": {
+          "name": "product_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Textual description of the product's current state or attributes.",
+          "semantic_type": "description",
+          "business_concept": "Product Condition/Description",
+          "aliases": [
+            "desc",
+            "details",
+            "status",
+            "notes",
+            "condition"
+          ]
+        }
+      }
+    },
+    "delivery_route_locations": {
+      "table": {
+        "name": "delivery_route_locations",
+        "column_count": 4,
+        "summary": "Stores the mapping between delivery routes and specific physical locations, including address identifiers and location names.",
+        "entity": "Delivery Route Location",
+        "role": "lookup_table",
+        "aliases": [
+          "route_locations",
+          "delivery_points",
+          "route_stops"
+        ]
+      },
+      "columns": {
+        "location_code": {
+          "name": "location_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A unique alphanumeric identifier for a specific physical location or address.",
+          "semantic_type": "code",
+          "business_concept": "Location Identifier",
+          "aliases": [
+            "loc_code",
+            "address_code",
+            "site_code"
+          ]
+        },
+        "route_id": {
+          "name": "route_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique integer identifier representing a specific delivery route.",
+          "semantic_type": "identifier",
+          "business_concept": "Route Identifier",
+          "aliases": [
+            "route_number",
+            "delivery_route",
+            "route_key"
+          ]
+        },
+        "location_address_id": {
+          "name": "location_address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique integer identifier linking to a master address table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Address Reference",
+          "aliases": [
+            "addr_id",
+            "address_key",
+            "location_key"
+          ]
+        },
+        "location_name": {
+          "name": "location_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The human-readable name of the location, often representing a business or organization at that address.",
+          "semantic_type": "organization_name",
+          "business_concept": "Location Name",
+          "aliases": [
+            "loc_name",
+            "site_name",
+            "business_name",
+            "company_name"
+          ]
+        }
+      }
+    },
+    "employees": {
+      "table": {
+        "name": "employees",
+        "column_count": 4,
+        "summary": "A table containing core employee information including unique identifiers, names, and contact details.",
+        "entity": "Employee",
+        "role": "entity_table",
+        "aliases": [
+          "staff",
+          "personnel",
+          "workers",
+          "users"
+        ]
+      },
+      "columns": {
+        "employee_id": {
+          "name": "employee_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each employee record.",
+          "semantic_type": "identifier",
+          "business_concept": "Employee ID",
+          "aliases": [
+            "emp_id",
+            "id",
+            "employee_number"
+          ]
+        },
+        "employee_address_id": {
+          "name": "employee_address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key linking the employee to their specific address record.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Address Reference",
+          "aliases": [
+            "addr_id",
+            "address_ref",
+            "home_address_id"
+          ]
+        },
+        "employee_name": {
+          "name": "employee_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The full name of the employee.",
+          "semantic_type": "person_name",
+          "business_concept": "Employee Name",
+          "aliases": [
+            "name",
+            "full_name",
+            "first_name",
+            "last_name"
+          ]
+        },
+        "employee_phone": {
+          "name": "employee_phone",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Contact phone number for the employee.",
+          "semantic_type": "phone",
+          "business_concept": "Phone Number",
+          "aliases": [
+            "phone",
+            "mobile",
+            "contact_number",
+            "tel"
+          ]
+        }
+      }
+    },
+    "delivery_routes": {
+      "table": {
+        "name": "delivery_routes",
+        "column_count": 3,
+        "summary": "A table defining specific delivery routes, identifying the carrier organization and their associated physical address.",
+        "entity": "Delivery Route",
+        "role": "entity_table",
+        "aliases": [
+          "routes",
+          "delivery_paths",
+          "carrier_routes"
+        ]
+      },
+      "columns": {
+        "route_id": {
+          "name": "route_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each delivery route.",
+          "semantic_type": "identifier",
+          "business_concept": "Route ID",
+          "aliases": [
+            "id",
+            "route_number",
+            "route_key"
+          ]
+        },
+        "route_name": {
+          "name": "route_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The name of the company or organization responsible for the delivery route.",
+          "semantic_type": "organization_name",
+          "business_concept": "Carrier Name",
+          "aliases": [
+            "carrier",
+            "company",
+            "organization",
+            "vendor"
+          ]
+        },
+        "other_route_details": {
+          "name": "other_route_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The physical mailing address associated with the delivery route.",
+          "semantic_type": "address",
+          "business_concept": "Route Address",
+          "aliases": [
+            "address",
+            "location",
+            "site_address",
+            "facility_address"
+          ]
+        }
+      }
+    },
+    "regular_orders": {
+      "table": {
+        "name": "regular_orders",
+        "column_count": 2,
+        "summary": "Stores records of regular orders with unique identifiers and associated distributor references.",
+        "entity": "Regular Order",
+        "role": "transaction_table",
+        "aliases": [
+          "regular_orders",
+          "orders",
+          "ord"
+        ]
+      },
+      "columns": {
+        "regular_order_id": {
+          "name": "regular_order_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific regular order record.",
+          "semantic_type": "identifier",
+          "business_concept": "Order ID",
+          "aliases": [
+            "order_id",
+            "id",
+            "rid"
+          ]
+        },
+        "distributer_id": {
+          "name": "distributer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the order to a specific distributor entity.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Distributor ID",
+          "aliases": [
+            "distributor_id",
+            "dist_id",
+            "supplier_id"
+          ]
+        }
+      }
+    },
+    "trucks": {
+      "table": {
+        "name": "trucks",
+        "column_count": 3,
+        "summary": "A table containing core identification and naming information for a fleet of trucks.",
+        "entity": "truck",
+        "role": "entity_table",
+        "aliases": [
+          "trucks",
+          "truck_master",
+          "fleet_trucks"
+        ]
+      },
+      "columns": {
+        "truck_id": {
+          "name": "truck_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The unique primary identifier for each truck record in the system.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "truck_no",
+            "truck_number",
+            "uid"
+          ]
+        },
+        "truck_licence_number": {
+          "name": "truck_licence_number",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The official registration or license number assigned to the truck by the relevant authority.",
+          "semantic_type": "code",
+          "business_concept": "License Plate / Registration Number",
+          "aliases": [
+            "license_plate",
+            "plate_number",
+            "reg_number",
+            "vin",
+            "registration"
+          ]
+        },
+        "truck_details": {
+          "name": "truck_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The common name or nickname given to the specific truck.",
+          "semantic_type": "person_name",
+          "business_concept": "Vehicle Name / Nickname",
+          "aliases": [
+            "name",
+            "nickname",
+            "truck_name",
+            "alias"
+          ]
+        }
+      }
+    }
+  }
+}

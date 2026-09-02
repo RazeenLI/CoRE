@@ -1,0 +1,543 @@
+{
+  "database": "driving_school",
+  "tables": {
+    "lessons": {
+      "table": {
+        "name": "lessons",
+        "column_count": 8,
+        "summary": "Records individual driving lessons including customer, staff, vehicle, timing, and pricing details.",
+        "entity": "Driving Lesson",
+        "role": "transaction_table",
+        "aliases": [
+          "lesson_records",
+          "driving_lessons",
+          "training_sessions"
+        ]
+      },
+      "columns": {
+        "lesson_id": {
+          "name": "lesson_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific driving lesson record.",
+          "semantic_type": "identifier",
+          "business_concept": "Lesson ID",
+          "aliases": [
+            "id",
+            "lesson_number",
+            "unique_id"
+          ]
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the lesson to a specific customer.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "client_id",
+            "user_id"
+          ]
+        },
+        "lesson_status_code": {
+          "name": "lesson_status_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Current status of the lesson (e.g., Completed, Cancelled).",
+          "semantic_type": "status",
+          "business_concept": "Lesson Status",
+          "aliases": [
+            "status",
+            "state",
+            "outcome"
+          ]
+        },
+        "staff_id": {
+          "name": "staff_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier of the instructor or staff member assigned to the lesson.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Instructor ID",
+          "aliases": [
+            "instructor_id",
+            "staff_number",
+            "driver_id"
+          ]
+        },
+        "vehicle_id": {
+          "name": "vehicle_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier of the vehicle used for the lesson.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Vehicle ID",
+          "aliases": [
+            "car_id",
+            "vehicle_number",
+            "unit_id"
+          ]
+        },
+        "lesson_date": {
+          "name": "lesson_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date and time when the lesson took place.",
+          "semantic_type": "timestamp",
+          "business_concept": "Lesson Date",
+          "aliases": [
+            "date",
+            "start_time",
+            "event_date"
+          ]
+        },
+        "lesson_time": {
+          "name": "lesson_time",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Duration of the lesson in hours.",
+          "semantic_type": "quantity",
+          "business_concept": "Lesson Duration",
+          "aliases": [
+            "duration",
+            "hours",
+            "length"
+          ]
+        },
+        "price": {
+          "name": "price",
+          "dtype": "double",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary cost charged for the lesson.",
+          "semantic_type": "money",
+          "business_concept": "Lesson Price",
+          "aliases": [
+            "cost",
+            "amount",
+            "fee",
+            "rate"
+          ]
+        }
+      }
+    },
+    "staff": {
+      "table": {
+        "name": "staff",
+        "column_count": 9,
+        "summary": "A table containing demographic and employment history information for staff members, including personal details, contact identifiers, and tenure dates.",
+        "entity": "staff_member",
+        "role": "entity_table",
+        "aliases": [
+          "employees",
+          "personnel",
+          "staff_details",
+          "user_profile"
+        ]
+      },
+      "columns": {
+        "staff_id": {
+          "name": "staff_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each staff member record.",
+          "semantic_type": "identifier",
+          "business_concept": "Staff ID",
+          "aliases": [
+            "id",
+            "staff_number",
+            "employee_id",
+            "emp_id"
+          ]
+        },
+        "staff_address_id": {
+          "name": "staff_address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key linking the staff member to their associated address record.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Address Reference",
+          "aliases": [
+            "address_id",
+            "addr_id",
+            "home_address_id"
+          ]
+        },
+        "nickname": {
+          "name": "nickname",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Informal name or handle used for the staff member.",
+          "semantic_type": "person_name",
+          "business_concept": "Nickname",
+          "aliases": [
+            "nick",
+            "handle",
+            "alias",
+            "screen_name"
+          ]
+        },
+        "first_name": {
+          "name": "first_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The given name of the staff member.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "fname",
+            "fn",
+            "given_name",
+            "first"
+          ]
+        },
+        "middle_name": {
+          "name": "middle_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The middle name of the staff member.",
+          "semantic_type": "person_name",
+          "business_concept": "Middle Name",
+          "aliases": [
+            "mname",
+            "mn",
+            "middle_initial"
+          ]
+        },
+        "last_name": {
+          "name": "last_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The family name or surname of the staff member.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "lname",
+            "ln",
+            "surname",
+            "family_name"
+          ]
+        },
+        "date_of_birth": {
+          "name": "date_of_birth",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date when the staff member was born.",
+          "semantic_type": "date",
+          "business_concept": "Date of Birth",
+          "aliases": [
+            "dob",
+            "birth_date",
+            "born",
+            "bdate"
+          ]
+        },
+        "date_joined_staff": {
+          "name": "date_joined_staff",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date when the staff member started their employment.",
+          "semantic_type": "date",
+          "business_concept": "Hire Date",
+          "aliases": [
+            "hire_date",
+            "start_date",
+            "join_date",
+            "employment_start"
+          ]
+        },
+        "date_left_staff": {
+          "name": "date_left_staff",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date when the staff member ended their employment (if applicable).",
+          "semantic_type": "date",
+          "business_concept": "Termination Date",
+          "aliases": [
+            "leave_date",
+            "end_date",
+            "resignation_date",
+            "employment_end"
+          ]
+        }
+      }
+    },
+    "vehicles": {
+      "table": {
+        "name": "vehicles",
+        "column_count": 2,
+        "summary": "Stores core information about vehicles, including a unique identifier and their type classification.",
+        "entity": "Vehicle",
+        "role": "entity_table",
+        "aliases": [
+          "vehicles",
+          "vehicle_master",
+          "fleet"
+        ]
+      },
+      "columns": {
+        "vehicle_id": {
+          "name": "vehicle_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each vehicle record.",
+          "semantic_type": "identifier",
+          "business_concept": "Vehicle ID",
+          "aliases": [
+            "id",
+            "vehicle_no",
+            "veh_id"
+          ]
+        },
+        "vehicle_details": {
+          "name": "vehicle_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A text field describing the specific type or category of the vehicle.",
+          "semantic_type": "category",
+          "business_concept": "Vehicle Type",
+          "aliases": [
+            "type",
+            "vehicle_type",
+            "class",
+            "category"
+          ]
+        }
+      }
+    },
+    "customer_payments": {
+      "table": {
+        "name": "customer_payments",
+        "column_count": 4,
+        "summary": "Records of financial transactions made by customers, including payment details, amounts, and timestamps.",
+        "entity": "customer_payment",
+        "role": "transaction_table",
+        "aliases": [
+          "payments",
+          "customer_transactions",
+          "payment_history",
+          "billing_records"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier linking the payment record to a specific customer.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer Identifier",
+          "aliases": [
+            "cust_id",
+            "client_id",
+            "account_id",
+            "customer_number"
+          ]
+        },
+        "datetime_payment": {
+          "name": "datetime_payment",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The specific date and time when the payment transaction was processed.",
+          "semantic_type": "timestamp",
+          "business_concept": "Payment Date/Time",
+          "aliases": [
+            "payment_date",
+            "trans_date",
+            "created_at",
+            "payment_timestamp"
+          ]
+        },
+        "payment_method_code": {
+          "name": "payment_method_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A descriptive string indicating the method used to make the payment (e.g., Credit Card, Direct Debit).",
+          "semantic_type": "category",
+          "business_concept": "Payment Method",
+          "aliases": [
+            "method",
+            "payment_type",
+            "channel",
+            "pay_mode"
+          ]
+        },
+        "amount_payment": {
+          "name": "amount_payment",
+          "dtype": "double",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary value of the payment transaction.",
+          "semantic_type": "money",
+          "business_concept": "Payment Amount",
+          "aliases": [
+            "amount",
+            "payment_amount",
+            "value",
+            "sum_paid"
+          ]
+        }
+      }
+    },
+    "addresses": {
+      "table": {
+        "name": "addresses",
+        "column_count": 6,
+        "summary": "Stores detailed shipping or billing address information including street, city, state, and country.",
+        "entity": "Address",
+        "role": "entity_table",
+        "aliases": [
+          "addr",
+          "ship_address",
+          "billing_address",
+          "locations"
+        ]
+      },
+      "columns": {
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each address record.",
+          "semantic_type": "identifier",
+          "business_concept": "Address ID",
+          "aliases": [
+            "id",
+            "addr_id",
+            "address_key"
+          ]
+        },
+        "line_1_number_building": {
+          "name": "line_1_number_building",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The primary street address line containing the building number and street name.",
+          "semantic_type": "address",
+          "business_concept": "Street Address",
+          "aliases": [
+            "street",
+            "addr_line1",
+            "line1",
+            "building_number"
+          ]
+        },
+        "city": {
+          "name": "city",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The name of the city where the address is located.",
+          "semantic_type": "city",
+          "business_concept": "City",
+          "aliases": [
+            "city_name",
+            "municipality",
+            "locality"
+          ]
+        },
+        "zip_postcode": {
+          "name": "zip_postcode",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The postal code or ZIP code associated with the address.",
+          "semantic_type": "code",
+          "business_concept": "Postal Code",
+          "aliases": [
+            "zip",
+            "postal_code",
+            "postcode",
+            "zip_code"
+          ]
+        },
+        "state_province_county": {
+          "name": "state_province_county",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The state, province, or county name where the address is located.",
+          "semantic_type": "category",
+          "business_concept": "State/Province",
+          "aliases": [
+            "state",
+            "province",
+            "region",
+            "county",
+            "state_province"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country where the address is located.",
+          "semantic_type": "country",
+          "business_concept": "Country",
+          "aliases": [
+            "nation",
+            "country_code",
+            "country_name"
+          ]
+        }
+      }
+    }
+  }
+}

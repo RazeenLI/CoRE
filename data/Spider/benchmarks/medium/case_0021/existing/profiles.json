@@ -1,0 +1,379 @@
+{
+  "database": "tracking_share_transactions",
+  "tables": {
+    "transactions": {
+      "table": {
+        "name": "transactions",
+        "column_count": 3,
+        "summary": "A record of financial transactions involving investors, capturing details such as transaction type, date, monetary amount, and share counts.",
+        "entity": "Transaction",
+        "role": "transaction_table",
+        "aliases": [
+          "txn",
+          "trx",
+          "trade",
+          "deal",
+          "financial_records"
+        ]
+      },
+      "columns": {
+        "transaction_id": {
+          "name": "transaction_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each transaction record.",
+          "semantic_type": "identifier",
+          "business_concept": "Transaction ID",
+          "aliases": [
+            "txn_id",
+            "trx_id",
+            "id",
+            "trans_id"
+          ]
+        },
+        "investor_id": {
+          "name": "investor_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A reference identifier linking the transaction to a specific investor.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Investor ID",
+          "aliases": [
+            "inv_id",
+            "investor_ref",
+            "client_id",
+            "user_id"
+          ]
+        },
+        "transaction_type_code": {
+          "name": "transaction_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short code indicating the nature of the transaction (e.g., sale or purchase).",
+          "semantic_type": "code",
+          "business_concept": "Transaction Type",
+          "aliases": [
+            "txn_type",
+            "type_code",
+            "trade_type",
+            "action"
+          ]
+        }
+      }
+    },
+    "investors": {
+      "table": {
+        "name": "investors",
+        "column_count": 2,
+        "summary": "A lookup table containing unique identifiers and short codes for investors.",
+        "entity": "Investor",
+        "role": "lookup_table",
+        "aliases": [
+          "investors",
+          "investor_master",
+          "investor_codes"
+        ]
+      },
+      "columns": {
+        "investor_id": {
+          "name": "investor_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique numeric identifier for each investor record.",
+          "semantic_type": "identifier",
+          "business_concept": "Investor ID",
+          "aliases": [
+            "id",
+            "investor_code",
+            "investor_key"
+          ]
+        },
+        "investor_details": {
+          "name": "investor_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Short alphanumeric code representing the investor, likely a classification or reference key.",
+          "semantic_type": "code",
+          "business_concept": "Investor Classification Code",
+          "aliases": [
+            "investor_code",
+            "investor_type",
+            "investor_ref"
+          ]
+        }
+      }
+    },
+    "transactions_lots": {
+      "table": {
+        "name": "transactions_lots",
+        "column_count": 2,
+        "summary": "A table recording the association between specific transactions and inventory lots.",
+        "entity": "TransactionLot",
+        "role": "relationship_table",
+        "aliases": [
+          "transaction_lots",
+          "lots_per_transaction",
+          "txn_lot_mapping"
+        ]
+      },
+      "columns": {
+        "transaction_id": {
+          "name": "transaction_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific transaction record.",
+          "semantic_type": "identifier",
+          "business_concept": "Transaction ID",
+          "aliases": [
+            "txn_id",
+            "trans_id",
+            "id"
+          ]
+        },
+        "lot_id": {
+          "name": "lot_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific inventory lot associated with the transaction.",
+          "semantic_type": "identifier",
+          "business_concept": "Lot ID",
+          "aliases": [
+            "lot",
+            "inventory_lot",
+            "batch_id"
+          ]
+        }
+      }
+    },
+    "sales": {
+      "table": {
+        "name": "sales",
+        "column_count": 2,
+        "summary": "A table recording individual sales transactions with unique identifiers and status flags.",
+        "entity": "Sales Transaction",
+        "role": "transaction_table",
+        "aliases": [
+          "sales",
+          "transactions",
+          "orders"
+        ]
+      },
+      "columns": {
+        "sales_transaction_id": {
+          "name": "sales_transaction_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each sales transaction record.",
+          "semantic_type": "identifier",
+          "business_concept": "Transaction ID",
+          "aliases": [
+            "id",
+            "txn_id",
+            "order_id",
+            "sale_id"
+          ]
+        },
+        "sales_details": {
+          "name": "sales_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short code representing the status or type of the sales transaction.",
+          "semantic_type": "code",
+          "business_concept": "Transaction Status",
+          "aliases": [
+            "status",
+            "state",
+            "flag",
+            "outcome"
+          ]
+        }
+      }
+    },
+    "lots": {
+      "table": {
+        "name": "lots",
+        "column_count": 3,
+        "summary": "Stores information about specific lots, linking them to investors and their classification codes.",
+        "entity": "Lot",
+        "role": "entity_table",
+        "aliases": [
+          "lot_master",
+          "lot_registry",
+          "parcel_info"
+        ]
+      },
+      "columns": {
+        "lot_id": {
+          "name": "lot_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific lot record.",
+          "semantic_type": "identifier",
+          "business_concept": "Lot ID",
+          "aliases": [
+            "lot_number",
+            "lot_key",
+            "id"
+          ]
+        },
+        "investor_id": {
+          "name": "investor_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the lot to a specific investor.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Investor ID",
+          "aliases": [
+            "investor_key",
+            "owner_id",
+            "investor_ref"
+          ]
+        },
+        "lot_details": {
+          "name": "lot_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short alphanumeric code representing the specific classification or type of the lot.",
+          "semantic_type": "code",
+          "business_concept": "Lot Classification Code",
+          "aliases": [
+            "lot_code",
+            "lot_type",
+            "category_code",
+            "zone_code"
+          ]
+        }
+      }
+    },
+    "ref_transaction_types": {
+      "table": {
+        "name": "ref_transaction_types",
+        "column_count": 2,
+        "summary": "A reference table defining standard codes and descriptions for different types of financial transactions.",
+        "entity": "Transaction Type",
+        "role": "lookup_table",
+        "aliases": [
+          "ref_transaction_types",
+          "txn_type_ref",
+          "transaction_master",
+          "type_codes"
+        ]
+      },
+      "columns": {
+        "transaction_type_code": {
+          "name": "transaction_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique alphanumeric identifier used to represent a specific transaction type.",
+          "semantic_type": "code",
+          "business_concept": "Transaction Type Code",
+          "aliases": [
+            "txn_type_code",
+            "type_code",
+            "transaction_code",
+            "tt_code"
+          ]
+        },
+        "transaction_type_description": {
+          "name": "transaction_type_description",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A human-readable text string explaining the meaning of the transaction type code.",
+          "semantic_type": "description",
+          "business_concept": "Transaction Type Description",
+          "aliases": [
+            "txn_type_desc",
+            "type_description",
+            "transaction_desc",
+            "tt_description"
+          ]
+        }
+      }
+    },
+    "purchases": {
+      "table": {
+        "name": "purchases",
+        "column_count": 2,
+        "summary": "A table recording individual purchase transactions with unique identifiers and status codes.",
+        "entity": "Purchase Transaction",
+        "role": "transaction_table",
+        "aliases": [
+          "purchases",
+          "purchase_transactions",
+          "orders"
+        ]
+      },
+      "columns": {
+        "purchase_transaction_id": {
+          "name": "purchase_transaction_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each purchase transaction record.",
+          "semantic_type": "identifier",
+          "business_concept": "Transaction ID",
+          "aliases": [
+            "id",
+            "transaction_id",
+            "purchase_id",
+            "txn_id"
+          ]
+        },
+        "purchase_details": {
+          "name": "purchase_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short code representing the status or type of the purchase transaction.",
+          "semantic_type": "code",
+          "business_concept": "Transaction Status",
+          "aliases": [
+            "status",
+            "type",
+            "detail_code",
+            "txn_status"
+          ]
+        }
+      }
+    }
+  }
+}

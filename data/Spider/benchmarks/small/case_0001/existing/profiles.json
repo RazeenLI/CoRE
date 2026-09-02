@@ -1,0 +1,454 @@
+{
+  "database": "customers_card_transactions",
+  "tables": {
+    "accounts": {
+      "table": {
+        "name": "accounts",
+        "column_count": 2,
+        "summary": "A table containing account records with unique identifiers, associated customer IDs, and account classification details.",
+        "entity": "Account",
+        "role": "entity_table",
+        "aliases": [
+          "acct",
+          "accounts",
+          "acc"
+        ]
+      },
+      "columns": {
+        "account_id": {
+          "name": "account_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The unique primary identifier for each account record.",
+          "semantic_type": "identifier",
+          "business_concept": "Account ID",
+          "aliases": [
+            "acct_id",
+            "id",
+            "account_number"
+          ]
+        },
+        "account_name": {
+          "name": "account_name",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A short code or label representing the account, which appears to be numeric in this dataset despite the string type.",
+          "semantic_type": "code",
+          "business_concept": "Account Name / Code",
+          "aliases": [
+            "acct_name",
+            "account_code",
+            "short_name"
+          ]
+        }
+      }
+    },
+    "customers_cards": {
+      "table": {
+        "name": "customers_cards",
+        "column_count": 7,
+        "summary": "Stores detailed information about credit and debit cards issued to customers, including card numbers, validity periods, and card types.",
+        "entity": "credit_card",
+        "role": "entity_table",
+        "aliases": [
+          "cards",
+          "customer_cards",
+          "payment_cards"
+        ]
+      },
+      "columns": {
+        "card_id": {
+          "name": "card_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific card record within the system.",
+          "semantic_type": "identifier",
+          "business_concept": "Card ID",
+          "aliases": [
+            "id",
+            "card_number_id",
+            "pk_card"
+          ]
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key linking the card to the specific customer who owns it.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "client_id",
+            "owner_id"
+          ]
+        },
+        "card_type_code": {
+          "name": "card_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Categorical code indicating the type of the card (e.g., Credit, Debit).",
+          "semantic_type": "code",
+          "business_concept": "Card Type",
+          "aliases": [
+            "card_type",
+            "type_code",
+            "card_category"
+          ]
+        },
+        "card_number": {
+          "name": "card_number",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like"
+          ],
+          "meaning": "The actual numeric sequence printed on the card used for transactions.",
+          "semantic_type": "code",
+          "business_concept": "Card Number",
+          "aliases": [
+            "pan",
+            "account_number",
+            "cc_number",
+            "card_digits"
+          ]
+        },
+        "date_valid_from": {
+          "name": "date_valid_from",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the card became active or was issued.",
+          "semantic_type": "timestamp",
+          "business_concept": "Issue Date",
+          "aliases": [
+            "validity_start",
+            "issue_date",
+            "activation_date"
+          ]
+        },
+        "date_valid_to": {
+          "name": "date_valid_to",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the card expires or becomes invalid.",
+          "semantic_type": "timestamp",
+          "business_concept": "Expiration Date",
+          "aliases": [
+            "validity_end",
+            "expiry_date",
+            "end_date"
+          ]
+        },
+        "other_card_details": {
+          "name": "other_card_details",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like"
+          ],
+          "meaning": "Additional numeric data associated with the card, potentially a BIN, CVV, or internal reference number.",
+          "semantic_type": "code",
+          "business_concept": "Card Details",
+          "aliases": [
+            "bin",
+            "cvv",
+            "internal_ref",
+            "extra_data"
+          ]
+        }
+      }
+    },
+    "financial_transactions": {
+      "table": {
+        "name": "financial_transactions",
+        "column_count": 9,
+        "summary": "A record of financial transactions including payments and refunds, linked to specific accounts and cards.",
+        "entity": "financial_transaction",
+        "role": "transaction_table",
+        "aliases": [
+          "transactions",
+          "fin_trans",
+          "payment_log"
+        ]
+      },
+      "columns": {
+        "transaction_id": {
+          "name": "transaction_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each transaction record.",
+          "semantic_type": "identifier",
+          "business_concept": "Transaction ID",
+          "aliases": [
+            "txn_id",
+            "id",
+            "trans_id"
+          ]
+        },
+        "previous_transaction_id": {
+          "name": "previous_transaction_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the ID of the preceding transaction in a sequence, likely for audit trails or chain verification.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Previous Transaction Reference",
+          "aliases": [
+            "prev_txn_id",
+            "parent_txn_id",
+            "link_txn_id"
+          ]
+        },
+        "account_id": {
+          "name": "account_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the bank account associated with the transaction.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Account ID",
+          "aliases": [
+            "acct_id",
+            "account_number",
+            "bank_account"
+          ]
+        },
+        "card_id": {
+          "name": "card_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the payment card used in the transaction.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Card ID",
+          "aliases": [
+            "card_number",
+            "payment_card",
+            "card_ref"
+          ]
+        },
+        "transaction_type": {
+          "name": "transaction_type",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Categorization of the transaction, such as a payment or a refund.",
+          "semantic_type": "category",
+          "business_concept": "Transaction Type",
+          "aliases": [
+            "txn_type",
+            "type",
+            "trans_category"
+          ]
+        },
+        "transaction_date": {
+          "name": "transaction_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the transaction occurred.",
+          "semantic_type": "timestamp",
+          "business_concept": "Transaction Date",
+          "aliases": [
+            "txn_date",
+            "date",
+            "trans_time"
+          ]
+        },
+        "transaction_amount": {
+          "name": "transaction_amount",
+          "dtype": "double",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary value of the transaction.",
+          "semantic_type": "money",
+          "business_concept": "Transaction Amount",
+          "aliases": [
+            "amount",
+            "value",
+            "sum",
+            "price"
+          ]
+        },
+        "transaction_comment": {
+          "name": "transaction_comment",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Optional textual notes or remarks regarding the transaction.",
+          "semantic_type": "description",
+          "business_concept": "Transaction Comment",
+          "aliases": [
+            "notes",
+            "remarks",
+            "memo",
+            "comment"
+          ]
+        },
+        "other_transaction_details": {
+          "name": "other_transaction_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional structured or unstructured data related to the transaction not covered by other fields.",
+          "semantic_type": "description",
+          "business_concept": "Transaction Details",
+          "aliases": [
+            "details",
+            "extra_info",
+            "metadata"
+          ]
+        }
+      }
+    },
+    "customers": {
+      "table": {
+        "name": "customers",
+        "column_count": 7,
+        "summary": "A table containing demographic and contact information for individual customers.",
+        "entity": "Customer",
+        "role": "entity_table",
+        "aliases": [
+          "cust",
+          "clients",
+          "users",
+          "accounts"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each customer record.",
+          "semantic_type": "identifier",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "id",
+            "customer_number"
+          ]
+        },
+        "customer_first_name": {
+          "name": "customer_first_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The first name of the customer.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "first_name",
+            "fname",
+            "fn",
+            "given_name"
+          ]
+        },
+        "customer_last_name": {
+          "name": "customer_last_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The last name of the customer.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "last_name",
+            "lname",
+            "ln",
+            "surname"
+          ]
+        },
+        "customer_address": {
+          "name": "customer_address",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full physical mailing address of the customer.",
+          "semantic_type": "address",
+          "business_concept": "Mailing Address",
+          "aliases": [
+            "address",
+            "addr",
+            "street_address",
+            "full_address"
+          ]
+        },
+        "customer_phone": {
+          "name": "customer_phone",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The primary telephone contact number for the customer.",
+          "semantic_type": "phone",
+          "business_concept": "Phone Number",
+          "aliases": [
+            "phone",
+            "tel",
+            "mobile",
+            "contact_phone"
+          ]
+        },
+        "customer_email": {
+          "name": "customer_email",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "The email address associated with the customer.",
+          "semantic_type": "email",
+          "business_concept": "Email Address",
+          "aliases": [
+            "email",
+            "e_mail",
+            "contact_email",
+            "user_email"
+          ]
+        },
+        "other_customer_details": {
+          "name": "other_customer_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional descriptive information about the customer, currently appearing empty in samples.",
+          "semantic_type": "description",
+          "business_concept": "Customer Notes",
+          "aliases": [
+            "notes",
+            "details",
+            "extra_info",
+            "remarks"
+          ]
+        }
+      }
+    }
+  }
+}

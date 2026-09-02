@@ -1,0 +1,269 @@
+{
+  "database": "medicine_enzyme_interaction",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/medicine_enzyme_interaction",
+    "schema_path": "data/Spider/parsed/medicine_enzyme_interaction/schema.json",
+    "tables_dir": "data/Spider/parsed/medicine_enzyme_interaction/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "enzyme": {
+      "table": {
+        "name": "enzyme",
+        "column_count": 7,
+        "summary": "A reference table containing detailed information about various enzymes, including their names, cellular locations, metabolic products, genetic locations, associated OMIM codes, and related porphyria conditions.",
+        "entity": "Enzyme",
+        "role": "lookup_table",
+        "aliases": [
+          "enzyme_catalog",
+          "enzyme_reference",
+          "metabolic_enzymes"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each enzyme record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "enzyme_id",
+            "pk_id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The common or systematic name of the enzyme.",
+          "semantic_type": "category",
+          "business_concept": "Enzyme Name",
+          "aliases": [
+            "enzyme_name",
+            "common_name",
+            "systematic_name"
+          ]
+        },
+        "location": {
+          "name": "location",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The cellular compartment where the enzyme is primarily active.",
+          "semantic_type": "category",
+          "business_concept": "Cellular Location",
+          "aliases": [
+            "cellular_location",
+            "subcellular_location",
+            "compartment"
+          ]
+        },
+        "product": {
+          "name": "product",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The chemical compound produced by the enzymatic reaction.",
+          "semantic_type": "category",
+          "business_concept": "Metabolic Product",
+          "aliases": [
+            "reaction_product",
+            "substrate_output",
+            "product_molecule"
+          ]
+        },
+        "chromosome": {
+          "name": "chromosome",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The chromosomal location of the gene encoding the enzyme.",
+          "semantic_type": "code",
+          "business_concept": "Genetic Locus",
+          "aliases": [
+            "gene_location",
+            "chromosomal_position",
+            "locus"
+          ]
+        },
+        "omim": {
+          "name": "omim",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "OMIM (Online Mendelian Inheritance in Man) identifier linking the enzyme to a specific genetic disorder.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "OMIM ID",
+          "aliases": [
+            "omim_id",
+            "disorder_code",
+            "genetic_disorder_ref"
+          ]
+        },
+        "porphyria": {
+          "name": "porphyria",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The specific type of porphyria associated with the enzyme deficiency or function.",
+          "semantic_type": "category",
+          "business_concept": "Associated Porphyria",
+          "aliases": [
+            "porphyria_type",
+            "disorder_name",
+            "clinical_condition"
+          ]
+        }
+      }
+    },
+    "medicine": {
+      "table": {
+        "name": "medicine",
+        "column_count": 4,
+        "summary": "A catalog of pharmaceutical drugs containing their generic names, brand names, and FDA approval status.",
+        "entity": "medicine",
+        "role": "lookup_table",
+        "aliases": [
+          "drugs",
+          "medications",
+          "pharmaceuticals",
+          "drug_catalog"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each medicine record.",
+          "semantic_type": "identifier",
+          "business_concept": "primary_key",
+          "aliases": [
+            "drug_id",
+            "med_id",
+            "pid"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The generic or chemical name of the medicine.",
+          "semantic_type": "category",
+          "business_concept": "generic_name",
+          "aliases": [
+            "generic_name",
+            "chemical_name",
+            "drug_name"
+          ]
+        },
+        "trade_name": {
+          "name": "trade_name",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The brand or proprietary name under which the medicine is marketed.",
+          "semantic_type": "code",
+          "business_concept": "brand_name",
+          "aliases": [
+            "brand",
+            "trade",
+            "prop_name",
+            "product_name"
+          ]
+        },
+        "fda_approved": {
+          "name": "fda_approved",
+          "dtype": "text",
+          "value_patterns": [
+            "boolean_like",
+            "short_code_like"
+          ],
+          "meaning": "Indicates whether the medicine has been approved by the US Food and Drug Administration.",
+          "semantic_type": "boolean",
+          "business_concept": "regulatory_status",
+          "aliases": [
+            "approved",
+            "fda_status",
+            "status"
+          ]
+        }
+      }
+    },
+    "medicine_enzyme_interaction": {
+      "table": {
+        "name": "medicine_enzyme_interaction",
+        "column_count": 3,
+        "summary": "A lookup or relationship table defining the nature of interactions between specific enzymes and medicines.",
+        "entity": "Enzyme-Medicine Interaction",
+        "role": "lookup_table",
+        "aliases": [
+          "enzyme_medicine_interaction",
+          "drug_enzyme_interaction",
+          "medication_enzyme_interaction"
+        ]
+      },
+      "columns": {
+        "enzyme_id": {
+          "name": "enzyme_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for an enzyme involved in the interaction.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Enzyme Identifier",
+          "aliases": [
+            "enzyme_code",
+            "enzyme_ref",
+            "enzyme_key"
+          ]
+        },
+        "medicine_id": {
+          "name": "medicine_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a medicine involved in the interaction.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Medicine Identifier",
+          "aliases": [
+            "medicine_code",
+            "drug_id",
+            "med_ref",
+            "medicine_key"
+          ]
+        },
+        "interaction_type": {
+          "name": "interaction_type",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Categorical description of how the medicine affects the enzyme (e.g., inhibition).",
+          "semantic_type": "category",
+          "business_concept": "Interaction Mechanism",
+          "aliases": [
+            "interaction_category",
+            "effect_type",
+            "mechanism",
+            "drug_effect"
+          ]
+        }
+      }
+    }
+  }
+}

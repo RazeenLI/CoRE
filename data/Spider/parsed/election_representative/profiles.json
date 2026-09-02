@@ -1,0 +1,222 @@
+{
+  "database": "election_representative",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/election_representative",
+    "schema_path": "data/Spider/parsed/election_representative/schema.json",
+    "tables_dir": "data/Spider/parsed/election_representative/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "election": {
+      "table": {
+        "name": "election",
+        "column_count": 7,
+        "summary": "Records historical election results including dates, vote counts, percentages, and seat allocations.",
+        "entity": "Election",
+        "role": "entity_table",
+        "aliases": [
+          "elections",
+          "voting_results",
+          "electoral_data"
+        ]
+      },
+      "columns": {
+        "election_id": {
+          "name": "election_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific election record.",
+          "semantic_type": "identifier",
+          "business_concept": "Election ID",
+          "aliases": [
+            "id",
+            "election_key",
+            "election_code"
+          ]
+        },
+        "representative_id": {
+          "name": "representative_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the election to a specific representative or candidate.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Representative ID",
+          "aliases": [
+            "rep_id",
+            "candidate_id",
+            "representative_code"
+          ]
+        },
+        "date": {
+          "name": "date",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The date or year when the election took place.",
+          "semantic_type": "date",
+          "business_concept": "Election Date",
+          "aliases": [
+            "election_date",
+            "year",
+            "date_of_election"
+          ]
+        },
+        "votes": {
+          "name": "votes",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Total number of votes cast in the election.",
+          "semantic_type": "quantity",
+          "business_concept": "Total Votes",
+          "aliases": [
+            "total_votes",
+            "vote_count",
+            "votes_cast"
+          ]
+        },
+        "vote_percent": {
+          "name": "vote_percent",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Percentage of total votes received by the representative or candidate.",
+          "semantic_type": "category",
+          "business_concept": "Vote Share",
+          "aliases": [
+            "percent_votes",
+            "vote_percentage",
+            "share"
+          ]
+        },
+        "seats": {
+          "name": "seats",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Number of legislative seats won or allocated in the election.",
+          "semantic_type": "quantity",
+          "business_concept": "Seats Won",
+          "aliases": [
+            "seats_won",
+            "legislative_seats",
+            "seat_count"
+          ]
+        },
+        "place": {
+          "name": "place",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Ranking or position of the representative/candidate in the election results.",
+          "semantic_type": "category",
+          "business_concept": "Ranking",
+          "aliases": [
+            "rank",
+            "position",
+            "standing"
+          ]
+        }
+      }
+    },
+    "representative": {
+      "table": {
+        "name": "representative",
+        "column_count": 5,
+        "summary": "A dataset containing biographical and political information about US Representatives, including their names, states, political parties, and lifespans.",
+        "entity": "US Representative",
+        "role": "entity_table",
+        "aliases": [
+          "representatives",
+          "congress_representatives",
+          "us_representatives",
+          "rep_list"
+        ]
+      },
+      "columns": {
+        "representative_id": {
+          "name": "representative_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each representative record.",
+          "semantic_type": "identifier",
+          "business_concept": "Unique ID",
+          "aliases": [
+            "id",
+            "rep_id",
+            "representative_number"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the representative.",
+          "semantic_type": "person_name",
+          "business_concept": "Full Name",
+          "aliases": [
+            "full_name",
+            "representative_name",
+            "name"
+          ]
+        },
+        "state": {
+          "name": "state",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The US state where the representative served.",
+          "semantic_type": "country",
+          "business_concept": "State",
+          "aliases": [
+            "state_name",
+            "us_state",
+            "district_state"
+          ]
+        },
+        "party": {
+          "name": "party",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The political party affiliation of the representative.",
+          "semantic_type": "category",
+          "business_concept": "Political Party",
+          "aliases": [
+            "party_affiliation",
+            "political_party",
+            "party"
+          ]
+        },
+        "lifespan": {
+          "name": "lifespan",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The birth and death years (or birth year only) of the representative.",
+          "semantic_type": "date",
+          "business_concept": "Lifespan",
+          "aliases": [
+            "birth_death",
+            "dates",
+            "life_span"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1053 @@
+{
+  "database": "store_1",
+  "tables": {
+    "invoice_lines": {
+      "table": {
+        "name": "invoice_lines",
+        "column_count": 5,
+        "summary": "A transactional table storing individual line items associated with specific invoices, tracking product details, pricing, and quantities.",
+        "entity": "invoice_line",
+        "role": "transaction_table",
+        "aliases": [
+          "invoice_items",
+          "order_lines",
+          "bill_details",
+          "line_items"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific line item record within the table.",
+          "semantic_type": "identifier",
+          "business_concept": "line_item_id",
+          "aliases": [
+            "line_id",
+            "item_id",
+            "row_id"
+          ]
+        },
+        "invoice_id": {
+          "name": "invoice_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key referencing the parent invoice to which this line item belongs.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "invoice_reference",
+          "aliases": [
+            "invoice_ref",
+            "parent_invoice",
+            "bill_id"
+          ]
+        },
+        "track_id": {
+          "name": "track_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the specific product, service, or tracking unit associated with this line item.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "product_id",
+          "aliases": [
+            "item_code",
+            "product_ref",
+            "sku_id",
+            "track_ref"
+          ]
+        },
+        "unit_price": {
+          "name": "unit_price",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary price per single unit of the item.",
+          "semantic_type": "money",
+          "business_concept": "unit_cost",
+          "aliases": [
+            "price",
+            "cost_per_unit",
+            "rate"
+          ]
+        },
+        "quantity": {
+          "name": "quantity",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of units of the item included in this line item.",
+          "semantic_type": "quantity",
+          "business_concept": "item_count",
+          "aliases": [
+            "qty",
+            "amount",
+            "count",
+            "units"
+          ]
+        }
+      }
+    },
+    "playlist_tracks": {
+      "table": {
+        "name": "playlist_tracks",
+        "column_count": 2,
+        "summary": "A relationship table linking specific tracks to playlists.",
+        "entity": "playlist_track_association",
+        "role": "relationship_table",
+        "aliases": [
+          "playlist_track",
+          "track_playlist",
+          "playlist_items"
+        ]
+      },
+      "columns": {
+        "playlist_id": {
+          "name": "playlist_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the playlist to which the track belongs.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Playlist Identifier",
+          "aliases": [
+            "playlist_uid",
+            "pl_id",
+            "playlist_ref"
+          ]
+        },
+        "track_id": {
+          "name": "track_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific track included in the playlist.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Track Identifier",
+          "aliases": [
+            "track_uid",
+            "tr_id",
+            "song_id"
+          ]
+        }
+      }
+    },
+    "tracks": {
+      "table": {
+        "name": "tracks",
+        "column_count": 9,
+        "summary": "A table containing detailed information about music tracks, including metadata such as name, album association, media type, genre, composer, duration, file size, and price.",
+        "entity": "Music Track",
+        "role": "entity_table",
+        "aliases": [
+          "tracks",
+          "song_list",
+          "audio_files",
+          "music_catalog"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each track record.",
+          "semantic_type": "identifier",
+          "business_concept": "Track ID",
+          "aliases": [
+            "track_id",
+            "track_pk",
+            "id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The title of the music track.",
+          "semantic_type": "description",
+          "business_concept": "Track Title",
+          "aliases": [
+            "title",
+            "song_name",
+            "track_title"
+          ]
+        },
+        "album_id": {
+          "name": "album_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key referencing the album to which this track belongs.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Album Reference",
+          "aliases": [
+            "album_ref",
+            "album_fk",
+            "album_id"
+          ]
+        },
+        "media_type_id": {
+          "name": "media_type_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key referencing the media format (e.g., audio, video).",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Media Format",
+          "aliases": [
+            "media_type_ref",
+            "format_id",
+            "media_fk"
+          ]
+        },
+        "genre_id": {
+          "name": "genre_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key referencing the musical genre of the track.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Genre Classification",
+          "aliases": [
+            "genre_ref",
+            "genre_fk",
+            "style_id"
+          ]
+        },
+        "composer": {
+          "name": "composer",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Names of the individuals who composed the track.",
+          "semantic_type": "person_name",
+          "business_concept": "Composer(s)",
+          "aliases": [
+            "writer",
+            "author",
+            "songwriter",
+            "composed_by"
+          ]
+        },
+        "milliseconds": {
+          "name": "milliseconds",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Duration of the track in milliseconds.",
+          "semantic_type": "quantity",
+          "business_concept": "Track Duration",
+          "aliases": [
+            "duration",
+            "length",
+            "time_ms",
+            "playtime"
+          ]
+        },
+        "bytes": {
+          "name": "bytes",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "File size of the track in bytes.",
+          "semantic_type": "quantity",
+          "business_concept": "File Size",
+          "aliases": [
+            "file_size",
+            "size",
+            "storage_bytes"
+          ]
+        },
+        "unit_price": {
+          "name": "unit_price",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary cost to purchase or download the track.",
+          "semantic_type": "money",
+          "business_concept": "Unit Price",
+          "aliases": [
+            "price",
+            "cost",
+            "unit_cost",
+            "sale_price"
+          ]
+        }
+      }
+    },
+    "playlists": {
+      "table": {
+        "name": "playlists",
+        "column_count": 2,
+        "summary": "A collection of user-created or system-defined lists containing media items such as music, movies, TV shows, and audiobooks.",
+        "entity": "playlist",
+        "role": "entity_table",
+        "aliases": [
+          "playlist_collection",
+          "media_lists",
+          "user_playlists"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each playlist record.",
+          "semantic_type": "identifier",
+          "business_concept": "playlist_id",
+          "aliases": [
+            "playlist_id",
+            "pk",
+            "primary_key"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The descriptive title of the playlist.",
+          "semantic_type": "description",
+          "business_concept": "playlist_name",
+          "aliases": [
+            "title",
+            "playlist_title",
+            "name"
+          ]
+        }
+      }
+    },
+    "invoices": {
+      "table": {
+        "name": "invoices",
+        "column_count": 9,
+        "summary": "A record of financial transactions representing invoices issued to customers, containing details about the billing address and the total amount due.",
+        "entity": "Invoice",
+        "role": "transaction_table",
+        "aliases": [
+          "invoice",
+          "bill",
+          "billing_records",
+          "customer_invoices"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each invoice record.",
+          "semantic_type": "identifier",
+          "business_concept": "Invoice ID",
+          "aliases": [
+            "invoice_id",
+            "inv_id",
+            "primary_key"
+          ]
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the customer who received the invoice.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer Reference",
+          "aliases": [
+            "cust_id",
+            "client_id",
+            "account_id"
+          ]
+        },
+        "invoice_date": {
+          "name": "invoice_date",
+          "dtype": "timestamp",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date on which the invoice was issued.",
+          "semantic_type": "timestamp",
+          "business_concept": "Invoice Date",
+          "aliases": [
+            "inv_date",
+            "date_issued",
+            "creation_date"
+          ]
+        },
+        "billing_address": {
+          "name": "billing_address",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The street address where the invoice should be sent.",
+          "semantic_type": "address",
+          "business_concept": "Billing Street Address",
+          "aliases": [
+            "street_address",
+            "addr_line1",
+            "billing_street"
+          ]
+        },
+        "billing_city": {
+          "name": "billing_city",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The city where the invoice should be sent.",
+          "semantic_type": "city",
+          "business_concept": "Billing City",
+          "aliases": [
+            "city",
+            "addr_city",
+            "billing_city_name"
+          ]
+        },
+        "billing_state": {
+          "name": "billing_state",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The state or province code where the invoice should be sent.",
+          "semantic_type": "code",
+          "business_concept": "Billing State/Province Code",
+          "aliases": [
+            "state",
+            "province",
+            "region_code",
+            "addr_state"
+          ]
+        },
+        "billing_country": {
+          "name": "billing_country",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country where the invoice should be sent.",
+          "semantic_type": "country",
+          "business_concept": "Billing Country",
+          "aliases": [
+            "country",
+            "nation",
+            "addr_country",
+            "billing_nation"
+          ]
+        },
+        "billing_postal_code": {
+          "name": "billing_postal_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The postal or zip code for the billing address.",
+          "semantic_type": "code",
+          "business_concept": "Billing Postal Code",
+          "aliases": [
+            "zip",
+            "postal_code",
+            "zip_code",
+            "addr_zip"
+          ]
+        },
+        "total": {
+          "name": "total",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total monetary amount of the invoice.",
+          "semantic_type": "money",
+          "business_concept": "Invoice Total Amount",
+          "aliases": [
+            "amount",
+            "amt",
+            "total_amount",
+            "sum",
+            "invoice_total"
+          ]
+        }
+      }
+    },
+    "genres": {
+      "table": {
+        "name": "genres",
+        "column_count": 2,
+        "summary": "A reference table defining music genres with unique identifiers and descriptive names.",
+        "entity": "Music Genre",
+        "role": "lookup_table",
+        "aliases": [
+          "genre_master",
+          "music_genres",
+          "genre_lookup"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each genre record.",
+          "semantic_type": "identifier",
+          "business_concept": "Genre ID",
+          "aliases": [
+            "genre_id",
+            "gid",
+            "genre_code"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The descriptive name of the music genre.",
+          "semantic_type": "category",
+          "business_concept": "Genre Name",
+          "aliases": [
+            "genre_name",
+            "g_name",
+            "type"
+          ]
+        }
+      }
+    },
+    "employees": {
+      "table": {
+        "name": "employees",
+        "column_count": 15,
+        "summary": "Contains comprehensive personal and contact information for employees, including names, job titles, reporting structure, hire dates, and full address details.",
+        "entity": "Employee",
+        "role": "entity_table",
+        "aliases": [
+          "staff",
+          "personnel",
+          "users",
+          "workforce"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each employee record.",
+          "semantic_type": "identifier",
+          "business_concept": "Employee ID",
+          "aliases": [
+            "emp_id",
+            "employee_id",
+            "pk",
+            "primary_key"
+          ]
+        },
+        "last_name": {
+          "name": "last_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The family name of the employee.",
+          "semantic_type": "person_name",
+          "business_concept": "Surname",
+          "aliases": [
+            "lname",
+            "family_name",
+            "surname"
+          ]
+        },
+        "first_name": {
+          "name": "first_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The given name of the employee.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "fname",
+            "given_name",
+            "firstname"
+          ]
+        },
+        "title": {
+          "name": "title",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The job title or role held by the employee.",
+          "semantic_type": "category",
+          "business_concept": "Job Title",
+          "aliases": [
+            "job_title",
+            "position",
+            "role",
+            "designation"
+          ]
+        },
+        "reports_to": {
+          "name": "reports_to",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The ID of the employee to whom this employee reports.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Manager ID",
+          "aliases": [
+            "manager_id",
+            "supervisor_id",
+            "reports_to_id"
+          ]
+        },
+        "birth_date": {
+          "name": "birth_date",
+          "dtype": "timestamp",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date of birth of the employee.",
+          "semantic_type": "date",
+          "business_concept": "Date of Birth",
+          "aliases": [
+            "dob",
+            "born",
+            "birthdate"
+          ]
+        },
+        "hire_date": {
+          "name": "hire_date",
+          "dtype": "timestamp",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date the employee was hired by the organization.",
+          "semantic_type": "date",
+          "business_concept": "Hire Date",
+          "aliases": [
+            "start_date",
+            "join_date",
+            "employment_start"
+          ]
+        },
+        "address": {
+          "name": "address",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The street address of the employee.",
+          "semantic_type": "address",
+          "business_concept": "Street Address",
+          "aliases": [
+            "street",
+            "addr",
+            "line1"
+          ]
+        },
+        "city": {
+          "name": "city",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The city where the employee resides.",
+          "semantic_type": "city",
+          "business_concept": "City",
+          "aliases": [
+            "city_name",
+            "municipality"
+          ]
+        },
+        "state": {
+          "name": "state",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The state or province where the employee resides.",
+          "semantic_type": "code",
+          "business_concept": "State/Province",
+          "aliases": [
+            "province",
+            "state_code",
+            "region"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country where the employee resides.",
+          "semantic_type": "country",
+          "business_concept": "Country",
+          "aliases": [
+            "nation",
+            "country_name"
+          ]
+        },
+        "postal_code": {
+          "name": "postal_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The postal or zip code for the employee's address.",
+          "semantic_type": "code",
+          "business_concept": "Postal Code",
+          "aliases": [
+            "zip",
+            "postcode",
+            "zip_code"
+          ]
+        },
+        "phone": {
+          "name": "phone",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The telephone number for the employee.",
+          "semantic_type": "phone",
+          "business_concept": "Phone Number",
+          "aliases": [
+            "telephone",
+            "tel",
+            "mobile",
+            "direct_dial"
+          ]
+        },
+        "fax": {
+          "name": "fax",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The fax number for the employee.",
+          "semantic_type": "phone",
+          "business_concept": "Fax Number",
+          "aliases": [
+            "fax_number",
+            "facsimile"
+          ]
+        },
+        "email": {
+          "name": "email",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "The email address of the employee.",
+          "semantic_type": "email",
+          "business_concept": "Email Address",
+          "aliases": [
+            "e_mail",
+            "mail",
+            "contact_email"
+          ]
+        }
+      }
+    },
+    "customers": {
+      "table": {
+        "name": "customers",
+        "column_count": 13,
+        "summary": "A comprehensive customer master table containing personal details, contact information, shipping addresses, and support assignment data.",
+        "entity": "Customer",
+        "role": "entity_table",
+        "aliases": [
+          "clients",
+          "accounts",
+          "contacts",
+          "users"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each customer record.",
+          "semantic_type": "identifier",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "customer_id",
+            "client_id",
+            "key"
+          ]
+        },
+        "first_name": {
+          "name": "first_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The given name of the customer.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "fname",
+            "fn",
+            "given_name"
+          ]
+        },
+        "last_name": {
+          "name": "last_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The family name of the customer.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "lname",
+            "ln",
+            "surname",
+            "family_name"
+          ]
+        },
+        "company": {
+          "name": "company",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The name of the organization the customer represents, if applicable.",
+          "semantic_type": "organization_name",
+          "business_concept": "Company Name",
+          "aliases": [
+            "org",
+            "firm",
+            "business_name",
+            "employer"
+          ]
+        },
+        "address": {
+          "name": "address",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The street address of the customer.",
+          "semantic_type": "address",
+          "business_concept": "Street Address",
+          "aliases": [
+            "street",
+            "addr",
+            "line1",
+            "address_line_1"
+          ]
+        },
+        "city": {
+          "name": "city",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The city where the customer is located.",
+          "semantic_type": "city",
+          "business_concept": "City",
+          "aliases": [
+            "cty",
+            "municipality"
+          ]
+        },
+        "state": {
+          "name": "state",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The state, province, or region code where the customer is located.",
+          "semantic_type": "code",
+          "business_concept": "State/Province Code",
+          "aliases": [
+            "st",
+            "province",
+            "region",
+            "state_code"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The country where the customer is located.",
+          "semantic_type": "country",
+          "business_concept": "Country",
+          "aliases": [
+            "cntry",
+            "nation",
+            "country_name"
+          ]
+        },
+        "postal_code": {
+          "name": "postal_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The postal or zip code for the customer's address.",
+          "semantic_type": "code",
+          "business_concept": "Postal Code",
+          "aliases": [
+            "zip",
+            "zipcode",
+            "post_code",
+            "zip_code"
+          ]
+        },
+        "phone": {
+          "name": "phone",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The primary telephone number for the customer.",
+          "semantic_type": "phone",
+          "business_concept": "Phone Number",
+          "aliases": [
+            "tel",
+            "telephone",
+            "mobile",
+            "cell"
+          ]
+        },
+        "fax": {
+          "name": "fax",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The fax number for the customer.",
+          "semantic_type": "phone",
+          "business_concept": "Fax Number",
+          "aliases": [
+            "fax_number",
+            "facsimile"
+          ]
+        },
+        "email": {
+          "name": "email",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "The primary email address for the customer.",
+          "semantic_type": "email",
+          "business_concept": "Email Address",
+          "aliases": [
+            "e_mail",
+            "mail",
+            "contact_email"
+          ]
+        },
+        "support_rep_id": {
+          "name": "support_rep_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the customer to their assigned support representative.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Support Representative ID",
+          "aliases": [
+            "sr_id",
+            "rep_id",
+            "agent_id",
+            "support_agent"
+          ]
+        }
+      }
+    },
+    "albums": {
+      "table": {
+        "name": "albums",
+        "column_count": 3,
+        "summary": "A table storing metadata about music albums, including their titles and associated artist identifiers.",
+        "entity": "Album",
+        "role": "entity_table",
+        "aliases": [
+          "album_list",
+          "music_albums",
+          "discography"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each album record.",
+          "semantic_type": "identifier",
+          "business_concept": "Album ID",
+          "aliases": [
+            "album_id",
+            "primary_key",
+            "pk"
+          ]
+        },
+        "title": {
+          "name": "title",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The name or title of the album.",
+          "semantic_type": "description",
+          "business_concept": "Album Title",
+          "aliases": [
+            "name",
+            "album_name",
+            "title_of_album"
+          ]
+        },
+        "artist_id": {
+          "name": "artist_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key referencing the artist who created the album.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Artist Reference",
+          "aliases": [
+            "artist_ref",
+            "creator_id",
+            "band_id"
+          ]
+        }
+      }
+    }
+  }
+}

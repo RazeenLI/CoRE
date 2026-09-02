@@ -1,0 +1,493 @@
+{
+  "database": "student_assessment",
+  "tables": {
+    "courses": {
+      "table": {
+        "name": "courses",
+        "column_count": 4,
+        "summary": "A table containing metadata and details for various academic or training courses.",
+        "entity": "Course",
+        "role": "entity_table",
+        "aliases": [
+          "course_master",
+          "curriculum",
+          "training_courses",
+          "class_list"
+        ]
+      },
+      "columns": {
+        "course_id": {
+          "name": "course_id",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each course record.",
+          "semantic_type": "identifier",
+          "business_concept": "Course ID",
+          "aliases": [
+            "cid",
+            "course_code",
+            "id"
+          ]
+        },
+        "course_name": {
+          "name": "course_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The primary title or name of the course.",
+          "semantic_type": "category",
+          "business_concept": "Course Title",
+          "aliases": [
+            "name",
+            "title",
+            "subject_name"
+          ]
+        },
+        "course_description": {
+          "name": "course_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A brief textual summary or overview of the course content.",
+          "semantic_type": "description",
+          "business_concept": "Course Description",
+          "aliases": [
+            "desc",
+            "summary",
+            "overview",
+            "details"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional miscellaneous information about the course, though currently empty in samples.",
+          "semantic_type": "description",
+          "business_concept": "Additional Course Information",
+          "aliases": [
+            "extra_info",
+            "notes",
+            "remarks"
+          ]
+        }
+      }
+    },
+    "student_course_attendance": {
+      "table": {
+        "name": "student_course_attendance",
+        "column_count": 3,
+        "summary": "Records tracking the specific dates and times when students attended specific courses.",
+        "entity": "student_course_attendance",
+        "role": "transaction_table",
+        "aliases": [
+          "student_attendance_log",
+          "course_attendance_records",
+          "student_course_log"
+        ]
+      },
+      "columns": {
+        "student_id": {
+          "name": "student_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a student enrolled in the system.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Student",
+          "aliases": [
+            "student_identifier",
+            "stu_id",
+            "student_code"
+          ]
+        },
+        "course_id": {
+          "name": "course_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a course offered in the system.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Course",
+          "aliases": [
+            "course_identifier",
+            "course_code",
+            "class_id"
+          ]
+        },
+        "date_of_attendance": {
+          "name": "date_of_attendance",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The specific date and time when the student was recorded as attending the course.",
+          "semantic_type": "timestamp",
+          "business_concept": "Attendance Time",
+          "aliases": [
+            "attendance_date",
+            "visit_time",
+            "log_timestamp"
+          ]
+        }
+      }
+    },
+    "students": {
+      "table": {
+        "name": "students",
+        "column_count": 2,
+        "summary": "A table containing basic identification and name information for students.",
+        "entity": "Student",
+        "role": "entity_table",
+        "aliases": [
+          "student_master",
+          "scholars",
+          "enrollees"
+        ]
+      },
+      "columns": {
+        "student_id": {
+          "name": "student_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each student record.",
+          "semantic_type": "identifier",
+          "business_concept": "Student ID",
+          "aliases": [
+            "sid",
+            "id",
+            "student_number"
+          ]
+        },
+        "student_details": {
+          "name": "student_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The first name or full name of the student.",
+          "semantic_type": "person_name",
+          "business_concept": "Student Name",
+          "aliases": [
+            "name",
+            "first_name",
+            "full_name",
+            "scholar_name"
+          ]
+        }
+      }
+    },
+    "student_course_registrations": {
+      "table": {
+        "name": "student_course_registrations",
+        "column_count": 3,
+        "summary": "Records of students enrolling in specific courses, capturing the unique pairing of a student and a course along with the date of registration.",
+        "entity": "student_course_registration",
+        "role": "relationship_table",
+        "aliases": [
+          "student_enrollments",
+          "course_signups",
+          "registrations",
+          "student_courses"
+        ]
+      },
+      "columns": {
+        "student_id": {
+          "name": "student_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for a student within the system.",
+          "semantic_type": "identifier",
+          "business_concept": "Student ID",
+          "aliases": [
+            "sid",
+            "student_number",
+            "stu_id"
+          ]
+        },
+        "course_id": {
+          "name": "course_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for a specific course within the system.",
+          "semantic_type": "identifier",
+          "business_concept": "Course ID",
+          "aliases": [
+            "cid",
+            "course_number",
+            "crs_id"
+          ]
+        },
+        "registration_date": {
+          "name": "registration_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The specific date and time when the student officially registered for the course.",
+          "semantic_type": "timestamp",
+          "business_concept": "Registration Date",
+          "aliases": [
+            "reg_date",
+            "enrollment_date",
+            "signup_date",
+            "date_registered"
+          ]
+        }
+      }
+    },
+    "people": {
+      "table": {
+        "name": "people",
+        "column_count": 8,
+        "summary": "A comprehensive user profile table containing personal identification details, contact information, and authentication credentials.",
+        "entity": "person",
+        "role": "entity_table",
+        "aliases": [
+          "users",
+          "members",
+          "accounts",
+          "personnel",
+          "contacts"
+        ]
+      },
+      "columns": {
+        "person_id": {
+          "name": "person_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each individual record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "pk",
+            "user_id",
+            "person_number"
+          ]
+        },
+        "first_name": {
+          "name": "first_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The given name of the person.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "fname",
+            "fn",
+            "given_name",
+            "first"
+          ]
+        },
+        "middle_name": {
+          "name": "middle_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The middle name of the person, which may be optional.",
+          "semantic_type": "person_name",
+          "business_concept": "Middle Name",
+          "aliases": [
+            "mname",
+            "mn",
+            "middle"
+          ]
+        },
+        "last_name": {
+          "name": "last_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The family name or surname of the person.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "lname",
+            "ln",
+            "surname",
+            "family_name",
+            "last"
+          ]
+        },
+        "cell_mobile_number": {
+          "name": "cell_mobile_number",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A mobile phone number associated with the person, formatted with various international and local patterns.",
+          "semantic_type": "phone",
+          "business_concept": "Mobile Phone",
+          "aliases": [
+            "mobile",
+            "cell",
+            "phone",
+            "tel",
+            "number"
+          ]
+        },
+        "email_address": {
+          "name": "email_address",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "The email address used for communication or account recovery.",
+          "semantic_type": "email",
+          "business_concept": "Email Address",
+          "aliases": [
+            "email",
+            "e_mail",
+            "mail",
+            "address"
+          ]
+        },
+        "login_name": {
+          "name": "login_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique short code or username used to identify the person within a system.",
+          "semantic_type": "code",
+          "business_concept": "Username",
+          "aliases": [
+            "username",
+            "user",
+            "login",
+            "uname",
+            "handle"
+          ]
+        },
+        "password": {
+          "name": "password",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A hashed or encrypted string used to authenticate the person's identity.",
+          "semantic_type": "code",
+          "business_concept": "Password Hash",
+          "aliases": [
+            "pwd",
+            "pass",
+            "secret",
+            "auth_token"
+          ]
+        }
+      }
+    },
+    "people_addresses": {
+      "table": {
+        "name": "people_addresses",
+        "column_count": 5,
+        "summary": "A relationship table linking people to their addresses with valid time periods.",
+        "entity": "person_address",
+        "role": "relationship_table",
+        "aliases": [
+          "person_addresses",
+          "addresses",
+          "address_history"
+        ]
+      },
+      "columns": {
+        "person_address_id": {
+          "name": "person_address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific person-address relationship record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "pk",
+            "address_id"
+          ]
+        },
+        "person_id": {
+          "name": "person_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking to the person entity.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Person Reference",
+          "aliases": [
+            "person",
+            "user_id",
+            "customer_id"
+          ]
+        },
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking to the address entity.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Address Reference",
+          "aliases": [
+            "addr_id",
+            "address",
+            "location_id"
+          ]
+        },
+        "date_from": {
+          "name": "date_from",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The start date of the address association.",
+          "semantic_type": "timestamp",
+          "business_concept": "Effective Start Date",
+          "aliases": [
+            "start_date",
+            "from_date",
+            "valid_from"
+          ]
+        },
+        "date_to": {
+          "name": "date_to",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The end date of the address association (null indicates current).",
+          "semantic_type": "timestamp",
+          "business_concept": "Effective End Date",
+          "aliases": [
+            "end_date",
+            "to_date",
+            "valid_to"
+          ]
+        }
+      }
+    }
+  }
+}

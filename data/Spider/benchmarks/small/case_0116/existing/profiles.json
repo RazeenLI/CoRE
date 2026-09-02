@@ -1,0 +1,285 @@
+{
+  "database": "assets_maintenance",
+  "tables": {
+    "maintenance_engineers": {
+      "table": {
+        "name": "maintenance_engineers",
+        "column_count": 5,
+        "summary": "A table containing demographic and identification information for maintenance engineers, including their unique ID, associated company, and name details.",
+        "entity": "Maintenance Engineer",
+        "role": "entity_table",
+        "aliases": [
+          "eng_team",
+          "staff_maintenance",
+          "tech_personnel"
+        ]
+      },
+      "columns": {
+        "engineer_id": {
+          "name": "engineer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each maintenance engineer record.",
+          "semantic_type": "identifier",
+          "business_concept": "Employee ID",
+          "aliases": [
+            "emp_id",
+            "eng_no",
+            "id"
+          ]
+        },
+        "company_id": {
+          "name": "company_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the engineer to their employing organization.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Organization ID",
+          "aliases": [
+            "org_id",
+            "comp_id",
+            "company_code"
+          ]
+        },
+        "first_name": {
+          "name": "first_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The given name of the maintenance engineer.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "fname",
+            "fn",
+            "given_name"
+          ]
+        },
+        "last_name": {
+          "name": "last_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The family name of the maintenance engineer.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "lname",
+            "ln",
+            "surname"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Additional descriptive information about the engineer, such as skill level or status.",
+          "semantic_type": "description",
+          "business_concept": "Engineer Notes",
+          "aliases": [
+            "notes",
+            "info",
+            "skills"
+          ]
+        }
+      }
+    },
+    "engineer_skills": {
+      "table": {
+        "name": "engineer_skills",
+        "column_count": 2,
+        "summary": "A junction table mapping engineers to their specific skills.",
+        "entity": "engineer_skill_mapping",
+        "role": "relationship_table",
+        "aliases": [
+          "engineer_skills",
+          "skills_by_engineer",
+          "engineer_skill_junction"
+        ]
+      },
+      "columns": {
+        "engineer_id": {
+          "name": "engineer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for an engineer record in the parent table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Engineer Identifier",
+          "aliases": [
+            "engineer_uid",
+            "emp_id",
+            "user_id"
+          ]
+        },
+        "skill_id": {
+          "name": "skill_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a skill record in the parent table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Skill Identifier",
+          "aliases": [
+            "skill_uid",
+            "skill_code",
+            "ability_id"
+          ]
+        }
+      }
+    },
+    "part_faults": {
+      "table": {
+        "name": "part_faults",
+        "column_count": 5,
+        "summary": "A lookup or reference table defining specific types of faults associated with parts, including their short codes and detailed descriptions.",
+        "entity": "Fault Definition",
+        "role": "lookup_table",
+        "aliases": [
+          "fault_types",
+          "part_fault_codes",
+          "fault_master"
+        ]
+      },
+      "columns": {
+        "part_fault_id": {
+          "name": "part_fault_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific fault definition record.",
+          "semantic_type": "identifier",
+          "business_concept": "Fault Record ID",
+          "aliases": [
+            "fault_id",
+            "fault_code_id",
+            "pk_fault"
+          ]
+        },
+        "part_id": {
+          "name": "part_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the fault definition to a specific part or category of parts.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Part Category ID",
+          "aliases": [
+            "part_code",
+            "part_ref",
+            "fk_part"
+          ]
+        },
+        "fault_short_name": {
+          "name": "fault_short_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A concise alphanumeric code representing the type of fault.",
+          "semantic_type": "code",
+          "business_concept": "Fault Code",
+          "aliases": [
+            "fault_code",
+            "fault_abbr",
+            "error_code"
+          ]
+        },
+        "fault_description": {
+          "name": "fault_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A human-readable text description explaining the nature of the fault.",
+          "semantic_type": "description",
+          "business_concept": "Fault Description",
+          "aliases": [
+            "fault_text",
+            "error_message",
+            "fault_detail"
+          ]
+        },
+        "other_fault_details": {
+          "name": "other_fault_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional optional details or notes regarding the fault, often empty.",
+          "semantic_type": "description",
+          "business_concept": "Supplementary Fault Info",
+          "aliases": [
+            "extra_details",
+            "fault_notes",
+            "additional_info"
+          ]
+        }
+      }
+    },
+    "skills_required_to_fix": {
+      "table": {
+        "name": "skills_required_to_fix",
+        "column_count": 2,
+        "summary": "Defines the mapping between specific part faults and the required skills to repair them.",
+        "entity": "Skill-Part Fault Relationship",
+        "role": "relationship_table",
+        "aliases": [
+          "required_skills",
+          "skill_mapping",
+          "fault_skill_requirements"
+        ]
+      },
+      "columns": {
+        "part_fault_id": {
+          "name": "part_fault_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific part fault or defect code.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Part Fault Identifier",
+          "aliases": [
+            "fault_id",
+            "part_id",
+            "defect_code",
+            "error_code"
+          ]
+        },
+        "skill_id": {
+          "name": "skill_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific technical skill required to address the fault.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Skill Identifier",
+          "aliases": [
+            "skill_code",
+            "technician_skill",
+            "repair_skill",
+            "competency_id"
+          ]
+        }
+      }
+    }
+  }
+}

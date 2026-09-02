@@ -1,0 +1,324 @@
+{
+  "database": "cre_Doc_Tracking_DB",
+  "tables": {
+    "documents_to_be_destroyed": {
+      "table": {
+        "name": "documents_to_be_destroyed",
+        "column_count": 6,
+        "summary": "Records tracking the lifecycle of document destruction, including authorization, execution, and associated metadata.",
+        "entity": "Document Destruction Record",
+        "role": "transaction_table",
+        "aliases": [
+          "document_destruction_log",
+          "destruction_registry",
+          "doc_destruction_tracking"
+        ]
+      },
+      "columns": {
+        "document_id": {
+          "name": "document_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific document scheduled for or undergoing destruction.",
+          "semantic_type": "identifier",
+          "business_concept": "Document Reference",
+          "aliases": [
+            "doc_id",
+            "document_ref",
+            "file_id"
+          ]
+        },
+        "destruction_authorised_by_employee_id": {
+          "name": "destruction_authorised_by_employee_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier of the employee who granted approval for the document's destruction.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Authorized Approver",
+          "aliases": [
+            "approver_id",
+            "auth_employee_id",
+            "approver_ref"
+          ]
+        },
+        "destroyed_by_employee_id": {
+          "name": "destroyed_by_employee_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier of the employee who physically performed the destruction action.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Executor",
+          "aliases": [
+            "executor_id",
+            "destroyer_id",
+            "operator_id"
+          ]
+        },
+        "planned_destruction_date": {
+          "name": "planned_destruction_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The scheduled date and time when the document was intended to be destroyed.",
+          "semantic_type": "timestamp",
+          "business_concept": "Scheduled Destruction Time",
+          "aliases": [
+            "planned_date",
+            "scheduled_destruction",
+            "target_date"
+          ]
+        },
+        "actual_destruction_date": {
+          "name": "actual_destruction_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date and time when the document was actually destroyed.",
+          "semantic_type": "timestamp",
+          "business_concept": "Actual Destruction Time",
+          "aliases": [
+            "actual_date",
+            "completion_date",
+            "destruction_timestamp"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional textual information or notes regarding the destruction process, often empty.",
+          "semantic_type": "description",
+          "business_concept": "Destruction Notes",
+          "aliases": [
+            "notes",
+            "comments",
+            "remarks",
+            "extra_info"
+          ]
+        }
+      }
+    },
+    "all_documents": {
+      "table": {
+        "name": "all_documents",
+        "column_count": 6,
+        "summary": "A master table storing metadata for various documents, including identification codes, storage timestamps, types, and names.",
+        "entity": "Document",
+        "role": "entity_table",
+        "aliases": [
+          "documents",
+          "doc_metadata",
+          "doc_master"
+        ]
+      },
+      "columns": {
+        "document_id": {
+          "name": "document_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each document record.",
+          "semantic_type": "identifier",
+          "business_concept": "Document ID",
+          "aliases": [
+            "doc_id",
+            "id",
+            "document_number"
+          ]
+        },
+        "date_stored": {
+          "name": "date_stored",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the document was recorded or stored in the system.",
+          "semantic_type": "timestamp",
+          "business_concept": "Ingestion Date",
+          "aliases": [
+            "created_at",
+            "stored_date",
+            "timestamp"
+          ]
+        },
+        "document_type_code": {
+          "name": "document_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short alphanumeric code representing the category or format of the document.",
+          "semantic_type": "code",
+          "business_concept": "Document Type",
+          "aliases": [
+            "doc_type",
+            "type_code",
+            "category_code"
+          ]
+        },
+        "document_name": {
+          "name": "document_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The human-readable title or name of the document.",
+          "semantic_type": "unknown",
+          "business_concept": "Document Title",
+          "aliases": [
+            "title",
+            "name",
+            "doc_title"
+          ]
+        },
+        "document_description": {
+          "name": "document_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A textual description of the document content or purpose.",
+          "semantic_type": "description",
+          "business_concept": "Document Description",
+          "aliases": [
+            "desc",
+            "summary",
+            "notes"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional miscellaneous information about the document.",
+          "semantic_type": "description",
+          "business_concept": "Additional Details",
+          "aliases": [
+            "extra_info",
+            "remarks",
+            "misc"
+          ]
+        }
+      }
+    },
+    "roles": {
+      "table": {
+        "name": "roles",
+        "column_count": 3,
+        "summary": "A reference table defining distinct job roles, their short codes, full names, and detailed descriptions.",
+        "entity": "Role",
+        "role": "lookup_table",
+        "aliases": [
+          "job_roles",
+          "user_roles",
+          "position_definitions",
+          "role_master"
+        ]
+      },
+      "columns": {
+        "role_code": {
+          "name": "role_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique, short alphanumeric identifier for a specific role.",
+          "semantic_type": "code",
+          "business_concept": "Role Identifier",
+          "aliases": [
+            "role_id",
+            "role_key",
+            "abbr",
+            "short_code"
+          ]
+        },
+        "role_name": {
+          "name": "role_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full, human-readable name of the role.",
+          "semantic_type": "category",
+          "business_concept": "Role Name",
+          "aliases": [
+            "role_title",
+            "position_name",
+            "job_title",
+            "name"
+          ]
+        },
+        "role_description": {
+          "name": "role_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A detailed textual explanation of the responsibilities and scope of the role.",
+          "semantic_type": "description",
+          "business_concept": "Role Description",
+          "aliases": [
+            "role_details",
+            "description",
+            "summary",
+            "notes"
+          ]
+        }
+      }
+    },
+    "ref_calendar": {
+      "table": {
+        "name": "ref_calendar",
+        "column_count": 2,
+        "summary": "A reference table containing calendar dates and associated day numbers, likely used for time-series indexing or day-of-week calculations.",
+        "entity": "Calendar Date",
+        "role": "lookup_table",
+        "aliases": [
+          "calendar",
+          "date_ref",
+          "time_index"
+        ]
+      },
+      "columns": {
+        "calendar_date": {
+          "name": "calendar_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The specific point in time represented by the date and time.",
+          "semantic_type": "timestamp",
+          "business_concept": "Date and Time",
+          "aliases": [
+            "date",
+            "dt",
+            "timestamp",
+            "event_time"
+          ]
+        },
+        "day_number": {
+          "name": "day_number",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A numeric code representing a specific day within a cycle (e.g., day of week or day of month).",
+          "semantic_type": "code",
+          "business_concept": "Day Index",
+          "aliases": [
+            "day_of_week",
+            "dow",
+            "day_idx",
+            "day_code"
+          ]
+        }
+      }
+    }
+  }
+}

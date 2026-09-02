@@ -1,0 +1,550 @@
+{
+  "database": "insurance_and_eClaims",
+  "tables": {
+    "claim_headers": {
+      "table": {
+        "name": "claim_headers",
+        "column_count": 6,
+        "summary": "A table storing high-level information about insurance or benefit claims, including their status, type, associated policy, financial amounts, and relevant dates.",
+        "entity": "Claim",
+        "role": "transaction_table",
+        "aliases": [
+          "claims",
+          "claim_master",
+          "claim_summary",
+          "claim_header_data"
+        ]
+      },
+      "columns": {
+        "claim_header_id": {
+          "name": "claim_header_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each claim record.",
+          "semantic_type": "identifier",
+          "business_concept": "Claim ID",
+          "aliases": [
+            "claim_id",
+            "header_id",
+            "claim_number"
+          ]
+        },
+        "claim_status_code": {
+          "name": "claim_status_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The current lifecycle status of the claim (e.g., Settled, Disputed).",
+          "semantic_type": "status",
+          "business_concept": "Claim Status",
+          "aliases": [
+            "status",
+            "claim_state",
+            "status_code"
+          ]
+        },
+        "claim_type_code": {
+          "name": "claim_type_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The specific category or reason for the claim (e.g., Handphone Subsidy, Child Birth).",
+          "semantic_type": "category",
+          "business_concept": "Claim Type",
+          "aliases": [
+            "type",
+            "claim_category",
+            "reason_code"
+          ]
+        },
+        "policy_id": {
+          "name": "policy_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A reference identifier linking the claim to a specific insurance policy.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Policy ID",
+          "aliases": [
+            "policy_number",
+            "policy_ref",
+            "p_id"
+          ]
+        },
+        "amount_claimed": {
+          "name": "amount_claimed",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total monetary value requested in the claim.",
+          "semantic_type": "money",
+          "business_concept": "Claim Amount",
+          "aliases": [
+            "requested_amount",
+            "claim_value",
+            "total_claim"
+          ]
+        },
+        "amount_piad": {
+          "name": "amount_piad",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The actual monetary amount paid out or processed for the claim.",
+          "semantic_type": "money",
+          "business_concept": "Paid Amount",
+          "aliases": [
+            "paid_amount",
+            "settlement_amount",
+            "amount_paid",
+            "piad_value"
+          ]
+        }
+      }
+    },
+    "claims_processing": {
+      "table": {
+        "name": "claims_processing",
+        "column_count": 5,
+        "summary": "Stores the current processing status, stage, and assigned staff for individual insurance claims.",
+        "entity": "Claim Processing Record",
+        "role": "transaction_table",
+        "aliases": [
+          "claims_status",
+          "claim_worklist",
+          "claim_assignment"
+        ]
+      },
+      "columns": {
+        "claim_processing_id": {
+          "name": "claim_processing_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific record in the claims processing log.",
+          "semantic_type": "identifier",
+          "business_concept": "Processing Record ID",
+          "aliases": [
+            "proc_id",
+            "claim_proc_key",
+            "log_id"
+          ]
+        },
+        "claim_id": {
+          "name": "claim_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the specific insurance claim being processed.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Claim Reference",
+          "aliases": [
+            "claim_ref",
+            "claim_number",
+            "parent_claim_id"
+          ]
+        },
+        "claim_outcome_code": {
+          "name": "claim_outcome_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Textual description of the current resolution status of the claim.",
+          "semantic_type": "status",
+          "business_concept": "Claim Outcome",
+          "aliases": [
+            "claim_status",
+            "resolution_code",
+            "outcome_desc"
+          ]
+        },
+        "claim_stage_id": {
+          "name": "claim_stage_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Numeric identifier representing the current step in the claims workflow.",
+          "semantic_type": "code",
+          "business_concept": "Workflow Stage",
+          "aliases": [
+            "stage_num",
+            "process_step",
+            "workflow_id"
+          ]
+        },
+        "staff_id": {
+          "name": "staff_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier of the employee currently assigned to or handling the claim.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Assigned Staff",
+          "aliases": [
+            "agent_id",
+            "handler_id",
+            "employee_id",
+            "adjuster_id"
+          ]
+        }
+      }
+    },
+    "staff": {
+      "table": {
+        "name": "staff",
+        "column_count": 2,
+        "summary": "A table containing core identification and name information for staff members.",
+        "entity": "staff",
+        "role": "entity_table",
+        "aliases": [
+          "employees",
+          "personnel",
+          "staff_list",
+          "user_directory"
+        ]
+      },
+      "columns": {
+        "staff_id": {
+          "name": "staff_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each staff member.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "staff_number",
+            "emp_id",
+            "employee_id"
+          ]
+        },
+        "staff_details": {
+          "name": "staff_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The first name of the staff member.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "first_name",
+            "fname",
+            "given_name",
+            "staff_name"
+          ]
+        }
+      }
+    },
+    "customers": {
+      "table": {
+        "name": "customers",
+        "column_count": 2,
+        "summary": "A table containing core customer identification and name information.",
+        "entity": "Customer",
+        "role": "entity_table",
+        "aliases": [
+          "clients",
+          "accounts",
+          "users"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each customer record.",
+          "semantic_type": "identifier",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "id",
+            "customer_number"
+          ]
+        },
+        "customer_details": {
+          "name": "customer_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full name of the customer, including titles and last names.",
+          "semantic_type": "person_name",
+          "business_concept": "Customer Name",
+          "aliases": [
+            "name",
+            "full_name",
+            "cust_name",
+            "client_name"
+          ]
+        }
+      }
+    },
+    "claims_documents": {
+      "table": {
+        "name": "claims_documents",
+        "column_count": 4,
+        "summary": "Stores metadata and creation details for various documents associated with insurance claims.",
+        "entity": "claim_document",
+        "role": "entity_table",
+        "aliases": [
+          "claims_docs",
+          "claim_documents",
+          "doc_metadata"
+        ]
+      },
+      "columns": {
+        "claim_id": {
+          "name": "claim_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier linking the document to a specific insurance claim.",
+          "semantic_type": "identifier",
+          "business_concept": "claim_reference",
+          "aliases": [
+            "claim_ref",
+            "claim_no",
+            "claim_number"
+          ]
+        },
+        "document_type_code": {
+          "name": "document_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Categorical code indicating the type of document (e.g., Medical, Document).",
+          "semantic_type": "code",
+          "business_concept": "document_category",
+          "aliases": [
+            "doc_type",
+            "document_category",
+            "type_code"
+          ]
+        },
+        "created_by_staff_id": {
+          "name": "created_by_staff_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier of the staff member who created or uploaded the document.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "staff_identifier",
+          "aliases": [
+            "creator_id",
+            "staff_id",
+            "uploader_id"
+          ]
+        },
+        "created_date": {
+          "name": "created_date",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Timestamp representing when the document was created or uploaded, stored as an integer (likely Unix epoch or similar).",
+          "semantic_type": "timestamp",
+          "business_concept": "creation_time",
+          "aliases": [
+            "create_time",
+            "upload_date",
+            "recorded_at"
+          ]
+        }
+      }
+    },
+    "policies": {
+      "table": {
+        "name": "policies",
+        "column_count": 5,
+        "summary": "A table storing records of insurance or coverage policies, linking them to specific customers and defining their active periods and types.",
+        "entity": "Policy",
+        "role": "entity_table",
+        "aliases": [
+          "policies",
+          "policy_records",
+          "coverage_policies"
+        ]
+      },
+      "columns": {
+        "policy_id": {
+          "name": "policy_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each policy record.",
+          "semantic_type": "identifier",
+          "business_concept": "Policy ID",
+          "aliases": [
+            "policy_number",
+            "pol_id",
+            "id"
+          ]
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier linking the policy to a specific customer.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "client_id",
+            "policyholder_id"
+          ]
+        },
+        "policy_type_code": {
+          "name": "policy_type_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A categorical code indicating the type of policy (e.g., Deputy, Jurisdiction, Uniformed).",
+          "semantic_type": "code",
+          "business_concept": "Policy Type",
+          "aliases": [
+            "policy_type",
+            "type_code",
+            "coverage_type"
+          ]
+        },
+        "start_date": {
+          "name": "start_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the policy coverage begins.",
+          "semantic_type": "timestamp",
+          "business_concept": "Policy Start Date",
+          "aliases": [
+            "effective_date",
+            "start",
+            "policy_start"
+          ]
+        },
+        "end_date": {
+          "name": "end_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the policy coverage expires or ends.",
+          "semantic_type": "timestamp",
+          "business_concept": "Policy End Date",
+          "aliases": [
+            "expiration_date",
+            "end",
+            "policy_end"
+          ]
+        }
+      }
+    },
+    "claims_processing_stages": {
+      "table": {
+        "name": "claims_processing_stages",
+        "column_count": 4,
+        "summary": "Defines the lifecycle stages and statuses associated with insurance claims processing.",
+        "entity": "Claim Stage",
+        "role": "lookup_table",
+        "aliases": [
+          "claim_stages",
+          "processing_stages",
+          "claim_lifecycle"
+        ]
+      },
+      "columns": {
+        "claim_stage_id": {
+          "name": "claim_stage_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific claim processing stage.",
+          "semantic_type": "identifier",
+          "business_concept": "Stage ID",
+          "aliases": [
+            "stage_id",
+            "id",
+            "claim_stage_code"
+          ]
+        },
+        "next_claim_stage_id": {
+          "name": "next_claim_stage_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier of the subsequent stage in the claim processing workflow; null if this is the final stage.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Next Stage",
+          "aliases": [
+            "next_stage_id",
+            "successor_stage",
+            "following_stage"
+          ]
+        },
+        "claim_status_name": {
+          "name": "claim_status_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Short textual label representing the current state of the claim.",
+          "semantic_type": "status",
+          "business_concept": "Claim Status",
+          "aliases": [
+            "status",
+            "state",
+            "claim_state"
+          ]
+        },
+        "claim_status_description": {
+          "name": "claim_status_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Detailed explanation of what the claim status entails.",
+          "semantic_type": "description",
+          "business_concept": "Status Description",
+          "aliases": [
+            "status_desc",
+            "description",
+            "status_details"
+          ]
+        }
+      }
+    }
+  }
+}

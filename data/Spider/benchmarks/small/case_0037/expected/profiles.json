@@ -1,0 +1,311 @@
+{
+  "database": "cinema",
+  "tables": {
+    "schedule": {
+      "table": {
+        "name": "schedule",
+        "column_count": 5,
+        "summary": "A table defining the scheduling details for film showings at various cinemas, including dates, number of daily shows, and ticket prices.",
+        "entity": "Cinema Show Schedule",
+        "role": "transaction_table",
+        "aliases": [
+          "show_schedule",
+          "film_showings",
+          "cinema_screening"
+        ]
+      },
+      "columns": {
+        "cinema_id": {
+          "name": "cinema_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the cinema where the film is being shown.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Cinema Location",
+          "aliases": [
+            "cinema_code",
+            "theater_id",
+            "venue_id"
+          ]
+        },
+        "film_id": {
+          "name": "film_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the film being scheduled.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Movie Title",
+          "aliases": [
+            "movie_id",
+            "film_code",
+            "title_id"
+          ]
+        },
+        "date": {
+          "name": "date",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The calendar date on which the film showings occur.",
+          "semantic_type": "date",
+          "business_concept": "Show Date",
+          "aliases": [
+            "show_date",
+            "screening_date",
+            "event_date"
+          ]
+        },
+        "show_times_per_day": {
+          "name": "show_times_per_day",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total count of showings scheduled for the film on a specific date.",
+          "semantic_type": "quantity",
+          "business_concept": "Number of Screenings",
+          "aliases": [
+            "daily_shows",
+            "screening_count",
+            "times_per_day"
+          ]
+        },
+        "price": {
+          "name": "price",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The ticket price for the film showing.",
+          "semantic_type": "money",
+          "business_concept": "Ticket Price",
+          "aliases": [
+            "cost",
+            "fare",
+            "admission_price",
+            "ticket_cost"
+          ]
+        }
+      }
+    },
+    "film": {
+      "table": {
+        "name": "film",
+        "column_count": 7,
+        "summary": "A catalog of television episodes, specifically from a series involving 'The Case' titles, containing metadata such as production codes, air dates, and director information.",
+        "entity": "television_episode",
+        "role": "entity_table",
+        "aliases": [
+          "episodes",
+          "tv_episodes",
+          "show_episodes",
+          "case_episodes"
+        ]
+      },
+      "columns": {
+        "film_id": {
+          "name": "film_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each episode record in the database.",
+          "semantic_type": "identifier",
+          "business_concept": "episode_id",
+          "aliases": [
+            "id",
+            "episode_id",
+            "film_id"
+          ]
+        },
+        "rank_in_series": {
+          "name": "rank_in_series",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The sequential order of the episode within the entire series.",
+          "semantic_type": "quantity",
+          "business_concept": "series_rank",
+          "aliases": [
+            "series_number",
+            "overall_rank",
+            "episode_number"
+          ]
+        },
+        "number_in_season": {
+          "name": "number_in_season",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The sequential order of the episode within its specific season.",
+          "semantic_type": "quantity",
+          "business_concept": "season_episode_number",
+          "aliases": [
+            "season_number",
+            "ep_number",
+            "season_rank"
+          ]
+        },
+        "title": {
+          "name": "title",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official name or title of the television episode.",
+          "semantic_type": "description",
+          "business_concept": "episode_title",
+          "aliases": [
+            "name",
+            "episode_name",
+            "title"
+          ]
+        },
+        "directed_by": {
+          "name": "directed_by",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the director responsible for the episode.",
+          "semantic_type": "person_name",
+          "business_concept": "director",
+          "aliases": [
+            "director",
+            "directed_by",
+            "director_name"
+          ]
+        },
+        "original_air_date": {
+          "name": "original_air_date",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The date range during which the episode originally aired on television.",
+          "semantic_type": "date",
+          "business_concept": "air_date",
+          "aliases": [
+            "air_date",
+            "original_date",
+            "broadcast_date",
+            "date_aired"
+          ]
+        },
+        "production_code": {
+          "name": "production_code",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "An alphanumeric code assigned by the production company to identify the episode.",
+          "semantic_type": "code",
+          "business_concept": "production_code",
+          "aliases": [
+            "prod_code",
+            "code",
+            "production_number"
+          ]
+        }
+      }
+    },
+    "cinema": {
+      "table": {
+        "name": "cinema",
+        "column_count": 5,
+        "summary": "A dataset containing information about various cinemas, including their names, opening years, seating capacity, and geographical locations.",
+        "entity": "cinema",
+        "role": "entity_table",
+        "aliases": [
+          "cinemas",
+          "movie_theaters",
+          "theaters",
+          "screening_halls"
+        ]
+      },
+      "columns": {
+        "cinema_id": {
+          "name": "cinema_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each cinema record.",
+          "semantic_type": "identifier",
+          "business_concept": "primary_key",
+          "aliases": [
+            "id",
+            "cinema_code",
+            "theater_id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The proper name of the cinema.",
+          "semantic_type": "organization_name",
+          "business_concept": "cinema_name",
+          "aliases": [
+            "title",
+            "cinema_name",
+            "theater_name"
+          ]
+        },
+        "openning_year": {
+          "name": "openning_year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The year in which the cinema opened for business.",
+          "semantic_type": "date",
+          "business_concept": "opening_year",
+          "aliases": [
+            "year_opened",
+            "established",
+            "opened",
+            "start_year"
+          ]
+        },
+        "capacity": {
+          "name": "capacity",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of seats available in the cinema.",
+          "semantic_type": "quantity",
+          "business_concept": "seating_capacity",
+          "aliases": [
+            "seats",
+            "max_seats",
+            "seat_count",
+            "holding"
+          ]
+        },
+        "location": {
+          "name": "location",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The geographical region or county where the cinema is situated.",
+          "semantic_type": "address",
+          "business_concept": "region",
+          "aliases": [
+            "county",
+            "region",
+            "area",
+            "district",
+            "place"
+          ]
+        }
+      }
+    }
+  }
+}

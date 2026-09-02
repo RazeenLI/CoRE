@@ -1,0 +1,359 @@
+{
+  "database": "shop_membership",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/shop_membership",
+    "schema_path": "data/Spider/parsed/shop_membership/schema.json",
+    "tables_dir": "data/Spider/parsed/shop_membership/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "branch": {
+      "table": {
+        "name": "branch",
+        "column_count": 6,
+        "summary": "A table containing details about various branches, including their identifiers, names, opening years, addresses, cities, and membership amounts.",
+        "entity": "Branch",
+        "role": "entity_table",
+        "aliases": [
+          "branches",
+          "branch_details",
+          "locations"
+        ]
+      },
+      "columns": {
+        "branch_id": {
+          "name": "branch_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each branch record.",
+          "semantic_type": "identifier",
+          "business_concept": "Branch ID",
+          "aliases": [
+            "id",
+            "branch_code",
+            "branch_key"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The name of the branch, which appears to be a surname or specific designation based on sample values.",
+          "semantic_type": "person_name",
+          "business_concept": "Branch Name",
+          "aliases": [
+            "branch_name",
+            "name",
+            "surname"
+          ]
+        },
+        "open_year": {
+          "name": "open_year",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The year in which the branch was opened.",
+          "semantic_type": "date",
+          "business_concept": "Opening Year",
+          "aliases": [
+            "year_opened",
+            "established",
+            "opened"
+          ]
+        },
+        "address_road": {
+          "name": "address_road",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The street name or road where the branch is located.",
+          "semantic_type": "address",
+          "business_concept": "Street Name",
+          "aliases": [
+            "street",
+            "road",
+            "address_line_1",
+            "street_name"
+          ]
+        },
+        "city": {
+          "name": "city",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The city where the branch is located.",
+          "semantic_type": "city",
+          "business_concept": "City",
+          "aliases": [
+            "location_city",
+            "city_name",
+            "urban_area"
+          ]
+        },
+        "membership_amount": {
+          "name": "membership_amount",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of members associated with the branch.",
+          "semantic_type": "quantity",
+          "business_concept": "Member Count",
+          "aliases": [
+            "members",
+            "member_count",
+            "total_members",
+            "headcount"
+          ]
+        }
+      }
+    },
+    "member": {
+      "table": {
+        "name": "member",
+        "column_count": 5,
+        "summary": "A table containing personal and demographic information for individual members, including their unique ID, card number, name, hometown, and a level classification.",
+        "entity": "member",
+        "role": "entity_table",
+        "aliases": [
+          "members",
+          "user_profile",
+          "person_data"
+        ]
+      },
+      "columns": {
+        "member_id": {
+          "name": "member_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each member record.",
+          "semantic_type": "identifier",
+          "business_concept": "Member ID",
+          "aliases": [
+            "id",
+            "member_no",
+            "uid"
+          ]
+        },
+        "card_number": {
+          "name": "card_number",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique alphanumeric code associated with the member, likely representing a membership card or account token.",
+          "semantic_type": "code",
+          "business_concept": "Membership Card Number",
+          "aliases": [
+            "card_no",
+            "card_id",
+            "member_code"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the member.",
+          "semantic_type": "person_name",
+          "business_concept": "Full Name",
+          "aliases": [
+            "first_name",
+            "last_name",
+            "full_name",
+            "member_name"
+          ]
+        },
+        "hometown": {
+          "name": "hometown",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The city and state of origin for the member.",
+          "semantic_type": "address",
+          "business_concept": "Hometown",
+          "aliases": [
+            "city",
+            "origin",
+            "location",
+            "residence"
+          ]
+        },
+        "level": {
+          "name": "level",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A numeric value representing the tier, rank, or classification level of the member.",
+          "semantic_type": "category",
+          "business_concept": "Membership Level",
+          "aliases": [
+            "tier",
+            "rank",
+            "grade",
+            "class"
+          ]
+        }
+      }
+    },
+    "membership_register_branch": {
+      "table": {
+        "name": "membership_register_branch",
+        "column_count": 3,
+        "summary": "Records the registration details of members at specific branches, including the year of registration.",
+        "entity": "Membership Registration",
+        "role": "transaction_table",
+        "aliases": [
+          "member_branch_register",
+          "branch_membership_log",
+          "member_registration_history"
+        ]
+      },
+      "columns": {
+        "member_id": {
+          "name": "member_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a registered member.",
+          "semantic_type": "identifier",
+          "business_concept": "Member ID",
+          "aliases": [
+            "member_uid",
+            "customer_id",
+            "person_id"
+          ]
+        },
+        "branch_id": {
+          "name": "branch_id",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the branch where the member is registered.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Branch ID",
+          "aliases": [
+            "branch_code",
+            "location_id",
+            "store_id"
+          ]
+        },
+        "register_year": {
+          "name": "register_year",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the member was registered at the branch.",
+          "semantic_type": "date",
+          "business_concept": "Registration Year",
+          "aliases": [
+            "reg_year",
+            "join_year",
+            "year_registered"
+          ]
+        }
+      }
+    },
+    "purchase": {
+      "table": {
+        "name": "purchase",
+        "column_count": 4,
+        "summary": "A transactional table recording purchase amounts aggregated by member, branch, and year.",
+        "entity": "purchase",
+        "role": "transaction_table",
+        "aliases": [
+          "purchases",
+          "buy_records",
+          "sales_log"
+        ]
+      },
+      "columns": {
+        "member_id": {
+          "name": "member_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the customer or member making the purchase.",
+          "semantic_type": "identifier",
+          "business_concept": "customer_id",
+          "aliases": [
+            "cust_id",
+            "user_id",
+            "member_no"
+          ]
+        },
+        "branch_id": {
+          "name": "branch_id",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the specific branch or location where the purchase occurred.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "store_id",
+          "aliases": [
+            "branch_code",
+            "location_id",
+            "shop_id"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the purchase transaction took place.",
+          "semantic_type": "date",
+          "business_concept": "transaction_year",
+          "aliases": [
+            "yr",
+            "fiscal_year",
+            "year_code"
+          ]
+        },
+        "total_pounds": {
+          "name": "total_pounds",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total monetary value of the purchase in pounds currency.",
+          "semantic_type": "money",
+          "business_concept": "purchase_amount",
+          "aliases": [
+            "amount",
+            "total",
+            "price",
+            "sum"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,466 @@
+{
+  "database": "customers_and_addresses",
+  "tables": {
+    "customers": {
+      "table": {
+        "name": "customers",
+        "column_count": 5,
+        "summary": "A table containing core customer information including unique identifiers, names, registration dates, payment preferences, and VIP status.",
+        "entity": "Customer",
+        "role": "entity_table",
+        "aliases": [
+          "clients",
+          "accounts",
+          "user_base"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each customer record.",
+          "semantic_type": "identifier",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "id",
+            "customer_number"
+          ]
+        },
+        "payment_method": {
+          "name": "payment_method",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The preferred method used by the customer for making payments.",
+          "semantic_type": "category",
+          "business_concept": "Payment Preference",
+          "aliases": [
+            "pay_type",
+            "payment_type",
+            "method"
+          ]
+        },
+        "customer_name": {
+          "name": "customer_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full name of the customer, potentially including titles and suffixes.",
+          "semantic_type": "person_name",
+          "business_concept": "Customer Name",
+          "aliases": [
+            "name",
+            "full_name",
+            "cust_name"
+          ]
+        },
+        "date_became_customer": {
+          "name": "date_became_customer",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp indicating when the individual first registered or was onboarded as a customer.",
+          "semantic_type": "timestamp",
+          "business_concept": "Registration Date",
+          "aliases": [
+            "signup_date",
+            "created_at",
+            "join_date",
+            "onboarding_date"
+          ]
+        },
+        "other_customer_details": {
+          "name": "other_customer_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Additional descriptive information about the customer, such as loyalty tier or special notes.",
+          "semantic_type": "description",
+          "business_concept": "Customer Status/Notes",
+          "aliases": [
+            "notes",
+            "status",
+            "tier",
+            "extra_info"
+          ]
+        }
+      }
+    },
+    "addresses": {
+      "table": {
+        "name": "addresses",
+        "column_count": 7,
+        "summary": "A table storing detailed location information including street addresses, cities, states, and countries.",
+        "entity": "Address",
+        "role": "entity_table",
+        "aliases": [
+          "addr",
+          "locations",
+          "contact_addresses",
+          "shipping_addresses"
+        ]
+      },
+      "columns": {
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each address record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "addr_id",
+            "address_key"
+          ]
+        },
+        "address_content": {
+          "name": "address_content",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full street address string including number, street name, and suite/apt details.",
+          "semantic_type": "address",
+          "business_concept": "Street Address",
+          "aliases": [
+            "street_address",
+            "full_address",
+            "line1",
+            "addr_line"
+          ]
+        },
+        "city": {
+          "name": "city",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The name of the city where the address is located.",
+          "semantic_type": "city",
+          "business_concept": "City Name",
+          "aliases": [
+            "city_name",
+            "municipality",
+            "locality"
+          ]
+        },
+        "zip_postcode": {
+          "name": "zip_postcode",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The postal code or zip code associated with the address.",
+          "semantic_type": "code",
+          "business_concept": "Postal Code",
+          "aliases": [
+            "zip",
+            "postal_code",
+            "postcode",
+            "zip_code"
+          ]
+        },
+        "state_province_county": {
+          "name": "state_province_county",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The state, province, or county name where the address is located.",
+          "semantic_type": "address",
+          "business_concept": "State/Province",
+          "aliases": [
+            "state",
+            "province",
+            "region",
+            "state_province"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country where the address is located.",
+          "semantic_type": "country",
+          "business_concept": "Country Name",
+          "aliases": [
+            "nation",
+            "country_code",
+            "iso_country"
+          ]
+        },
+        "other_address_details": {
+          "name": "other_address_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional information about the address not covered by other fields.",
+          "semantic_type": "description",
+          "business_concept": "Address Notes",
+          "aliases": [
+            "addr_notes",
+            "extra_details",
+            "supplementary_info"
+          ]
+        }
+      }
+    },
+    "order_items": {
+      "table": {
+        "name": "order_items",
+        "column_count": 3,
+        "summary": "Stores the line-level details of orders, linking specific products to orders with their respective quantities.",
+        "entity": "Order Item",
+        "role": "transaction_table",
+        "aliases": [
+          "order_details",
+          "order_lines",
+          "order_line_items"
+        ]
+      },
+      "columns": {
+        "order_id": {
+          "name": "order_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the parent order to which this item belongs.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Order Reference",
+          "aliases": [
+            "order_ref",
+            "parent_order",
+            "order_number"
+          ]
+        },
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific product included in the order.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Product Reference",
+          "aliases": [
+            "item_id",
+            "sku",
+            "product_ref",
+            "goods_id"
+          ]
+        },
+        "order_quantity": {
+          "name": "order_quantity",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of units of the product ordered in this specific line item.",
+          "semantic_type": "quantity",
+          "business_concept": "Item Count",
+          "aliases": [
+            "qty",
+            "quantity",
+            "amount",
+            "count"
+          ]
+        }
+      }
+    },
+    "customer_contact_channels": {
+      "table": {
+        "name": "customer_contact_channels",
+        "column_count": 5,
+        "summary": "Stores the history of contact channels (phone numbers, email, etc.) associated with customers, including activation and deactivation dates.",
+        "entity": "customer_contact_channel",
+        "role": "transaction_table",
+        "aliases": [
+          "customer_communication_channels",
+          "contact_methods",
+          "customer_phone_email_history"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier linking the contact channel record to a specific customer.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer Identifier",
+          "aliases": [
+            "cust_id",
+            "customer_key",
+            "client_id"
+          ]
+        },
+        "channel_code": {
+          "name": "channel_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A categorical code representing the type of communication channel (e.g., Email, Cell).",
+          "semantic_type": "code",
+          "business_concept": "Communication Channel Type",
+          "aliases": [
+            "channel_type",
+            "contact_type",
+            "medium_code"
+          ]
+        },
+        "active_from_date": {
+          "name": "active_from_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the contact channel became active for the customer.",
+          "semantic_type": "timestamp",
+          "business_concept": "Channel Activation Date",
+          "aliases": [
+            "start_date",
+            "created_at",
+            "effective_from"
+          ]
+        },
+        "active_to_date": {
+          "name": "active_to_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the contact channel became inactive or was removed; null indicates the channel is still active.",
+          "semantic_type": "timestamp",
+          "business_concept": "Channel Deactivation Date",
+          "aliases": [
+            "end_date",
+            "terminated_at",
+            "effective_until"
+          ]
+        },
+        "contact_number": {
+          "name": "contact_number",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The specific phone number or contact string associated with the channel.",
+          "semantic_type": "phone",
+          "business_concept": "Contact Phone Number",
+          "aliases": [
+            "phone_number",
+            "mobile_number",
+            "contact_phone",
+            "extension"
+          ]
+        }
+      }
+    },
+    "customer_addresses": {
+      "table": {
+        "name": "customer_addresses",
+        "column_count": 5,
+        "summary": "Stores historical address records linked to customers, including address types and validity periods.",
+        "entity": "Customer Address",
+        "role": "entity_table",
+        "aliases": [
+          "customer_addresses",
+          "addr",
+          "cust_addr",
+          "address_history"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier linking the address record to a specific customer.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer Identifier",
+          "aliases": [
+            "cust_id",
+            "customer",
+            "client_id"
+          ]
+        },
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific address record within the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Address Record ID",
+          "aliases": [
+            "addr_id",
+            "address",
+            "id"
+          ]
+        },
+        "date_address_from": {
+          "name": "date_address_from",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The start date and time when this address became valid for the customer.",
+          "semantic_type": "timestamp",
+          "business_concept": "Address Validity Start Date",
+          "aliases": [
+            "addr_from",
+            "start_date",
+            "valid_from",
+            "effective_date"
+          ]
+        },
+        "address_type": {
+          "name": "address_type",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Categorizes the address as either for billing purposes or residential use.",
+          "semantic_type": "category",
+          "business_concept": "Address Category",
+          "aliases": [
+            "addr_type",
+            "type",
+            "category",
+            "purpose"
+          ]
+        },
+        "date_address_to": {
+          "name": "date_address_to",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The end date and time when this address ceased to be valid (nullable if currently active).",
+          "semantic_type": "timestamp",
+          "business_concept": "Address Validity End Date",
+          "aliases": [
+            "addr_to",
+            "end_date",
+            "valid_to",
+            "expiry_date"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,453 @@
+{
+  "database": "products_gen_characteristics",
+  "tables": {
+    "characteristics": {
+      "table": {
+        "name": "characteristics",
+        "column_count": 5,
+        "summary": "A lookup table defining standardized product or item characteristics, such as quality grades, purity levels, and speed ratings.",
+        "entity": "Characteristic",
+        "role": "lookup_table",
+        "aliases": [
+          "characteristics",
+          "product_attributes",
+          "item_specs",
+          "quality_traits"
+        ]
+      },
+      "columns": {
+        "characteristic_id": {
+          "name": "characteristic_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each characteristic record.",
+          "semantic_type": "identifier",
+          "business_concept": "Characteristic ID",
+          "aliases": [
+            "char_id",
+            "id",
+            "characteristic_key"
+          ]
+        },
+        "characteristic_type_code": {
+          "name": "characteristic_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Categorical code representing the nature of the characteristic (e.g., Grade, Purity).",
+          "semantic_type": "code",
+          "business_concept": "Characteristic Type",
+          "aliases": [
+            "type_code",
+            "char_type",
+            "category_code"
+          ]
+        },
+        "characteristic_data_type": {
+          "name": "characteristic_data_type",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Data classification or format associated with the characteristic (values appear to be placeholder or legacy data).",
+          "semantic_type": "code",
+          "business_concept": "Data Type",
+          "aliases": [
+            "data_type",
+            "dtype",
+            "char_data_type"
+          ]
+        },
+        "characteristic_name": {
+          "name": "characteristic_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Human-readable name or label for the characteristic (e.g., slow, fast, warm).",
+          "semantic_type": "category",
+          "business_concept": "Characteristic Name",
+          "aliases": [
+            "name",
+            "label",
+            "char_name",
+            "attribute_name"
+          ]
+        },
+        "other_characteristic_details": {
+          "name": "other_characteristic_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional descriptive text or notes about the characteristic, currently empty in samples.",
+          "semantic_type": "description",
+          "business_concept": "Additional Details",
+          "aliases": [
+            "details",
+            "notes",
+            "description",
+            "extra_info"
+          ]
+        }
+      }
+    },
+    "ref_characteristic_types": {
+      "table": {
+        "name": "ref_characteristic_types",
+        "column_count": 2,
+        "summary": "A reference table defining standard types of characteristics used to describe items, likely in a manufacturing or quality control context.",
+        "entity": "Characteristic Type",
+        "role": "lookup_table",
+        "aliases": [
+          "ref_char_types",
+          "characteristic_type_master",
+          "char_type_lookup"
+        ]
+      },
+      "columns": {
+        "characteristic_type_code": {
+          "name": "characteristic_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique, short identifier for a specific type of characteristic.",
+          "semantic_type": "code",
+          "business_concept": "Characteristic Type ID",
+          "aliases": [
+            "char_type_code",
+            "type_code",
+            "ct_code"
+          ]
+        },
+        "characteristic_type_description": {
+          "name": "characteristic_type_description",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A human-readable text description explaining the characteristic type.",
+          "semantic_type": "description",
+          "business_concept": "Characteristic Type Name/Label",
+          "aliases": [
+            "char_type_desc",
+            "type_description",
+            "char_type_name"
+          ]
+        }
+      }
+    },
+    "product_characteristics": {
+      "table": {
+        "name": "product_characteristics",
+        "column_count": 3,
+        "summary": "Stores the specific characteristic values (e.g., quality level, size) associated with various products.",
+        "entity": "Product Characteristic",
+        "role": "relationship_table",
+        "aliases": [
+          "product_features",
+          "product_specs",
+          "item_attributes"
+        ]
+      },
+      "columns": {
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the product to which the characteristic applies.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Product ID",
+          "aliases": [
+            "prod_id",
+            "product_code",
+            "item_id"
+          ]
+        },
+        "characteristic_id": {
+          "name": "characteristic_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific characteristic being recorded.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Characteristic ID",
+          "aliases": [
+            "char_id",
+            "feature_id",
+            "spec_id"
+          ]
+        },
+        "product_characteristic_value": {
+          "name": "product_characteristic_value",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The specific value or attribute level assigned to the product for the given characteristic.",
+          "semantic_type": "code",
+          "business_concept": "Characteristic Value",
+          "aliases": [
+            "char_value",
+            "attribute_value",
+            "spec_value",
+            "level"
+          ]
+        }
+      }
+    },
+    "ref_colors": {
+      "table": {
+        "name": "ref_colors",
+        "column_count": 2,
+        "summary": "A reference table mapping short color codes to their descriptive names.",
+        "entity": "Color",
+        "role": "lookup_table",
+        "aliases": [
+          "color_ref",
+          "color_master",
+          "color_lookup"
+        ]
+      },
+      "columns": {
+        "color_code": {
+          "name": "color_code",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique short identifier representing a specific color.",
+          "semantic_type": "code",
+          "business_concept": "Color Identifier",
+          "aliases": [
+            "color_id",
+            "color_key",
+            "short_code"
+          ]
+        },
+        "color_description": {
+          "name": "color_description",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The human-readable name of the color.",
+          "semantic_type": "description",
+          "business_concept": "Color Name",
+          "aliases": [
+            "color_name",
+            "color_label",
+            "color_text"
+          ]
+        }
+      }
+    },
+    "ref_product_categories": {
+      "table": {
+        "name": "ref_product_categories",
+        "column_count": 3,
+        "summary": "A reference table defining standard product categories, their descriptions, and associated units of measure.",
+        "entity": "Product Category",
+        "role": "lookup_table",
+        "aliases": [
+          "product_cat_ref",
+          "cat_master",
+          "product_type_lookup"
+        ]
+      },
+      "columns": {
+        "product_category_code": {
+          "name": "product_category_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier or short code representing a specific product category.",
+          "semantic_type": "code",
+          "business_concept": "Category Identifier",
+          "aliases": [
+            "cat_code",
+            "product_cat_id",
+            "category_key"
+          ]
+        },
+        "product_category_description": {
+          "name": "product_category_description",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A textual description providing details about the product category.",
+          "semantic_type": "description",
+          "business_concept": "Category Description",
+          "aliases": [
+            "cat_desc",
+            "category_name",
+            "product_cat_name"
+          ]
+        },
+        "unit_of_measure": {
+          "name": "unit_of_measure",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The standard unit used to quantify items within this product category.",
+          "semantic_type": "code",
+          "business_concept": "Unit of Measure",
+          "aliases": [
+            "uom",
+            "unit",
+            "measure_unit",
+            "unit_code"
+          ]
+        }
+      }
+    },
+    "products": {
+      "table": {
+        "name": "products",
+        "column_count": 8,
+        "summary": "A catalog of products containing identifiers, names, categories, and pricing information.",
+        "entity": "Product",
+        "role": "entity_table",
+        "aliases": [
+          "product_catalog",
+          "items",
+          "merchandise"
+        ]
+      },
+      "columns": {
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each product record.",
+          "semantic_type": "identifier",
+          "business_concept": "Product ID",
+          "aliases": [
+            "id",
+            "pid",
+            "sku"
+          ]
+        },
+        "color_code": {
+          "name": "color_code",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A code representing the color of the product, stored as a string.",
+          "semantic_type": "code",
+          "business_concept": "Color Code",
+          "aliases": [
+            "color",
+            "clr",
+            "color_id"
+          ]
+        },
+        "product_category_code": {
+          "name": "product_category_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A code or label indicating the category of the product.",
+          "semantic_type": "category",
+          "business_concept": "Product Category",
+          "aliases": [
+            "category",
+            "cat",
+            "product_type"
+          ]
+        },
+        "product_name": {
+          "name": "product_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The human-readable name of the product.",
+          "semantic_type": "unknown",
+          "business_concept": "Product Name",
+          "aliases": [
+            "name",
+            "title",
+            "item_name"
+          ]
+        },
+        "typical_buying_price": {
+          "name": "typical_buying_price",
+          "dtype": "string",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The typical cost to purchase the product, stored as a string.",
+          "semantic_type": "money",
+          "business_concept": "Buying Price",
+          "aliases": [
+            "buy_price",
+            "cost",
+            "purchase_price",
+            "wholesale_price"
+          ]
+        },
+        "typical_selling_price": {
+          "name": "typical_selling_price",
+          "dtype": "string",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The typical price at which the product is sold, stored as a string.",
+          "semantic_type": "money",
+          "business_concept": "Selling Price",
+          "aliases": [
+            "sell_price",
+            "price",
+            "retail_price",
+            "sale_price"
+          ]
+        },
+        "product_description": {
+          "name": "product_description",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A textual description of the product, containing Latin placeholder text in samples.",
+          "semantic_type": "description",
+          "business_concept": "Product Description",
+          "aliases": [
+            "desc",
+            "details",
+            "summary"
+          ]
+        },
+        "other_product_details": {
+          "name": "other_product_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional details about the product, currently empty in samples.",
+          "semantic_type": "description",
+          "business_concept": "Additional Details",
+          "aliases": [
+            "extra_info",
+            "notes",
+            "metadata"
+          ]
+        }
+      }
+    }
+  }
+}

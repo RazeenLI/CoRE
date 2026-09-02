@@ -1,0 +1,603 @@
+{
+  "database": "e_learning",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/e_learning",
+    "schema_path": "data/Spider/parsed/e_learning/schema.json",
+    "tables_dir": "data/Spider/parsed/e_learning/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "course_authors_and_tutors": {
+      "table": {
+        "name": "course_authors_and_tutors",
+        "column_count": 9,
+        "summary": "Stores profile information, authentication credentials, and contact details for course authors and tutors.",
+        "entity": "Person",
+        "role": "entity_table",
+        "aliases": [
+          "authors_tutors",
+          "instructor_profiles",
+          "user_auth",
+          "staff_directory"
+        ]
+      },
+      "columns": {
+        "author_id": {
+          "name": "author_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for an author or tutor within the system.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "author_pk",
+            "tutor_id"
+          ]
+        },
+        "author_tutor_atb": {
+          "name": "author_tutor_atb",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A short code or status indicator distinguishing the role (Author vs Tutor) or a specific attribute code.",
+          "semantic_type": "code",
+          "business_concept": "Role Indicator",
+          "aliases": [
+            "role_code",
+            "atb_code",
+            "type_flag"
+          ]
+        },
+        "login_name": {
+          "name": "login_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Unique username used for system authentication.",
+          "semantic_type": "code",
+          "business_concept": "Username",
+          "aliases": [
+            "username",
+            "user_id",
+            "login"
+          ]
+        },
+        "password": {
+          "name": "password",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Encrypted or hashed password string for authentication.",
+          "semantic_type": "code",
+          "business_concept": "Password Hash",
+          "aliases": [
+            "pwd",
+            "pass",
+            "auth_token"
+          ]
+        },
+        "personal_name": {
+          "name": "personal_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The given name or first name of the individual.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "first_name",
+            "fname",
+            "given_name"
+          ]
+        },
+        "middle_name": {
+          "name": "middle_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The middle name of the individual.",
+          "semantic_type": "person_name",
+          "business_concept": "Middle Name",
+          "aliases": [
+            "mid_name",
+            "middle",
+            "mname"
+          ]
+        },
+        "family_name": {
+          "name": "family_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The surname or last name of the individual.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "last_name",
+            "lname",
+            "surname"
+          ]
+        },
+        "gender_mf": {
+          "name": "gender_mf",
+          "dtype": "string",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Gender indicator represented as a binary code (0 or 1).",
+          "semantic_type": "code",
+          "business_concept": "Gender",
+          "aliases": [
+            "gender",
+            "sex",
+            "gender_code"
+          ]
+        },
+        "address_line_1": {
+          "name": "address_line_1",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The primary line of the physical mailing address.",
+          "semantic_type": "address",
+          "business_concept": "Street Address",
+          "aliases": [
+            "addr_line1",
+            "street",
+            "address"
+          ]
+        }
+      }
+    },
+    "courses": {
+      "table": {
+        "name": "courses",
+        "column_count": 5,
+        "summary": "A table containing metadata and details about various academic courses, including their identifiers, authors, subjects, names, and descriptions.",
+        "entity": "Course",
+        "role": "entity_table",
+        "aliases": [
+          "course_master",
+          "course_catalog",
+          "curriculum"
+        ]
+      },
+      "columns": {
+        "course_id": {
+          "name": "course_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific course record.",
+          "semantic_type": "identifier",
+          "business_concept": "Course ID",
+          "aliases": [
+            "cid",
+            "course_no",
+            "id"
+          ]
+        },
+        "author_id": {
+          "name": "author_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the course to its instructor or creator.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Instructor ID",
+          "aliases": [
+            "instructor_id",
+            "prof_id",
+            "teacher_id",
+            "creator_id"
+          ]
+        },
+        "subject_id": {
+          "name": "subject_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the course to a specific academic subject or department.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Subject ID",
+          "aliases": [
+            "dept_id",
+            "category_id",
+            "discipline_id"
+          ]
+        },
+        "course_name": {
+          "name": "course_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The official title or name of the course.",
+          "semantic_type": "code",
+          "business_concept": "Course Title",
+          "aliases": [
+            "title",
+            "name",
+            "course_title"
+          ]
+        },
+        "course_description": {
+          "name": "course_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A textual summary or detailed explanation of the course content.",
+          "semantic_type": "description",
+          "business_concept": "Course Description",
+          "aliases": [
+            "desc",
+            "summary",
+            "overview",
+            "details"
+          ]
+        }
+      }
+    },
+    "student_course_enrolment": {
+      "table": {
+        "name": "student_course_enrolment",
+        "column_count": 5,
+        "summary": "Records the enrollment and completion details of students in various courses, including timestamps for both events.",
+        "entity": "student_course_enrolment",
+        "role": "transaction_table",
+        "aliases": [
+          "student_course_enrolment",
+          "course_enrolments",
+          "student_courses",
+          "enrolment_records"
+        ]
+      },
+      "columns": {
+        "registration_id": {
+          "name": "registration_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each specific enrollment record.",
+          "semantic_type": "identifier",
+          "business_concept": "enrollment_registration_id",
+          "aliases": [
+            "reg_id",
+            "enrolment_id",
+            "record_id"
+          ]
+        },
+        "student_id": {
+          "name": "student_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier linking the record to a specific student.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "student_identifier",
+          "aliases": [
+            "student_code",
+            "stu_id",
+            "student_ref"
+          ]
+        },
+        "course_id": {
+          "name": "course_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier linking the record to a specific course.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "course_identifier",
+          "aliases": [
+            "course_code",
+            "c_id",
+            "course_ref"
+          ]
+        },
+        "date_of_enrolment": {
+          "name": "date_of_enrolment",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The specific date and time when the student officially registered for the course.",
+          "semantic_type": "timestamp",
+          "business_concept": "enrollment_start_date",
+          "aliases": [
+            "enrolment_date",
+            "reg_date",
+            "start_date",
+            "join_date"
+          ]
+        },
+        "date_of_completion": {
+          "name": "date_of_completion",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The specific date and time when the student finished the course.",
+          "semantic_type": "timestamp",
+          "business_concept": "course_completion_date",
+          "aliases": [
+            "completion_date",
+            "end_date",
+            "finish_date",
+            "graduation_date"
+          ]
+        }
+      }
+    },
+    "student_tests_taken": {
+      "table": {
+        "name": "student_tests_taken",
+        "column_count": 3,
+        "summary": "Records of individual tests taken by students, including the date of the test and the result achieved.",
+        "entity": "test_record",
+        "role": "transaction_table",
+        "aliases": [
+          "student_test_history",
+          "test_results_log",
+          "exam_records"
+        ]
+      },
+      "columns": {
+        "registration_id": {
+          "name": "registration_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the student associated with the test record.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "student_identifier",
+          "aliases": [
+            "student_id",
+            "reg_id",
+            "student_registration"
+          ]
+        },
+        "date_test_taken": {
+          "name": "date_test_taken",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The specific date and time when the student completed the test.",
+          "semantic_type": "timestamp",
+          "business_concept": "test_completion_time",
+          "aliases": [
+            "test_date",
+            "exam_date",
+            "test_timestamp",
+            "date_taken"
+          ]
+        },
+        "test_result": {
+          "name": "test_result",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The outcome of the test, indicating whether the student passed or failed.",
+          "semantic_type": "status",
+          "business_concept": "test_outcome",
+          "aliases": [
+            "result",
+            "exam_result",
+            "pass_fail",
+            "score_status"
+          ]
+        }
+      }
+    },
+    "students": {
+      "table": {
+        "name": "students",
+        "column_count": 8,
+        "summary": "A table containing student account information, including registration details, login credentials, and personal names.",
+        "entity": "Student",
+        "role": "entity_table",
+        "aliases": [
+          "student_accounts",
+          "user_students",
+          "reg_students"
+        ]
+      },
+      "columns": {
+        "student_id": {
+          "name": "student_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each student record.",
+          "semantic_type": "identifier",
+          "business_concept": "Student ID",
+          "aliases": [
+            "sid",
+            "id",
+            "student_number"
+          ]
+        },
+        "date_of_registration": {
+          "name": "date_of_registration",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the student account was created or registered in the system.",
+          "semantic_type": "timestamp",
+          "business_concept": "Registration Date",
+          "aliases": [
+            "reg_date",
+            "created_at",
+            "signup_date"
+          ]
+        },
+        "date_of_latest_logon": {
+          "name": "date_of_latest_logon",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The most recent timestamp when the student successfully logged into the system.",
+          "semantic_type": "timestamp",
+          "business_concept": "Last Login Date",
+          "aliases": [
+            "last_login",
+            "last_access",
+            "logon_date"
+          ]
+        },
+        "login_name": {
+          "name": "login_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The username used by the student to authenticate to the system.",
+          "semantic_type": "code",
+          "business_concept": "Username",
+          "aliases": [
+            "username",
+            "user_id",
+            "login",
+            "uname"
+          ]
+        },
+        "password": {
+          "name": "password",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The hashed or encoded password string used for authentication.",
+          "semantic_type": "code",
+          "business_concept": "Password Hash",
+          "aliases": [
+            "pwd",
+            "pass",
+            "secret",
+            "auth_token"
+          ]
+        },
+        "personal_name": {
+          "name": "personal_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The given name or first name of the student.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "first_name",
+            "fname",
+            "given_name",
+            "fn"
+          ]
+        },
+        "middle_name": {
+          "name": "middle_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The middle name of the student.",
+          "semantic_type": "person_name",
+          "business_concept": "Middle Name",
+          "aliases": [
+            "mid_name",
+            "middle",
+            "mn"
+          ]
+        },
+        "family_name": {
+          "name": "family_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The surname or last name of the student.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "last_name",
+            "lname",
+            "surname",
+            "sn"
+          ]
+        }
+      }
+    },
+    "subjects": {
+      "table": {
+        "name": "subjects",
+        "column_count": 2,
+        "summary": "A table containing a list of academic subjects with unique identifiers and names.",
+        "entity": "Academic Subject",
+        "role": "lookup_table",
+        "aliases": [
+          "courses",
+          "topics",
+          "disciplines",
+          "majors"
+        ]
+      },
+      "columns": {
+        "subject_id": {
+          "name": "subject_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each subject.",
+          "semantic_type": "identifier",
+          "business_concept": "Subject ID",
+          "aliases": [
+            "id",
+            "subject_code",
+            "subj_id"
+          ]
+        },
+        "subject_name": {
+          "name": "subject_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The descriptive name of the academic subject.",
+          "semantic_type": "category",
+          "business_concept": "Subject Name",
+          "aliases": [
+            "name",
+            "title",
+            "course_name",
+            "topic_name"
+          ]
+        }
+      }
+    }
+  }
+}

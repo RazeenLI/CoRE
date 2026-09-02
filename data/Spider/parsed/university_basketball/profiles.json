@@ -1,0 +1,312 @@
+{
+  "database": "university_basketball",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/university_basketball",
+    "schema_path": "data/Spider/parsed/university_basketball/schema.json",
+    "tables_dir": "data/Spider/parsed/university_basketball/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "basketball_match": {
+      "table": {
+        "name": "basketball_match",
+        "column_count": 12,
+        "summary": "Records containing performance statistics for teams participating in ACC basketball matches, including win-loss records and winning percentages.",
+        "entity": "basketball_match",
+        "role": "entity_table",
+        "aliases": [
+          "basketball_team_stats",
+          "acc_basketball_standings",
+          "team_performance"
+        ]
+      },
+      "columns": {
+        "team_id": {
+          "name": "team_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a basketball team.",
+          "semantic_type": "identifier",
+          "business_concept": "Team ID",
+          "aliases": [
+            "team_code",
+            "id"
+          ]
+        },
+        "school_id": {
+          "name": "school_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the team to its parent educational institution.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "School ID",
+          "aliases": [
+            "school_code",
+            "institution_id"
+          ]
+        },
+        "team_name": {
+          "name": "team_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official name of the basketball team.",
+          "semantic_type": "organization_name",
+          "business_concept": "Team Name",
+          "aliases": [
+            "name",
+            "team"
+          ]
+        },
+        "acc_regular_season": {
+          "name": "acc_regular_season",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The win-loss record of the team during the regular ACC season.",
+          "semantic_type": "code",
+          "business_concept": "Regular Season Record",
+          "aliases": [
+            "wins_losses",
+            "record"
+          ]
+        },
+        "acc_percent": {
+          "name": "acc_percent",
+          "dtype": "text",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The winning percentage calculated from the team's regular season games.",
+          "semantic_type": "quantity",
+          "business_concept": "Winning Percentage",
+          "aliases": [
+            "win_pct",
+            "percentage"
+          ]
+        },
+        "acc_home": {
+          "name": "acc_home",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The win-loss record of the team specifically in home games during the ACC season.",
+          "semantic_type": "code",
+          "business_concept": "Home Record",
+          "aliases": [
+            "home_wins_losses",
+            "home_record"
+          ]
+        },
+        "acc_road": {
+          "name": "acc_road",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Win-loss record for conference games played on the road.",
+          "semantic_type": "code",
+          "business_concept": "conference_road_record",
+          "aliases": [
+            "conf_road",
+            "away_conf_record"
+          ]
+        },
+        "all_games": {
+          "name": "all_games",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Total win-loss record for all games played during the season.",
+          "semantic_type": "code",
+          "business_concept": "total_season_record",
+          "aliases": [
+            "overall_record",
+            "total_games_record"
+          ]
+        },
+        "all_games_percent": {
+          "name": "all_games_percent",
+          "dtype": "integer",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Winning percentage calculated from total games played.",
+          "semantic_type": "quantity",
+          "business_concept": "winning_percentage",
+          "aliases": [
+            "win_pct",
+            "overall_win_rate"
+          ]
+        },
+        "all_home": {
+          "name": "all_home",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Win-loss record for all games played at home.",
+          "semantic_type": "code",
+          "business_concept": "home_record",
+          "aliases": [
+            "home_record",
+            "home_games_record"
+          ]
+        },
+        "all_road": {
+          "name": "all_road",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Win-loss record for all games played away from home.",
+          "semantic_type": "code",
+          "business_concept": "away_record",
+          "aliases": [
+            "road_record",
+            "away_games_record"
+          ]
+        },
+        "all_neutral": {
+          "name": "all_neutral",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Win-loss record for games played at neutral venues.",
+          "semantic_type": "code",
+          "business_concept": "neutral_record",
+          "aliases": [
+            "neutral_games_record",
+            "away_neutral_record"
+          ]
+        }
+      }
+    },
+    "university": {
+      "table": {
+        "name": "university",
+        "column_count": 8,
+        "summary": "A reference table containing metadata and statistics for various universities, including their names, locations, founding dates, affiliations, enrollment numbers, athletic nicknames, and conference memberships.",
+        "entity": "University",
+        "role": "lookup_table",
+        "aliases": [
+          "universities",
+          "schools",
+          "colleges",
+          "university_metadata"
+        ]
+      },
+      "columns": {
+        "school_id": {
+          "name": "school_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each university record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "school_code",
+            "university_id"
+          ]
+        },
+        "school": {
+          "name": "school",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full official name of the university.",
+          "semantic_type": "organization_name",
+          "business_concept": "Entity Name",
+          "aliases": [
+            "name",
+            "university_name",
+            "title"
+          ]
+        },
+        "location": {
+          "name": "location",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The city and state where the university is located.",
+          "semantic_type": "address",
+          "business_concept": "Physical Location",
+          "aliases": [
+            "city_state",
+            "address",
+            "campus_location"
+          ]
+        },
+        "founded": {
+          "name": "founded",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The year the university was established.",
+          "semantic_type": "date",
+          "business_concept": "Establishment Date",
+          "aliases": [
+            "year_established",
+            "founding_year",
+            "established"
+          ]
+        },
+        "affiliation": {
+          "name": "affiliation",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The type of ownership or governance of the university (e.g., Public, Private).",
+          "semantic_type": "category",
+          "business_concept": "Institution Type",
+          "aliases": [
+            "type",
+            "ownership",
+            "status"
+          ]
+        },
+        "enrollment": {
+          "name": "enrollment",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total number of students currently enrolled at the university.",
+          "semantic_type": "quantity",
+          "business_concept": "Student Count",
+          "aliases": [
+            "students",
+            "headcount",
+            "population"
+          ]
+        },
+        "nickname": {
+          "name": "nickname",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The common name or mascot associated with the university's athletic teams.",
+          "semantic_type": "description",
+          "business_concept": "Athletic Nickname",
+          "aliases": [
+            "mascot",
+            "team_name",
+            "moniker"
+          ]
+        },
+        "primary_conference": {
+          "name": "primary_conference",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The athletic conference the university primarily belongs to.",
+          "semantic_type": "category",
+          "business_concept": "Athletic Conference",
+          "aliases": [
+            "conference",
+            "league",
+            "division"
+          ]
+        }
+      }
+    }
+  }
+}

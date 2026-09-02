@@ -1,0 +1,340 @@
+{
+  "database": "cre_Drama_Workshop_Groups",
+  "tables": {
+    "order_items": {
+      "table": {
+        "name": "order_items",
+        "column_count": 5,
+        "summary": "Stores the line-level details of orders, linking specific products to orders with their respective quantities.",
+        "entity": "Order Item",
+        "role": "transaction_table",
+        "aliases": [
+          "order_lines",
+          "order_details",
+          "items"
+        ]
+      },
+      "columns": {
+        "order_item_id": {
+          "name": "order_item_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific line item within an order.",
+          "semantic_type": "identifier",
+          "business_concept": "Line Item ID",
+          "aliases": [
+            "item_id",
+            "order_line_id",
+            "id"
+          ]
+        },
+        "order_id": {
+          "name": "order_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the parent order containing this item.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Order Reference",
+          "aliases": [
+            "parent_order_id",
+            "order_ref",
+            "order_no"
+          ]
+        },
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the specific product included in this order line.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Product Reference",
+          "aliases": [
+            "item_sku",
+            "product_ref",
+            "sku"
+          ]
+        },
+        "order_quantity": {
+          "name": "order_quantity",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of units of the product ordered in this specific line item.",
+          "semantic_type": "quantity",
+          "business_concept": "Ordered Quantity",
+          "aliases": [
+            "qty",
+            "quantity",
+            "amount",
+            "count"
+          ]
+        },
+        "other_item_details": {
+          "name": "other_item_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Optional additional information or notes regarding the specific item line.",
+          "semantic_type": "description",
+          "business_concept": "Item Notes",
+          "aliases": [
+            "notes",
+            "remarks",
+            "extra_info",
+            "comments"
+          ]
+        }
+      }
+    },
+    "invoices": {
+      "table": {
+        "name": "invoices",
+        "column_count": 7,
+        "summary": "A transactional table recording individual line items within sales orders, linking specific products to orders and payment methods.",
+        "entity": "Order Item",
+        "role": "transaction_table",
+        "aliases": [
+          "order_items",
+          "sales_line_items",
+          "invoice_line_items",
+          "order_details"
+        ]
+      },
+      "columns": {
+        "invoice_id": {
+          "name": "invoice_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the invoice associated with this order item.",
+          "semantic_type": "identifier",
+          "business_concept": "Invoice ID",
+          "aliases": [
+            "inv_id",
+            "invoice_number",
+            "doc_id"
+          ]
+        },
+        "order_id": {
+          "name": "order_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the parent order to which this item belongs.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Order ID",
+          "aliases": [
+            "ord_id",
+            "order_number",
+            "parent_order"
+          ]
+        },
+        "payment_method_code": {
+          "name": "payment_method_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Code or name representing the payment method used for the transaction.",
+          "semantic_type": "code",
+          "business_concept": "Payment Method",
+          "aliases": [
+            "pay_method",
+            "card_type",
+            "payment_type"
+          ]
+        },
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific product being purchased.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Product ID",
+          "aliases": [
+            "prod_id",
+            "sku",
+            "item_code",
+            "catalog_id"
+          ]
+        },
+        "order_quantity": {
+          "name": "order_quantity",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of units of the product ordered in this line item.",
+          "semantic_type": "quantity",
+          "business_concept": "Quantity Ordered",
+          "aliases": [
+            "qty",
+            "quantity",
+            "amount",
+            "units"
+          ]
+        },
+        "other_item_details": {
+          "name": "other_item_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional descriptive information or notes about the specific item.",
+          "semantic_type": "description",
+          "business_concept": "Item Details",
+          "aliases": [
+            "notes",
+            "remarks",
+            "extra_info",
+            "description"
+          ]
+        },
+        "order_item_id": {
+          "name": "order_item_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for this specific line item within the context of the order.",
+          "semantic_type": "identifier",
+          "business_concept": "Order Item ID",
+          "aliases": [
+            "item_id",
+            "line_id",
+            "row_id"
+          ]
+        }
+      }
+    },
+    "customers": {
+      "table": {
+        "name": "customers",
+        "column_count": 6,
+        "summary": "A table containing core contact and identification information for individual customers, including names, phone numbers, email addresses, and unique identifiers.",
+        "entity": "Customer",
+        "role": "entity_table",
+        "aliases": [
+          "clients",
+          "accounts",
+          "user_contacts",
+          "customer_master"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier assigned to each customer record.",
+          "semantic_type": "identifier",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "id",
+            "customer_number",
+            "client_id"
+          ]
+        },
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier linking the customer to a specific address record in a separate table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Address Reference",
+          "aliases": [
+            "addr_id",
+            "address_ref",
+            "location_id"
+          ]
+        },
+        "customer_name": {
+          "name": "customer_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The full name or primary name of the customer.",
+          "semantic_type": "person_name",
+          "business_concept": "Customer Name",
+          "aliases": [
+            "name",
+            "full_name",
+            "cust_name",
+            "client_name"
+          ]
+        },
+        "customer_phone": {
+          "name": "customer_phone",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The primary telephone contact number for the customer.",
+          "semantic_type": "phone",
+          "business_concept": "Phone Number",
+          "aliases": [
+            "phone",
+            "telephone",
+            "mobile",
+            "contact_phone",
+            "tel"
+          ]
+        },
+        "customer_email_address": {
+          "name": "customer_email_address",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "The email address associated with the customer.",
+          "semantic_type": "email",
+          "business_concept": "Email Address",
+          "aliases": [
+            "email",
+            "e_mail",
+            "contact_email",
+            "cust_email"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Additional descriptive information or tags about the customer, such as status or notes.",
+          "semantic_type": "description",
+          "business_concept": "Customer Notes / Tags",
+          "aliases": [
+            "notes",
+            "remarks",
+            "extra_info",
+            "tags",
+            "status_code"
+          ]
+        }
+      }
+    }
+  }
+}

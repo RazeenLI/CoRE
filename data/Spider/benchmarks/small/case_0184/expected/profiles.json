@@ -1,0 +1,372 @@
+{
+  "database": "hospital_1",
+  "tables": {
+    "stay": {
+      "table": {
+        "name": "stay",
+        "column_count": 5,
+        "summary": "Records of patient hospital stays including admission and discharge dates, patient identifiers, and room assignments.",
+        "entity": "Hospital Stay",
+        "role": "transaction_table",
+        "aliases": [
+          "stays",
+          "admissions",
+          "patient_stays",
+          "hospital_stays"
+        ]
+      },
+      "columns": {
+        "stayid": {
+          "name": "stayid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific hospital stay record.",
+          "semantic_type": "identifier",
+          "business_concept": "Stay ID",
+          "aliases": [
+            "stay_id",
+            "admission_id",
+            "record_id"
+          ]
+        },
+        "patient": {
+          "name": "patient",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier linking the stay to a specific patient.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Patient ID",
+          "aliases": [
+            "patient_id",
+            "pat_id",
+            "mrn"
+          ]
+        },
+        "room": {
+          "name": "room",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier for the hospital room assigned to the patient during the stay.",
+          "semantic_type": "code",
+          "business_concept": "Room Number",
+          "aliases": [
+            "room_number",
+            "room_id",
+            "ward_room"
+          ]
+        },
+        "staystart": {
+          "name": "staystart",
+          "dtype": "datetime",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The date and time when the patient was admitted to the hospital.",
+          "semantic_type": "timestamp",
+          "business_concept": "Admission Date",
+          "aliases": [
+            "admission_date",
+            "stay_start_date",
+            "check_in_date"
+          ]
+        },
+        "stayend": {
+          "name": "stayend",
+          "dtype": "datetime",
+          "value_patterns": [
+            "date_like",
+            "short_code_like"
+          ],
+          "meaning": "The date and time when the patient was discharged from the hospital.",
+          "semantic_type": "timestamp",
+          "business_concept": "Discharge Date",
+          "aliases": [
+            "discharge_date",
+            "stay_end_date",
+            "check_out_date"
+          ]
+        }
+      }
+    },
+    "procedures": {
+      "table": {
+        "name": "procedures",
+        "column_count": 3,
+        "summary": "A catalog of medical procedures with their unique identifiers and associated costs.",
+        "entity": "Medical Procedure",
+        "role": "lookup_table",
+        "aliases": [
+          "procedure_catalog",
+          "medical_procedures",
+          "surgery_list",
+          "treatment_codes"
+        ]
+      },
+      "columns": {
+        "code": {
+          "name": "code",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique numeric identifier for a specific medical procedure.",
+          "semantic_type": "code",
+          "business_concept": "Procedure ID",
+          "aliases": [
+            "proc_id",
+            "procedure_code",
+            "code",
+            "id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The descriptive name of the medical procedure.",
+          "semantic_type": "description",
+          "business_concept": "Procedure Name",
+          "aliases": [
+            "proc_name",
+            "procedure_name",
+            "name",
+            "title"
+          ]
+        },
+        "cost": {
+          "name": "cost",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary price associated with performing the procedure.",
+          "semantic_type": "money",
+          "business_concept": "Procedure Cost",
+          "aliases": [
+            "price",
+            "fee",
+            "cost",
+            "amount",
+            "rate"
+          ]
+        }
+      }
+    },
+    "nurse": {
+      "table": {
+        "name": "nurse",
+        "column_count": 5,
+        "summary": "A table containing demographic and employment details for nurses, including their names, positions, registration status, and social security numbers.",
+        "entity": "Nurse",
+        "role": "entity_table",
+        "aliases": [
+          "nurses",
+          "staff",
+          "personnel"
+        ]
+      },
+      "columns": {
+        "employeeid": {
+          "name": "employeeid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier assigned to each nurse within the organization.",
+          "semantic_type": "identifier",
+          "business_concept": "Employee ID",
+          "aliases": [
+            "emp_id",
+            "id",
+            "employee_number"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full name of the nurse.",
+          "semantic_type": "person_name",
+          "business_concept": "Full Name",
+          "aliases": [
+            "full_name",
+            "first_name",
+            "last_name",
+            "name"
+          ]
+        },
+        "position": {
+          "name": "position",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The job title or role held by the nurse.",
+          "semantic_type": "category",
+          "business_concept": "Job Title",
+          "aliases": [
+            "title",
+            "role",
+            "job_title",
+            "position"
+          ]
+        },
+        "registered": {
+          "name": "registered",
+          "dtype": "boolean",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A flag indicating whether the nurse is currently registered or active.",
+          "semantic_type": "boolean",
+          "business_concept": "Registration Status",
+          "aliases": [
+            "active",
+            "status",
+            "is_registered",
+            "flag"
+          ]
+        },
+        "ssn": {
+          "name": "ssn",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The Social Security Number associated with the nurse.",
+          "semantic_type": "code",
+          "business_concept": "Social Security Number",
+          "aliases": [
+            "ssn",
+            "social_security",
+            "social_security_number",
+            "tax_id"
+          ]
+        }
+      }
+    },
+    "patient": {
+      "table": {
+        "name": "patient",
+        "column_count": 6,
+        "summary": "A table containing core demographic and contact information for patients, including identifiers, names, addresses, phone numbers, and insurance details.",
+        "entity": "Patient",
+        "role": "entity_table",
+        "aliases": [
+          "patients",
+          "patient_info",
+          "patient_demographics"
+        ]
+      },
+      "columns": {
+        "ssn": {
+          "name": "ssn",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the patient, likely a Social Security Number or an internal surrogate key formatted as an integer.",
+          "semantic_type": "identifier",
+          "business_concept": "Patient Unique ID",
+          "aliases": [
+            "patient_id",
+            "social_security_number",
+            "ssn",
+            "id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full name of the patient.",
+          "semantic_type": "person_name",
+          "business_concept": "Patient Name",
+          "aliases": [
+            "full_name",
+            "patient_name",
+            "first_name",
+            "last_name"
+          ]
+        },
+        "address": {
+          "name": "address",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The residential or mailing address of the patient.",
+          "semantic_type": "address",
+          "business_concept": "Patient Address",
+          "aliases": [
+            "street_address",
+            "home_address",
+            "residence"
+          ]
+        },
+        "phone": {
+          "name": "phone",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The contact phone number for the patient.",
+          "semantic_type": "phone",
+          "business_concept": "Patient Phone Number",
+          "aliases": [
+            "telephone",
+            "mobile",
+            "contact_number",
+            "phone_number"
+          ]
+        },
+        "insuranceid": {
+          "name": "insuranceid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the patient's insurance policy or provider.",
+          "semantic_type": "identifier",
+          "business_concept": "Insurance Policy ID",
+          "aliases": [
+            "policy_number",
+            "insurance_policy",
+            "plan_id",
+            "ins_id"
+          ]
+        },
+        "pcp": {
+          "name": "pcp",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A numeric code representing the patient's Primary Care Physician, likely a foreign key to a physicians table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Primary Care Physician ID",
+          "aliases": [
+            "primary_care_physician",
+            "pcp_id",
+            "doctor_id",
+            "physician_code"
+          ]
+        }
+      }
+    }
+  }
+}

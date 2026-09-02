@@ -1,0 +1,446 @@
+{
+  "database": "swimming",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/swimming",
+    "schema_path": "data/Spider/parsed/swimming/schema.json",
+    "tables_dir": "data/Spider/parsed/swimming/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "event": {
+      "table": {
+        "name": "event",
+        "column_count": 4,
+        "summary": "A table recording details of various sporting events, including their identifiers, names, associated stadiums, and years.",
+        "entity": "Sporting Event",
+        "role": "entity_table",
+        "aliases": [
+          "events",
+          "event_details",
+          "competition_events"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each event record.",
+          "semantic_type": "identifier",
+          "business_concept": "Event ID",
+          "aliases": [
+            "event_id",
+            "evt_id",
+            "primary_key"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The specific name or title of the sporting event.",
+          "semantic_type": "organization_name",
+          "business_concept": "Event Name",
+          "aliases": [
+            "event_name",
+            "title",
+            "competition_name"
+          ]
+        },
+        "stadium_id": {
+          "name": "stadium_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key linking the event to a specific stadium.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Stadium Reference",
+          "aliases": [
+            "stadium_ref",
+            "venue_id",
+            "stadium_code"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the event took place.",
+          "semantic_type": "date",
+          "business_concept": "Event Year",
+          "aliases": [
+            "event_year",
+            "year_code",
+            "occurred_in"
+          ]
+        }
+      }
+    },
+    "record": {
+      "table": {
+        "name": "record",
+        "column_count": 4,
+        "summary": "A table recording the outcomes of swimming events, linking specific swimmers to specific events and their results.",
+        "entity": "Swimming Event Result",
+        "role": "transaction_table",
+        "aliases": [
+          "swim_results",
+          "event_outcomes",
+          "race_records"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Record ID",
+          "aliases": [
+            "row_id",
+            "rec_id",
+            "pk"
+          ]
+        },
+        "result": {
+          "name": "result",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The outcome of the swimming event for the specific swimmer.",
+          "semantic_type": "status",
+          "business_concept": "Event Result",
+          "aliases": [
+            "outcome",
+            "finish_status",
+            "race_result"
+          ]
+        },
+        "swimmer_id": {
+          "name": "swimmer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the record to a specific swimmer.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Swimmer Reference",
+          "aliases": [
+            "athlete_id",
+            "competitor_id",
+            "swimmer_ref"
+          ]
+        },
+        "event_id": {
+          "name": "event_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the record to a specific swimming event.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Event Reference",
+          "aliases": [
+            "race_id",
+            "competition_id",
+            "event_ref"
+          ]
+        }
+      }
+    },
+    "stadium": {
+      "table": {
+        "name": "stadium",
+        "column_count": 6,
+        "summary": "A dataset containing information about various stadiums, including their names, locations, capacities, and opening years.",
+        "entity": "Stadium",
+        "role": "entity_table",
+        "aliases": [
+          "stadiums",
+          "stadium_info",
+          "venues",
+          "arenas"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each stadium record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "stadium_id",
+            "venue_id",
+            "id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official name of the stadium.",
+          "semantic_type": "organization_name",
+          "business_concept": "Stadium Name",
+          "aliases": [
+            "stadium_name",
+            "venue_name",
+            "title"
+          ]
+        },
+        "capacity": {
+          "name": "capacity",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The maximum number of spectators the stadium can hold.",
+          "semantic_type": "quantity",
+          "business_concept": "Seating Capacity",
+          "aliases": [
+            "seats",
+            "max_capacity",
+            "holding"
+          ]
+        },
+        "city": {
+          "name": "city",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The city where the stadium is located.",
+          "semantic_type": "city",
+          "business_concept": "Location City",
+          "aliases": [
+            "city_name",
+            "location",
+            "municipality"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country where the stadium is located.",
+          "semantic_type": "country",
+          "business_concept": "Location Country",
+          "aliases": [
+            "nation",
+            "country_name",
+            "location_country"
+          ]
+        },
+        "opening_year": {
+          "name": "opening_year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The year the stadium was opened or built.",
+          "semantic_type": "date",
+          "business_concept": "Construction Year",
+          "aliases": [
+            "built_year",
+            "opened",
+            "year_opened",
+            "construction_date"
+          ]
+        }
+      }
+    },
+    "swimmer": {
+      "table": {
+        "name": "swimmer",
+        "column_count": 11,
+        "summary": "A table containing performance metrics for swimmers, including their names, nationalities, and split times for various distances in a swimming race.",
+        "entity": "swimmer",
+        "role": "entity_table",
+        "aliases": [
+          "swimmers",
+          "athlete_performance",
+          "race_results"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each swimmer record.",
+          "semantic_type": "identifier",
+          "business_concept": "swimmer_id",
+          "aliases": [
+            "swimmer_id",
+            "athlete_id",
+            "pk"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Full name of the swimmer.",
+          "semantic_type": "person_name",
+          "business_concept": "swimmer_name",
+          "aliases": [
+            "full_name",
+            "athlete_name",
+            "first_name",
+            "last_name"
+          ]
+        },
+        "nationality": {
+          "name": "nationality",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Country of origin or representation for the swimmer.",
+          "semantic_type": "country",
+          "business_concept": "swimmer_nationality",
+          "aliases": [
+            "country",
+            "nation",
+            "origin",
+            "flag"
+          ]
+        },
+        "meter_100": {
+          "name": "meter_100",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Time taken to complete the first 100 meters of the race.",
+          "semantic_type": "quantity",
+          "business_concept": "split_time_100m",
+          "aliases": [
+            "time_100",
+            "split_100",
+            "100m_time"
+          ]
+        },
+        "meter_200": {
+          "name": "meter_200",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Time taken to complete the first 200 meters of the race.",
+          "semantic_type": "quantity",
+          "business_concept": "split_time_200m",
+          "aliases": [
+            "time_200",
+            "split_200",
+            "200m_time"
+          ]
+        },
+        "meter_300": {
+          "name": "meter_300",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Time taken to complete the first 300 meters of the race.",
+          "semantic_type": "quantity",
+          "business_concept": "split_time_300m",
+          "aliases": [
+            "time_300",
+            "split_300",
+            "300m_time"
+          ]
+        },
+        "meter_400": {
+          "name": "meter_400",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Time taken to complete the first 400 meters of the race.",
+          "semantic_type": "quantity",
+          "business_concept": "split_time_400m",
+          "aliases": [
+            "time_400",
+            "split_400",
+            "400m_time"
+          ]
+        },
+        "meter_500": {
+          "name": "meter_500",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Time taken to complete the first 500 meters of the race.",
+          "semantic_type": "quantity",
+          "business_concept": "split_time_500m",
+          "aliases": [
+            "time_500",
+            "split_500",
+            "500m_time"
+          ]
+        },
+        "meter_600": {
+          "name": "meter_600",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Time taken to complete the first 600 meters of the race.",
+          "semantic_type": "quantity",
+          "business_concept": "split_time_600m",
+          "aliases": [
+            "time_600",
+            "split_600",
+            "600m_time"
+          ]
+        },
+        "meter_700": {
+          "name": "meter_700",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Time taken to complete the first 700 meters of the race.",
+          "semantic_type": "quantity",
+          "business_concept": "split_time_700m",
+          "aliases": [
+            "time_700",
+            "split_700",
+            "700m_time"
+          ]
+        },
+        "time": {
+          "name": "time",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Total time taken to complete the entire race.",
+          "semantic_type": "quantity",
+          "business_concept": "total_race_time",
+          "aliases": [
+            "total_time",
+            "finish_time",
+            "race_time",
+            "final_time"
+          ]
+        }
+      }
+    }
+  }
+}

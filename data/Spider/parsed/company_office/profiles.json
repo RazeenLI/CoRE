@@ -1,0 +1,322 @@
+{
+  "database": "company_office",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/company_office",
+    "schema_path": "data/Spider/parsed/company_office/schema.json",
+    "tables_dir": "data/Spider/parsed/company_office/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "companies": {
+      "table": {
+        "name": "companies",
+        "column_count": 8,
+        "summary": "A dataset containing financial and operational metrics for major global corporations.",
+        "entity": "Company",
+        "role": "entity_table",
+        "aliases": [
+          "corporations",
+          "firms",
+          "businesses",
+          "organizations",
+          "companies_data"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each company record.",
+          "semantic_type": "identifier",
+          "business_concept": "Company ID",
+          "aliases": [
+            "company_id",
+            "corp_id",
+            "entity_id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official legal or trading name of the company.",
+          "semantic_type": "organization_name",
+          "business_concept": "Company Name",
+          "aliases": [
+            "company_name",
+            "corp_name",
+            "legal_name",
+            "trading_name"
+          ]
+        },
+        "headquarters": {
+          "name": "headquarters",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The country where the company's main office is located.",
+          "semantic_type": "country",
+          "business_concept": "Headquarters Location",
+          "aliases": [
+            "hq_country",
+            "head_office",
+            "base_country",
+            "location"
+          ]
+        },
+        "industry": {
+          "name": "industry",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The primary sector or field in which the company operates.",
+          "semantic_type": "category",
+          "business_concept": "Industry Sector",
+          "aliases": [
+            "sector",
+            "business_sector",
+            "industry_group",
+            "field"
+          ]
+        },
+        "sales_billion": {
+          "name": "sales_billion",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Total annual revenue of the company in billions of currency units.",
+          "semantic_type": "money",
+          "business_concept": "Annual Revenue",
+          "aliases": [
+            "revenue",
+            "turnover",
+            "sales",
+            "annual_sales"
+          ]
+        },
+        "profits_billion": {
+          "name": "profits_billion",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Net income or profit of the company in billions of currency units.",
+          "semantic_type": "money",
+          "business_concept": "Net Profit",
+          "aliases": [
+            "net_income",
+            "earnings",
+            "profit",
+            "net_profit"
+          ]
+        },
+        "assets_billion": {
+          "name": "assets_billion",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Total value of the company's assets in billions of currency units.",
+          "semantic_type": "money",
+          "business_concept": "Total Assets",
+          "aliases": [
+            "total_assets",
+            "asset_value",
+            "balance_sheet_assets"
+          ]
+        },
+        "market_value_billion": {
+          "name": "market_value_billion",
+          "dtype": "text",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total market capitalization of the company in billions of currency units.",
+          "semantic_type": "money",
+          "business_concept": "Market Capitalization",
+          "aliases": [
+            "market_cap",
+            "market_capitalization",
+            "equity_value",
+            "stock_value"
+          ]
+        }
+      }
+    },
+    "office_locations": {
+      "table": {
+        "name": "office_locations",
+        "column_count": 3,
+        "summary": "Stores information about office locations, linking specific buildings to companies and recording the year they moved in.",
+        "entity": "Office Location",
+        "role": "entity_table",
+        "aliases": [
+          "office_locations",
+          "building_locations",
+          "office_sites"
+        ]
+      },
+      "columns": {
+        "building_id": {
+          "name": "building_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific office building.",
+          "semantic_type": "identifier",
+          "business_concept": "Building Identifier",
+          "aliases": [
+            "building_code",
+            "site_id",
+            "property_id"
+          ]
+        },
+        "company_id": {
+          "name": "company_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "An identifier linking the office location to a specific company.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Company Identifier",
+          "aliases": [
+            "company_code",
+            "tenant_id",
+            "org_id"
+          ]
+        },
+        "move_in_year": {
+          "name": "move_in_year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the company moved into the office location.",
+          "semantic_type": "date",
+          "business_concept": "Move-in Year",
+          "aliases": [
+            "occupancy_year",
+            "lease_start_year",
+            "established_year"
+          ]
+        }
+      }
+    },
+    "buildings": {
+      "table": {
+        "name": "buildings",
+        "column_count": 6,
+        "summary": "A catalog of commercial buildings with details on their names, locations, physical dimensions, and development status.",
+        "entity": "Building",
+        "role": "entity_table",
+        "aliases": [
+          "skyscrapers",
+          "towers",
+          "real_estate_buildings",
+          "property_listings"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each building record.",
+          "semantic_type": "identifier",
+          "business_concept": "Building ID",
+          "aliases": [
+            "building_id",
+            "bldg_id",
+            "record_id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The proper name or title of the building.",
+          "semantic_type": "organization_name",
+          "business_concept": "Building Name",
+          "aliases": [
+            "title",
+            "building_name",
+            "common_name"
+          ]
+        },
+        "city": {
+          "name": "city",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The city where the building is located.",
+          "semantic_type": "city",
+          "business_concept": "Location City",
+          "aliases": [
+            "location",
+            "city_name",
+            "municipality"
+          ]
+        },
+        "height": {
+          "name": "height",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total height of the building, likely in meters.",
+          "semantic_type": "quantity",
+          "business_concept": "Building Height",
+          "aliases": [
+            "height_m",
+            "total_height",
+            "structure_height"
+          ]
+        },
+        "stories": {
+          "name": "stories",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of floors or levels in the building.",
+          "semantic_type": "quantity",
+          "business_concept": "Number of Floors",
+          "aliases": [
+            "floors",
+            "levels",
+            "stories_count",
+            "num_floors"
+          ]
+        },
+        "status": {
+          "name": "status",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The current development or operational state of the building.",
+          "semantic_type": "status",
+          "business_concept": "Project Status",
+          "aliases": [
+            "state",
+            "development_status",
+            "lifecycle_stage"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,507 @@
+{
+  "database": "geo",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/geo",
+    "schema_path": "data/Spider/parsed/geo/schema.json",
+    "tables_dir": "data/Spider/parsed/geo/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "border_info": {
+      "table": {
+        "name": "border_info",
+        "column_count": 2,
+        "summary": "Stores information regarding state borders, likely linking state names to their adjacent bordering entities.",
+        "entity": "Border Information",
+        "role": "lookup_table",
+        "aliases": [
+          "state_borders",
+          "border_details",
+          "state_adjacency"
+        ]
+      },
+      "columns": {
+        "state_name": {
+          "name": "state_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the US state or region for which border information is recorded.",
+          "semantic_type": "organization_name",
+          "business_concept": "State Name",
+          "aliases": [
+            "state",
+            "state_name",
+            "region_name",
+            "jurisdiction"
+          ]
+        },
+        "border": {
+          "name": "border",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the adjacent state, country, or body of water that forms the border.",
+          "semantic_type": "organization_name",
+          "business_concept": "Border Entity",
+          "aliases": [
+            "adjacent_state",
+            "bordering_entity",
+            "neighbor",
+            "border_name"
+          ]
+        }
+      }
+    },
+    "city": {
+      "table": {
+        "name": "city",
+        "column_count": 4,
+        "summary": "A reference table containing information about cities, including their names, populations, and administrative divisions.",
+        "entity": "City",
+        "role": "lookup_table",
+        "aliases": [
+          "cities",
+          "city_data",
+          "urban_locations"
+        ]
+      },
+      "columns": {
+        "city_name": {
+          "name": "city_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The unique or common name of the city.",
+          "semantic_type": "city",
+          "business_concept": "City Identifier",
+          "aliases": [
+            "name",
+            "city",
+            "city_title"
+          ]
+        },
+        "population": {
+          "name": "population",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The total number of people residing in the city.",
+          "semantic_type": "quantity",
+          "business_concept": "Population Count",
+          "aliases": [
+            "pop",
+            "count",
+            "inhabitants",
+            "headcount"
+          ]
+        },
+        "country_name": {
+          "name": "country_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The ISO 3-letter code representing the country where the city is located.",
+          "semantic_type": "code",
+          "business_concept": "Country Code",
+          "aliases": [
+            "country_code",
+            "iso3",
+            "nation_code"
+          ]
+        },
+        "state_name": {
+          "name": "state_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the state, province, or region containing the city.",
+          "semantic_type": "organization_name",
+          "business_concept": "State/Province Name",
+          "aliases": [
+            "state",
+            "province",
+            "region",
+            "division"
+          ]
+        }
+      }
+    },
+    "highlow": {
+      "table": {
+        "name": "highlow",
+        "column_count": 5,
+        "summary": "A reference table containing geographic elevation extremes for US states.",
+        "entity": "State",
+        "role": "lookup_table",
+        "aliases": [
+          "state_elevations",
+          "us_states_highlow",
+          "state_extremes"
+        ]
+      },
+      "columns": {
+        "state_name": {
+          "name": "state_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the US state for which elevation data is recorded.",
+          "semantic_type": "identifier",
+          "business_concept": "State Name",
+          "aliases": [
+            "state",
+            "name",
+            "state_full_name"
+          ]
+        },
+        "highest_elevation": {
+          "name": "highest_elevation",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The maximum elevation point within the state, typically in feet or meters.",
+          "semantic_type": "quantity",
+          "business_concept": "Maximum Elevation",
+          "aliases": [
+            "max_elevation",
+            "peak",
+            "highest_point"
+          ]
+        },
+        "lowest_point": {
+          "name": "lowest_point",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the specific geographic feature representing the lowest elevation in the state.",
+          "semantic_type": "unknown",
+          "business_concept": "Lowest Geographic Feature",
+          "aliases": [
+            "min_point",
+            "lowest_feature"
+          ]
+        },
+        "highest_point": {
+          "name": "highest_point",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the specific geographic feature representing the highest elevation in the state.",
+          "semantic_type": "unknown",
+          "business_concept": "Highest Geographic Feature",
+          "aliases": [
+            "max_point",
+            "peak_name",
+            "highest_feature"
+          ]
+        },
+        "lowest_elevation": {
+          "name": "lowest_elevation",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The minimum elevation point within the state, typically in feet or meters.",
+          "semantic_type": "quantity",
+          "business_concept": "Minimum Elevation",
+          "aliases": [
+            "min_elevation",
+            "lowest_elevation_value"
+          ]
+        }
+      }
+    },
+    "lake": {
+      "table": {
+        "name": "lake",
+        "column_count": 4,
+        "summary": "A reference table containing information about lakes, including their names, surface areas, and geographic locations.",
+        "entity": "Lake",
+        "role": "lookup_table",
+        "aliases": [
+          "lakes",
+          "water_bodies",
+          "natural_lakes"
+        ]
+      },
+      "columns": {
+        "lake_name": {
+          "name": "lake_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The unique or descriptive name of the lake.",
+          "semantic_type": "identifier",
+          "business_concept": "Lake Name",
+          "aliases": [
+            "name",
+            "lake_id",
+            "title"
+          ]
+        },
+        "area": {
+          "name": "area",
+          "dtype": "double",
+          "value_patterns": [],
+          "meaning": "The surface area of the lake, likely measured in square kilometers or miles.",
+          "semantic_type": "quantity",
+          "business_concept": "Surface Area",
+          "aliases": [
+            "size",
+            "sq_km",
+            "area_sq_km"
+          ]
+        },
+        "country_name": {
+          "name": "country_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The ISO 3-letter country code indicating the nation where the lake is located.",
+          "semantic_type": "code",
+          "business_concept": "Country Code",
+          "aliases": [
+            "country_code",
+            "iso3",
+            "nation"
+          ]
+        },
+        "state_name": {
+          "name": "state_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the state, province, or region within the country where the lake is situated.",
+          "semantic_type": "organization_name",
+          "business_concept": "State/Province Name",
+          "aliases": [
+            "state",
+            "province",
+            "region",
+            "admin_division"
+          ]
+        }
+      }
+    },
+    "mountain": {
+      "table": {
+        "name": "mountain",
+        "column_count": 4,
+        "summary": "A reference table containing information about mountains, including their names, altitudes, and associated country and state.",
+        "entity": "Mountain",
+        "role": "lookup_table",
+        "aliases": [
+          "mountains",
+          "peaks",
+          "summits"
+        ]
+      },
+      "columns": {
+        "mountain_name": {
+          "name": "mountain_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The unique name of the mountain.",
+          "semantic_type": "identifier",
+          "business_concept": "Mountain Name",
+          "aliases": [
+            "name",
+            "peak_name",
+            "summit_name"
+          ]
+        },
+        "mountain_altitude": {
+          "name": "mountain_altitude",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The elevation of the mountain above sea level.",
+          "semantic_type": "quantity",
+          "business_concept": "Altitude",
+          "aliases": [
+            "elevation",
+            "height",
+            "altitude_m"
+          ]
+        },
+        "country_name": {
+          "name": "country_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The ISO country code (3 characters) where the mountain is located.",
+          "semantic_type": "code",
+          "business_concept": "Country Code",
+          "aliases": [
+            "country_code",
+            "iso_code",
+            "nation"
+          ]
+        },
+        "state_name": {
+          "name": "state_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the state or province where the mountain is located.",
+          "semantic_type": "organization_name",
+          "business_concept": "State/Province Name",
+          "aliases": [
+            "state",
+            "province",
+            "region",
+            "administrative_division"
+          ]
+        }
+      }
+    },
+    "river": {
+      "table": {
+        "name": "river",
+        "column_count": 4,
+        "summary": "A reference table containing information about rivers, including their names, lengths, and the countries they traverse.",
+        "entity": "River",
+        "role": "lookup_table",
+        "aliases": [
+          "rivers",
+          "river_data",
+          "world_rivers"
+        ]
+      },
+      "columns": {
+        "river_name": {
+          "name": "river_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The unique name of the river.",
+          "semantic_type": "identifier",
+          "business_concept": "River Name",
+          "aliases": [
+            "name",
+            "river_id",
+            "r_name"
+          ]
+        },
+        "length": {
+          "name": "length",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The total length of the river in kilometers or miles.",
+          "semantic_type": "quantity",
+          "business_concept": "River Length",
+          "aliases": [
+            "len",
+            "distance",
+            "km"
+          ]
+        },
+        "country_name": {
+          "name": "country_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A 3-letter country code indicating the country where the river is located or originates.",
+          "semantic_type": "code",
+          "business_concept": "Country Code",
+          "aliases": [
+            "country",
+            "cc",
+            "iso_code"
+          ]
+        },
+        "traverse": {
+          "name": "traverse",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "A textual description of the countries or regions the river flows through.",
+          "semantic_type": "description",
+          "business_concept": "Traverse Path",
+          "aliases": [
+            "path",
+            "route",
+            "countries_traversed"
+          ]
+        }
+      }
+    },
+    "state": {
+      "table": {
+        "name": "state",
+        "column_count": 6,
+        "summary": "A reference table containing geographic and demographic statistics for US states.",
+        "entity": "US State",
+        "role": "lookup_table",
+        "aliases": [
+          "states",
+          "state_data",
+          "us_states"
+        ]
+      },
+      "columns": {
+        "state_name": {
+          "name": "state_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the US state.",
+          "semantic_type": "organization_name",
+          "business_concept": "State Name",
+          "aliases": [
+            "name",
+            "state",
+            "full_name"
+          ]
+        },
+        "population": {
+          "name": "population",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The total number of people residing in the state.",
+          "semantic_type": "quantity",
+          "business_concept": "Population Count",
+          "aliases": [
+            "pop",
+            "total_pop",
+            "inhabitants"
+          ]
+        },
+        "area": {
+          "name": "area",
+          "dtype": "double",
+          "value_patterns": [],
+          "meaning": "The total land area of the state in square miles.",
+          "semantic_type": "quantity",
+          "business_concept": "Land Area",
+          "aliases": [
+            "sq_miles",
+            "size",
+            "land_area"
+          ]
+        },
+        "country_name": {
+          "name": "country_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The ISO 3-letter country code indicating the country the state belongs to.",
+          "semantic_type": "code",
+          "business_concept": "Country Code",
+          "aliases": [
+            "country_code",
+            "iso3",
+            "nation"
+          ]
+        },
+        "capital": {
+          "name": "capital",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the capital city of the state.",
+          "semantic_type": "city",
+          "business_concept": "Capital City",
+          "aliases": [
+            "capital_city",
+            "seat",
+            "main_city"
+          ]
+        },
+        "density": {
+          "name": "density",
+          "dtype": "double",
+          "value_patterns": [],
+          "meaning": "The population density of the state, calculated as population divided by area.",
+          "semantic_type": "quantity",
+          "business_concept": "Population Density",
+          "aliases": [
+            "pop_density",
+            "density_per_sq_mi",
+            "people_per_sq_mile"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,270 @@
+{
+  "database": "local_govt_and_lot",
+  "tables": {
+    "organizations": {
+      "table": {
+        "name": "organizations",
+        "column_count": 2,
+        "summary": "A table storing hierarchical information about organizations, including their unique identifiers, parent relationships, and descriptive names.",
+        "entity": "Organization",
+        "role": "entity_table",
+        "aliases": [
+          "orgs",
+          "companies",
+          "groups",
+          "entities"
+        ]
+      },
+      "columns": {
+        "organization_id": {
+          "name": "organization_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The unique identifier for a specific organization record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "org_id",
+            "id",
+            "organization_code"
+          ]
+        },
+        "organization_details": {
+          "name": "organization_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full name or descriptive title of the organization.",
+          "semantic_type": "organization_name",
+          "business_concept": "Organization Name",
+          "aliases": [
+            "org_name",
+            "company_name",
+            "group_name",
+            "full_name"
+          ]
+        }
+      }
+    },
+    "timed_locations_of_things": {
+      "table": {
+        "name": "timed_locations_of_things",
+        "column_count": 3,
+        "summary": "Records the specific geographic locations where distinct entities (things) were present at various points in time.",
+        "entity": "Location Event",
+        "role": "transaction_table",
+        "aliases": [
+          "thing_location_history",
+          "entity_presence_log",
+          "location_tracking_log",
+          "thing_movement_records"
+        ]
+      },
+      "columns": {
+        "thing_id": {
+          "name": "thing_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the entity or object being tracked.",
+          "semantic_type": "identifier",
+          "business_concept": "Entity ID",
+          "aliases": [
+            "entity_id",
+            "object_id",
+            "item_id",
+            "thing_ref"
+          ]
+        },
+        "date_and_time": {
+          "name": "date_and_time",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The precise moment when the entity was recorded at the specified location.",
+          "semantic_type": "timestamp",
+          "business_concept": "Event Time",
+          "aliases": [
+            "event_time",
+            "timestamp",
+            "recorded_at",
+            "datetime"
+          ]
+        },
+        "location_code": {
+          "name": "location_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A descriptive string code representing the geographic location or place name where the entity was found.",
+          "semantic_type": "address",
+          "business_concept": "Location Name",
+          "aliases": [
+            "place_name",
+            "site_code",
+            "location_name",
+            "geo_code"
+          ]
+        }
+      }
+    },
+    "things": {
+      "table": {
+        "name": "things",
+        "column_count": 5,
+        "summary": "A catalog of items or services categorized by organization, type, and service status.",
+        "entity": "Thing",
+        "role": "entity_table",
+        "aliases": [
+          "items",
+          "services",
+          "catalog",
+          "things_list"
+        ]
+      },
+      "columns": {
+        "thing_id": {
+          "name": "thing_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific thing record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "thing_key",
+            "item_id"
+          ]
+        },
+        "organization_id": {
+          "name": "organization_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the thing to a specific organization.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Organization Reference",
+          "aliases": [
+            "org_id",
+            "company_id",
+            "tenant_id"
+          ]
+        },
+        "type_of_thing_code": {
+          "name": "type_of_thing_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Categorical code defining the broad classification of the thing.",
+          "semantic_type": "code",
+          "business_concept": "Item Category",
+          "aliases": [
+            "category_code",
+            "item_type",
+            "product_class"
+          ]
+        },
+        "service_type_code": {
+          "name": "service_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Categorical code defining the specific type of service associated with the thing.",
+          "semantic_type": "code",
+          "business_concept": "Service Category",
+          "aliases": [
+            "service_code",
+            "service_class",
+            "operation_type"
+          ]
+        },
+        "service_details": {
+          "name": "service_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Textual description of the service status or outcome.",
+          "semantic_type": "description",
+          "business_concept": "Service Status",
+          "aliases": [
+            "status",
+            "feedback",
+            "outcome",
+            "service_note"
+          ]
+        }
+      }
+    },
+    "timed_status_of_things": {
+      "table": {
+        "name": "timed_status_of_things",
+        "column_count": 3,
+        "summary": "Records the temporal status changes of various entities or items.",
+        "entity": "timed_status_of_things",
+        "role": "transaction_table",
+        "aliases": [
+          "thing_status_log",
+          "entity_status_history",
+          "status_timeline"
+        ]
+      },
+      "columns": {
+        "thing_id": {
+          "name": "thing_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the entity or item whose status is being tracked.",
+          "semantic_type": "identifier",
+          "business_concept": "Entity ID",
+          "aliases": [
+            "id",
+            "entity_id",
+            "item_id",
+            "thing_key"
+          ]
+        },
+        "date_and_date": {
+          "name": "date_and_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The specific point in time when the status was recorded or changed.",
+          "semantic_type": "timestamp",
+          "business_concept": "Event Time",
+          "aliases": [
+            "timestamp",
+            "event_time",
+            "recorded_at",
+            "datetime"
+          ]
+        },
+        "status_of_thing_code": {
+          "name": "status_of_thing_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The current or historical state of the entity at the given timestamp.",
+          "semantic_type": "status",
+          "business_concept": "Entity Status",
+          "aliases": [
+            "status",
+            "state",
+            "thing_status",
+            "current_status"
+          ]
+        }
+      }
+    }
+  }
+}

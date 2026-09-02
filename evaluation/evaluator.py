@@ -20,6 +20,10 @@ from evaluation.metrics import (
     compute_fact_set_metrics,
     extract_constraint_facts,
     extract_schema_facts,
+    compute_decision_action_consistency,
+    compute_rdb_complexity_features,
+    compute_final_tuple_metrics,
+    compute_tuple_incorporation_metrics,
 )
 
 
@@ -57,7 +61,9 @@ OUTPUT_ROOT = Path("outputs")
 SAMPLE_NUM = 0
 
 
-def compute_task_state_metrics(task_state: dict[str, Any]) -> dict[str, Any]:
+def compute_task_state_metrics(
+    task_state: dict[str, Any], reference_decision: str | None = None
+) -> dict[str, Any]:
     """Extract run completion and revision-loop counters from a saved task state."""
     results = task_state.get("results", {})
     if not isinstance(results, dict):
@@ -83,6 +89,31 @@ def compute_task_state_metrics(task_state: dict[str, Any]) -> dict[str, Any]:
         if validations and isinstance(validations[-1], dict)
         else None
     )
+    proposals = results.get("building_proposal", [])
+    if not isinstance(proposals, list):
+        proposals = []
+    signatures = [
+        json.dumps(proposal, sort_keys=True, ensure_ascii=False)
+        for proposal in proposals if isinstance(proposal, dict)
+    ]
+    decisions = [
+        proposal.get("source_decision")
+        for proposal in proposals if isinstance(proposal, dict)
+    ]
+    repair_succeeded = (
+        validator_calls > 1
+        and isinstance(validations[0], dict)
+        and validations[0].get("route") != "decision"
+        and final_route == "decision"
+    )
+    initial_correct = (
+        decisions[0] == reference_decision
+        if decisions and reference_decision is not None else None
+    )
+    final_correct = (
+        decisions[-1] == reference_decision
+        if decisions and reference_decision is not None else None
+    )
     return {
         "pipeline_succeeded": task_state.get("status") == "succeeded",
         "validator_call_count": validator_calls,
@@ -91,6 +122,16 @@ def compute_task_state_metrics(task_state: dict[str, Any]) -> dict[str, Any]:
         "retry_exhausted": exhausted,
         "validator_final_route": final_route,
         "validator_accepted": final_route == "decision" if final_route else None,
+        "repair_succeeded": repair_succeeded,
+        "no_change_retry": retries > 0 and len(set(signatures)) <= 1,
+        "decision_corrected": (
+            not initial_correct and final_correct
+            if initial_correct is not None and final_correct is not None else None
+        ),
+        "decision_harmed": (
+            initial_correct and not final_correct
+            if initial_correct is not None and final_correct is not None else None
+        ),
     }
 
 
@@ -221,6 +262,7 @@ def evaluate_benchmark(
 
         timing_result: dict[str, Any] = {}
         task_state_result: dict[str, Any] = {}
+        task_state: dict[str, Any] | None = None
         if task_state_path.exists():
             try:
                 task_state = load_json(task_state_path)
@@ -252,6 +294,17 @@ def evaluate_benchmark(
         expected_proposal = load_json(
             case_dir / "expected" / "proposal.json"
         )
+        if task_state is not None:
+            task_state_result = compute_task_state_metrics(
+                task_state, expected_proposal.get("decision")
+            )
+
+        complexity_result = compute_rdb_complexity_features(
+            existing_rdb, incoming_table
+        )
+        perturbations = expected_proposal.get("perturbations", [])
+        if not isinstance(perturbations, list):
+            perturbations = []
 
         # ---------------------------------------------
         # 2. Check whether model result exists
@@ -419,6 +472,10 @@ def evaluate_benchmark(
             reference_facts=reference_proposal_facts,
         )
 
+        decision_action_consistency_result = compute_decision_action_consistency(
+            predicted_proposal
+        )
+
         operation_only_result = compute_fact_set_metrics(
             predicted_facts={
                 fact for fact in predicted_proposal_facts
@@ -470,6 +527,22 @@ def evaluate_benchmark(
         final_schema_result = compute_fact_set_metrics(
             extract_schema_facts(predicted_rdb),
             extract_schema_facts(expected_rdb),
+        )
+        final_tuple_result = compute_final_tuple_metrics(
+            predicted_rdb_path=predicted_rdb_path,
+            expected_rdb_path=case_dir / "expected",
+            expected_schema=expected_rdb["schema"],
+        )
+        run_incoming_rows = (
+            task_state.get("incoming_table", {}).get("sample_values", [])
+            if task_state is not None else incoming_table.get("sample_values", [])
+        )
+        if not isinstance(run_incoming_rows, list):
+            run_incoming_rows = []
+        tuple_incorporation_result = compute_tuple_incorporation_metrics(
+            incoming_rows=run_incoming_rows,
+            column_placements=expected_proposal.get("column_placements", {}),
+            predicted_rdb_path=predicted_rdb_path,
         )
 
         # -----------------------------------
@@ -530,6 +603,10 @@ def evaluate_benchmark(
                 if validator_accepted is not None else None
             ),
         }
+        if task_state_result.get("repair_succeeded"):
+            task_state_result["repair_succeeded"] = bool(
+                validity_data["checked_valid"]
+            )
 
         non_target_preservation_result = compute_non_target_preservation_metrics(
             existing_rdb=existing_rdb,
@@ -546,6 +623,8 @@ def evaluate_benchmark(
             "evaluation_status": "evaluated",
             "result_available": True,
             "error": "",
+            "case_perturbed": bool(perturbations),
+            "case_perturbation_types": "|".join(sorted(perturbations)),
         }
 
         # print(json.dumps(case_result, indent=4))
@@ -573,12 +652,16 @@ def evaluate_benchmark(
         case_result.update(flatten_dict(proposal_fact_result, prefix="proposal_fact"))
 
         case_result.update(flatten_dict(operation_only_result, prefix="operation_only_fact"))
+        case_result.update(flatten_dict(decision_action_consistency_result, prefix="decision_action_consistency"))
         case_result.update(flatten_dict(table_action_result, prefix="table_action"))
         case_result.update(flatten_dict(column_action_result, prefix="column_action"))
         case_result.update(flatten_dict(primary_key_result, prefix="primary_key"))
         case_result.update(flatten_dict(foreign_key_result, prefix="foreign_key"))
         case_result.update(flatten_dict(final_constraint_result, prefix="final_constraint"))
         case_result.update(flatten_dict(final_schema_result, prefix="final_schema"))
+        case_result.update(flatten_dict(final_tuple_result, prefix="final_tuple"))
+        case_result.update(flatten_dict(tuple_incorporation_result, prefix="tuple_incorporation"))
+        case_result.update(flatten_dict(complexity_result, prefix="complexity"))
 
         case_result.update(flatten_dict(required_column_coverage_result, prefix="required_column_coverage"))
 

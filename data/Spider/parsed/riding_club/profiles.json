@@ -1,0 +1,524 @@
+{
+  "database": "riding_club",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/riding_club",
+    "schema_path": "data/Spider/parsed/riding_club/schema.json",
+    "tables_dir": "data/Spider/parsed/riding_club/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "club": {
+      "table": {
+        "name": "club",
+        "column_count": 4,
+        "summary": "A reference table containing information about sports clubs, including their unique identifiers, names, geographic regions, and founding years.",
+        "entity": "Sports Club",
+        "role": "lookup_table",
+        "aliases": [
+          "clubs",
+          "teams",
+          "sport_clubs",
+          "organization_clubs"
+        ]
+      },
+      "columns": {
+        "club_id": {
+          "name": "club_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each sports club.",
+          "semantic_type": "identifier",
+          "business_concept": "Club ID",
+          "aliases": [
+            "id",
+            "club_code",
+            "team_id"
+          ]
+        },
+        "club_name": {
+          "name": "club_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official name of the sports club.",
+          "semantic_type": "organization_name",
+          "business_concept": "Club Name",
+          "aliases": [
+            "name",
+            "team_name",
+            "club_title"
+          ]
+        },
+        "region": {
+          "name": "region",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The geographic region or country where the club is based.",
+          "semantic_type": "country",
+          "business_concept": "Region",
+          "aliases": [
+            "country",
+            "location",
+            "territory",
+            "nation"
+          ]
+        },
+        "start_year": {
+          "name": "start_year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The year the club was founded or established.",
+          "semantic_type": "date",
+          "business_concept": "Founding Year",
+          "aliases": [
+            "founded",
+            "established",
+            "year",
+            "creation_year"
+          ]
+        }
+      }
+    },
+    "coach": {
+      "table": {
+        "name": "coach",
+        "column_count": 5,
+        "summary": "A table containing demographic and ranking information for coaches, including their names, gender, associated club, and rank.",
+        "entity": "Coach",
+        "role": "entity_table",
+        "aliases": [
+          "coaches",
+          "coach_master",
+          "staff_coaches"
+        ]
+      },
+      "columns": {
+        "coach_id": {
+          "name": "coach_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each coach record.",
+          "semantic_type": "identifier",
+          "business_concept": "Coach ID",
+          "aliases": [
+            "id",
+            "coach_number",
+            "coach_code"
+          ]
+        },
+        "coach_name": {
+          "name": "coach_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Full name of the coach.",
+          "semantic_type": "person_name",
+          "business_concept": "Coach Name",
+          "aliases": [
+            "name",
+            "full_name",
+            "coach_fullname"
+          ]
+        },
+        "gender": {
+          "name": "gender",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Gender classification of the coach.",
+          "semantic_type": "code",
+          "business_concept": "Gender",
+          "aliases": [
+            "sex",
+            "gender_code",
+            "g"
+          ]
+        },
+        "club_id": {
+          "name": "club_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the coach to a specific club or organization.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Club ID",
+          "aliases": [
+            "club_code",
+            "organization_id",
+            "team_id"
+          ]
+        },
+        "rank": {
+          "name": "rank",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The ranking or tier level assigned to the coach.",
+          "semantic_type": "category",
+          "business_concept": "Coach Rank",
+          "aliases": [
+            "level",
+            "tier",
+            "rating",
+            "position"
+          ]
+        }
+      }
+    },
+    "match_result": {
+      "table": {
+        "name": "match_result",
+        "column_count": 7,
+        "summary": "Records the performance metrics and rankings of clubs in a competition, including points, medals, and specific tier counts.",
+        "entity": "club",
+        "role": "transaction_table",
+        "aliases": [
+          "match_results",
+          "competition_standings",
+          "club_performance",
+          "tournament_results"
+        ]
+      },
+      "columns": {
+        "rank": {
+          "name": "rank",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The ordinal position of the club in the competition standings.",
+          "semantic_type": "code",
+          "business_concept": "ranking_position",
+          "aliases": [
+            "position",
+            "order",
+            "place",
+            "sort_order"
+          ]
+        },
+        "club_id": {
+          "name": "club_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the club participating in the competition.",
+          "semantic_type": "identifier",
+          "business_concept": "club_identifier",
+          "aliases": [
+            "club_code",
+            "team_id",
+            "organization_id",
+            "entity_id"
+          ]
+        },
+        "gold": {
+          "name": "gold",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The count of gold medals or top-tier awards won by the club.",
+          "semantic_type": "quantity",
+          "business_concept": "gold_medal_count",
+          "aliases": [
+            "gold_medals",
+            "g",
+            "top_awards",
+            "first_place_count"
+          ]
+        },
+        "big_silver": {
+          "name": "big_silver",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The count of large silver medals or second-tier awards won by the club.",
+          "semantic_type": "quantity",
+          "business_concept": "big_silver_medal_count",
+          "aliases": [
+            "big_silver_medals",
+            "bs",
+            "second_place_large",
+            "silver_large"
+          ]
+        },
+        "small_silver": {
+          "name": "small_silver",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The count of small silver medals or third-tier awards won by the club.",
+          "semantic_type": "quantity",
+          "business_concept": "small_silver_medal_count",
+          "aliases": [
+            "small_silver_medals",
+            "ss",
+            "second_place_small",
+            "silver_small"
+          ]
+        },
+        "bronze": {
+          "name": "bronze",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The count of bronze medals or fourth-tier awards won by the club.",
+          "semantic_type": "quantity",
+          "business_concept": "bronze_medal_count",
+          "aliases": [
+            "bronze_medals",
+            "b",
+            "third_place",
+            "bronze_count"
+          ]
+        },
+        "points": {
+          "name": "points",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total accumulated points for the club based on performance.",
+          "semantic_type": "quantity",
+          "business_concept": "total_points",
+          "aliases": [
+            "pts",
+            "score",
+            "total_score",
+            "points_earned"
+          ]
+        }
+      }
+    },
+    "player": {
+      "table": {
+        "name": "player",
+        "column_count": 8,
+        "summary": "A table containing profiles of individuals, likely politicians or public officials, including their names, residences, occupations, and election-related metrics such as votes and rank.",
+        "entity": "Person",
+        "role": "entity_table",
+        "aliases": [
+          "politicians",
+          "candidates",
+          "representatives",
+          "members",
+          "officials"
+        ]
+      },
+      "columns": {
+        "player_id": {
+          "name": "player_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "pk",
+            "player_pk"
+          ]
+        },
+        "sponsor_name": {
+          "name": "sponsor_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the electoral district or riding associated with the person.",
+          "semantic_type": "organization_name",
+          "business_concept": "Electoral District",
+          "aliases": [
+            "riding",
+            "district",
+            "constituency",
+            "seat"
+          ]
+        },
+        "player_name": {
+          "name": "player_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the individual.",
+          "semantic_type": "person_name",
+          "business_concept": "Full Name",
+          "aliases": [
+            "name",
+            "full_name",
+            "candidate_name"
+          ]
+        },
+        "gender": {
+          "name": "gender",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The gender of the individual, represented by a single character code.",
+          "semantic_type": "code",
+          "business_concept": "Gender",
+          "aliases": [
+            "sex",
+            "gender_code",
+            "g"
+          ]
+        },
+        "residence": {
+          "name": "residence",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The city or town where the individual resides.",
+          "semantic_type": "city",
+          "business_concept": "City of Residence",
+          "aliases": [
+            "city",
+            "town",
+            "location",
+            "home_town"
+          ]
+        },
+        "occupation": {
+          "name": "occupation",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The professional job or role held by the individual.",
+          "semantic_type": "category",
+          "business_concept": "Occupation",
+          "aliases": [
+            "job",
+            "profession",
+            "role",
+            "employment"
+          ]
+        },
+        "votes": {
+          "name": "votes",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of votes received by the individual.",
+          "semantic_type": "quantity",
+          "business_concept": "Vote Count",
+          "aliases": [
+            "vote_total",
+            "votes_received",
+            "count"
+          ]
+        },
+        "rank": {
+          "name": "rank",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The ranking position of the individual, likely within an electoral district or party list.",
+          "semantic_type": "code",
+          "business_concept": "Ranking",
+          "aliases": [
+            "position",
+            "order",
+            "standing",
+            "rank_code"
+          ]
+        }
+      }
+    },
+    "player_coach": {
+      "table": {
+        "name": "player_coach",
+        "column_count": 3,
+        "summary": "Records the association between players and their coaches, including the starting year of the coaching relationship.",
+        "entity": "player_coach",
+        "role": "relationship_table",
+        "aliases": [
+          "player_coach_mapping",
+          "coach_assignment",
+          "player_coaching_history"
+        ]
+      },
+      "columns": {
+        "player_id": {
+          "name": "player_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a player within the system.",
+          "semantic_type": "identifier",
+          "business_concept": "Player ID",
+          "aliases": [
+            "player_uid",
+            "athlete_id",
+            "player_code"
+          ]
+        },
+        "coach_id": {
+          "name": "coach_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a coach linked to the player.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Coach ID",
+          "aliases": [
+            "coach_uid",
+            "trainer_id",
+            "coach_code"
+          ]
+        },
+        "starting_year": {
+          "name": "starting_year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the coaching relationship began.",
+          "semantic_type": "date",
+          "business_concept": "Coaching Start Year",
+          "aliases": [
+            "start_year",
+            "hire_year",
+            "assignment_year"
+          ]
+        }
+      }
+    }
+  }
+}

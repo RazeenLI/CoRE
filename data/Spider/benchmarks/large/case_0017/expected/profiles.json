@@ -1,0 +1,1085 @@
+{
+  "database": "cre_Drama_Workshop_Groups",
+  "tables": {
+    "ref_service_types": {
+      "table": {
+        "name": "ref_service_types",
+        "column_count": 3,
+        "summary": "A reference table defining distinct types of services available, including their unique codes, hierarchical relationships, and descriptions.",
+        "entity": "Service Type",
+        "role": "lookup_table",
+        "aliases": [
+          "service_type_master",
+          "svc_type_ref",
+          "service_categories"
+        ]
+      },
+      "columns": {
+        "service_type_code": {
+          "name": "service_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique alphanumeric identifier assigned to a specific service type.",
+          "semantic_type": "code",
+          "business_concept": "Service Type Identifier",
+          "aliases": [
+            "svc_code",
+            "type_id",
+            "service_code"
+          ]
+        },
+        "parent_service_type_code": {
+          "name": "parent_service_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The code of the parent service type, establishing a hierarchical relationship (e.g., category vs. sub-category). Null indicates no parent.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Service Type Hierarchy",
+          "aliases": [
+            "parent_code",
+            "parent_svc_code",
+            "supertype_code"
+          ]
+        },
+        "service_type_description": {
+          "name": "service_type_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A textual description explaining the nature or scope of the service type.",
+          "semantic_type": "description",
+          "business_concept": "Service Description",
+          "aliases": [
+            "svc_desc",
+            "description",
+            "type_description"
+          ]
+        }
+      }
+    },
+    "invoice_items": {
+      "table": {
+        "name": "invoice_items",
+        "column_count": 7,
+        "summary": "A transactional table recording the line items associated with specific orders and invoices, linking products to purchase quantities.",
+        "entity": "invoice_item",
+        "role": "transaction_table",
+        "aliases": [
+          "invoice_lines",
+          "order_invoice_items",
+          "billing_items"
+        ]
+      },
+      "columns": {
+        "invoice_item_id": {
+          "name": "invoice_item_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific line item within an invoice.",
+          "semantic_type": "identifier",
+          "business_concept": "Line Item ID",
+          "aliases": [
+            "item_id",
+            "invoice_line_id",
+            "row_id"
+          ]
+        },
+        "invoice_id": {
+          "name": "invoice_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the parent invoice record containing this item.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Invoice Reference",
+          "aliases": [
+            "inv_id",
+            "invoice_ref",
+            "bill_id"
+          ]
+        },
+        "order_id": {
+          "name": "order_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the parent order record associated with this invoice item.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Order Reference",
+          "aliases": [
+            "ord_id",
+            "order_ref",
+            "purchase_order_id"
+          ]
+        },
+        "order_item_id": {
+          "name": "order_item_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the specific item within the source order that this invoice line represents.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Order Line Reference",
+          "aliases": [
+            "oi_id",
+            "order_line_id",
+            "source_item_id"
+          ]
+        },
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the catalog product being purchased in this line item.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Product Reference",
+          "aliases": [
+            "prod_id",
+            "sku_id",
+            "item_code",
+            "catalog_id"
+          ]
+        },
+        "order_quantity": {
+          "name": "order_quantity",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of units of the product included in this specific invoice line.",
+          "semantic_type": "quantity",
+          "business_concept": "Purchase Quantity",
+          "aliases": [
+            "qty",
+            "quantity",
+            "units",
+            "amount"
+          ]
+        },
+        "other_item_details": {
+          "name": "other_item_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional descriptive text or notes regarding the specific item line.",
+          "semantic_type": "description",
+          "business_concept": "Item Notes",
+          "aliases": [
+            "notes",
+            "remarks",
+            "comments",
+            "description"
+          ]
+        }
+      }
+    },
+    "customers": {
+      "table": {
+        "name": "customers",
+        "column_count": 6,
+        "summary": "A table containing core contact and identification information for individual customers, including names, phone numbers, email addresses, and unique identifiers.",
+        "entity": "Customer",
+        "role": "entity_table",
+        "aliases": [
+          "clients",
+          "accounts",
+          "user_contacts",
+          "customer_master"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier assigned to each customer record.",
+          "semantic_type": "identifier",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "id",
+            "customer_number",
+            "client_id"
+          ]
+        },
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier linking the customer to a specific address record in a separate table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Address Reference",
+          "aliases": [
+            "addr_id",
+            "address_ref",
+            "location_id"
+          ]
+        },
+        "customer_name": {
+          "name": "customer_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The full name or primary name of the customer.",
+          "semantic_type": "person_name",
+          "business_concept": "Customer Name",
+          "aliases": [
+            "name",
+            "full_name",
+            "cust_name",
+            "client_name"
+          ]
+        },
+        "customer_phone": {
+          "name": "customer_phone",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The primary telephone contact number for the customer.",
+          "semantic_type": "phone",
+          "business_concept": "Phone Number",
+          "aliases": [
+            "phone",
+            "telephone",
+            "mobile",
+            "contact_phone",
+            "tel"
+          ]
+        },
+        "customer_email_address": {
+          "name": "customer_email_address",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "The email address associated with the customer.",
+          "semantic_type": "email",
+          "business_concept": "Email Address",
+          "aliases": [
+            "email",
+            "e_mail",
+            "contact_email",
+            "cust_email"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Additional descriptive information or tags about the customer, such as status or notes.",
+          "semantic_type": "description",
+          "business_concept": "Customer Notes / Tags",
+          "aliases": [
+            "notes",
+            "remarks",
+            "extra_info",
+            "tags",
+            "status_code"
+          ]
+        }
+      }
+    },
+    "clients": {
+      "table": {
+        "name": "clients",
+        "column_count": 6,
+        "summary": "A table containing contact and identification details for individual customers, including names, emails, phone numbers, and associated IDs.",
+        "entity": "Customer",
+        "role": "entity_table",
+        "aliases": [
+          "customers",
+          "client_contacts",
+          "user_profiles"
+        ]
+      },
+      "columns": {
+        "client_id": {
+          "name": "client_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific client record within the system.",
+          "semantic_type": "identifier",
+          "business_concept": "Client ID",
+          "aliases": [
+            "id",
+            "client_number",
+            "cust_id"
+          ]
+        },
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier linking the client to a specific address record, likely in a separate address table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Address Reference",
+          "aliases": [
+            "addr_id",
+            "address_ref",
+            "location_id"
+          ]
+        },
+        "customer_email_address": {
+          "name": "customer_email_address",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "The email address associated with the customer account.",
+          "semantic_type": "email",
+          "business_concept": "Contact Email",
+          "aliases": [
+            "email",
+            "cust_email",
+            "e_mail"
+          ]
+        },
+        "customer_name": {
+          "name": "customer_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The first name or primary name of the customer.",
+          "semantic_type": "person_name",
+          "business_concept": "Customer Name",
+          "aliases": [
+            "first_name",
+            "name",
+            "fname",
+            "cust_name"
+          ]
+        },
+        "customer_phone": {
+          "name": "customer_phone",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The telephone number associated with the customer.",
+          "semantic_type": "phone",
+          "business_concept": "Contact Phone",
+          "aliases": [
+            "phone",
+            "tel",
+            "mobile",
+            "cust_phone",
+            "telephone"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional descriptive information or status tags regarding the client, such as VIP status.",
+          "semantic_type": "description",
+          "business_concept": "Client Notes / Status",
+          "aliases": [
+            "notes",
+            "tags",
+            "info",
+            "remarks"
+          ]
+        }
+      }
+    },
+    "performers_in_bookings": {
+      "table": {
+        "name": "performers_in_bookings",
+        "column_count": 2,
+        "summary": "A junction table linking specific performers to specific orders or bookings.",
+        "entity": "performer_booking_association",
+        "role": "relationship_table",
+        "aliases": [
+          "performer_bookings",
+          "booking_performers",
+          "order_performers"
+        ]
+      },
+      "columns": {
+        "order_id": {
+          "name": "order_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the order or booking record.",
+          "semantic_type": "identifier",
+          "business_concept": "Order ID",
+          "aliases": [
+            "order_number",
+            "booking_id",
+            "transaction_id"
+          ]
+        },
+        "performer_id": {
+          "name": "performer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the performer associated with the order.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Performer ID",
+          "aliases": [
+            "artist_id",
+            "talent_id",
+            "actor_id"
+          ]
+        }
+      }
+    },
+    "drama_workshop_groups": {
+      "table": {
+        "name": "drama_workshop_groups",
+        "column_count": 8,
+        "summary": "A table linking drama workshop groups to specific store locations, including contact details, regional codes, and currency information.",
+        "entity": "Workshop Group Location",
+        "role": "relationship_table",
+        "aliases": [
+          "workshop_store_mapping",
+          "drama_group_locations",
+          "workshop_branches"
+        ]
+      },
+      "columns": {
+        "workshop_group_id": {
+          "name": "workshop_group_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific drama workshop group.",
+          "semantic_type": "identifier",
+          "business_concept": "Workshop Group ID",
+          "aliases": [
+            "wg_id",
+            "group_id",
+            "workshop_id"
+          ]
+        },
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the physical address associated with the workshop group.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Address ID",
+          "aliases": [
+            "addr_id",
+            "location_id",
+            "site_id"
+          ]
+        },
+        "currency_code": {
+          "name": "currency_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The currency code applicable to the workshop group or its associated store.",
+          "semantic_type": "code",
+          "business_concept": "Currency",
+          "aliases": [
+            "curr_code",
+            "currency",
+            "c_code"
+          ]
+        },
+        "marketing_region_code": {
+          "name": "marketing_region_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The marketing region or country code where the workshop group operates.",
+          "semantic_type": "code",
+          "business_concept": "Marketing Region",
+          "aliases": [
+            "region_code",
+            "country_code",
+            "market_code",
+            "m_region"
+          ]
+        },
+        "store_name": {
+          "name": "store_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The name of the store or venue where the workshop is held.",
+          "semantic_type": "organization_name",
+          "business_concept": "Store Name",
+          "aliases": [
+            "store",
+            "venue_name",
+            "shop_name",
+            "location_name"
+          ]
+        },
+        "store_phone": {
+          "name": "store_phone",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The telephone contact number for the store.",
+          "semantic_type": "phone",
+          "business_concept": "Store Phone Number",
+          "aliases": [
+            "phone",
+            "tel",
+            "contact_phone",
+            "store_tel"
+          ]
+        },
+        "store_email_address": {
+          "name": "store_email_address",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "The email contact address for the store.",
+          "semantic_type": "email",
+          "business_concept": "Store Email",
+          "aliases": [
+            "email",
+            "contact_email",
+            "store_email",
+            "e_mail"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Additional descriptive text or notes about the workshop group or store.",
+          "semantic_type": "description",
+          "business_concept": "Additional Details",
+          "aliases": [
+            "notes",
+            "remarks",
+            "extra_info",
+            "comments"
+          ]
+        }
+      }
+    },
+    "performers": {
+      "table": {
+        "name": "performers",
+        "column_count": 6,
+        "summary": "A table containing contact and identification details for performers, including unique IDs, names, phone numbers, and email addresses.",
+        "entity": "performer",
+        "role": "entity_table",
+        "aliases": [
+          "performers",
+          "artists",
+          "talent",
+          "actresses",
+          "actors"
+        ]
+      },
+      "columns": {
+        "performer_id": {
+          "name": "performer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each performer record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "pk",
+            "performer_pk"
+          ]
+        },
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the performer to a specific address record, likely a foreign key.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Address Reference",
+          "aliases": [
+            "addr_id",
+            "address_ref",
+            "location_id"
+          ]
+        },
+        "customer_name": {
+          "name": "customer_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The name of the performer.",
+          "semantic_type": "person_name",
+          "business_concept": "Full Name",
+          "aliases": [
+            "name",
+            "first_name",
+            "last_name",
+            "display_name",
+            "artist_name"
+          ]
+        },
+        "customer_phone": {
+          "name": "customer_phone",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Contact phone number for the performer.",
+          "semantic_type": "phone",
+          "business_concept": "Telephone Number",
+          "aliases": [
+            "phone",
+            "tel",
+            "mobile",
+            "contact_number",
+            "cell"
+          ]
+        },
+        "customer_email_address": {
+          "name": "customer_email_address",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "Email address associated with the performer.",
+          "semantic_type": "email",
+          "business_concept": "Electronic Mail Address",
+          "aliases": [
+            "email",
+            "e_mail",
+            "contact_email",
+            "address"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional free-text information about the performer, currently appearing empty in samples.",
+          "semantic_type": "description",
+          "business_concept": "Notes / Additional Info",
+          "aliases": [
+            "notes",
+            "remarks",
+            "extra_info",
+            "bio"
+          ]
+        }
+      }
+    },
+    "addresses": {
+      "table": {
+        "name": "addresses",
+        "column_count": 6,
+        "summary": "Stores detailed shipping or billing address information including street lines, city, state, and a unique identifier.",
+        "entity": "Address",
+        "role": "entity_table",
+        "aliases": [
+          "addr",
+          "ship_addr",
+          "bill_addr",
+          "locations",
+          "contact_addresses"
+        ]
+      },
+      "columns": {
+        "address_id": {
+          "name": "address_id",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each address record in the system.",
+          "semantic_type": "identifier",
+          "business_concept": "Address ID",
+          "aliases": [
+            "addr_id",
+            "id",
+            "address_key"
+          ]
+        },
+        "line_1": {
+          "name": "line_1",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The primary street address component, typically containing the building number and street name.",
+          "semantic_type": "address",
+          "business_concept": "Street Address Line 1",
+          "aliases": [
+            "street",
+            "addr_line1",
+            "line1",
+            "address_line_1"
+          ]
+        },
+        "line_2": {
+          "name": "line_2",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Secondary address component used for suites, apartments, or floor numbers.",
+          "semantic_type": "address",
+          "business_concept": "Street Address Line 2",
+          "aliases": [
+            "suite",
+            "apt",
+            "addr_line2",
+            "line2",
+            "address_line_2",
+            "secondary_address"
+          ]
+        },
+        "city_town": {
+          "name": "city_town",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The name of the city or town where the address is located.",
+          "semantic_type": "city",
+          "business_concept": "City",
+          "aliases": [
+            "city",
+            "town",
+            "municipality",
+            "locality"
+          ]
+        },
+        "state_county": {
+          "name": "state_county",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The state or province associated with the address, often containing the full name rather than just a code.",
+          "semantic_type": "address",
+          "business_concept": "State/Province",
+          "aliases": [
+            "state",
+            "province",
+            "region",
+            "state_code",
+            "county"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional free-form text providing supplementary information about the address.",
+          "semantic_type": "description",
+          "business_concept": "Address Notes",
+          "aliases": [
+            "notes",
+            "comments",
+            "extra_info",
+            "details"
+          ]
+        }
+      }
+    },
+    "order_items": {
+      "table": {
+        "name": "order_items",
+        "column_count": 5,
+        "summary": "Stores the line-level details of orders, linking specific products to orders with their respective quantities.",
+        "entity": "Order Item",
+        "role": "transaction_table",
+        "aliases": [
+          "order_lines",
+          "order_details",
+          "items"
+        ]
+      },
+      "columns": {
+        "order_item_id": {
+          "name": "order_item_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific line item within an order.",
+          "semantic_type": "identifier",
+          "business_concept": "Line Item ID",
+          "aliases": [
+            "item_id",
+            "order_line_id",
+            "id"
+          ]
+        },
+        "order_id": {
+          "name": "order_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the parent order containing this item.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Order Reference",
+          "aliases": [
+            "parent_order_id",
+            "order_ref",
+            "order_no"
+          ]
+        },
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the specific product included in this order line.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Product Reference",
+          "aliases": [
+            "item_sku",
+            "product_ref",
+            "sku"
+          ]
+        },
+        "order_quantity": {
+          "name": "order_quantity",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of units of the product ordered in this specific line item.",
+          "semantic_type": "quantity",
+          "business_concept": "Ordered Quantity",
+          "aliases": [
+            "qty",
+            "quantity",
+            "amount",
+            "count"
+          ]
+        },
+        "other_item_details": {
+          "name": "other_item_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Optional additional information or notes regarding the specific item line.",
+          "semantic_type": "description",
+          "business_concept": "Item Notes",
+          "aliases": [
+            "notes",
+            "remarks",
+            "extra_info",
+            "comments"
+          ]
+        }
+      }
+    },
+    "bookings_services": {
+      "table": {
+        "name": "bookings_services",
+        "column_count": 2,
+        "summary": "A transactional table recording service bookings linked to specific orders and products.",
+        "entity": "booking",
+        "role": "transaction_table",
+        "aliases": [
+          "bookings",
+          "service_bookings",
+          "order_services"
+        ]
+      },
+      "columns": {
+        "order_id": {
+          "name": "order_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the parent order associated with this service booking.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Order Reference",
+          "aliases": [
+            "order_ref",
+            "parent_order",
+            "order_no"
+          ]
+        },
+        "product_id": {
+          "name": "product_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific product or service item being booked.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Product Reference",
+          "aliases": [
+            "product_ref",
+            "item_id",
+            "service_id"
+          ]
+        }
+      }
+    },
+    "stores": {
+      "table": {
+        "name": "stores",
+        "column_count": 7,
+        "summary": "A table containing detailed information about physical retail locations, including unique identifiers, contact details, and regional classifications.",
+        "entity": "Store",
+        "role": "entity_table",
+        "aliases": [
+          "store_master",
+          "locations",
+          "outlets",
+          "shop_details"
+        ]
+      },
+      "columns": {
+        "store_id": {
+          "name": "store_id",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific store location.",
+          "semantic_type": "identifier",
+          "business_concept": "Store ID",
+          "aliases": [
+            "store_code",
+            "location_id",
+            "shop_id"
+          ]
+        },
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference key linking the store to a specific address record in an external or internal address table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Address Reference",
+          "aliases": [
+            "addr_id",
+            "location_address_ref"
+          ]
+        },
+        "marketing_region_code": {
+          "name": "marketing_region_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short code representing the marketing region or country where the store operates.",
+          "semantic_type": "code",
+          "business_concept": "Marketing Region",
+          "aliases": [
+            "region_code",
+            "country_code",
+            "market_area"
+          ]
+        },
+        "store_name": {
+          "name": "store_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The display name or title of the store.",
+          "semantic_type": "organization_name",
+          "business_concept": "Store Name",
+          "aliases": [
+            "name",
+            "shop_name",
+            "location_name"
+          ]
+        },
+        "store_phone": {
+          "name": "store_phone",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Contact telephone number for the store.",
+          "semantic_type": "phone",
+          "business_concept": "Store Phone Number",
+          "aliases": [
+            "phone",
+            "tel",
+            "contact_number"
+          ]
+        },
+        "store_email_address": {
+          "name": "store_email_address",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "Email contact address for the store.",
+          "semantic_type": "email",
+          "business_concept": "Store Email",
+          "aliases": [
+            "email",
+            "contact_email",
+            "store_mail"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional descriptive text or notes about the store, such as ratings or special features.",
+          "semantic_type": "description",
+          "business_concept": "Store Notes",
+          "aliases": [
+            "notes",
+            "comments",
+            "extra_info"
+          ]
+        }
+      }
+    }
+  }
+}

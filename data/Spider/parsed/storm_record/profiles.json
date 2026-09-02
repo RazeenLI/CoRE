@@ -1,0 +1,257 @@
+{
+  "database": "storm_record",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/storm_record",
+    "schema_path": "data/Spider/parsed/storm_record/schema.json",
+    "tables_dir": "data/Spider/parsed/storm_record/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "affected_region": {
+      "table": {
+        "name": "affected_region",
+        "column_count": 3,
+        "summary": "Records the impact of specific storms on geographic regions, detailing the number of cities affected.",
+        "entity": "Storm Impact Record",
+        "role": "transaction_table",
+        "aliases": [
+          "storm_region_impact",
+          "affected_areas",
+          "storm_city_count"
+        ]
+      },
+      "columns": {
+        "region_id": {
+          "name": "region_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a geographic region impacted by the storm.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Geographic Region ID",
+          "aliases": [
+            "region_code",
+            "area_id",
+            "geo_id"
+          ]
+        },
+        "storm_id": {
+          "name": "storm_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the storm event causing the impact.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Storm Event ID",
+          "aliases": [
+            "storm_code",
+            "event_id",
+            "cyclone_id"
+          ]
+        },
+        "number_city_affected": {
+          "name": "number_city_affected",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The count of cities within the region that were impacted by the storm.",
+          "semantic_type": "quantity",
+          "business_concept": "Cities Affected Count",
+          "aliases": [
+            "city_count",
+            "affected_cities",
+            "impact_count"
+          ]
+        }
+      }
+    },
+    "region": {
+      "table": {
+        "name": "region",
+        "column_count": 3,
+        "summary": "A reference table containing unique identifiers, codes, and full names for geographical regions, likely countries.",
+        "entity": "Region",
+        "role": "lookup_table",
+        "aliases": [
+          "regions",
+          "geo_regions",
+          "country_list",
+          "territories"
+        ]
+      },
+      "columns": {
+        "region_id": {
+          "name": "region_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique integer identifier for each region entry.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "region_key",
+            "pk_region"
+          ]
+        },
+        "region_code": {
+          "name": "region_code",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short alphanumeric code representing the region, matching ISO 3166-1 alpha-2 country codes.",
+          "semantic_type": "code",
+          "business_concept": "Region Code",
+          "aliases": [
+            "code",
+            "iso_code",
+            "country_code",
+            "abbr"
+          ]
+        },
+        "region_name": {
+          "name": "region_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full official name of the region or country.",
+          "semantic_type": "organization_name",
+          "business_concept": "Region Name",
+          "aliases": [
+            "name",
+            "full_name",
+            "country_name",
+            "label"
+          ]
+        }
+      }
+    },
+    "storm": {
+      "table": {
+        "name": "storm",
+        "column_count": 6,
+        "summary": "A dataset containing historical records of tropical cyclones (storms), detailing their identifiers, names, active periods, intensity, and impact metrics.",
+        "entity": "Tropical Cyclone / Storm",
+        "role": "entity_table",
+        "aliases": [
+          "cyclones",
+          "hurricanes",
+          "typhoons",
+          "tropical_storms",
+          "severe_storms",
+          "weather_events"
+        ]
+      },
+      "columns": {
+        "storm_id": {
+          "name": "storm_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier assigned to each storm record.",
+          "semantic_type": "identifier",
+          "business_concept": "Storm Unique ID",
+          "aliases": [
+            "id",
+            "storm_number",
+            "cyclone_id",
+            "event_id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The official name assigned to the storm by meteorological agencies.",
+          "semantic_type": "category",
+          "business_concept": "Storm Name",
+          "aliases": [
+            "storm_name",
+            "cyclone_name",
+            "hurricane_name",
+            "typhoon_name"
+          ]
+        },
+        "dates_active": {
+          "name": "dates_active",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The time period during which the storm was active, formatted as start date to end date.",
+          "semantic_type": "date",
+          "business_concept": "Storm Duration",
+          "aliases": [
+            "active_period",
+            "dates",
+            "duration",
+            "timeframe"
+          ]
+        },
+        "max_speed": {
+          "name": "max_speed",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The maximum sustained wind speed of the storm, typically measured in knots or mph.",
+          "semantic_type": "quantity",
+          "business_concept": "Maximum Wind Speed",
+          "aliases": [
+            "max_wind",
+            "peak_wind",
+            "sustained_speed",
+            "wind_speed"
+          ]
+        },
+        "damage_millions_usd": {
+          "name": "damage_millions_usd",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total monetary value of damage caused by the storm, expressed in millions of US dollars.",
+          "semantic_type": "money",
+          "business_concept": "Economic Damage",
+          "aliases": [
+            "damage",
+            "cost",
+            "losses",
+            "property_damage",
+            "economic_impact"
+          ]
+        },
+        "number_deaths": {
+          "name": "number_deaths",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total count of human fatalities attributed to the storm.",
+          "semantic_type": "quantity",
+          "business_concept": "Casualties",
+          "aliases": [
+            "deaths",
+            "fatalities",
+            "casualties",
+            "loss_of_life"
+          ]
+        }
+      }
+    }
+  }
+}

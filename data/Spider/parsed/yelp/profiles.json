@@ -1,0 +1,635 @@
+{
+  "database": "yelp",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/yelp",
+    "schema_path": "data/Spider/parsed/yelp/schema.json",
+    "tables_dir": "data/Spider/parsed/yelp/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "business": {
+      "table": {
+        "name": "business",
+        "column_count": 11,
+        "summary": "A table containing detailed information about businesses, including their identifiers, names, locations, operational status, and customer ratings.",
+        "entity": "Business",
+        "role": "entity_table",
+        "aliases": [
+          "businesses",
+          "companies",
+          "stores",
+          "locations",
+          "vendors"
+        ]
+      },
+      "columns": {
+        "bid": {
+          "name": "bid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "A unique integer identifier for a business record, likely an internal database primary key.",
+          "semantic_type": "identifier",
+          "business_concept": "Internal Business ID",
+          "aliases": [
+            "id",
+            "business_key",
+            "pk"
+          ]
+        },
+        "business_id": {
+          "name": "business_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "A unique text-based identifier for a business, potentially used for external referencing or legacy systems.",
+          "semantic_type": "identifier",
+          "business_concept": "External Business ID",
+          "aliases": [
+            "biz_id",
+            "external_id",
+            "merchant_id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official or common name of the business.",
+          "semantic_type": "organization_name",
+          "business_concept": "Business Name",
+          "aliases": [
+            "title",
+            "company_name",
+            "brand"
+          ]
+        },
+        "full_address": {
+          "name": "full_address",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The complete physical address of the business location.",
+          "semantic_type": "address",
+          "business_concept": "Physical Location",
+          "aliases": [
+            "address",
+            "street_address",
+            "location_string"
+          ]
+        },
+        "city": {
+          "name": "city",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The city where the business is located.",
+          "semantic_type": "city",
+          "business_concept": "City Location",
+          "aliases": [
+            "city_name",
+            "municipality"
+          ]
+        },
+        "latitude": {
+          "name": "latitude",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The geographic latitude coordinate of the business location.",
+          "semantic_type": "unknown",
+          "business_concept": "Latitude Coordinate",
+          "aliases": [
+            "lat",
+            "geo_lat"
+          ]
+        },
+        "longitude": {
+          "name": "longitude",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The geographic longitude coordinate of the business location.",
+          "semantic_type": "unknown",
+          "business_concept": "Longitude Coordinate",
+          "aliases": [
+            "lon",
+            "geo_lon"
+          ]
+        },
+        "review_count": {
+          "name": "review_count",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The total number of customer reviews received by the business.",
+          "semantic_type": "quantity",
+          "business_concept": "Review Volume",
+          "aliases": [
+            "num_reviews",
+            "review_total",
+            "feedback_count"
+          ]
+        },
+        "is_open": {
+          "name": "is_open",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "A flag indicating whether the business is currently open for business.",
+          "semantic_type": "boolean",
+          "business_concept": "Operational Status",
+          "aliases": [
+            "open_status",
+            "status_flag",
+            "active"
+          ]
+        },
+        "rating": {
+          "name": "rating",
+          "dtype": "float",
+          "value_patterns": [],
+          "meaning": "The average customer rating score for the business.",
+          "semantic_type": "unknown",
+          "business_concept": "Average Rating",
+          "aliases": [
+            "avg_rating",
+            "score",
+            "star_rating"
+          ]
+        },
+        "state": {
+          "name": "state",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The state or province where the business is located.",
+          "semantic_type": "country",
+          "business_concept": "State/Region",
+          "aliases": [
+            "state_name",
+            "province",
+            "region",
+            "state_code"
+          ]
+        }
+      }
+    },
+    "category": {
+      "table": {
+        "name": "category",
+        "column_count": 3,
+        "summary": "A reference table defining product or service categories with unique identifiers and human-readable names.",
+        "entity": "Category",
+        "role": "lookup_table",
+        "aliases": [
+          "categories",
+          "cat",
+          "category_master",
+          "taxonomy"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique primary key identifying a specific category record.",
+          "semantic_type": "identifier",
+          "business_concept": "Category ID",
+          "aliases": [
+            "cat_id",
+            "category_id",
+            "pk_category"
+          ]
+        },
+        "business_id": {
+          "name": "business_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "An external or internal business identifier linking the category to a specific business unit, tenant, or organizational context.",
+          "semantic_type": "code",
+          "business_concept": "Business Unit ID",
+          "aliases": [
+            "biz_id",
+            "tenant_id",
+            "org_id",
+            "external_id"
+          ]
+        },
+        "category_name": {
+          "name": "category_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The human-readable name or label assigned to the category.",
+          "semantic_type": "category",
+          "business_concept": "Category Name",
+          "aliases": [
+            "name",
+            "cat_name",
+            "label",
+            "title"
+          ]
+        }
+      }
+    },
+    "checkin": {
+      "table": {
+        "name": "checkin",
+        "column_count": 4,
+        "summary": "Records daily check-in counts associated with specific business entities.",
+        "entity": "checkin",
+        "role": "transaction_table",
+        "aliases": [
+          "checkins",
+          "daily_checkins",
+          "business_checkins"
+        ]
+      },
+      "columns": {
+        "cid": {
+          "name": "cid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for the check-in record.",
+          "semantic_type": "identifier",
+          "business_concept": "checkin_id",
+          "aliases": [
+            "id",
+            "checkin_id",
+            "record_id"
+          ]
+        },
+        "business_id": {
+          "name": "business_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Identifier linking the check-in to a specific business location or entity.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "business_identifier",
+          "aliases": [
+            "biz_id",
+            "business_identifier",
+            "store_id",
+            "shop_id"
+          ]
+        },
+        "count": {
+          "name": "count",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The number of check-ins recorded for this entry.",
+          "semantic_type": "quantity",
+          "business_concept": "checkin_count",
+          "aliases": [
+            "num",
+            "total",
+            "amount",
+            "frequency"
+          ]
+        },
+        "day": {
+          "name": "day",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The date on which the check-ins occurred.",
+          "semantic_type": "date",
+          "business_concept": "checkin_date",
+          "aliases": [
+            "date",
+            "d",
+            "day_of_checkin",
+            "report_date"
+          ]
+        }
+      }
+    },
+    "neighbourhood": {
+      "table": {
+        "name": "neighbourhood",
+        "column_count": 3,
+        "summary": "A reference table containing unique identifiers and names for geographical neighbourhoods.",
+        "entity": "neighbourhood",
+        "role": "lookup_table",
+        "aliases": [
+          "neighborhood",
+          "neighborhoods",
+          "area",
+          "district"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique primary key identifier for each neighbourhood record.",
+          "semantic_type": "identifier",
+          "business_concept": "neighbourhood_id",
+          "aliases": [
+            "neighbourhood_id",
+            "pk",
+            "uuid"
+          ]
+        },
+        "business_id": {
+          "name": "business_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "External or internal business identifier linking the neighbourhood to a specific business entity or system.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "business_reference",
+          "aliases": [
+            "biz_id",
+            "external_id",
+            "ref_id"
+          ]
+        },
+        "neighbourhood_name": {
+          "name": "neighbourhood_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The human-readable name of the neighbourhood.",
+          "semantic_type": "organization_name",
+          "business_concept": "neighbourhood_name",
+          "aliases": [
+            "name",
+            "title",
+            "label"
+          ]
+        }
+      }
+    },
+    "review": {
+      "table": {
+        "name": "review",
+        "column_count": 7,
+        "summary": "A table storing user reviews with ratings, textual feedback, and temporal metadata.",
+        "entity": "review",
+        "role": "transaction_table",
+        "aliases": [
+          "reviews",
+          "user_reviews",
+          "feedback",
+          "ratings"
+        ]
+      },
+      "columns": {
+        "rid": {
+          "name": "rid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a specific review record.",
+          "semantic_type": "identifier",
+          "business_concept": "review_id",
+          "aliases": [
+            "review_id",
+            "id",
+            "rid"
+          ]
+        },
+        "business_id": {
+          "name": "business_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Identifier linking the review to a specific business or merchant.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "business_identifier",
+          "aliases": [
+            "biz_id",
+            "merchant_id",
+            "store_id",
+            "vendor_id"
+          ]
+        },
+        "user_id": {
+          "name": "user_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Identifier linking the review to the user who wrote it.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "user_identifier",
+          "aliases": [
+            "uid",
+            "customer_id",
+            "author_id",
+            "reviewer_id"
+          ]
+        },
+        "rating": {
+          "name": "rating",
+          "dtype": "float",
+          "value_patterns": [],
+          "meaning": "Numerical score given by the user to the business or product.",
+          "semantic_type": "quantity",
+          "business_concept": "star_rating",
+          "aliases": [
+            "score",
+            "stars",
+            "rating_value"
+          ]
+        },
+        "text": {
+          "name": "text",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Free-form textual content describing the user's experience or opinion.",
+          "semantic_type": "description",
+          "business_concept": "review_content",
+          "aliases": [
+            "comment",
+            "feedback_text",
+            "review_body",
+            "description"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The calendar year in which the review was submitted.",
+          "semantic_type": "date",
+          "business_concept": "review_year",
+          "aliases": [
+            "review_year",
+            "yr",
+            "date_year"
+          ]
+        },
+        "month": {
+          "name": "month",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The calendar month in which the review was submitted.",
+          "semantic_type": "date",
+          "business_concept": "review_month",
+          "aliases": [
+            "review_month",
+            "mo",
+            "date_month"
+          ]
+        }
+      }
+    },
+    "tip": {
+      "table": {
+        "name": "tip",
+        "column_count": 7,
+        "summary": "A table storing user-generated tips or posts, including metadata about the author, engagement metrics, and temporal information.",
+        "entity": "Tip",
+        "role": "entity_table",
+        "aliases": [
+          "tips",
+          "posts",
+          "user_tips",
+          "content"
+        ]
+      },
+      "columns": {
+        "tip_id": {
+          "name": "tip_id",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a specific tip record.",
+          "semantic_type": "identifier",
+          "business_concept": "Tip ID",
+          "aliases": [
+            "id",
+            "tipid",
+            "pk"
+          ]
+        },
+        "business_id": {
+          "name": "business_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Identifier linking the tip to a specific business or organization.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Business ID",
+          "aliases": [
+            "biz_id",
+            "org_id",
+            "company_id"
+          ]
+        },
+        "text": {
+          "name": "text",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The main content or body of the tip.",
+          "semantic_type": "description",
+          "business_concept": "Tip Content",
+          "aliases": [
+            "content",
+            "body",
+            "message",
+            "description"
+          ]
+        },
+        "user_id": {
+          "name": "user_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Identifier of the user who created the tip.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "User ID",
+          "aliases": [
+            "uid",
+            "author_id",
+            "creator_id",
+            "username_id"
+          ]
+        },
+        "likes": {
+          "name": "likes",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Count of likes or endorsements received by the tip.",
+          "semantic_type": "quantity",
+          "business_concept": "Engagement Count",
+          "aliases": [
+            "like_count",
+            "likes",
+            "popularity"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The calendar year in which the tip was created or posted.",
+          "semantic_type": "date",
+          "business_concept": "Year",
+          "aliases": [
+            "yr",
+            "post_year",
+            "creation_year"
+          ]
+        },
+        "month": {
+          "name": "month",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The calendar month in which the tip was created or posted.",
+          "semantic_type": "date",
+          "business_concept": "Month",
+          "aliases": [
+            "mo",
+            "post_month",
+            "creation_month"
+          ]
+        }
+      }
+    },
+    "user": {
+      "table": {
+        "name": "user",
+        "column_count": 3,
+        "summary": "Stores basic user profile information including unique identifiers and names.",
+        "entity": "User",
+        "role": "entity_table",
+        "aliases": [
+          "users",
+          "user_profile",
+          "member"
+        ]
+      },
+      "columns": {
+        "uid": {
+          "name": "uid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique internal identifier for a user record.",
+          "semantic_type": "identifier",
+          "business_concept": "User ID",
+          "aliases": [
+            "id",
+            "user_id",
+            "primary_key"
+          ]
+        },
+        "user_id": {
+          "name": "user_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Alternative or external identifier for a user, potentially redundant or linked to another system.",
+          "semantic_type": "identifier",
+          "business_concept": "User ID",
+          "aliases": [
+            "uid",
+            "id",
+            "external_id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name or display name of the user.",
+          "semantic_type": "person_name",
+          "business_concept": "User Name",
+          "aliases": [
+            "full_name",
+            "display_name",
+            "first_name",
+            "last_name"
+          ]
+        }
+      }
+    }
+  }
+}

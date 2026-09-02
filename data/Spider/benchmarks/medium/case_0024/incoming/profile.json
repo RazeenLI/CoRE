@@ -1,0 +1,99 @@
+{
+  "database": "incoming",
+  "tables": {
+    "claim_worklist": {
+      "table": {
+        "name": "claim_worklist",
+        "column_count": 5,
+        "summary": "Stores the current processing status, stage, and assigned staff for individual insurance claims.",
+        "entity": "Claim Processing Record",
+        "role": "transaction_table",
+        "aliases": [
+          "claims_status",
+          "claim_worklist",
+          "claim_assignment"
+        ]
+      },
+      "columns": {
+        "claim_processing_id": {
+          "name": "claim_processing_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific record in the claims processing log.",
+          "semantic_type": "identifier",
+          "business_concept": "Processing Record ID",
+          "aliases": [
+            "proc_id",
+            "claim_proc_key",
+            "log_id"
+          ]
+        },
+        "claim_id": {
+          "name": "claim_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the specific insurance claim being processed.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Claim Reference",
+          "aliases": [
+            "claim_ref",
+            "claim_number",
+            "parent_claim_id"
+          ]
+        },
+        "claim_outcome_code": {
+          "name": "claim_outcome_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Textual description of the current resolution status of the claim.",
+          "semantic_type": "status",
+          "business_concept": "Claim Outcome",
+          "aliases": [
+            "claim_status",
+            "resolution_code",
+            "outcome_desc"
+          ]
+        },
+        "claim_stage_id": {
+          "name": "claim_stage_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Numeric identifier representing the current step in the claims workflow.",
+          "semantic_type": "code",
+          "business_concept": "Workflow Stage",
+          "aliases": [
+            "stage_num",
+            "process_step",
+            "workflow_id"
+          ]
+        },
+        "staff_id": {
+          "name": "staff_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier of the employee currently assigned to or handling the claim.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Assigned Staff",
+          "aliases": [
+            "agent_id",
+            "handler_id",
+            "employee_id",
+            "adjuster_id"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,145 @@
+{
+  "database": "incoming",
+  "tables": {
+    "payments": {
+      "table": {
+        "name": "payments",
+        "column_count": 8,
+        "summary": "Records financial transactions including payment details, amounts paid and due, payment methods, and associated booking and customer identifiers.",
+        "entity": "Payment",
+        "role": "transaction_table",
+        "aliases": [
+          "payment_records",
+          "payment_details",
+          "transaction_log",
+          "payments"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the customer making the payment.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "client_id",
+            "user_id"
+          ]
+        },
+        "payment_type_code": {
+          "name": "payment_type_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Categorical code indicating the method used for the payment.",
+          "semantic_type": "code",
+          "business_concept": "Payment Method",
+          "aliases": [
+            "pay_method",
+            "payment_mode",
+            "transaction_type"
+          ]
+        },
+        "payment_id": {
+          "name": "payment_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each payment record.",
+          "semantic_type": "identifier",
+          "business_concept": "Payment ID",
+          "aliases": [
+            "payment_uid",
+            "pay_id",
+            "txn_id"
+          ]
+        },
+        "booking_id": {
+          "name": "booking_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the payment to a specific booking or reservation.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Booking Reference",
+          "aliases": [
+            "booking_ref",
+            "reservation_id",
+            "order_id"
+          ]
+        },
+        "amount_paid": {
+          "name": "amount_paid",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary value of the payment made in this transaction.",
+          "semantic_type": "money",
+          "business_concept": "Payment Amount",
+          "aliases": [
+            "pay_amount",
+            "transaction_value",
+            "paid_sum"
+          ]
+        },
+        "amount_paid_in_full_yn": {
+          "name": "amount_paid_in_full_yn",
+          "dtype": "string",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Indicator specifying whether the payment covers the full outstanding balance.",
+          "semantic_type": "boolean",
+          "business_concept": "Full Payment Flag",
+          "aliases": [
+            "paid_in_full",
+            "balance_cleared",
+            "full_settlement"
+          ]
+        },
+        "amount_due": {
+          "name": "amount_due",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total monetary amount remaining to be paid for the associated booking.",
+          "semantic_type": "money",
+          "business_concept": "Outstanding Balance",
+          "aliases": [
+            "balance_due",
+            "remaining_amount",
+            "total_due"
+          ]
+        },
+        "payment_date": {
+          "name": "payment_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "Timestamp recording when the payment transaction occurred.",
+          "semantic_type": "timestamp",
+          "business_concept": "Payment Date",
+          "aliases": [
+            "pay_datetime",
+            "transaction_time",
+            "post_date"
+          ]
+        }
+      }
+    }
+  }
+}

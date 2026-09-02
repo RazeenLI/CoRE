@@ -1,0 +1,451 @@
+{
+  "database": "assets_maintenance",
+  "tables": {
+    "engineer_visits": {
+      "table": {
+        "name": "engineer_visits",
+        "column_count": 6,
+        "summary": "Records tracking individual engineer visits to address faults, including associated staff, status, and timestamps.",
+        "entity": "Engineer Visit",
+        "role": "transaction_table",
+        "aliases": [
+          "engineer_visits",
+          "visit_log",
+          "fault_visit_records"
+        ]
+      },
+      "columns": {
+        "engineer_visit_id": {
+          "name": "engineer_visit_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific engineer visit record.",
+          "semantic_type": "identifier",
+          "business_concept": "Visit ID",
+          "aliases": [
+            "visit_id",
+            "id",
+            "visit_key"
+          ]
+        },
+        "engineer_id": {
+          "name": "engineer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier of the engineer who performed the visit.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Engineer ID",
+          "aliases": [
+            "engineer_key",
+            "tech_id",
+            "worker_id"
+          ]
+        },
+        "fault_log_entry_id": {
+          "name": "fault_log_entry_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier of the specific fault log entry associated with this visit.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Fault Entry ID",
+          "aliases": [
+            "fault_id",
+            "log_entry_id",
+            "ticket_id"
+          ]
+        },
+        "fault_status": {
+          "name": "fault_status",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Current status of the fault associated with the visit.",
+          "semantic_type": "status",
+          "business_concept": "Fault Status",
+          "aliases": [
+            "status",
+            "fault_state",
+            "resolution_status"
+          ]
+        },
+        "visit_end_datetime": {
+          "name": "visit_end_datetime",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "Timestamp indicating when the engineer visit concluded.",
+          "semantic_type": "timestamp",
+          "business_concept": "Visit End Time",
+          "aliases": [
+            "end_time",
+            "visit_end",
+            "departure_time"
+          ]
+        },
+        "other_visit_details": {
+          "name": "other_visit_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional textual notes or details regarding the visit.",
+          "semantic_type": "description",
+          "business_concept": "Visit Notes",
+          "aliases": [
+            "notes",
+            "comments",
+            "details",
+            "remarks"
+          ]
+        }
+      }
+    },
+    "fault_log": {
+      "table": {
+        "name": "fault_log",
+        "column_count": 6,
+        "summary": "A log table recording system faults and errors associated with specific assets, including details on the fault, the staff member who recorded it, and the timestamp of the event.",
+        "entity": "Fault Log Entry",
+        "role": "transaction_table",
+        "aliases": [
+          "fault_logs",
+          "error_logs",
+          "incident_records",
+          "system_faults"
+        ]
+      },
+      "columns": {
+        "fault_log_entry_id": {
+          "name": "fault_log_entry_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each specific fault log entry record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "entry_id",
+            "log_id",
+            "fault_id"
+          ]
+        },
+        "asset_id": {
+          "name": "asset_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "An identifier linking the fault to a specific physical or logical asset.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Asset Reference",
+          "aliases": [
+            "asset",
+            "equipment_id",
+            "device_id",
+            "machine_id"
+          ]
+        },
+        "recorded_by_staff_id": {
+          "name": "recorded_by_staff_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "An identifier for the staff member who documented the fault.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "User Reference",
+          "aliases": [
+            "staff_id",
+            "user_id",
+            "reporter_id",
+            "technician_id"
+          ]
+        },
+        "fault_log_entry_datetime": {
+          "name": "fault_log_entry_datetime",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp indicating when the fault was recorded or occurred.",
+          "semantic_type": "timestamp",
+          "business_concept": "Event Time",
+          "aliases": [
+            "created_at",
+            "recorded_at",
+            "timestamp",
+            "event_time"
+          ]
+        },
+        "fault_description": {
+          "name": "fault_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A textual description of the fault or error encountered.",
+          "semantic_type": "description",
+          "business_concept": "Fault Details",
+          "aliases": [
+            "error_message",
+            "fault_text",
+            "issue_description",
+            "problem"
+          ]
+        },
+        "other_fault_details": {
+          "name": "other_fault_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional supplementary information regarding the fault, often used for extended notes or specific technical data.",
+          "semantic_type": "description",
+          "business_concept": "Extended Fault Info",
+          "aliases": [
+            "notes",
+            "extra_details",
+            "additional_info",
+            "remarks"
+          ]
+        }
+      }
+    },
+    "staff": {
+      "table": {
+        "name": "staff",
+        "column_count": 4,
+        "summary": "A table containing basic demographic and role information for staff members.",
+        "entity": "staff",
+        "role": "entity_table",
+        "aliases": [
+          "employees",
+          "personnel",
+          "workers",
+          "team_members"
+        ]
+      },
+      "columns": {
+        "staff_id": {
+          "name": "staff_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each staff member.",
+          "semantic_type": "identifier",
+          "business_concept": "Staff ID",
+          "aliases": [
+            "id",
+            "emp_id",
+            "employee_id",
+            "staff_number"
+          ]
+        },
+        "staff_name": {
+          "name": "staff_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The full name of the staff member.",
+          "semantic_type": "person_name",
+          "business_concept": "Staff Name",
+          "aliases": [
+            "name",
+            "full_name",
+            "first_name",
+            "last_name",
+            "employee_name"
+          ]
+        },
+        "gender": {
+          "name": "gender",
+          "dtype": "string",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The gender of the staff member, represented as a binary code.",
+          "semantic_type": "boolean",
+          "business_concept": "Gender",
+          "aliases": [
+            "sex",
+            "gender_code",
+            "g"
+          ]
+        },
+        "other_staff_details": {
+          "name": "other_staff_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Additional information regarding the staff member's role or position.",
+          "semantic_type": "description",
+          "business_concept": "Job Title / Role",
+          "aliases": [
+            "role",
+            "position",
+            "title",
+            "designation",
+            "job_role"
+          ]
+        }
+      }
+    },
+    "engineer_skills": {
+      "table": {
+        "name": "engineer_skills",
+        "column_count": 2,
+        "summary": "A junction table mapping engineers to their specific skills.",
+        "entity": "engineer_skill_mapping",
+        "role": "relationship_table",
+        "aliases": [
+          "engineer_skills",
+          "skills_by_engineer",
+          "engineer_skill_junction"
+        ]
+      },
+      "columns": {
+        "engineer_id": {
+          "name": "engineer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for an engineer record in the parent table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Engineer Identifier",
+          "aliases": [
+            "engineer_uid",
+            "emp_id",
+            "user_id"
+          ]
+        },
+        "skill_id": {
+          "name": "skill_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a skill record in the parent table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Skill Identifier",
+          "aliases": [
+            "skill_uid",
+            "skill_code",
+            "ability_id"
+          ]
+        }
+      }
+    },
+    "maintenance_engineers": {
+      "table": {
+        "name": "maintenance_engineers",
+        "column_count": 5,
+        "summary": "A table containing demographic and identification information for maintenance engineers, including their unique ID, associated company, and name details.",
+        "entity": "Maintenance Engineer",
+        "role": "entity_table",
+        "aliases": [
+          "eng_team",
+          "staff_maintenance",
+          "tech_personnel"
+        ]
+      },
+      "columns": {
+        "engineer_id": {
+          "name": "engineer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each maintenance engineer record.",
+          "semantic_type": "identifier",
+          "business_concept": "Employee ID",
+          "aliases": [
+            "emp_id",
+            "eng_no",
+            "id"
+          ]
+        },
+        "company_id": {
+          "name": "company_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the engineer to their employing organization.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Organization ID",
+          "aliases": [
+            "org_id",
+            "comp_id",
+            "company_code"
+          ]
+        },
+        "first_name": {
+          "name": "first_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The given name of the maintenance engineer.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "fname",
+            "fn",
+            "given_name"
+          ]
+        },
+        "last_name": {
+          "name": "last_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The family name of the maintenance engineer.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "lname",
+            "ln",
+            "surname"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Additional descriptive information about the engineer, such as skill level or status.",
+          "semantic_type": "description",
+          "business_concept": "Engineer Notes",
+          "aliases": [
+            "notes",
+            "info",
+            "skills"
+          ]
+        }
+      }
+    }
+  }
+}

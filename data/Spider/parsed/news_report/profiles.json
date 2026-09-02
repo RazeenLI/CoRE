@@ -1,0 +1,261 @@
+{
+  "database": "news_report",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/news_report",
+    "schema_path": "data/Spider/parsed/news_report/schema.json",
+    "tables_dir": "data/Spider/parsed/news_report/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "event": {
+      "table": {
+        "name": "event",
+        "column_count": 5,
+        "summary": "A record of various events including their dates, venues, names, and attendance figures.",
+        "entity": "Event",
+        "role": "entity_table",
+        "aliases": [
+          "events",
+          "event_log",
+          "occurrences"
+        ]
+      },
+      "columns": {
+        "event_id": {
+          "name": "event_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each event record.",
+          "semantic_type": "identifier",
+          "business_concept": "Event ID",
+          "aliases": [
+            "id",
+            "event_code",
+            "evt_id"
+          ]
+        },
+        "date": {
+          "name": "date",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The calendar date on which the event took place.",
+          "semantic_type": "date",
+          "business_concept": "Event Date",
+          "aliases": [
+            "event_date",
+            "occurred_on",
+            "date_of_event"
+          ]
+        },
+        "venue": {
+          "name": "venue",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The name or identifier of the location where the event was held.",
+          "semantic_type": "organization_name",
+          "business_concept": "Venue Name",
+          "aliases": [
+            "location",
+            "place",
+            "site",
+            "stadium"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The descriptive title or subject of the event.",
+          "semantic_type": "description",
+          "business_concept": "Event Title",
+          "aliases": [
+            "title",
+            "event_name",
+            "subject",
+            "topic"
+          ]
+        },
+        "event_attendance": {
+          "name": "event_attendance",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of people who attended the event.",
+          "semantic_type": "quantity",
+          "business_concept": "Attendance Count",
+          "aliases": [
+            "attendees",
+            "count",
+            "participants",
+            "crowd_size"
+          ]
+        }
+      }
+    },
+    "journalist": {
+      "table": {
+        "name": "journalist",
+        "column_count": 5,
+        "summary": "A table containing demographic and professional statistics for journalists.",
+        "entity": "Journalist",
+        "role": "entity_table",
+        "aliases": [
+          "journalists",
+          "press_contacts",
+          "reporters"
+        ]
+      },
+      "columns": {
+        "journalist_id": {
+          "name": "journalist_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each journalist record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "journalist_key",
+            "pk"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Full name of the journalist.",
+          "semantic_type": "person_name",
+          "business_concept": "Full Name",
+          "aliases": [
+            "full_name",
+            "first_name",
+            "last_name",
+            "name"
+          ]
+        },
+        "nationality": {
+          "name": "nationality",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country or region the journalist is from.",
+          "semantic_type": "country",
+          "business_concept": "Nationality",
+          "aliases": [
+            "country",
+            "origin",
+            "nationality_code"
+          ]
+        },
+        "age": {
+          "name": "age",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Current age of the journalist in years.",
+          "semantic_type": "quantity",
+          "business_concept": "Age",
+          "aliases": [
+            "years_old",
+            "age_in_years"
+          ]
+        },
+        "years_working": {
+          "name": "years_working",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of years the journalist has been working in the field.",
+          "semantic_type": "quantity",
+          "business_concept": "Years of Experience",
+          "aliases": [
+            "experience",
+            "tenure",
+            "years_in_field"
+          ]
+        }
+      }
+    },
+    "news_report": {
+      "table": {
+        "name": "news_report",
+        "column_count": 3,
+        "summary": "A table recording the association between journalists and specific events, detailing the type of work performed.",
+        "entity": "News Report",
+        "role": "relationship_table",
+        "aliases": [
+          "news_reports",
+          "journalist_event_log",
+          "reporting_activity"
+        ]
+      },
+      "columns": {
+        "journalist_id": {
+          "name": "journalist_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the journalist who performed the work.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Journalist",
+          "aliases": [
+            "journalist",
+            "reporter_id",
+            "staff_id"
+          ]
+        },
+        "event_id": {
+          "name": "event_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the event being reported on.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Event",
+          "aliases": [
+            "event",
+            "incident_id",
+            "coverage_id"
+          ]
+        },
+        "work_type": {
+          "name": "work_type",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Category or type of journalistic work performed during the event.",
+          "semantic_type": "category",
+          "business_concept": "Work Type",
+          "aliases": [
+            "activity_type",
+            "task_type",
+            "coverage_type"
+          ]
+        }
+      }
+    }
+  }
+}

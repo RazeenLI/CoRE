@@ -1,0 +1,131 @@
+{
+  "database": "storm_record",
+  "tables": {
+    "affected_region": {
+      "table": {
+        "name": "affected_region",
+        "column_count": 3,
+        "summary": "Records the impact of specific storms on geographic regions, detailing the number of cities affected.",
+        "entity": "Storm Impact Record",
+        "role": "transaction_table",
+        "aliases": [
+          "storm_region_impact",
+          "affected_areas",
+          "storm_city_count"
+        ]
+      },
+      "columns": {
+        "region_id": {
+          "name": "region_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a geographic region impacted by the storm.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Geographic Region ID",
+          "aliases": [
+            "region_code",
+            "area_id",
+            "geo_id"
+          ]
+        },
+        "storm_id": {
+          "name": "storm_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the storm event causing the impact.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Storm Event ID",
+          "aliases": [
+            "storm_code",
+            "event_id",
+            "cyclone_id"
+          ]
+        },
+        "number_city_affected": {
+          "name": "number_city_affected",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The count of cities within the region that were impacted by the storm.",
+          "semantic_type": "quantity",
+          "business_concept": "Cities Affected Count",
+          "aliases": [
+            "city_count",
+            "affected_cities",
+            "impact_count"
+          ]
+        }
+      }
+    },
+    "region": {
+      "table": {
+        "name": "region",
+        "column_count": 3,
+        "summary": "A reference table containing unique identifiers, codes, and full names for geographical regions, likely countries.",
+        "entity": "Region",
+        "role": "lookup_table",
+        "aliases": [
+          "regions",
+          "geo_regions",
+          "country_list",
+          "territories"
+        ]
+      },
+      "columns": {
+        "region_id": {
+          "name": "region_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique integer identifier for each region entry.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "region_key",
+            "pk_region"
+          ]
+        },
+        "region_code": {
+          "name": "region_code",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short alphanumeric code representing the region, matching ISO 3166-1 alpha-2 country codes.",
+          "semantic_type": "code",
+          "business_concept": "Region Code",
+          "aliases": [
+            "code",
+            "iso_code",
+            "country_code",
+            "abbr"
+          ]
+        },
+        "region_name": {
+          "name": "region_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full official name of the region or country.",
+          "semantic_type": "organization_name",
+          "business_concept": "Region Name",
+          "aliases": [
+            "name",
+            "full_name",
+            "country_name",
+            "label"
+          ]
+        }
+      }
+    }
+  }
+}

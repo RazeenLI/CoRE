@@ -1,0 +1,522 @@
+{
+  "database": "apartment_rentals",
+  "tables": {
+    "guests": {
+      "table": {
+        "name": "guests",
+        "column_count": 2,
+        "summary": "A table containing demographic and identification details for individual guests.",
+        "entity": "Guest",
+        "role": "entity_table",
+        "aliases": [
+          "guests",
+          "guest_info",
+          "visitor_details"
+        ]
+      },
+      "columns": {
+        "guest_id": {
+          "name": "guest_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier assigned to each guest record.",
+          "semantic_type": "identifier",
+          "business_concept": "Guest ID",
+          "aliases": [
+            "guest_id",
+            "id",
+            "guest_number"
+          ]
+        },
+        "guest_last_name": {
+          "name": "guest_last_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The last name of the guest.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "last_name",
+            "lname",
+            "surname"
+          ]
+        }
+      }
+    },
+    "apartment_bookings": {
+      "table": {
+        "name": "apartment_bookings",
+        "column_count": 6,
+        "summary": "Records of apartment reservations including guest details, booking status, and date ranges.",
+        "entity": "apartment_booking",
+        "role": "transaction_table",
+        "aliases": [
+          "apt_bookings",
+          "reservations",
+          "booking_records"
+        ]
+      },
+      "columns": {
+        "apt_booking_id": {
+          "name": "apt_booking_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific apartment booking record.",
+          "semantic_type": "identifier",
+          "business_concept": "booking_reference",
+          "aliases": [
+            "booking_id",
+            "reservation_id",
+            "apt_book_id"
+          ]
+        },
+        "apt_id": {
+          "name": "apt_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the booking to a specific apartment unit.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "apartment_reference",
+          "aliases": [
+            "apartment_id",
+            "apt_ref",
+            "room_id"
+          ]
+        },
+        "guest_id": {
+          "name": "guest_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the booking to a specific guest or user.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "guest_reference",
+          "aliases": [
+            "user_id",
+            "customer_id",
+            "guest_ref"
+          ]
+        },
+        "booking_status_code": {
+          "name": "booking_status_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Current state of the booking, such as provisional or confirmed.",
+          "semantic_type": "status",
+          "business_concept": "booking_status",
+          "aliases": [
+            "status",
+            "booking_state",
+            "reservation_status"
+          ]
+        },
+        "booking_start_date": {
+          "name": "booking_start_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The datetime when the guest's stay begins.",
+          "semantic_type": "timestamp",
+          "business_concept": "check_in_time",
+          "aliases": [
+            "start_date",
+            "check_in",
+            "arrival_date"
+          ]
+        },
+        "booking_end_date": {
+          "name": "booking_end_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The datetime when the guest's stay ends.",
+          "semantic_type": "timestamp",
+          "business_concept": "check_out_time",
+          "aliases": [
+            "end_date",
+            "check_out",
+            "departure_date"
+          ]
+        }
+      }
+    },
+    "apartment_facilities": {
+      "table": {
+        "name": "apartment_facilities",
+        "column_count": 2,
+        "summary": "A lookup or reference table mapping apartment identifiers to their available amenities or facilities.",
+        "entity": "apartment_facility",
+        "role": "lookup_table",
+        "aliases": [
+          "apt_amenities",
+          "unit_facilities",
+          "property_amenities"
+        ]
+      },
+      "columns": {
+        "apt_id": {
+          "name": "apt_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific apartment or unit.",
+          "semantic_type": "identifier",
+          "business_concept": "apartment_id",
+          "aliases": [
+            "apt",
+            "unit_id",
+            "apartment_code"
+          ]
+        },
+        "facility_code": {
+          "name": "facility_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Name or label describing the specific amenity or facility available in the apartment.",
+          "semantic_type": "category",
+          "business_concept": "facility_name",
+          "aliases": [
+            "amenity",
+            "facility_name",
+            "feature",
+            "service"
+          ]
+        }
+      }
+    },
+    "apartment_buildings": {
+      "table": {
+        "name": "apartment_buildings",
+        "column_count": 7,
+        "summary": "A reference table containing metadata, contact information, and basic details for various apartment buildings.",
+        "entity": "apartment_building",
+        "role": "lookup_table",
+        "aliases": [
+          "buildings",
+          "apt_buildings",
+          "property_listings"
+        ]
+      },
+      "columns": {
+        "building_id": {
+          "name": "building_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each building record.",
+          "semantic_type": "identifier",
+          "business_concept": "Building ID",
+          "aliases": [
+            "id",
+            "building_key",
+            "apt_id"
+          ]
+        },
+        "building_short_name": {
+          "name": "building_short_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A concise, abbreviated name used to refer to the building.",
+          "semantic_type": "organization_name",
+          "business_concept": "Building Short Name",
+          "aliases": [
+            "short_name",
+            "abbr_name",
+            "nickname"
+          ]
+        },
+        "building_full_name": {
+          "name": "building_full_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The complete, formal name of the building.",
+          "semantic_type": "organization_name",
+          "business_concept": "Building Full Name",
+          "aliases": [
+            "full_name",
+            "official_name",
+            "name"
+          ]
+        },
+        "building_description": {
+          "name": "building_description",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A brief text indicating the type of housing unit (e.g., Studio, Flat).",
+          "semantic_type": "category",
+          "business_concept": "Unit Type",
+          "aliases": [
+            "type",
+            "unit_type",
+            "housing_type"
+          ]
+        },
+        "building_address": {
+          "name": "building_address",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full physical location of the building including street, city, state, and zip code.",
+          "semantic_type": "address",
+          "business_concept": "Building Address",
+          "aliases": [
+            "address",
+            "location",
+            "street_address"
+          ]
+        },
+        "building_manager": {
+          "name": "building_manager",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The name of the person responsible for managing the building.",
+          "semantic_type": "person_name",
+          "business_concept": "Building Manager",
+          "aliases": [
+            "manager",
+            "contact_person",
+            "admin"
+          ]
+        },
+        "building_phone": {
+          "name": "building_phone",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The telephone number for contacting the building.",
+          "semantic_type": "phone",
+          "business_concept": "Building Phone",
+          "aliases": [
+            "phone",
+            "contact_phone",
+            "tel"
+          ]
+        }
+      }
+    },
+    "apartments": {
+      "table": {
+        "name": "apartments",
+        "column_count": 7,
+        "summary": "A table containing detailed information about individual apartment units, including their identifiers, building associations, unit types, and room counts.",
+        "entity": "apartment_unit",
+        "role": "entity_table",
+        "aliases": [
+          "apartments",
+          "units",
+          "apt_details",
+          "residential_units"
+        ]
+      },
+      "columns": {
+        "apt_id": {
+          "name": "apt_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific apartment unit.",
+          "semantic_type": "identifier",
+          "business_concept": "primary_key",
+          "aliases": [
+            "apt_id",
+            "unit_id",
+            "apt_no"
+          ]
+        },
+        "building_id": {
+          "name": "building_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the apartment unit to its parent building.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "building_reference",
+          "aliases": [
+            "building_id",
+            "bldg_id",
+            "complex_id"
+          ]
+        },
+        "apt_type_code": {
+          "name": "apt_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Categorical code or label describing the type of the apartment unit.",
+          "semantic_type": "code",
+          "business_concept": "unit_classification",
+          "aliases": [
+            "apt_type",
+            "unit_type",
+            "type_code"
+          ]
+        },
+        "apt_number": {
+          "name": "apt_number",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Human-readable label or specific designation for the apartment unit within a building.",
+          "semantic_type": "code",
+          "business_concept": "unit_designation",
+          "aliases": [
+            "apt_num",
+            "unit_number",
+            "suite_number"
+          ]
+        },
+        "bathroom_count": {
+          "name": "bathroom_count",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of bathrooms available in the apartment unit.",
+          "semantic_type": "quantity",
+          "business_concept": "bathroom_count",
+          "aliases": [
+            "bath_count",
+            "num_bathrooms",
+            "bathrooms"
+          ]
+        },
+        "bedroom_count": {
+          "name": "bedroom_count",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The number of bedrooms available in the apartment unit.",
+          "semantic_type": "quantity",
+          "business_concept": "bedroom_count",
+          "aliases": [
+            "bed_count",
+            "num_bedrooms",
+            "bedrooms"
+          ]
+        },
+        "room_count": {
+          "name": "room_count",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of rooms in the apartment unit.",
+          "semantic_type": "quantity",
+          "business_concept": "total_room_count",
+          "aliases": [
+            "total_rooms",
+            "num_rooms",
+            "room_total"
+          ]
+        }
+      }
+    },
+    "view_unit_status": {
+      "table": {
+        "name": "view_unit_status",
+        "column_count": 4,
+        "summary": "A view tracking the availability status of apartment units over time, linking specific units to booking records and recording status change dates.",
+        "entity": "apartment_unit_status",
+        "role": "transaction_table",
+        "aliases": [
+          "apt_status_log",
+          "unit_availability_view",
+          "booking_status_history"
+        ]
+      },
+      "columns": {
+        "apt_id": {
+          "name": "apt_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific apartment unit.",
+          "semantic_type": "identifier",
+          "business_concept": "apartment_unit_id",
+          "aliases": [
+            "apt",
+            "unit_id",
+            "property_id"
+          ]
+        },
+        "apt_booking_id": {
+          "name": "apt_booking_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the apartment unit to a specific booking record.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "booking_reference",
+          "aliases": [
+            "booking_id",
+            "reservation_id",
+            "apt_book_ref"
+          ]
+        },
+        "status_date": {
+          "name": "status_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the unit's availability status was recorded or updated.",
+          "semantic_type": "timestamp",
+          "business_concept": "status_change_time",
+          "aliases": [
+            "updated_at",
+            "record_date",
+            "status_timestamp"
+          ]
+        },
+        "available_yn": {
+          "name": "available_yn",
+          "dtype": "bit",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Boolean flag indicating whether the apartment unit is currently available for booking.",
+          "semantic_type": "boolean",
+          "business_concept": "availability_flag",
+          "aliases": [
+            "is_available",
+            "avail_flag",
+            "status_code"
+          ]
+        }
+      }
+    }
+  }
+}

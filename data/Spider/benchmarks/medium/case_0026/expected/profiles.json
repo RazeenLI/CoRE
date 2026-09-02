@@ -1,0 +1,809 @@
+{
+  "database": "dog_kennels",
+  "tables": {
+    "dogs": {
+      "table": {
+        "name": "dogs",
+        "column_count": 13,
+        "summary": "A master table containing detailed records of dogs, including their demographics, owner information, adoption status, and lifecycle events.",
+        "entity": "Dog",
+        "role": "entity_table",
+        "aliases": [
+          "dog_master",
+          "animal_records",
+          "pet_inventory"
+        ]
+      },
+      "columns": {
+        "dog_id": {
+          "name": "dog_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each dog record in the system.",
+          "semantic_type": "identifier",
+          "business_concept": "Dog ID",
+          "aliases": [
+            "id",
+            "dog_pk",
+            "animal_id"
+          ]
+        },
+        "owner_id": {
+          "name": "owner_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the owner of the dog, linking to an owners table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Owner ID",
+          "aliases": [
+            "owner_ref",
+            "cust_id",
+            "pet_owner_id"
+          ]
+        },
+        "abandoned_yn": {
+          "name": "abandoned_yn",
+          "dtype": "string",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Indicates whether the dog was abandoned (1) or not (0).",
+          "semantic_type": "boolean",
+          "business_concept": "Abandonment Status",
+          "aliases": [
+            "is_abandoned",
+            "abandon_flag",
+            "status_abandoned"
+          ]
+        },
+        "breed_code": {
+          "name": "breed_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Alphanumeric code representing the breed of the dog.",
+          "semantic_type": "code",
+          "business_concept": "Dog Breed",
+          "aliases": [
+            "breed",
+            "breed_ref",
+            "dog_breed_code"
+          ]
+        },
+        "size_code": {
+          "name": "size_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Alphanumeric code representing the size category of the dog.",
+          "semantic_type": "code",
+          "business_concept": "Dog Size",
+          "aliases": [
+            "size",
+            "size_ref",
+            "dog_size_code"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The given name of the dog.",
+          "semantic_type": "person_name",
+          "business_concept": "Dog Name",
+          "aliases": [
+            "dog_name",
+            "nickname",
+            "pet_name"
+          ]
+        },
+        "age": {
+          "name": "age",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The age of the dog in years.",
+          "semantic_type": "quantity",
+          "business_concept": "Dog Age",
+          "aliases": [
+            "years_old",
+            "age_years",
+            "dog_age"
+          ]
+        },
+        "date_of_birth": {
+          "name": "date_of_birth",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date the dog was born.",
+          "semantic_type": "date",
+          "business_concept": "Birth Date",
+          "aliases": [
+            "dob",
+            "born_date",
+            "birth_dt"
+          ]
+        },
+        "gender": {
+          "name": "gender",
+          "dtype": "string",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Indicates the gender of the dog (1 for Male, 0 for Female based on samples).",
+          "semantic_type": "boolean",
+          "business_concept": "Gender",
+          "aliases": [
+            "sex",
+            "gender_code",
+            "is_male"
+          ]
+        },
+        "weight": {
+          "name": "weight",
+          "dtype": "string",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The current weight of the dog.",
+          "semantic_type": "quantity",
+          "business_concept": "Dog Weight",
+          "aliases": [
+            "wt",
+            "mass",
+            "dog_weight"
+          ]
+        },
+        "date_arrived": {
+          "name": "date_arrived",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date the dog arrived at the facility.",
+          "semantic_type": "date",
+          "business_concept": "Arrival Date",
+          "aliases": [
+            "intake_date",
+            "arrival_dt",
+            "date_in"
+          ]
+        },
+        "date_adopted": {
+          "name": "date_adopted",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date the dog was adopted by an owner.",
+          "semantic_type": "date",
+          "business_concept": "Adoption Date",
+          "aliases": [
+            "adopted_date",
+            "home_date",
+            "date_out"
+          ]
+        },
+        "date_departed": {
+          "name": "date_departed",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date the dog left the facility (due to adoption, transfer, or death).",
+          "semantic_type": "date",
+          "business_concept": "Departure Date",
+          "aliases": [
+            "exit_date",
+            "departure_dt",
+            "date_left"
+          ]
+        }
+      }
+    },
+    "treatment_types": {
+      "table": {
+        "name": "treatment_types",
+        "column_count": 2,
+        "summary": "A reference table defining standard categories of medical or veterinary treatments with unique codes and human-readable descriptions.",
+        "entity": "Treatment Type",
+        "role": "lookup_table",
+        "aliases": [
+          "treatment_categories",
+          "procedure_types",
+          "service_codes",
+          "medical_procedures"
+        ]
+      },
+      "columns": {
+        "treatment_type_code": {
+          "name": "treatment_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique alphanumeric identifier used to reference a specific type of treatment.",
+          "semantic_type": "code",
+          "business_concept": "Treatment Code",
+          "aliases": [
+            "treatment_id",
+            "procedure_code",
+            "svc_code",
+            "treatment_key"
+          ]
+        },
+        "treatment_type_description": {
+          "name": "treatment_type_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A textual explanation of the treatment type associated with the code.",
+          "semantic_type": "description",
+          "business_concept": "Treatment Description",
+          "aliases": [
+            "treatment_name",
+            "procedure_name",
+            "service_desc",
+            "treatment_label"
+          ]
+        }
+      }
+    },
+    "breeds": {
+      "table": {
+        "name": "breeds",
+        "column_count": 2,
+        "summary": "A reference table containing standardized codes and names for various dog breeds.",
+        "entity": "Dog Breed",
+        "role": "lookup_table",
+        "aliases": [
+          "breed_reference",
+          "dog_breeds",
+          "canine_breeds"
+        ]
+      },
+      "columns": {
+        "breed_code": {
+          "name": "breed_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique, short alphanumeric identifier assigned to a specific dog breed.",
+          "semantic_type": "code",
+          "business_concept": "Breed Identifier",
+          "aliases": [
+            "breed_id",
+            "breef_key",
+            "dog_code"
+          ]
+        },
+        "breed_name": {
+          "name": "breed_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The common or official name of the dog breed.",
+          "semantic_type": "category",
+          "business_concept": "Breed Name",
+          "aliases": [
+            "breed_label",
+            "dog_name",
+            "breef_title"
+          ]
+        }
+      }
+    },
+    "treatments": {
+      "table": {
+        "name": "treatments",
+        "column_count": 6,
+        "summary": "Records of veterinary treatments performed on dogs, including details about the treatment type, date, cost, and associated professionals.",
+        "entity": "Treatment",
+        "role": "transaction_table",
+        "aliases": [
+          "treatments",
+          "vet_treatments",
+          "dog_treatments",
+          "service_records"
+        ]
+      },
+      "columns": {
+        "treatment_id": {
+          "name": "treatment_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific treatment record.",
+          "semantic_type": "identifier",
+          "business_concept": "Treatment ID",
+          "aliases": [
+            "treatment_key",
+            "id",
+            "treatment_number"
+          ]
+        },
+        "dog_id": {
+          "name": "dog_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the specific dog that received the treatment.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Dog ID",
+          "aliases": [
+            "dog_key",
+            "patient_id",
+            "animal_id"
+          ]
+        },
+        "professional_id": {
+          "name": "professional_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Reference to the veterinary professional who performed the treatment.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Professional ID",
+          "aliases": [
+            "vet_id",
+            "staff_id",
+            "provider_id"
+          ]
+        },
+        "treatment_type_code": {
+          "name": "treatment_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Alphanumeric code representing the category or type of service provided.",
+          "semantic_type": "code",
+          "business_concept": "Treatment Type",
+          "aliases": [
+            "service_code",
+            "treatment_category",
+            "procedure_code"
+          ]
+        },
+        "date_of_treatment": {
+          "name": "date_of_treatment",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The specific date and time when the treatment was administered.",
+          "semantic_type": "timestamp",
+          "business_concept": "Treatment Date",
+          "aliases": [
+            "treatment_date",
+            "service_date",
+            "visit_date"
+          ]
+        },
+        "cost_of_treatment": {
+          "name": "cost_of_treatment",
+          "dtype": "decimal",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The monetary amount charged for the specific treatment.",
+          "semantic_type": "money",
+          "business_concept": "Treatment Cost",
+          "aliases": [
+            "treatment_cost",
+            "price",
+            "charge",
+            "amount"
+          ]
+        }
+      }
+    },
+    "sizes": {
+      "table": {
+        "name": "sizes",
+        "column_count": 2,
+        "summary": "Stores standardized size definitions including their unique codes and human-readable descriptions.",
+        "entity": "Size",
+        "role": "lookup_table",
+        "aliases": [
+          "size_master",
+          "size_reference",
+          "product_sizes"
+        ]
+      },
+      "columns": {
+        "size_code": {
+          "name": "size_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique alphanumeric identifier representing a specific size category.",
+          "semantic_type": "code",
+          "business_concept": "Size Identifier",
+          "aliases": [
+            "size_id",
+            "size_key",
+            "size_ref"
+          ]
+        },
+        "size_description": {
+          "name": "size_description",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A human-readable text label describing the size category.",
+          "semantic_type": "description",
+          "business_concept": "Size Label",
+          "aliases": [
+            "size_name",
+            "size_label",
+            "size_text"
+          ]
+        }
+      }
+    },
+    "professionals": {
+      "table": {
+        "name": "professionals",
+        "column_count": 11,
+        "summary": "A table containing personal and contact information for various professionals, including their names, roles, and physical addresses.",
+        "entity": "Professional",
+        "role": "entity_table",
+        "aliases": [
+          "staff",
+          "personnel",
+          "contacts",
+          "employees",
+          "doctors",
+          "veterinarians"
+        ]
+      },
+      "columns": {
+        "professional_id": {
+          "name": "professional_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each professional record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "prof_id",
+            "employee_id",
+            "staff_id"
+          ]
+        },
+        "role_code": {
+          "name": "role_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A code or label indicating the job role or profession of the individual.",
+          "semantic_type": "code",
+          "business_concept": "Job Title / Profession",
+          "aliases": [
+            "role",
+            "job_title",
+            "profession",
+            "position"
+          ]
+        },
+        "first_name": {
+          "name": "first_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The given name of the professional.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "fname",
+            "fn",
+            "given_name"
+          ]
+        },
+        "street": {
+          "name": "street",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The street address line, including building number and street name.",
+          "semantic_type": "address",
+          "business_concept": "Street Address",
+          "aliases": [
+            "addr",
+            "street_address",
+            "line1"
+          ]
+        },
+        "city": {
+          "name": "city",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The city where the professional resides or works.",
+          "semantic_type": "city",
+          "business_concept": "City",
+          "aliases": [
+            "city_name",
+            "municipality"
+          ]
+        },
+        "state": {
+          "name": "state",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The state or province associated with the address.",
+          "semantic_type": "country",
+          "business_concept": "State / Province",
+          "aliases": [
+            "state_code",
+            "state_abbr",
+            "region",
+            "province"
+          ]
+        },
+        "zip_code": {
+          "name": "zip_code",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The postal code for the address.",
+          "semantic_type": "code",
+          "business_concept": "Postal Code / Zip Code",
+          "aliases": [
+            "zip",
+            "postal_code",
+            "postcode",
+            "zip_code"
+          ]
+        },
+        "last_name": {
+          "name": "last_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The family name of the professional.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "lname",
+            "ln",
+            "surname",
+            "family_name"
+          ]
+        },
+        "email_address": {
+          "name": "email_address",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "The email contact address for the professional.",
+          "semantic_type": "email",
+          "business_concept": "Email Address",
+          "aliases": [
+            "email",
+            "e_mail",
+            "contact_email"
+          ]
+        },
+        "home_phone": {
+          "name": "home_phone",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The telephone number for the professional's home.",
+          "semantic_type": "phone",
+          "business_concept": "Home Phone",
+          "aliases": [
+            "home_phone",
+            "residential_phone",
+            "home_tel"
+          ]
+        },
+        "cell_number": {
+          "name": "cell_number",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The mobile telephone number for the professional.",
+          "semantic_type": "phone",
+          "business_concept": "Mobile Phone",
+          "aliases": [
+            "cell",
+            "mobile",
+            "cell_phone",
+            "phone"
+          ]
+        }
+      }
+    },
+    "owners": {
+      "table": {
+        "name": "owners",
+        "column_count": 10,
+        "summary": "A table containing personal contact and address information for individual owners.",
+        "entity": "Owner",
+        "role": "entity_table",
+        "aliases": [
+          "owner_contacts",
+          "owner_addresses",
+          "person_details"
+        ]
+      },
+      "columns": {
+        "owner_id": {
+          "name": "owner_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each owner record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "owner_pk",
+            "uid"
+          ]
+        },
+        "first_name": {
+          "name": "first_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The given name of the owner.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "fname",
+            "fn",
+            "given_name"
+          ]
+        },
+        "last_name": {
+          "name": "last_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The family name of the owner.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "lname",
+            "ln",
+            "surname"
+          ]
+        },
+        "street": {
+          "name": "street",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The street address line including number, name, and unit type.",
+          "semantic_type": "address",
+          "business_concept": "Street Address",
+          "aliases": [
+            "addr_line1",
+            "street_address",
+            "address_line"
+          ]
+        },
+        "city": {
+          "name": "city",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The city where the owner resides.",
+          "semantic_type": "city",
+          "business_concept": "City",
+          "aliases": [
+            "city_name",
+            "municipality"
+          ]
+        },
+        "state": {
+          "name": "state",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The state or province of the owner's residence.",
+          "semantic_type": "address",
+          "business_concept": "State",
+          "aliases": [
+            "state_code",
+            "state_name",
+            "province"
+          ]
+        },
+        "zip_code": {
+          "name": "zip_code",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The postal code for the owner's address.",
+          "semantic_type": "address",
+          "business_concept": "Postal Code",
+          "aliases": [
+            "zip",
+            "postal",
+            "zipcode"
+          ]
+        },
+        "email_address": {
+          "name": "email_address",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "The email contact address for the owner.",
+          "semantic_type": "email",
+          "business_concept": "Email Address",
+          "aliases": [
+            "email",
+            "e_mail",
+            "contact_email"
+          ]
+        },
+        "home_phone": {
+          "name": "home_phone",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The landline or home telephone number for the owner.",
+          "semantic_type": "phone",
+          "business_concept": "Home Phone",
+          "aliases": [
+            "home_tel",
+            "landline",
+            "residential_phone"
+          ]
+        },
+        "cell_number": {
+          "name": "cell_number",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The mobile telephone number for the owner.",
+          "semantic_type": "phone",
+          "business_concept": "Mobile Phone",
+          "aliases": [
+            "mobile",
+            "cell",
+            "phone",
+            "cell_phone"
+          ]
+        }
+      }
+    }
+  }
+}

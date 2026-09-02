@@ -1,0 +1,450 @@
+{
+  "database": "farm",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/farm",
+    "schema_path": "data/Spider/parsed/farm/schema.json",
+    "tables_dir": "data/Spider/parsed/farm/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "city": {
+      "table": {
+        "name": "city",
+        "column_count": 6,
+        "summary": "A reference table containing demographic and administrative details for various municipalities, including their names, status, area, population, and census ranking.",
+        "entity": "city",
+        "role": "lookup_table",
+        "aliases": [
+          "cities",
+          "municipalities",
+          "municipalities_data",
+          "city_reference"
+        ]
+      },
+      "columns": {
+        "city_id": {
+          "name": "city_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each city or municipality in the dataset.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "city_code",
+            "municipality_id",
+            "unique_id"
+          ]
+        },
+        "official_name": {
+          "name": "official_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The formal, legal name of the city or municipality, which may include bilingual designations.",
+          "semantic_type": "organization_name",
+          "business_concept": "City Name",
+          "aliases": [
+            "name",
+            "full_name",
+            "legal_name",
+            "municipality_name"
+          ]
+        },
+        "status": {
+          "name": "status",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The administrative classification or type of the municipality (e.g., Town, Village).",
+          "semantic_type": "category",
+          "business_concept": "Municipality Type",
+          "aliases": [
+            "type",
+            "classification",
+            "municipality_type",
+            "status_code"
+          ]
+        },
+        "area_km_2": {
+          "name": "area_km_2",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total land area of the municipality measured in square kilometers.",
+          "semantic_type": "quantity",
+          "business_concept": "Geographic Area",
+          "aliases": [
+            "area",
+            "size",
+            "land_area",
+            "sq_km"
+          ]
+        },
+        "population": {
+          "name": "population",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total number of residents living in the municipality.",
+          "semantic_type": "quantity",
+          "business_concept": "Population Count",
+          "aliases": [
+            "pop",
+            "count",
+            "inhabitants",
+            "residents"
+          ]
+        },
+        "census_ranking": {
+          "name": "census_ranking",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The rank of the municipality based on population within the national census dataset.",
+          "semantic_type": "code",
+          "business_concept": "Population Rank",
+          "aliases": [
+            "rank",
+            "census_rank",
+            "population_rank",
+            "order"
+          ]
+        }
+      }
+    },
+    "competition_record": {
+      "table": {
+        "name": "competition_record",
+        "column_count": 3,
+        "summary": "Records the performance rankings of farms in various competitions.",
+        "entity": "Competition Result",
+        "role": "transaction_table",
+        "aliases": [
+          "competition_results",
+          "farm_competition_ranking",
+          "competition_standings"
+        ]
+      },
+      "columns": {
+        "competition_id": {
+          "name": "competition_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific competition event.",
+          "semantic_type": "identifier",
+          "business_concept": "Competition ID",
+          "aliases": [
+            "comp_id",
+            "event_id",
+            "competition_code"
+          ]
+        },
+        "farm_id": {
+          "name": "farm_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a participating farm.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Farm ID",
+          "aliases": [
+            "farm_code",
+            "farm_ref",
+            "entity_id"
+          ]
+        },
+        "rank": {
+          "name": "rank",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The ordinal position of the farm within a specific competition.",
+          "semantic_type": "quantity",
+          "business_concept": "Ranking Position",
+          "aliases": [
+            "position",
+            "place",
+            "standing",
+            "order"
+          ]
+        }
+      }
+    },
+    "farm": {
+      "table": {
+        "name": "farm",
+        "column_count": 10,
+        "summary": "Historical agricultural statistics recording livestock inventory counts for specific farms across various years.",
+        "entity": "farm",
+        "role": "entity_table",
+        "aliases": [
+          "farm_inventory",
+          "livestock_stats",
+          "animal_counts",
+          "farm_records"
+        ]
+      },
+      "columns": {
+        "farm_id": {
+          "name": "farm_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific farm entity.",
+          "semantic_type": "identifier",
+          "business_concept": "Farm ID",
+          "aliases": [
+            "farm_code",
+            "farm_key",
+            "id"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the livestock data was recorded.",
+          "semantic_type": "date",
+          "business_concept": "Reporting Year",
+          "aliases": [
+            "year_of_record",
+            "fiscal_year",
+            "date"
+          ]
+        },
+        "total_horses": {
+          "name": "total_horses",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total count of horses present on the farm.",
+          "semantic_type": "quantity",
+          "business_concept": "Total Horse Count",
+          "aliases": [
+            "horse_count",
+            "total_horse_inventory",
+            "horses"
+          ]
+        },
+        "working_horses": {
+          "name": "working_horses",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The count of horses used for labor or work purposes.",
+          "semantic_type": "quantity",
+          "business_concept": "Working Horse Count",
+          "aliases": [
+            "labor_horses",
+            "work_horses",
+            "active_horses"
+          ]
+        },
+        "total_cattle": {
+          "name": "total_cattle",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total count of cattle (cows and bulls) present on the farm.",
+          "semantic_type": "quantity",
+          "business_concept": "Total Cattle Count",
+          "aliases": [
+            "cattle_count",
+            "total_bovine_inventory",
+            "cows_and_bulls"
+          ]
+        },
+        "oxen": {
+          "name": "oxen",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The count of oxen (castrated male cattle used for draft work) on the farm.",
+          "semantic_type": "quantity",
+          "business_concept": "Oxen Count",
+          "aliases": [
+            "ox_count",
+            "draft_cattle",
+            "working_oxen"
+          ]
+        },
+        "bulls": {
+          "name": "bulls",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The count of male cattle (bulls) on the farm.",
+          "semantic_type": "quantity",
+          "business_concept": "Bull Count",
+          "aliases": [
+            "male_cattle",
+            "bull_inventory",
+            "male_bovine"
+          ]
+        },
+        "cows": {
+          "name": "cows",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The count of female cattle (cows) on the farm.",
+          "semantic_type": "quantity",
+          "business_concept": "Cow Count",
+          "aliases": [
+            "female_cattle",
+            "cow_inventory",
+            "female_bovine"
+          ]
+        },
+        "pigs": {
+          "name": "pigs",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The count of pigs present on the farm.",
+          "semantic_type": "quantity",
+          "business_concept": "Pig Count",
+          "aliases": [
+            "swine_count",
+            "pig_inventory",
+            "pork_inventory"
+          ]
+        },
+        "sheep_and_goats": {
+          "name": "sheep_and_goats",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The combined count of sheep and goats present on the farm.",
+          "semantic_type": "quantity",
+          "business_concept": "Small Ruminant Count",
+          "aliases": [
+            "sheep_goat_count",
+            "small_ruminants",
+            "ovine_caprine"
+          ]
+        }
+      }
+    },
+    "farm_competition": {
+      "table": {
+        "name": "farm_competition",
+        "column_count": 5,
+        "summary": "Records of various music competitions held in different years, cities, with specific themes and host celebrities.",
+        "entity": "Music Competition",
+        "role": "entity_table",
+        "aliases": [
+          "competition_events",
+          "music_contests",
+          "show_details"
+        ]
+      },
+      "columns": {
+        "competition_id": {
+          "name": "competition_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each specific competition event.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "comp_id",
+            "event_id"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the competition took place.",
+          "semantic_type": "date",
+          "business_concept": "Event Year",
+          "aliases": [
+            "event_year",
+            "competition_year",
+            "year_held"
+          ]
+        },
+        "theme": {
+          "name": "theme",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The specific theme, slogan, or title associated with the competition.",
+          "semantic_type": "description",
+          "business_concept": "Event Theme",
+          "aliases": [
+            "title",
+            "slogan",
+            "topic",
+            "event_name"
+          ]
+        },
+        "host_city_id": {
+          "name": "host_city_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A numeric code representing the city where the competition was hosted.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Host City Reference",
+          "aliases": [
+            "city_id",
+            "location_id",
+            "venue_city_id"
+          ]
+        },
+        "hosts": {
+          "name": "hosts",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Names of the celebrity hosts or performers associated with the competition.",
+          "semantic_type": "person_name",
+          "business_concept": "Event Hosts",
+          "aliases": [
+            "celebrity_hosts",
+            "performers",
+            "presenters",
+            "host_names"
+          ]
+        }
+      }
+    }
+  }
+}

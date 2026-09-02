@@ -1,0 +1,220 @@
+{
+  "database": "wrestler",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/wrestler",
+    "schema_path": "data/Spider/parsed/wrestler/schema.json",
+    "tables_dir": "data/Spider/parsed/wrestler/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "elimination": {
+      "table": {
+        "name": "elimination",
+        "column_count": 6,
+        "summary": "Records of wrestlers being eliminated from a team-based competition, detailing the eliminator, the move used, and the duration.",
+        "entity": "Elimination Event",
+        "role": "transaction_table",
+        "aliases": [
+          "elimination_log",
+          "match_eliminations",
+          "team_elimination_records"
+        ]
+      },
+      "columns": {
+        "elimination_id": {
+          "name": "elimination_id",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific elimination event.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "elim_id",
+            "match_id"
+          ]
+        },
+        "wrestler_id": {
+          "name": "wrestler_id",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier of the wrestler who was eliminated.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Participant ID",
+          "aliases": [
+            "wrestler",
+            "eliminated_wrestler_id",
+            "contestant_id"
+          ]
+        },
+        "team": {
+          "name": "team",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Name of the team the eliminated wrestler belonged to.",
+          "semantic_type": "organization_name",
+          "business_concept": "Team Name",
+          "aliases": [
+            "team_name",
+            "group",
+            "faction"
+          ]
+        },
+        "eliminated_by": {
+          "name": "eliminated_by",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Name of the wrestler who performed the elimination.",
+          "semantic_type": "person_name",
+          "business_concept": "Eliminator Name",
+          "aliases": [
+            "winner",
+            "eliminator",
+            "opponent"
+          ]
+        },
+        "elimination_move": {
+          "name": "elimination_move",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Description of the specific wrestling move used to eliminate the opponent.",
+          "semantic_type": "description",
+          "business_concept": "Finisher Move",
+          "aliases": [
+            "move_name",
+            "finisher",
+            "technique"
+          ]
+        },
+        "time": {
+          "name": "time",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Duration in minutes and seconds from the start of the match until the elimination occurred.",
+          "semantic_type": "timestamp",
+          "business_concept": "Elimination Time",
+          "aliases": [
+            "duration",
+            "time_elapsed",
+            "match_time"
+          ]
+        }
+      }
+    },
+    "wrestler": {
+      "table": {
+        "name": "wrestler",
+        "column_count": 6,
+        "summary": "Records of championship reigns held by professional wrestlers, including duration, location, and event type.",
+        "entity": "Wrestler Championship Reign",
+        "role": "transaction_table",
+        "aliases": [
+          "championship_reigns",
+          "title_holds",
+          "wrestling_championships"
+        ]
+      },
+      "columns": {
+        "wrestler_id": {
+          "name": "wrestler_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the wrestler associated with this championship reign.",
+          "semantic_type": "identifier",
+          "business_concept": "Wrestler ID",
+          "aliases": [
+            "id",
+            "wrestler_key",
+            "athlete_id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The ring name or moniker of the wrestler who held the championship.",
+          "semantic_type": "person_name",
+          "business_concept": "Wrestler Name",
+          "aliases": [
+            "ring_name",
+            "nickname",
+            "full_name"
+          ]
+        },
+        "reign": {
+          "name": "reign",
+          "dtype": "text",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Indicates whether the wrestler is the current champion (1) or a past champion.",
+          "semantic_type": "boolean",
+          "business_concept": "Current Champion Status",
+          "aliases": [
+            "is_current",
+            "active",
+            "status_flag"
+          ]
+        },
+        "days_held": {
+          "name": "days_held",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The total number of days the wrestler held the championship title.",
+          "semantic_type": "quantity",
+          "business_concept": "Reign Duration",
+          "aliases": [
+            "duration",
+            "days",
+            "tenure_length"
+          ]
+        },
+        "location": {
+          "name": "location",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The city and country where the championship match took place.",
+          "semantic_type": "address",
+          "business_concept": "Match Location",
+          "aliases": [
+            "city",
+            "venue_location",
+            "place"
+          ]
+        },
+        "event": {
+          "name": "event",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The type of event where the championship was won or defended.",
+          "semantic_type": "category",
+          "business_concept": "Event Type",
+          "aliases": [
+            "event_type",
+            "match_type",
+            "show_type"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,826 @@
+{
+  "database": "academic",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/academic",
+    "schema_path": "data/Spider/parsed/academic/schema.json",
+    "tables_dir": "data/Spider/parsed/academic/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "author": {
+      "table": {
+        "name": "author",
+        "column_count": 4,
+        "summary": "Stores information about authors, including their names, homepages, and internal identifiers.",
+        "entity": "Author",
+        "role": "entity_table",
+        "aliases": [
+          "authors",
+          "author_info",
+          "writer"
+        ]
+      },
+      "columns": {
+        "aid": {
+          "name": "aid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for an author record.",
+          "semantic_type": "identifier",
+          "business_concept": "Author ID",
+          "aliases": [
+            "author_id",
+            "id",
+            "primary_key"
+          ]
+        },
+        "homepage": {
+          "name": "homepage",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "URL of the author's personal or professional website.",
+          "semantic_type": "unknown",
+          "business_concept": "Author Homepage",
+          "aliases": [
+            "web_url",
+            "site",
+            "url"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the author.",
+          "semantic_type": "person_name",
+          "business_concept": "Author Name",
+          "aliases": [
+            "full_name",
+            "author_name",
+            "display_name"
+          ]
+        },
+        "oid": {
+          "name": "oid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "An object identifier, potentially a legacy ID or a foreign key to another system.",
+          "semantic_type": "identifier",
+          "business_concept": "Object ID",
+          "aliases": [
+            "object_id",
+            "legacy_id",
+            "external_id"
+          ]
+        }
+      }
+    },
+    "cite": {
+      "table": {
+        "name": "cite",
+        "column_count": 2,
+        "summary": "A relationship table defining citation links between entities.",
+        "entity": "citation",
+        "role": "relationship_table",
+        "aliases": [
+          "citations",
+          "links",
+          "references"
+        ]
+      },
+      "columns": {
+        "cited": {
+          "name": "cited",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The ID of the entity being cited or referenced.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "referenced_entity_id",
+          "aliases": [
+            "target_id",
+            "reference_id",
+            "source_id"
+          ]
+        },
+        "citing": {
+          "name": "citing",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The ID of the entity that performs the citation or reference.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "citing_entity_id",
+          "aliases": [
+            "source_id",
+            "reference_id",
+            "target_id"
+          ]
+        }
+      }
+    },
+    "conference": {
+      "table": {
+        "name": "conference",
+        "column_count": 3,
+        "summary": "A table storing metadata and identifiers for various conferences.",
+        "entity": "conference",
+        "role": "entity_table",
+        "aliases": [
+          "conferences",
+          "conf",
+          "meetings",
+          "events"
+        ]
+      },
+      "columns": {
+        "cid": {
+          "name": "cid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a specific conference record.",
+          "semantic_type": "identifier",
+          "business_concept": "Conference ID",
+          "aliases": [
+            "conf_id",
+            "id",
+            "conference_id"
+          ]
+        },
+        "homepage": {
+          "name": "homepage",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "URL of the official website for the conference.",
+          "semantic_type": "unknown",
+          "business_concept": "Conference Website",
+          "aliases": [
+            "url",
+            "web",
+            "site",
+            "link"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official title or name of the conference.",
+          "semantic_type": "organization_name",
+          "business_concept": "Conference Name",
+          "aliases": [
+            "title",
+            "conf_name",
+            "event_name"
+          ]
+        }
+      }
+    },
+    "domain": {
+      "table": {
+        "name": "domain",
+        "column_count": 2,
+        "summary": "A table containing unique identifiers and names for various entities within the system.",
+        "entity": "domain",
+        "role": "lookup_table",
+        "aliases": [
+          "domains",
+          "domain_list",
+          "domain_registry"
+        ]
+      },
+      "columns": {
+        "did": {
+          "name": "did",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "A unique integer identifier for each domain record.",
+          "semantic_type": "identifier",
+          "business_concept": "Domain ID",
+          "aliases": [
+            "domain_id",
+            "id",
+            "did",
+            "primary_key"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The textual name or label associated with the domain.",
+          "semantic_type": "unknown",
+          "business_concept": "Domain Name",
+          "aliases": [
+            "domain_name",
+            "name",
+            "label",
+            "title"
+          ]
+        }
+      }
+    },
+    "domain_author": {
+      "table": {
+        "name": "domain_author",
+        "column_count": 2,
+        "summary": "A relationship table linking application identifiers to domain identifiers.",
+        "entity": "Domain Author Relationship",
+        "role": "relationship_table",
+        "aliases": [
+          "domain_author_map",
+          "app_domain_link",
+          "did_aid_mapping"
+        ]
+      },
+      "columns": {
+        "aid": {
+          "name": "aid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for an application or account entity.",
+          "semantic_type": "identifier",
+          "business_concept": "Application ID",
+          "aliases": [
+            "app_id",
+            "application_id",
+            "account_id",
+            "aid"
+          ]
+        },
+        "did": {
+          "name": "did",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a domain name or digital identity.",
+          "semantic_type": "identifier",
+          "business_concept": "Domain ID",
+          "aliases": [
+            "domain_id",
+            "domain_identifier",
+            "did"
+          ]
+        }
+      }
+    },
+    "domain_conference": {
+      "table": {
+        "name": "domain_conference",
+        "column_count": 2,
+        "summary": "A relationship table linking domain entities to conference entities.",
+        "entity": "Domain-Conference Association",
+        "role": "relationship_table",
+        "aliases": [
+          "domain_conference",
+          "dc",
+          "domain_conf"
+        ]
+      },
+      "columns": {
+        "cid": {
+          "name": "cid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a domain entity within the system.",
+          "semantic_type": "identifier",
+          "business_concept": "Domain ID",
+          "aliases": [
+            "domain_id",
+            "cid",
+            "domain_code"
+          ]
+        },
+        "did": {
+          "name": "did",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a conference entity within the system.",
+          "semantic_type": "identifier",
+          "business_concept": "Conference ID",
+          "aliases": [
+            "conference_id",
+            "did",
+            "conf_id"
+          ]
+        }
+      }
+    },
+    "domain_journal": {
+      "table": {
+        "name": "domain_journal",
+        "column_count": 2,
+        "summary": "A table containing pairs of integer identifiers, likely representing a relationship or mapping between two distinct entities.",
+        "entity": "domain_journal",
+        "role": "relationship_table",
+        "aliases": [
+          "domain_journal",
+          "did_jid",
+          "did_jid_map"
+        ]
+      },
+      "columns": {
+        "did": {
+          "name": "did",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "A unique integer identifier for a primary entity (e.g., Domain ID).",
+          "semantic_type": "identifier",
+          "business_concept": "Domain Identifier",
+          "aliases": [
+            "did",
+            "domain_id",
+            "domain_identifier",
+            "primary_id"
+          ]
+        },
+        "jid": {
+          "name": "jid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "A unique integer identifier for a secondary entity (e.g., Journal ID) associated with the primary entity.",
+          "semantic_type": "identifier",
+          "business_concept": "Journal Identifier",
+          "aliases": [
+            "jid",
+            "journal_id",
+            "journal_identifier",
+            "secondary_id"
+          ]
+        }
+      }
+    },
+    "domain_keyword": {
+      "table": {
+        "name": "domain_keyword",
+        "column_count": 2,
+        "summary": "A relationship table linking domain entities to their associated keywords.",
+        "entity": "domain_keyword",
+        "role": "relationship_table",
+        "aliases": [
+          "domain_keywords",
+          "domain_keyword_map",
+          "dk"
+        ]
+      },
+      "columns": {
+        "did": {
+          "name": "did",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a domain entity.",
+          "semantic_type": "identifier",
+          "business_concept": "domain_id",
+          "aliases": [
+            "domain_id",
+            "domain",
+            "did",
+            "domain_key"
+          ]
+        },
+        "kid": {
+          "name": "kid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a keyword entity.",
+          "semantic_type": "identifier",
+          "business_concept": "keyword_id",
+          "aliases": [
+            "keyword_id",
+            "keyword",
+            "kid",
+            "keyword_key"
+          ]
+        }
+      }
+    },
+    "domain_publication": {
+      "table": {
+        "name": "domain_publication",
+        "column_count": 2,
+        "summary": "A relationship table linking domain entities to publication entities.",
+        "entity": "domain_publication",
+        "role": "relationship_table",
+        "aliases": [
+          "domain_publication",
+          "pub_domain",
+          "domain_pub"
+        ]
+      },
+      "columns": {
+        "did": {
+          "name": "did",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a domain entity.",
+          "semantic_type": "identifier",
+          "business_concept": "domain_id",
+          "aliases": [
+            "domain_id",
+            "did",
+            "domain_ref"
+          ]
+        },
+        "pid": {
+          "name": "pid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a publication entity.",
+          "semantic_type": "identifier",
+          "business_concept": "publication_id",
+          "aliases": [
+            "pub_id",
+            "pid",
+            "publication_ref"
+          ]
+        }
+      }
+    },
+    "journal": {
+      "table": {
+        "name": "journal",
+        "column_count": 3,
+        "summary": "A table storing metadata and identifiers for journals, likely representing academic publications, magazines, or news sources.",
+        "entity": "Journal",
+        "role": "entity_table",
+        "aliases": [
+          "journals",
+          "publication",
+          "magazine",
+          "periodical",
+          "journal_list"
+        ]
+      },
+      "columns": {
+        "homepage": {
+          "name": "homepage",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The URL of the journal's official website.",
+          "semantic_type": "unknown",
+          "business_concept": "Web Address",
+          "aliases": [
+            "url",
+            "website",
+            "site",
+            "web_address",
+            "link"
+          ]
+        },
+        "jid": {
+          "name": "jid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "A unique integer identifier for each journal record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "journal_id",
+            "pk",
+            "key"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The title or proper name of the journal.",
+          "semantic_type": "organization_name",
+          "business_concept": "Publication Title",
+          "aliases": [
+            "title",
+            "journal_name",
+            "pub_name",
+            "short_name"
+          ]
+        }
+      }
+    },
+    "keyword": {
+      "table": {
+        "name": "keyword",
+        "column_count": 2,
+        "summary": "A lookup table containing unique keywords and their corresponding internal identifiers.",
+        "entity": "keyword",
+        "role": "lookup_table",
+        "aliases": [
+          "keywords",
+          "keyword_list",
+          "term_index",
+          "tag_mapping"
+        ]
+      },
+      "columns": {
+        "keyword": {
+          "name": "keyword",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The text string representing the keyword or term.",
+          "semantic_type": "category",
+          "business_concept": "search_term",
+          "aliases": [
+            "term",
+            "tag",
+            "label",
+            "phrase",
+            "word"
+          ]
+        },
+        "kid": {
+          "name": "kid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "A unique integer identifier assigned to each keyword.",
+          "semantic_type": "identifier",
+          "business_concept": "keyword_id",
+          "aliases": [
+            "id",
+            "keyword_id",
+            "key_id",
+            "term_id"
+          ]
+        }
+      }
+    },
+    "organization": {
+      "table": {
+        "name": "organization",
+        "column_count": 4,
+        "summary": "A master table containing core details about organizations, including their names, unique identifiers, web presence, and geographic region.",
+        "entity": "Organization",
+        "role": "entity_table",
+        "aliases": [
+          "org",
+          "companies",
+          "entities",
+          "businesses"
+        ]
+      },
+      "columns": {
+        "continent": {
+          "name": "continent",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The geographic continent where the organization is headquartered or primarily operates.",
+          "semantic_type": "country",
+          "business_concept": "Geographic Location",
+          "aliases": [
+            "region",
+            "location",
+            "geo",
+            "zone"
+          ]
+        },
+        "homepage": {
+          "name": "homepage",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The URL of the organization's official website.",
+          "semantic_type": "unknown",
+          "business_concept": "Web Address",
+          "aliases": [
+            "website",
+            "url",
+            "web",
+            "site"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official registered or common name of the organization.",
+          "semantic_type": "organization_name",
+          "business_concept": "Entity Name",
+          "aliases": [
+            "title",
+            "company_name",
+            "org_name",
+            "label"
+          ]
+        },
+        "oid": {
+          "name": "oid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "A unique integer identifier assigned to the organization record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "org_id",
+            "key",
+            "uid"
+          ]
+        }
+      }
+    },
+    "publication": {
+      "table": {
+        "name": "publication",
+        "column_count": 8,
+        "summary": "A table containing metadata and bibliographic information for academic publications, including titles, abstracts, publication years, and citation metrics.",
+        "entity": "publication",
+        "role": "entity_table",
+        "aliases": [
+          "pub",
+          "paper",
+          "article",
+          "journal_entry",
+          "scholar_work"
+        ]
+      },
+      "columns": {
+        "abstract": {
+          "name": "abstract",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "A brief summary or synopsis of the content of the publication.",
+          "semantic_type": "description",
+          "business_concept": "content_summary",
+          "aliases": [
+            "summary",
+            "abstract_text",
+            "description"
+          ]
+        },
+        "cid": {
+          "name": "cid",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "A unique identifier for the publication, likely referencing a specific database catalog.",
+          "semantic_type": "identifier",
+          "business_concept": "publication_id",
+          "aliases": [
+            "catalog_id",
+            "db_id",
+            "record_id"
+          ]
+        },
+        "citation_num": {
+          "name": "citation_num",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The total number of times this publication has been cited by other works.",
+          "semantic_type": "quantity",
+          "business_concept": "impact_metric",
+          "aliases": [
+            "citations",
+            "cite_count",
+            "citation_count"
+          ]
+        },
+        "jid": {
+          "name": "jid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "An identifier, likely representing a Journal ID associated with the publication.",
+          "semantic_type": "identifier",
+          "business_concept": "journal_reference",
+          "aliases": [
+            "journal_id",
+            "journal_code",
+            "pub_id"
+          ]
+        },
+        "pid": {
+          "name": "pid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "A primary identifier for the publication record, possibly a persistent ID.",
+          "semantic_type": "identifier",
+          "business_concept": "primary_key",
+          "aliases": [
+            "pub_id",
+            "record_id",
+            "id"
+          ]
+        },
+        "reference_num": {
+          "name": "reference_num",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The number of references or citations listed within this publication.",
+          "semantic_type": "quantity",
+          "business_concept": "reference_count",
+          "aliases": [
+            "refs",
+            "bibliography_count",
+            "ref_count"
+          ]
+        },
+        "title": {
+          "name": "title",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official title of the publication.",
+          "semantic_type": "description",
+          "business_concept": "document_title",
+          "aliases": [
+            "name",
+            "heading",
+            "subject"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The year in which the publication was released or published.",
+          "semantic_type": "date",
+          "business_concept": "publication_date",
+          "aliases": [
+            "pub_year",
+            "date",
+            "year_published"
+          ]
+        }
+      }
+    },
+    "publication_keyword": {
+      "table": {
+        "name": "publication_keyword",
+        "column_count": 2,
+        "summary": "A junction table linking publications to their associated keywords.",
+        "entity": "publication_keyword",
+        "role": "relationship_table",
+        "aliases": [
+          "pub_keyword",
+          "publication_keywords",
+          "keyword_association"
+        ]
+      },
+      "columns": {
+        "pid": {
+          "name": "pid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Primary identifier for a publication record, used to link this row to the publications table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "publication_id",
+          "aliases": [
+            "pub_id",
+            "publication_id",
+            "pub"
+          ]
+        },
+        "kid": {
+          "name": "kid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Primary identifier for a keyword record, used to link this row to the keywords table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "keyword_id",
+          "aliases": [
+            "kw_id",
+            "keyword_id",
+            "kw"
+          ]
+        }
+      }
+    },
+    "writes": {
+      "table": {
+        "name": "writes",
+        "column_count": 2,
+        "summary": "A relationship table linking application instances to process instances.",
+        "entity": "write_record",
+        "role": "relationship_table",
+        "aliases": [
+          "writes",
+          "app_process_writes",
+          "pid_aid_map"
+        ]
+      },
+      "columns": {
+        "aid": {
+          "name": "aid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for an application instance.",
+          "semantic_type": "identifier",
+          "business_concept": "Application ID",
+          "aliases": [
+            "app_id",
+            "application_id",
+            "aid"
+          ]
+        },
+        "pid": {
+          "name": "pid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a process instance associated with the application.",
+          "semantic_type": "identifier",
+          "business_concept": "Process ID",
+          "aliases": [
+            "process_id",
+            "proc_id",
+            "pid"
+          ]
+        }
+      }
+    }
+  }
+}

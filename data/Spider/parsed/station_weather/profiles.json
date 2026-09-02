@@ -1,0 +1,368 @@
+{
+  "database": "station_weather",
+  "profile_version": "v1",
+  "source": {
+    "parsed_dir": "data/Spider/parsed/station_weather",
+    "schema_path": "data/Spider/parsed/station_weather/schema.json",
+    "tables_dir": "data/Spider/parsed/station_weather/tables",
+    "sample_num": 5,
+    "llm_enabled": true,
+    "model_name": "Qwen/Qwen3.5-9B"
+  },
+  "tables": {
+    "route": {
+      "table": {
+        "name": "route",
+        "column_count": 2,
+        "summary": "Defines the connectivity or adjacency between train stations, likely representing a segment of a rail network.",
+        "entity": "Route Segment",
+        "role": "relationship_table",
+        "aliases": [
+          "route",
+          "train_route",
+          "station_connection",
+          "rail_link"
+        ]
+      },
+      "columns": {
+        "train_id": {
+          "name": "train_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific train line or service.",
+          "semantic_type": "code",
+          "business_concept": "Train Line Identifier",
+          "aliases": [
+            "train_code",
+            "line_id",
+            "service_id"
+          ]
+        },
+        "station_id": {
+          "name": "station_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific station involved in the route segment.",
+          "semantic_type": "code",
+          "business_concept": "Station Identifier",
+          "aliases": [
+            "station_code",
+            "stop_id",
+            "node_id"
+          ]
+        }
+      }
+    },
+    "station": {
+      "table": {
+        "name": "station",
+        "column_count": 4,
+        "summary": "A reference table containing details about railway stations, including their unique identifiers, associated local authorities, and the train services operating there.",
+        "entity": "Railway Station",
+        "role": "lookup_table",
+        "aliases": [
+          "stations",
+          "railway_stations",
+          "train_stations",
+          "station_info"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each railway station record.",
+          "semantic_type": "identifier",
+          "business_concept": "Station ID",
+          "aliases": [
+            "station_id",
+            "station_code",
+            "station_key"
+          ]
+        },
+        "network_name": {
+          "name": "network_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the local authority or network area associated with the station.",
+          "semantic_type": "organization_name",
+          "business_concept": "Local Authority / Network Name",
+          "aliases": [
+            "authority_name",
+            "network",
+            "area_name",
+            "local_authority_name"
+          ]
+        },
+        "services": {
+          "name": "services",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "List of train operating companies or lines that serve this station.",
+          "semantic_type": "category",
+          "business_concept": "Operating Services",
+          "aliases": [
+            "train_services",
+            "operators",
+            "lines",
+            "service_providers"
+          ]
+        },
+        "local_authority": {
+          "name": "local_authority",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The specific local government authority responsible for the station's area.",
+          "semantic_type": "organization_name",
+          "business_concept": "Local Authority",
+          "aliases": [
+            "authority",
+            "local_gov",
+            "district",
+            "council"
+          ]
+        }
+      }
+    },
+    "train": {
+      "table": {
+        "name": "train",
+        "column_count": 7,
+        "summary": "A dataset containing details of various train services, including their identifiers, names, routes, and schedules.",
+        "entity": "Train Service",
+        "role": "entity_table",
+        "aliases": [
+          "trains",
+          "train_schedule",
+          "train_list",
+          "railway_services"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each row in the dataset.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "train_id",
+            "record_id",
+            "row_id"
+          ]
+        },
+        "train_number": {
+          "name": "train_number",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The unique numerical code assigned to a specific train service.",
+          "semantic_type": "code",
+          "business_concept": "Train Number",
+          "aliases": [
+            "train_code",
+            "number",
+            "train_no"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The official name of the train service.",
+          "semantic_type": "organization_name",
+          "business_concept": "Train Name",
+          "aliases": [
+            "train_name",
+            "title",
+            "service_name"
+          ]
+        },
+        "origin": {
+          "name": "origin",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The starting city or station of the train journey.",
+          "semantic_type": "city",
+          "business_concept": "Departure Location",
+          "aliases": [
+            "source",
+            "from",
+            "start_station",
+            "departure_city"
+          ]
+        },
+        "destination": {
+          "name": "destination",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The ending city or station of the train journey.",
+          "semantic_type": "city",
+          "business_concept": "Arrival Location",
+          "aliases": [
+            "target",
+            "to",
+            "end_station",
+            "arrival_city"
+          ]
+        },
+        "time": {
+          "name": "time",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The scheduled departure time of the train.",
+          "semantic_type": "timestamp",
+          "business_concept": "Departure Time",
+          "aliases": [
+            "departure_time",
+            "start_time",
+            "schedule_time"
+          ]
+        },
+        "interval": {
+          "name": "interval",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The frequency at which the train operates.",
+          "semantic_type": "category",
+          "business_concept": "Service Frequency",
+          "aliases": [
+            "frequency",
+            "schedule_interval",
+            "running_days"
+          ]
+        }
+      }
+    },
+    "weekly_weather": {
+      "table": {
+        "name": "weekly_weather",
+        "column_count": 6,
+        "summary": "A dataset containing weekly weather observations including temperature, precipitation, and wind speed for various weather stations.",
+        "entity": "weather_observation",
+        "role": "entity_table",
+        "aliases": [
+          "weekly_weather_data",
+          "station_weekly_report",
+          "weather_summary"
+        ]
+      },
+      "columns": {
+        "station_id": {
+          "name": "station_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the weather station where the data was recorded.",
+          "semantic_type": "identifier",
+          "business_concept": "weather_station",
+          "aliases": [
+            "station_code",
+            "site_id",
+            "sensor_id"
+          ]
+        },
+        "day_of_week": {
+          "name": "day_of_week",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The specific day of the week for which the weather data is recorded.",
+          "semantic_type": "category",
+          "business_concept": "day_of_week",
+          "aliases": [
+            "weekday",
+            "day_name"
+          ]
+        },
+        "high_temperature": {
+          "name": "high_temperature",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The maximum temperature recorded during the day in Fahrenheit.",
+          "semantic_type": "quantity",
+          "business_concept": "temperature_high",
+          "aliases": [
+            "max_temp",
+            "high",
+            "tmax"
+          ]
+        },
+        "low_temperature": {
+          "name": "low_temperature",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The minimum temperature recorded during the day in Fahrenheit.",
+          "semantic_type": "quantity",
+          "business_concept": "temperature_low",
+          "aliases": [
+            "min_temp",
+            "low",
+            "tmin"
+          ]
+        },
+        "precipitation": {
+          "name": "precipitation",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total amount of liquid precipitation measured during the day.",
+          "semantic_type": "quantity",
+          "business_concept": "precipitation_amount",
+          "aliases": [
+            "rainfall",
+            "precip",
+            "rain"
+          ]
+        },
+        "wind_speed_mph": {
+          "name": "wind_speed_mph",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The average wind speed recorded during the day in miles per hour.",
+          "semantic_type": "quantity",
+          "business_concept": "wind_speed",
+          "aliases": [
+            "wind",
+            "wsp",
+            "avg_wind"
+          ]
+        }
+      }
+    }
+  }
+}

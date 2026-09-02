@@ -1,0 +1,444 @@
+{
+  "database": "cre_Docs_and_Epenses",
+  "tables": {
+    "accounts": {
+      "table": {
+        "name": "accounts",
+        "column_count": 3,
+        "summary": "A table linking account identifiers to specific statement records and their associated monetary values.",
+        "entity": "Account Statement",
+        "role": "transaction_table",
+        "aliases": [
+          "account_statements",
+          "stmt_details",
+          "account_balances"
+        ]
+      },
+      "columns": {
+        "account_id": {
+          "name": "account_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the account associated with the statement.",
+          "semantic_type": "identifier",
+          "business_concept": "Account ID",
+          "aliases": [
+            "acct_id",
+            "account_number",
+            "id"
+          ]
+        },
+        "statement_id": {
+          "name": "statement_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific statement record.",
+          "semantic_type": "identifier",
+          "business_concept": "Statement ID",
+          "aliases": [
+            "stmt_id",
+            "statement_number",
+            "id"
+          ]
+        },
+        "account_details": {
+          "name": "account_details",
+          "dtype": "string",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary value or balance associated with the account statement.",
+          "semantic_type": "money",
+          "business_concept": "Account Balance",
+          "aliases": [
+            "balance",
+            "amount",
+            "value",
+            "total"
+          ]
+        }
+      }
+    },
+    "projects": {
+      "table": {
+        "name": "projects",
+        "column_count": 2,
+        "summary": "Stores metadata and high-level descriptions for various projects.",
+        "entity": "Project",
+        "role": "entity_table",
+        "aliases": [
+          "proj",
+          "project_info",
+          "project_master"
+        ]
+      },
+      "columns": {
+        "project_id": {
+          "name": "project_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each project record.",
+          "semantic_type": "identifier",
+          "business_concept": "Project ID",
+          "aliases": [
+            "id",
+            "proj_id",
+            "project_code"
+          ]
+        },
+        "project_details": {
+          "name": "project_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A textual description or title summarizing the nature of the project.",
+          "semantic_type": "description",
+          "business_concept": "Project Description",
+          "aliases": [
+            "desc",
+            "title",
+            "summary",
+            "project_name",
+            "details"
+          ]
+        }
+      }
+    },
+    "documents_with_expenses": {
+      "table": {
+        "name": "documents_with_expenses",
+        "column_count": 3,
+        "summary": "A table linking specific documents to their associated budget types and descriptive categories.",
+        "entity": "Document",
+        "role": "transaction_table",
+        "aliases": [
+          "doc_expenses",
+          "document_budget_mapping",
+          "doc_details"
+        ]
+      },
+      "columns": {
+        "document_id": {
+          "name": "document_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific document record.",
+          "semantic_type": "identifier",
+          "business_concept": "Document ID",
+          "aliases": [
+            "doc_id",
+            "id",
+            "document_number"
+          ]
+        },
+        "budget_type_code": {
+          "name": "budget_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short alphanumeric code representing the type of budget associated with the document.",
+          "semantic_type": "code",
+          "business_concept": "Budget Type",
+          "aliases": [
+            "budget_code",
+            "bt_code",
+            "budget_category"
+          ]
+        },
+        "document_details": {
+          "name": "document_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A textual description or classification of the document, currently showing 'government' in samples.",
+          "semantic_type": "category",
+          "business_concept": "Document Category",
+          "aliases": [
+            "doc_type",
+            "detail_code",
+            "classification"
+          ]
+        }
+      }
+    },
+    "statements": {
+      "table": {
+        "name": "statements",
+        "column_count": 2,
+        "summary": "A table containing unique identifiers and brief descriptions for various project statements.",
+        "entity": "Statement",
+        "role": "lookup_table",
+        "aliases": [
+          "projects",
+          "statement_list",
+          "project_details"
+        ]
+      },
+      "columns": {
+        "statement_id": {
+          "name": "statement_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each statement record.",
+          "semantic_type": "identifier",
+          "business_concept": "Unique Statement ID",
+          "aliases": [
+            "id",
+            "stmt_id",
+            "project_id",
+            "statement_number"
+          ]
+        },
+        "statement_details": {
+          "name": "statement_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A short text description indicating the type or status of the project statement.",
+          "semantic_type": "description",
+          "business_concept": "Project Type / Status",
+          "aliases": [
+            "description",
+            "type",
+            "status",
+            "category",
+            "project_name"
+          ]
+        }
+      }
+    },
+    "ref_document_types": {
+      "table": {
+        "name": "ref_document_types",
+        "column_count": 3,
+        "summary": "A reference table defining standard document types with their codes, names, and quality descriptions.",
+        "entity": "Document Type",
+        "role": "lookup_table",
+        "aliases": [
+          "doc_types",
+          "document_categories",
+          "ref_documents"
+        ]
+      },
+      "columns": {
+        "document_type_code": {
+          "name": "document_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique alphanumeric identifier for a specific document type.",
+          "semantic_type": "code",
+          "business_concept": "Document Type Code",
+          "aliases": [
+            "doc_code",
+            "type_code",
+            "document_id"
+          ]
+        },
+        "document_type_name": {
+          "name": "document_type_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The human-readable name of the document type.",
+          "semantic_type": "category",
+          "business_concept": "Document Type Name",
+          "aliases": [
+            "doc_name",
+            "type_name",
+            "document_label"
+          ]
+        },
+        "document_type_description": {
+          "name": "document_type_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A qualitative assessment or description associated with the document type, seemingly indicating quality or sentiment.",
+          "semantic_type": "description",
+          "business_concept": "Document Quality Rating",
+          "aliases": [
+            "doc_desc",
+            "type_description",
+            "quality_note"
+          ]
+        }
+      }
+    },
+    "documents": {
+      "table": {
+        "name": "documents",
+        "column_count": 7,
+        "summary": "A master table storing metadata and classification details for various documents, including their type, associated project, creation date, and descriptive names.",
+        "entity": "Document",
+        "role": "entity_table",
+        "aliases": [
+          "doc_table",
+          "documents_master",
+          "doc_metadata"
+        ]
+      },
+      "columns": {
+        "document_id": {
+          "name": "document_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each document record.",
+          "semantic_type": "identifier",
+          "business_concept": "Document ID",
+          "aliases": [
+            "doc_id",
+            "id",
+            "primary_key"
+          ]
+        },
+        "document_type_code": {
+          "name": "document_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short alphanumeric code representing the category or nature of the document (e.g., CV, BK).",
+          "semantic_type": "code",
+          "business_concept": "Document Type",
+          "aliases": [
+            "doc_type",
+            "type_code",
+            "category_code"
+          ]
+        },
+        "project_id": {
+          "name": "project_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the document to a specific project.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Project ID",
+          "aliases": [
+            "proj_id",
+            "project_code",
+            "parent_project"
+          ]
+        },
+        "document_date": {
+          "name": "document_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the document was created, updated, or processed.",
+          "semantic_type": "timestamp",
+          "business_concept": "Document Date",
+          "aliases": [
+            "created_at",
+            "doc_date",
+            "timestamp"
+          ]
+        },
+        "document_name": {
+          "name": "document_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A human-readable title or short name for the document.",
+          "semantic_type": "description",
+          "business_concept": "Document Name",
+          "aliases": [
+            "title",
+            "doc_title",
+            "name"
+          ]
+        },
+        "document_description": {
+          "name": "document_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A detailed textual description of the document content or purpose.",
+          "semantic_type": "description",
+          "business_concept": "Document Description",
+          "aliases": [
+            "desc",
+            "details",
+            "summary"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional miscellaneous information or notes about the document.",
+          "semantic_type": "description",
+          "business_concept": "Other Details",
+          "aliases": [
+            "notes",
+            "extra_info",
+            "remarks"
+          ]
+        }
+      }
+    },
+    "ref_budget_codes": {
+      "table": {
+        "name": "ref_budget_codes",
+        "column_count": 2,
+        "summary": "A reference table defining standard budget types with their corresponding codes and descriptions.",
+        "entity": "Budget Type",
+        "role": "lookup_table",
+        "aliases": [
+          "budget_types",
+          "budget_code_ref",
+          "budget_category_master"
+        ]
+      },
+      "columns": {
+        "budget_type_code": {
+          "name": "budget_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique alphanumeric identifier representing a specific budget type.",
+          "semantic_type": "code",
+          "business_concept": "Budget Type Identifier",
+          "aliases": [
+            "budget_code",
+            "type_code",
+            "budget_ref"
+          ]
+        },
+        "budget_type_description": {
+          "name": "budget_type_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A human-readable text description explaining the meaning of the budget type code.",
+          "semantic_type": "description",
+          "business_concept": "Budget Type Description",
+          "aliases": [
+            "budget_desc",
+            "type_description",
+            "budget_name"
+          ]
+        }
+      }
+    }
+  }
+}
