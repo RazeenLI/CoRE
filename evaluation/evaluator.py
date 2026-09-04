@@ -261,15 +261,27 @@ def evaluate_benchmark(
         task_state_path = result_case_dir / "task_state.json"
 
         timing_result: dict[str, Any] = {}
+        llm_usage_result: dict[str, Any] = {}
         task_state_result: dict[str, Any] = {}
         task_state: dict[str, Any] | None = None
         if task_state_path.exists():
             try:
                 task_state = load_json(task_state_path)
                 timing_result = task_state.get("timing", {})
+                usage = task_state.get("llm_usage", {})
+                llm_usage_result = {
+                    key: usage.get(key)
+                    for key in (
+                        "model", "call_count", "input_tokens",
+                        "output_tokens", "elapsed_seconds",
+                    )
+                    if key in usage
+                }
+                llm_usage_result["by_caller"] = usage.get("by_caller", {})
                 task_state_result = compute_task_state_metrics(task_state)
             except (FileNotFoundError, ValueError):
                 timing_result = {}
+                llm_usage_result = {}
                 task_state_result = {}
 
         # ---------------------------------------------
@@ -671,6 +683,7 @@ def evaluate_benchmark(
         case_result.update(flatten_dict(non_target_preservation_result, prefix="non_target_preservation"))
 
         case_result.update(flatten_dict(timing_result, prefix="timing"))
+        case_result.update(flatten_dict(llm_usage_result, prefix="llm_usage"))
         case_result.update(flatten_dict(task_state_result, prefix="run"))
 
         # print(json.dumps(case_result, indent=4))

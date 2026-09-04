@@ -62,6 +62,7 @@ def run_pipeline(
         existing_rdb=existing_rdb,
         incoming_table=incoming_table,
     )
+    task_state.llm_usage = llm_client.usage_summary()
     save_json(task_state.to_dict(), Path(save_root_path) / "task_state.json")
     save_json(proposal, Path(save_root_path) / "proposal.json")
     save_rdb(task_state.existing_rdb, save_root_path, folder_name="database")

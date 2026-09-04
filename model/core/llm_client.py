@@ -63,6 +63,7 @@ Example:
 import json
 import re
 from dataclasses import dataclass
+from time import perf_counter
 from typing import Any, Literal
 
 import torch
@@ -98,6 +99,8 @@ class HFLLMClient:
         self.default_mode = default_mode
         self.debug = debug
         self.supports_thinking = supports_thinking(model_name)
+        self.usage_records: list[dict[str, Any]] = []
+        self.current_caller: str | None = None
 
         self.tokenizer = AutoTokenizer.from_pretrained(
             model_name,
@@ -191,6 +194,7 @@ class HFLLMClient:
         if decoding.do_sample:
             generation_kwargs["temperature"] = decoding.temperature
 
+        started_at = perf_counter()
         with torch.inference_mode():
             outputs = self.model.generate(
                 **inputs,
@@ -199,6 +203,16 @@ class HFLLMClient:
 
         input_len = inputs["input_ids"].shape[-1]
         generated_ids = outputs[0][input_len:]
+        self.usage_records.append(
+            {
+                "caller": self.current_caller or "unknown",
+                "model": self.model_name,
+                "mode": mode,
+                "input_tokens": int(input_len),
+                "output_tokens": int(generated_ids.shape[-1]),
+                "elapsed_seconds": perf_counter() - started_at,
+            }
+        )
 
         text = self.tokenizer.decode(
             generated_ids,
@@ -237,6 +251,30 @@ class HFLLMClient:
         )
 
         return extract_json_object(text)
+
+    def usage_summary(self) -> dict[str, Any]:
+        """Return serializable per-call and aggregate token/cost inputs."""
+        by_caller: dict[str, dict[str, Any]] = {}
+        for record in self.usage_records:
+            caller = str(record["caller"])
+            entry = by_caller.setdefault(
+                caller,
+                {"call_count": 0, "input_tokens": 0, "output_tokens": 0,
+                 "elapsed_seconds": 0.0},
+            )
+            entry["call_count"] += 1
+            entry["input_tokens"] += record["input_tokens"]
+            entry["output_tokens"] += record["output_tokens"]
+            entry["elapsed_seconds"] += record["elapsed_seconds"]
+        return {
+            "model": self.model_name,
+            "call_count": len(self.usage_records),
+            "input_tokens": sum(r["input_tokens"] for r in self.usage_records),
+            "output_tokens": sum(r["output_tokens"] for r in self.usage_records),
+            "elapsed_seconds": sum(r["elapsed_seconds"] for r in self.usage_records),
+            "by_caller": by_caller,
+            "calls": list(self.usage_records),
+        }
 
 
 def strip_qwen_thinking(text: str) -> str:

@@ -128,6 +128,7 @@ def run_pipeline(
         existing_rdb=existing_rdb,
         incoming_table=incoming_table,
     )
+    task_state.llm_usage = llm_client.usage_summary()
 
     existing_rdb = task_state.existing_rdb  # Update existing RDB for the next task
 

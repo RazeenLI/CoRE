@@ -175,6 +175,7 @@ class TaskState:
                 )
             },
         }
+        self.llm_usage: dict[str, Any] = {}
 
     @contextmanager
     def measure_step(self, step: TaskStep):
@@ -384,6 +385,7 @@ class TaskState:
             "routing": self.routing,
             "trace": self.trace,
             "timing": self.timing,
+            "llm_usage": self.llm_usage,
         }
 
     @classmethod
@@ -430,5 +432,6 @@ class TaskState:
             "timing",
             state.timing,
         )
+        state.llm_usage = data.get("llm_usage", {})
 
         return state

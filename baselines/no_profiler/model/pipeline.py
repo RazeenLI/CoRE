@@ -47,6 +47,7 @@ def run_selector_pipeline(
         existing_rdb=existing_rdb,
         incoming_table=incoming,
     )
+    state.llm_usage = client.usage_summary()
     save_json(state.to_dict(), Path(save_root_path) / "task_state.json")
     save_json(proposal, Path(save_root_path) / "proposal.json")
     save_rdb(state.existing_rdb, save_root_path, folder_name="database")

@@ -50,7 +50,14 @@ class BaseAgent:
         If your client returns a JSON string instead of a dict, this method
         also accepts that and parses it.
         """
-        return self.llm_client.generate_json(prompt)
+        previous_caller = getattr(self.llm_client, "current_caller", None)
+        if hasattr(self.llm_client, "current_caller"):
+            self.llm_client.current_caller = self.__class__.__name__
+        try:
+            return self.llm_client.generate_json(prompt)
+        finally:
+            if hasattr(self.llm_client, "current_caller"):
+                self.llm_client.current_caller = previous_caller
         # result = self.llm_client.generate_json(prompt)
 
         # if isinstance(result, dict):
@@ -79,4 +86,3 @@ class BaseAgent:
         table_schema = tables[table_name]
 
         return table_name, table_schema
-    
