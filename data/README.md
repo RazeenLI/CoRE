@@ -21,9 +21,9 @@ Each case should be a local RDB maintenance scenario, rather than a full databas
 | TPC-DS    | 60                      | 80                       | 60                        | 200        |
 | MONDIAL   | 70                      | 100                      | 80                        | 250        |
 | Spider    | 200                     | 175                      | 125                       | 500        |
-| **Total** | **370**                 | **640**                  | **530**                   | **1540**   |
+| **Total** | **380**                 | **415**                  | **305**                   | **1100**   |
 
-The counts above are the target benchmark composition. They should be reported as final dataset statistics only after all cases have been generated and validated.
+The counts above are the generated benchmark composition: 1,100 cases in total. Reported schema and perturbation statistics should still be recomputed from the final case directories whenever a benchmark is regenerated.
 
 ### Paper-facing benchmark contribution
 

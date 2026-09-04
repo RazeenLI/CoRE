@@ -86,3 +86,17 @@ outputs/Chinook/standard/medium_2.csv
 ```
 
 将它们都加入 `RESULT_FILES` 后，aggregate 会计算多次实验的均值和标准差。
+
+## 4. Pending model-sensitivity experiments
+
+### TODO: Core LLM sensitivity
+
+Evaluate whether the complete framework depends on the current Qwen3.5-9B backbone. At minimum, compare Qwen3.5-9B with Qwen3-8B while keeping prompts, MPNet retrieval, top-k, sampled rows, decoding, retry limits, proposal construction, and benchmark cases fixed. Replace the shared LLM used by the Profiler, Evolutor, and Validator together. Report Decision Macro-F1, Column F1, Proposal F1, Checked-valid, final-schema exact match, latency, and LLM calls. Use a pre-declared subset stratified by dataset, operation, and context size if a full 1,100-case rerun is too expensive. With only Qwen-family models, describe this as backbone sensitivity rather than cross-family generalization.
+
+### TODO: Validator LLM sensitivity
+
+First replay different Validator models on the same saved first-round Evolutor proposals and before/after previews, holding the prompt, decoding, and deterministic route controls fixed. Report detection precision/recall, false acceptance/rejection, route agreement, latency, and tokens. Then run the full revision loop only for retained Validator configurations and report correction, harm, repair success, retries, retry exhaustion, final proposal quality, and added cost. Do not infer Validator-model effects from runs in which the Profiler or Evolutor model also changes.
+
+### TODO: Matching-adapter sensitivity
+
+The primary matching baselines use one shared deterministic correspondence-to-proposal adapter. If an LLM adapter is evaluated, feed it only the matcher output, incoming table, and associated schema/constraint context; do not provide Standard's semantic profiles or unrestricted database context. Add successful variants directly to the main result table rather than creating a separate paper subsection. Report native correspondence quality and adapted end-to-end quality so that matcher errors can be separated from adapter-induced errors.
