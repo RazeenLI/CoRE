@@ -1,0 +1,23 @@
+# Standard core agents remain on the paper's reference model.
+LLMs:
+  name: "Qwen/Qwen3.5-9B"
+  default_mode: "non_thinking"
+
+# Only Validator is replaced by the larger dense model.
+validator_LLMs:
+  name: "Qwen/Qwen3.5-27B"
+  default_mode: "non_thinking"
+  device_map: "auto"
+  # This server uses 24GB A5000 GPUs; fail early unless the six-GPU job is
+  # exposed. On a server with larger GPUs this value may be lowered explicitly.
+  min_cuda_devices: 6
+
+orchestrator:
+  high_confidence_threshold: 0.9
+  max_validator_runs: 3
+  decision_auto: true
+
+standard:
+  embedding_model: "sentence-transformers/all-mpnet-base-v2"
+  column_top_k: 20
+  table_top_k: 5

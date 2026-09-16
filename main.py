@@ -16,6 +16,8 @@ PIPELINE_MODULES = {
     "oneshot": "baselines.oneshot.pipeline",
     "magneto": "baselines.magneto.pipeline",
     "magneto_llm": "baselines.magneto_llm.pipeline",
+    "coma_llm": "baselines.coma_llm.pipeline",
+    "starmie_llm": "baselines.starmie_llm.pipeline",
     "santos": "baselines.santos.pipeline",
     "embdi": "baselines.embdi.pipeline",
     "starmie": "baselines.starmie.pipeline",

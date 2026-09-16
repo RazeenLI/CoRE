@@ -8,7 +8,7 @@ import yaml
 
 from model.utils.io import load_rdb, save_rdb, load_table, terminal_message, save_json
 
-from model.core.llm_client import HFLLMClient
+from model.core.llm_client import HFLLMClient, merge_usage_summaries
 from model.core.orchestrator import Orchestrator
 
 from model.agents.base_agent import BaseAgent
@@ -25,7 +25,7 @@ def load_config(config_path: str) -> dict:
     with open(config_path, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
-def create_agents(llm_client):
+def create_agents(llm_client, validator_client=None):
     """
     Create all agents used by the orchestrator.
 
@@ -35,7 +35,7 @@ def create_agents(llm_client):
     profiler_agent = ProfilerAgent(llm_client)
     # matcher_agent = MatcherAgent(llm_client)
     evolutor_agent = EvolutorAgent(llm_client)
-    validator_agent = ValidatorAgent(llm_client)
+    validator_agent = ValidatorAgent(validator_client or llm_client)
     # decision_agent = BaseAgent(llm_client)
 
     return {
@@ -73,14 +73,35 @@ def run_pipeline(
     terminal_message("success", f"Load existing relational database with keys: {existing_rdb.keys()}.")
 
     # 2. Create LLM Client
+    validator_config = agent_config.get("validator_LLMs")
+    if validator_config:
+        minimum_devices = int(validator_config.get("min_cuda_devices", 0))
+        visible_devices = torch.cuda.device_count()
+        if minimum_devices and visible_devices < minimum_devices:
+            raise RuntimeError(
+                "The role-specific Validator configuration requires at least "
+                f"{minimum_devices} visible CUDA devices, but found "
+                f"{visible_devices}. Check CUDA_VISIBLE_DEVICES before loading."
+            )
+
     llm_client = HFLLMClient(
         model_name=agent_config["LLMs"]["name"],
         default_mode=agent_config["LLMs"]["default_mode"],
+        reasoning_effort=agent_config["LLMs"].get("reasoning_effort"),
         debug=False,
     )
+    validator_client = llm_client
+    if validator_config:
+        validator_client = HFLLMClient(
+            model_name=validator_config["name"],
+            default_mode=validator_config.get("default_mode", "non_thinking"),
+            reasoning_effort=validator_config.get("reasoning_effort"),
+            device_map=validator_config.get("device_map", "auto"),
+            debug=False,
+        )
     
     # 3. Create agents
-    agents = create_agents(llm_client)
+    agents = create_agents(llm_client, validator_client)
 
     selector_config = agent_config.get("standard", {})
     selector_agent = CandidateSelectorAgent(
@@ -128,7 +149,13 @@ def run_pipeline(
         existing_rdb=existing_rdb,
         incoming_table=incoming_table,
     )
-    task_state.llm_usage = llm_client.usage_summary()
+    if validator_client is llm_client:
+        task_state.llm_usage = llm_client.usage_summary()
+    else:
+        task_state.llm_usage = merge_usage_summaries({
+            "core": llm_client.usage_summary(),
+            "validator": validator_client.usage_summary(),
+        })
 
     existing_rdb = task_state.existing_rdb  # Update existing RDB for the next task
 

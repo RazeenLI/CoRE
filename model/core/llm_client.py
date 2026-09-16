@@ -93,10 +93,12 @@ class HFLLMClient:
         device_map: str = "auto",
         trust_remote_code: bool = True,
         default_mode: GenerationMode = "non_thinking",
+        reasoning_effort: str | None = None,
         debug: bool = False,
     ) -> None:
         self.model_name = model_name
         self.default_mode = default_mode
+        self.reasoning_effort = reasoning_effort
         self.debug = debug
         self.supports_thinking = supports_thinking(model_name)
         self.usage_records: list[dict[str, Any]] = []
@@ -152,6 +154,8 @@ class HFLLMClient:
 
         if self.supports_thinking:
             kwargs["enable_thinking"] = mode == "thinking"
+        if "gpt-oss" in self.model_name.lower() and self.reasoning_effort:
+            kwargs["reasoning_effort"] = self.reasoning_effort
 
         return self.tokenizer.apply_chat_template(
             messages,
@@ -275,6 +279,48 @@ class HFLLMClient:
             "by_caller": by_caller,
             "calls": list(self.usage_records),
         }
+
+
+def merge_usage_summaries(
+    summaries: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
+    """Merge role-specific clients while preserving legacy total fields."""
+
+    calls: list[dict[str, Any]] = []
+    by_caller: dict[str, dict[str, Any]] = {}
+    for role, summary in summaries.items():
+        for raw_record in summary.get("calls", []):
+            record = {**raw_record, "client_role": role}
+            calls.append(record)
+            caller = str(record.get("caller", "unknown"))
+            entry = by_caller.setdefault(
+                caller,
+                {
+                    "call_count": 0,
+                    "input_tokens": 0,
+                    "output_tokens": 0,
+                    "elapsed_seconds": 0.0,
+                },
+            )
+            entry["call_count"] += 1
+            entry["input_tokens"] += int(record.get("input_tokens", 0))
+            entry["output_tokens"] += int(record.get("output_tokens", 0))
+            entry["elapsed_seconds"] += float(record.get("elapsed_seconds", 0.0))
+
+    models = {role: summary.get("model") for role, summary in summaries.items()}
+    return {
+        "model": models.get("core"),
+        "models": models,
+        "call_count": len(calls),
+        "input_tokens": sum(int(item.get("input_tokens", 0)) for item in calls),
+        "output_tokens": sum(int(item.get("output_tokens", 0)) for item in calls),
+        "elapsed_seconds": sum(
+            float(item.get("elapsed_seconds", 0.0)) for item in calls
+        ),
+        "by_caller": by_caller,
+        "by_client_role": summaries,
+        "calls": calls,
+    }
 
 
 def strip_qwen_thinking(text: str) -> str:

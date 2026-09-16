@@ -12,6 +12,8 @@ DATASET="${DATASET:-Chinook}"
 DATASIZE="${DATASIZE:-medium}"
 
 MAX_ATTEMPTS="${MAX_ATTEMPTS:-3}"
+SKIP_COMPLETED="${SKIP_COMPLETED:-true}"
+FAIL_BATCH_ON_CASE_ERROR="${FAIL_BATCH_ON_CASE_ERROR:-false}"
 
 MAIN_SCRIPT="main.py"
 DATA_ROOT="data/$DATASET/benchmarks/$DATASIZE"
@@ -195,7 +197,28 @@ fi
 
 declare -A ATTEMPTS=()
 declare -A FINAL_FAILURES=()
-declare -a PENDING_CASES=("${ALL_CASES[@]}")
+declare -a PENDING_CASES=()
+declare -a SKIPPED_CASES=()
+
+for case_name in "${ALL_CASES[@]}"; do
+    output_path="$OUTPUT_ROOT/$case_name"
+    if [[ "$SKIP_COMPLETED" == "true" \
+        && -f "$output_path/task_state.json" \
+        && -f "$output_path/proposal.json" ]]; then
+        SKIPPED_CASES+=("$case_name")
+    else
+        PENDING_CASES+=("$case_name")
+    fi
+done
+
+if (( ${#SKIPPED_CASES[@]} > 0 )); then
+    log_message "Skipping ${#SKIPPED_CASES[@]} completed case(s): ${SKIPPED_CASES[*]}"
+fi
+
+if (( ${#PENDING_CASES[@]} == 0 )); then
+    log_message "All selected cases already have complete outputs."
+    exit 0
+fi
 
 round=1
 
@@ -294,7 +317,12 @@ if (( ${#FINAL_FAILURES[@]} > 0 )); then
     done
 
     log_message "Summary log: $SUMMARY_LOG"
-    exit 1
+    if [[ "$FAIL_BATCH_ON_CASE_ERROR" == "true" ]]; then
+        exit 1
+    fi
+
+    log_message "Continuing despite permanent case failures (FAIL_BATCH_ON_CASE_ERROR=false)."
+    exit 0
 fi
 
 log_message "All cases completed successfully."
