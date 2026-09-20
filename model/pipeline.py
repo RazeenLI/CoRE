@@ -88,6 +88,7 @@ def run_pipeline(
         model_name=agent_config["LLMs"]["name"],
         default_mode=agent_config["LLMs"]["default_mode"],
         reasoning_effort=agent_config["LLMs"].get("reasoning_effort"),
+        trust_remote_code=agent_config["LLMs"].get("trust_remote_code", True),
         debug=False,
     )
     validator_client = llm_client
@@ -97,6 +98,7 @@ def run_pipeline(
             default_mode=validator_config.get("default_mode", "non_thinking"),
             reasoning_effort=validator_config.get("reasoning_effort"),
             device_map=validator_config.get("device_map", "auto"),
+            trust_remote_code=validator_config.get("trust_remote_code", True),
             debug=False,
         )
     

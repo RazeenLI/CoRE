@@ -1,4 +1,4 @@
-"""Figure 1: per-operation (Insert/Extend/Create) decision F1,
+"""Per-operation (Insert/Extend/Create) decision F1,
 one subfigure per dataset (TPC-DS, Spider, MONDIAL), one bar group per method.
 
 Data is loaded live from evaluation/aggregate_result.py's summary logic
@@ -8,6 +8,7 @@ over the raw per-case CSVs in outputs/<Dataset>/<method>/{small,medium,large}.cs
 
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 from data_loader import OPERATIONS, load_operation_f1_table
 
@@ -24,17 +25,19 @@ DATASET_LABELS = {
 }
 
 METHODS = [
-    ("standard", "Standard"),
+    ("standard", "CoRE"),
     ("oneshot", "OneShot"),
     ("magneto_llm", "Magneto-LLM"),
-    ("magneto", "Magneto"),
+    ("coma_llm", "COMA-LLM"),
+    ("starmie_llm", "Starmie-LLM"),
 ]
 
 METHOD_COLORS = {
-    "Standard":    "#3A73AB",
+    "CoRE":        "#3A73AB",
     "OneShot":     "#D87C2C",
     "Magneto-LLM": "#3E935C",
-    "Magneto":     "#7F68AC",
+    "COMA-LLM":    "#7F68AC",
+    "Starmie-LLM": "#B45F5F",
 }
 
 # Full operation names for loading data
@@ -67,15 +70,14 @@ plt.rcParams["xtick.labelsize"] = 7
 plt.rcParams["ytick.labelsize"] = 7
 plt.rcParams["legend.fontsize"] = 6.5
 
-panel_labels = ["(a)", "(b)", "(c)"]
-hatches = ["//", "\\\\", "xx", ".."]
+hatches = ["//", "\\\\", "xx", "..", "++"]
 
 
 # -----------------------------
 # figure
 # -----------------------------
 fig_w = 3.35
-fig_h = 1.45
+fig_h = 1.1
 
 fig, axes = plt.subplots(
     nrows=1,
@@ -94,7 +96,7 @@ bar_w = group_width / n_methods
 # -----------------------------
 # panels
 # -----------------------------
-for col, (ax, ds, plabel) in enumerate(zip(axes, DATASETS, panel_labels)):
+for col, (ax, ds) in enumerate(zip(axes, DATASETS)):
     for i, method in enumerate(methods):
         vals = data[ds][method]
 
@@ -116,7 +118,7 @@ for col, (ax, ds, plabel) in enumerate(zip(axes, DATASETS, panel_labels)):
     ax.grid(axis="y", linewidth=0.35, alpha=0.5)
     ax.set_axisbelow(True)
 
-    ax.set_title(f"{plabel} {DATASET_LABELS[ds]}", pad=2)
+    ax.set_title(DATASET_LABELS[ds], pad=2)
 
     # Tight horizontal range inside each panel
     ax.set_xlim(
@@ -139,11 +141,12 @@ handles, labels = axes[0].get_legend_handles_labels()
 fig.legend(
     handles,
     labels,
-    ncol=4,                    # one row
+    ncol=5,                    # one row
     loc="upper center",
     bbox_to_anchor=(0.5, 0.995),
     frameon=False,
-    columnspacing=0.7,
+    fontsize=6.0,
+    columnspacing=0.55,
     handletextpad=0.35,
     handlelength=1.1,
     borderaxespad=0.0,
@@ -157,7 +160,7 @@ fig.subplots_adjust(
     left=0.088,   # slightly tighter left margin
     right=0.992,  # tiny right white margin so border is not cut
     top=0.77,     # room for one-line legend
-    bottom=0.15,
+    bottom=0.18,
     wspace=0.18,  # larger gap between subfigures
 )
 
@@ -165,7 +168,8 @@ fig.subplots_adjust(
 # -----------------------------
 # save
 # -----------------------------
-out_path = "visualization/figures/fig1_operation_f1.pdf"
+out_path = Path(__file__).resolve().parent / "figures" / "operation_f1.pdf"
+out_path.parent.mkdir(parents=True, exist_ok=True)
 
 plt.savefig(
     out_path,

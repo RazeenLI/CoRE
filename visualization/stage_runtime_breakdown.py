@@ -1,5 +1,5 @@
-"""Figure 3: per-stage runtime breakdown (Profile/Select/Evolve/Validate)
-for the Standard method, stacked bars across all four datasets.
+"""Per-stage runtime breakdown (Profile/Select/Evolve/Validate)
+for CoRE, stacked bars across all four datasets.
 
 Data is loaded live from outputs/<Dataset>/standard/{small,medium,large}.csv
 via data_loader.load_stage_timing_table -- mean of each stage's
@@ -10,6 +10,7 @@ Run this file directly to regenerate the PDF.
 
 import matplotlib.pyplot as plt
 import numpy as np
+from pathlib import Path
 
 from data_loader import STAGE_TIMING_COLUMNS, load_stage_timing_table
 
@@ -66,8 +67,8 @@ plt.rcParams["xtick.labelsize"] = 6.5
 plt.rcParams["ytick.labelsize"] = 6.5
 plt.rcParams["legend.fontsize"] = 6.5
 
-# Single-column width, approximately 2:1 width:height
-fig, ax = plt.subplots(figsize=(3.35, 1.68))
+# Single-column width with a compact height
+fig, ax = plt.subplots(figsize=(3.35, 0.84))
 
 # ============================================================
 # Stacked bars
@@ -124,8 +125,6 @@ for i, value in enumerate(total):
 # Axes
 # ============================================================
 
-ax.set_xlabel("Latency (s)", labelpad=2)
-
 ax.set_yticks(x)
 ax.set_yticklabels(datasets)
 ax.invert_yaxis()  # first dataset at the top
@@ -173,11 +172,12 @@ ax.legend(
 fig.subplots_adjust(
     left=0.115,
     right=1.0,
-    bottom=0.19,
-    top=0.78
+    bottom=0.25,
+    top=0.72
 )
 
-out_path = "figures/fig3_stage_runtime_breakdown.pdf"
+out_path = Path(__file__).resolve().parent / "figures" / "stage_runtime_breakdown.pdf"
+out_path.parent.mkdir(parents=True, exist_ok=True)
 plt.savefig(
     out_path,
     format="pdf",

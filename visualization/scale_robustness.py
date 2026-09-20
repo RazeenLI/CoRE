@@ -1,8 +1,6 @@
-"""Figure 4: robustness across benchmark size (Small/Medium/Large), one
-panel per dataset (Chinook, MONDIAL, TPC-DS, Spider). Each panel overlays
-both metrics -- DMF1 (decision macro-F1, solid/filled) and PropF1
-(proposal_fact_micro_f1, dashed/hollow) -- since they share the same [0.2,
-1.0] score scale, colored by method.
+"""Robustness across benchmark size (Small/Medium/Large) for Chinook and
+Spider. Rows are datasets; columns show DMF1 (decision macro-F1) and
+PropF1 (proposal fact micro-F1) separately, colored by method.
 
 Data is loaded live from outputs/<Dataset>/<method>/{small,medium,large}.csv
 via data_loader.load_scale_robustness_table -- decision_macro_f1 and
@@ -14,6 +12,7 @@ regenerate the PDF.
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.lines import Line2D
+from pathlib import Path
 
 from data_loader import load_scale_robustness_table
 
@@ -24,43 +23,39 @@ from data_loader import load_scale_robustness_table
 sizes = ["Small", "Medium", "Large"]
 x = np.arange(len(sizes))
 
-DATASETS = ["Chinook", "MONDIAL", "TPCDS", "Spider"]
-DATASET_LABELS = {"Chinook": "Chinook", "MONDIAL": "MONDIAL", "TPCDS": "TPC-DS", "Spider": "Spider"}
+DATASETS = ["Chinook", "Spider"]
 
 METHODS = [
-    ("standard", "Standard"),
+    ("standard", "CoRE"),
     ("oneshot", "OneShot"),
     ("magneto_llm", "Magneto-LLM"),
-    ("magneto", "Magneto"),
+    ("coma_llm", "COMA-LLM"),
+    ("starmie_llm", "Starmie-LLM"),
 ]
 methods = [label for _, label in METHODS]
 
 data = load_scale_robustness_table(DATASETS, METHODS)
-data = {
-    (DATASET_LABELS[ds], metric): values
-    for (ds, metric), values in data.items()
-}
 
-# Method colors, from the academic color palette's "AI/ML" profile -- same
-# identity used across the other figures (Standard=Blue, OneShot=Orange,
-# Magneto-LLM=Green, Magneto=Purple).
+# Keep method colors consistent with the operation-F1 figure.
 METHOD_COLORS = {
-    "Standard":    "#3A73AB",
+    "CoRE":        "#3A73AB",
     "OneShot":     "#D87C2C",
     "Magneto-LLM": "#3E935C",
-    "Magneto":     "#7F68AC",
+    "COMA-LLM":    "#7F68AC",
+    "Starmie-LLM": "#B45F5F",
 }
 
 markers = {
-    "Standard": "o",
+    "CoRE": "o",
     "OneShot": "s",
     "Magneto-LLM": "^",
-    "Magneto": "D",
+    "COMA-LLM": "D",
+    "Starmie-LLM": "v",
 }
 
-METRIC_STYLE = {
-    "DMF1":   dict(linestyle="-",  fillstyle="full"),
-    "PropF1": dict(linestyle="--", fillstyle="none"),
+Y_SCALES = {
+    "DMF1": ((0.5, 1.0), [0.5, 0.6, 0.7, 0.8, 0.9, 1.0]),
+    "PropF1": ((0.5, 0.7), [0.5, 0.6, 0.7]),
 }
 
 # ============================================================
@@ -82,45 +77,44 @@ plt.rcParams["legend.fontsize"] = 6.2
 fig, axes = plt.subplots(
     2,
     2,
-    figsize=(3.35, 2.35),
+    figsize=(3.35, 2.0),
     sharex=True,
-    sharey=True
+    sharey="col"
 )
 
 panels = [
-    ("Chinook", "(a) Chinook"),
-    ("MONDIAL", "(b) MONDIAL"),
-    ("TPC-DS", "(c) TPC-DS"),
-    ("Spider", "(d) Spider"),
+    ("Chinook", "DMF1", "Chinook: DMF1"),
+    ("Chinook", "PropF1", "Chinook: PropF1"),
+    ("Spider", "DMF1", "Spider: DMF1"),
+    ("Spider", "PropF1", "Spider: PropF1"),
 ]
 
 # ============================================================
 # Plot
 # ============================================================
 
-for ax, (dataset, title) in zip(axes.flat, panels):
+for ax, (dataset, metric, title) in zip(axes.flat, panels):
 
     for method in methods:
-        for metric in ("DMF1", "PropF1"):
-            style = METRIC_STYLE[metric]
-            ax.plot(
-                x,
-                data[(dataset, metric)][method],
-                marker=markers[method],
-                color=METHOD_COLORS[method],
-                linewidth=1.0,
-                markersize=2.6,
-                markeredgewidth=0.8,
-                **style,
-            )
+        ax.plot(
+            x,
+            data[(dataset, metric)][method],
+            marker=markers[method],
+            color=METHOD_COLORS[method],
+            linewidth=1.0,
+            markersize=2.6,
+            markeredgewidth=0.8,
+        )
 
     ax.set_title(title, pad=2)
 
     ax.set_xticks(x)
     ax.set_xticklabels(sizes)
 
-    ax.set_ylim(0.2, 1.0)
-    ax.set_yticks([0.2, 0.4, 0.6, 0.8, 1.0])
+    y_limits, y_ticks = Y_SCALES[metric]
+    ax.set_ylim(*y_limits)
+    ax.set_yticks(y_ticks)
+    ax.tick_params(axis="y", labelleft=True)
 
     ax.grid(
         axis="y",
@@ -135,16 +129,15 @@ for ax, (dataset, title) in zip(axes.flat, panels):
     ax.tick_params(
         axis="both",
         length=2.2,
-        pad=1.5
+        pad=0
     )
+    ax.tick_params(axis="x", pad=1.5)
 
-# Only left-side y labels
 axes[0, 0].set_ylabel("Score", labelpad=2)
 axes[1, 0].set_ylabel("Score", labelpad=2)
 
 # ============================================================
-# Shared legends: method (color) and metric (line style) are independent,
-# so they get two separate small legends rather than 8 combined entries.
+# Shared method legend
 # ============================================================
 
 method_handles = [
@@ -154,29 +147,13 @@ method_handles = [
 fig.legend(
     method_handles,
     methods,
-    ncol=4,
+    ncol=5,
     loc="upper center",
-    bbox_to_anchor=(0.5, 1.03),
+    bbox_to_anchor=(0.5, 1.01),
     frameon=False,
-    columnspacing=0.8,
-    handlelength=1.4,
-    handletextpad=0.3,
-    borderaxespad=0
-)
-
-metric_handles = [
-    Line2D([0], [0], color="black", linewidth=1.0, **METRIC_STYLE["DMF1"], marker="o", markersize=2.6, markeredgewidth=0.8),
-    Line2D([0], [0], color="black", linewidth=1.0, **METRIC_STYLE["PropF1"], marker="o", markersize=2.6, markeredgewidth=0.8),
-]
-fig.legend(
-    metric_handles,
-    ["DMF1", "PropF1"],
-    ncol=2,
-    loc="upper center",
-    bbox_to_anchor=(0.5, 0.93),
-    frameon=False,
-    columnspacing=0.8,
-    handlelength=1.8,
+    fontsize=5.8,
+    columnspacing=0.5,
+    handlelength=1.0,
     handletextpad=0.3,
     borderaxespad=0
 )
@@ -186,27 +163,30 @@ fig.legend(
 # ============================================================
 
 fig.subplots_adjust(
-    left=0.13,
-    right=1.0,
-    bottom=0.115,
-    top=0.8,
-    wspace=0.1,
-    hspace=0.4
+    left=0.119,
+    right=0.995,
+    bottom=0.1405,
+    top=0.87,
+    wspace=0.15,
+    hspace=0.30
 )
 
 # ============================================================
 # Save
 # ============================================================
 
+out_dir = Path(__file__).resolve().parent / "figures"
+out_dir.mkdir(parents=True, exist_ok=True)
+
 plt.savefig(
-    "figures/fig4_scale_robustness.pdf",
+    out_dir / "scale_robustness.pdf",
     format="pdf",
     bbox_inches="tight",
     pad_inches=0
 )
 
 plt.savefig(
-    "figures/fig4_scale_robustness.png",
+    out_dir / "scale_robustness.png",
     dpi=300,
     bbox_inches="tight",
     pad_inches=0
@@ -214,4 +194,4 @@ plt.savefig(
 
 plt.close(fig)
 
-print("saved to: figures/fig4_scale_robustness.pdf")
+print(f"saved to: {out_dir / 'scale_robustness.pdf'}")

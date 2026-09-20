@@ -12,7 +12,7 @@ This is deliberately NOT proposal_fact_f1 / slice_operation_*_proposal_f1
 from evaluation/aggregate_result.py -- that measures correctness of the
 full predicted proposal, not decision classification, and gives very
 different numbers. Verified to reproduce the paper table's values exactly
-(e.g. TPC-DS/Standard -> Insert P=0.659 R=0.900 F1=0.761).
+(e.g. TPC-DS/CoRE -> Insert P=0.659 R=0.900 F1=0.761).
 """
 
 from __future__ import annotations
@@ -79,7 +79,7 @@ def load_stage_timing_table(
     mean_validate_s]} for one method, averaged over all cases.
 
     Verified to reproduce the paper's per-stage latency numbers exactly
-    (e.g. TPC-DS/Standard -> [59.1, 6.2, 78.1, 8.0]).
+    (e.g. TPC-DS/CoRE -> [59.1, 6.2, 78.1, 8.0]).
     """
     data: dict[str, list[float]] = {}
     for dataset in datasets:
@@ -119,7 +119,7 @@ def decision_confusion_matrix(rows: list[dict], labels: list[str]):
 
     Matches the "Normalized decision confusion matrices" table in the paper
     (Experimental Evaluation.tex) -- verified to reproduce it exactly (e.g.
-    TPC-DS/Standard row for Ref. Insert -> [0.900, 0.083, 0.017]).
+    TPC-DS/CoRE row for Ref. Insert -> [0.900, 0.083, 0.017]).
     """
     import numpy as np
 
@@ -155,7 +155,7 @@ def load_scale_robustness_table(
     per-size (not concatenated across sizes).
 
     Verified to closely reproduce the reference numbers for this figure
-    (e.g. TPC-DS/Standard DMF1 -> [0.797, 0.871, 0.718] vs reference
+    (e.g. TPC-DS/CoRE DMF1 -> [0.797, 0.871, 0.718] vs reference
     [0.80, 0.87, 0.72]).
     """
     data: dict[tuple[str, str], dict[str, list[float]]] = {}

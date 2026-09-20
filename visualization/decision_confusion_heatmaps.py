@@ -1,5 +1,5 @@
-"""Figure 2: normalized decision confusion matrices (rows: reference
-operation, columns: predicted operation) for the Standard method on
+"""Normalized decision confusion matrices (rows: reference
+operation, columns: predicted operation) for CoRE on
 TPC-DS, Spider, and MONDIAL.
 
 Data is loaded live from outputs/<Dataset>/standard/{small,medium,large}.csv
@@ -11,6 +11,7 @@ Run this file directly to regenerate the PDF.
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
+from pathlib import Path
 
 from data_loader import (
     OPERATIONS,
@@ -42,19 +43,11 @@ labels = [label[0] for _, label in OPERATIONS]
 # -----------------------------
 # colormap
 # -----------------------------
-PAIRED_BLUE_ORANGE = [
-    "#284F76",
-    "#6891BA",
-    "#C0C9D3",
-    "#F4F2ED",
-    "#E2D8CF",
-    "#D29D6F",
-    "#9F5A1E",
-]
+PAIRED_RED_TEAL = ["#8C4047", "#F4F2ED", "#246065"]
 
 CMAP = LinearSegmentedColormap.from_list(
-    "db_paired_blue_orange",
-    PAIRED_BLUE_ORANGE,
+    "db_paired_red_teal",
+    PAIRED_RED_TEAL,
 )
 
 
@@ -88,7 +81,7 @@ plt.rcParams["ytick.labelsize"] = 6.5
 # -----------------------------
 # figure
 #
-# Same overall single-column structure as Figure 1.
+# Same overall single-column structure as the operation-F1 figure.
 # Slightly taller because of the horizontal colorbar.
 # -----------------------------
 fig_w = 3.35
@@ -222,7 +215,7 @@ for col, (ax, (dataset, cm)) in enumerate(
 # ============================================================
 # Main panel layout
 #
-# Similar horizontal structure to Figure 1:
+# Similar horizontal structure to the operation-F1 figure:
 # - left margin for y labels
 # - small right safety margin
 # - visible but not excessive space between panels
@@ -236,7 +229,7 @@ fig.subplots_adjust(
     # More bottom space because colorbar sits below heatmaps.
     bottom=0.34,
 
-    # Similar visual spacing to Figure 1.
+    # Similar visual spacing to the operation-F1 figure.
     wspace=0.18,
 )
 
@@ -283,7 +276,8 @@ cbar.ax.text(
 # save
 # ============================================================
 
-out_path = "visualization/figures/fig2_confusion_heatmaps.pdf"
+out_path = Path(__file__).resolve().parent / "figures" / "confusion_heatmaps.pdf"
+out_path.parent.mkdir(parents=True, exist_ok=True)
 
 plt.savefig(
     out_path,
