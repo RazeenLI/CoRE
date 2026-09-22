@@ -68,13 +68,13 @@ plt.rcParams["ytick.labelsize"] = 6.5
 plt.rcParams["legend.fontsize"] = 6.5
 
 # Single-column width with a compact height
-fig, ax = plt.subplots(figsize=(3.35, 0.84))
+fig, ax = plt.subplots(figsize=(3.35, 0.9))
 
 # ============================================================
 # Stacked bars
 # ============================================================
 
-bar_width = 0.58
+bar_width = 0.66
 
 MIN_LABEL_WIDTH = 8.0  # skip in-segment labels too narrow to hold text (e.g. Select)
 
