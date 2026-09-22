@@ -532,6 +532,31 @@ def filter_profiles_by_schema(
             if col in keep_columns
         }
 
+        source_columns = set(source_tables[table].get("columns", {}))
+        if keep_columns != source_columns:
+            # The source profile was generated with columns that are hidden in
+            # this benchmark state.  Do not retain LLM-written semantics that
+            # may describe those hidden columns.  A benchmark profiling pass
+            # can regenerate these fields from the visible schema and rows.
+            table_meta = table_profile.get("table", {})
+            if isinstance(table_meta, dict):
+                table_meta.update({
+                    "summary": "",
+                    "entity": "unknown",
+                    "role": "unknown",
+                    "aliases": [],
+                })
+
+            for column_profile in table_profile["columns"].values():
+                if not isinstance(column_profile, dict):
+                    continue
+                column_profile.update({
+                    "meaning": "",
+                    "semantic_type": "unknown",
+                    "business_concept": "unknown",
+                    "aliases": [],
+                })
+
         if "table" in table_profile:
             table_profile["table"]["name"] = table
             table_profile["table"]["column_count"] = len(keep_columns)

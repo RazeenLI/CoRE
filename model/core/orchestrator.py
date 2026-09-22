@@ -280,6 +280,7 @@ class Orchestrator:
             proposal=task_state.proposal_result,
             before=task_state.preview_result["before"],
             after=task_state.preview_result["after"],
+            existing_schema=task_state.existing_schema,
         )
 
         next_step = VALIDATOR_ROUTE_TO_STEP[validator_result["route"]]

@@ -473,6 +473,65 @@ def profile_all_tables(
     return output
 
 
+def profile_extend_benchmark_cases(
+    benchmark_root: Path,
+    model_name: str | None,
+    device_map: str = "auto",
+    sample_num: int = 5,
+    no_llm: bool = False,
+) -> tuple[int, int]:
+    """Regenerate only Extend target profiles from each case's visible state."""
+    proposal_paths = sorted(benchmark_root.rglob("case_*/expected/proposal.json"))
+    if not proposal_paths:
+        raise FileNotFoundError(
+            f"No benchmark cases found under {benchmark_root}"
+        )
+
+    profiler = ProfilerAgent(
+        llm_client=create_llm_client(
+            model_name=model_name,
+            device_map=device_map,
+            no_llm=no_llm,
+        )
+    )
+    completed = skipped = 0
+
+    for proposal_path in proposal_paths:
+        proposal = load_json(proposal_path)
+        if proposal.get("decision") != "extend_table":
+            skipped += 1
+            continue
+
+        case_dir = proposal_path.parents[1]
+        existing_dir = case_dir / "existing"
+        schema_path = existing_dir / "schema.json"
+        profiles_path = existing_dir / "profiles.json"
+        schema = load_json(schema_path)
+        profiles = load_json(profiles_path)
+        table_name = proposal.get("target_table")
+        table_schema = schema.get("tables", {}).get(table_name)
+
+        if not isinstance(table_name, str) or not isinstance(table_schema, dict):
+            raise ValueError(
+                f"Extend target table is missing from visible schema: {case_dir}"
+            )
+
+        profile = profile_one_table(
+            profiler=profiler,
+            database_name=schema.get("database", case_dir.name),
+            table_name=table_name,
+            table_schema=table_schema,
+            tables_dir=existing_dir / "tables",
+            sample_num=sample_num,
+        )
+        profiles.setdefault("tables", {})[table_name] = profile
+        save_json(profiles, profiles_path)
+        completed += 1
+        print(f"[{completed}] updated {case_dir}: {table_name}", flush=True)
+
+    return completed, skipped
+
+
 # -----------------------------
 # CLI
 # -----------------------------
@@ -493,6 +552,11 @@ def parse_args() -> argparse.Namespace:
         "--parsed-root",
         type=Path,
         help="Root containing multiple <database>/schema.json parsed directories.",
+    )
+    input_group.add_argument(
+        "--benchmark-root",
+        type=Path,
+        help="Benchmark root; regenerate only Extend target profiles in place.",
     )
 
     parser.add_argument(
@@ -550,6 +614,20 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+
+    if args.benchmark_root is not None:
+        if args.output is not None:
+            raise ValueError("--output is not valid with --benchmark-root.")
+        completed, skipped = profile_extend_benchmark_cases(
+            benchmark_root=args.benchmark_root,
+            model_name=args.model_name,
+            device_map=args.device_map,
+            sample_num=args.sample_num,
+            no_llm=args.no_llm,
+        )
+        print(f"updated_extend_cases: {completed}")
+        print(f"skipped_other_cases:  {skipped}")
+        return
 
     if args.parsed is not None:
         parsed_dir = args.parsed

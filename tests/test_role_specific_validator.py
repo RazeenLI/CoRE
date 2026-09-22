@@ -1,5 +1,6 @@
 import unittest
 
+from model.agents.validator_agent import ValidatorAgent
 from model.core.llm_client import merge_usage_summaries
 from model.pipeline import create_agents
 
@@ -41,3 +42,52 @@ class RoleSpecificValidatorTest(unittest.TestCase):
         self.assertEqual(merged["models"]["validator"], "Qwen3.5-27B")
         self.assertEqual(merged["call_count"], 2)
         self.assertEqual(merged["calls"][1]["client_role"], "validator")
+
+    def test_validator_rejects_malformed_schema_without_calling_llm(self) -> None:
+        class FailingClient:
+            def generate_json(self, *args, **kwargs):
+                raise AssertionError("LLM must not be called after a hard-rule failure")
+
+        result = ValidatorAgent(FailingClient())(
+            proposal={"source_decision": "extend_table"},
+            before={},
+            after={
+                "schema": {
+                    "tables": {
+                        "customer": {
+                            "columns": {"id": {"type": "integer"}},
+                            "column_order": ["missing"],
+                        }
+                    }
+                },
+                "constraints": {},
+            },
+        )
+
+        self.assertEqual(result["route"], "evolutor")
+        self.assertEqual(result["score"], 0.0)
+        self.assertFalse(result["rule_checks"]["after_schema_well_formed"])
+
+    def test_validator_rejects_invalid_constraint_reference(self) -> None:
+        result = ValidatorAgent(None)(
+            proposal={"source_decision": "insert_table"},
+            before={},
+            after={
+                "schema": {
+                    "tables": {
+                        "customer": {
+                            "columns": {"id": {"type": "integer"}},
+                            "column_order": ["id"],
+                        }
+                    }
+                },
+                "constraints": {
+                    "primary_keys": {"customer": ["missing"]},
+                },
+            },
+        )
+
+        self.assertEqual(result["route"], "matcher")
+        self.assertFalse(
+            result["rule_checks"]["after_constraints_reference_valid"]
+        )

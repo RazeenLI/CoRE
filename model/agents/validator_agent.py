@@ -11,7 +11,7 @@ class ValidatorAgent(BaseAgent):
     """
     Validate whether the generated AFTER partial RDB is reasonable.
 
-    This validator is LLM-based.
+    This validator applies deterministic schema checks before LLM judgment.
 
     Input:
     - proposal
@@ -40,10 +40,32 @@ class ValidatorAgent(BaseAgent):
         proposal: dict[str, Any],
         before: dict[str, Any],
         after: dict[str, Any],
+        existing_schema: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         source_decision = proposal["source_decision"]
 
         terminal_message("info", f"Validating generated partial RDB from decision: {source_decision}.", "\t")
+
+        rule_checks, rule_issues = run_rule_checks(
+            before=before,
+            after=after,
+            existing_schema=existing_schema,
+        )
+        if rule_issues:
+            result = {
+                "route": fallback_route(source_decision),
+                "score": 0.0,
+                "rule_checks": rule_checks,
+                "llm_judgment": None,
+                "issues": rule_issues,
+                "summary": "Deterministic schema validation failed.",
+            }
+            terminal_message(
+                "error",
+                f"ValidatorAgent rejected preview with {len(rule_issues)} hard-rule issue(s).",
+                "\t",
+            )
+            return result
 
         llm_input = build_llm_input(
             proposal=proposal,
@@ -58,6 +80,13 @@ class ValidatorAgent(BaseAgent):
             llm_output=llm_output,
             source_decision=source_decision,
         )
+        result["rule_checks"] = rule_checks
+        result["llm_judgment"] = {
+            "route": result["route"],
+            "score": result["score"],
+            "issues": result["issues"],
+            "summary": result["summary"],
+        }
 
         terminal_message("success", f"ValidatorAgent completed with route={result['route']} score={result['score']}.","\t",)
 
@@ -74,6 +103,152 @@ def build_llm_input(
         "before_partial_rdb": before,
         "after_partial_rdb": after,
     }
+
+
+def run_rule_checks(
+    after: dict[str, Any],
+    existing_schema: dict[str, Any] | None = None,
+    before: dict[str, Any] | None = None,
+) -> tuple[dict[str, bool], list[str]]:
+    schema_issues = validate_after_schema(after)
+    constraint_issues = validate_after_constraints(
+        after=after,
+        existing_schema=existing_schema,
+    )
+    if before is not None:
+        existing_constraint_issues = set(validate_after_constraints(
+            after=before,
+            existing_schema=existing_schema,
+        ))
+        constraint_issues = [
+            issue
+            for issue in constraint_issues
+            if issue not in existing_constraint_issues
+        ]
+    checks = {
+        "after_schema_well_formed": not schema_issues,
+        "after_constraints_reference_valid": not constraint_issues,
+    }
+    return checks, schema_issues + constraint_issues
+
+
+def validate_after_schema(after: dict[str, Any]) -> list[str]:
+    schema = after.get("schema") if isinstance(after, dict) else None
+    tables = schema.get("tables") if isinstance(schema, dict) else None
+    if not isinstance(tables, dict):
+        return ["after.schema.tables must be an object"]
+
+    issues: list[str] = []
+    for table_name, table_schema in tables.items():
+        if not isinstance(table_name, str) or not table_name:
+            issues.append("after schema contains an invalid table name")
+            continue
+        if not isinstance(table_schema, dict):
+            issues.append(f"{table_name} schema must be an object")
+            continue
+
+        columns = table_schema.get("columns")
+        column_order = table_schema.get("column_order")
+        if not isinstance(columns, dict) or not columns:
+            issues.append(f"{table_name} must contain at least one column")
+            continue
+        if any(not isinstance(name, str) or not name for name in columns):
+            issues.append(f"{table_name} contains an invalid column name")
+        if any(not isinstance(meta, dict) for meta in columns.values()):
+            issues.append(f"{table_name} column metadata must be objects")
+        if not isinstance(column_order, list):
+            issues.append(f"{table_name}.column_order must be a list")
+        elif (
+            any(not isinstance(name, str) for name in column_order)
+            or len(column_order) != len(set(column_order))
+            or set(column_order) != set(columns)
+        ):
+            issues.append(f"{table_name}.column_order must match columns exactly")
+
+    return issues
+
+
+def validate_after_constraints(
+    after: dict[str, Any],
+    existing_schema: dict[str, Any] | None = None,
+) -> list[str]:
+    partial_schema = after.get("schema", {}).get("tables", {})
+    known_tables = dict(
+        existing_schema.get("tables", {})
+        if isinstance(existing_schema, dict)
+        else {}
+    )
+    if isinstance(partial_schema, dict):
+        known_tables.update(partial_schema)
+
+    constraints = after.get("constraints", {}) if isinstance(after, dict) else {}
+    if isinstance(constraints, dict) and "constraints" in constraints:
+        constraints = constraints.get("constraints")
+    if not isinstance(constraints, dict):
+        return ["after.constraints must be an object"]
+
+    issues: list[str] = []
+
+    def columns_exist(table: Any, columns: Any, label: str) -> bool:
+        if table not in known_tables:
+            issues.append(f"{label} references missing table {table}")
+            return False
+        table_columns = known_tables[table].get("columns", {})
+        if not isinstance(columns, list) or not columns:
+            issues.append(f"{label} must reference at least one column")
+            return False
+        missing = [column for column in columns if column not in table_columns]
+        if missing:
+            issues.append(f"{label} references missing columns in {table}")
+            return False
+        return True
+
+    primary_keys = constraints.get("primary_keys", {})
+    unique_constraints = constraints.get("unique_constraints", {})
+    indexes = constraints.get("indexes", {})
+    foreign_keys = constraints.get("foreign_keys", {})
+    sections = (primary_keys, unique_constraints, indexes, foreign_keys)
+    if any(not isinstance(section, dict) for section in sections):
+        return ["constraint sections must be objects"]
+
+    for table, columns in primary_keys.items():
+        columns_exist(table, columns, f"primary key on {table}")
+    for section_name, section in (
+        ("unique constraint", unique_constraints),
+        ("index", indexes),
+    ):
+        for table, column_groups in section.items():
+            if not isinstance(column_groups, list):
+                issues.append(f"{section_name} list on {table} is invalid")
+                continue
+            for columns in column_groups:
+                columns_exist(table, columns, f"{section_name} on {table}")
+
+    for table, table_fks in foreign_keys.items():
+        if not isinstance(table_fks, list):
+            issues.append(f"foreign key list on {table} is invalid")
+            continue
+        for fk in table_fks:
+            if not isinstance(fk, dict):
+                issues.append(f"foreign key on {table} is invalid")
+                continue
+            columns = fk.get("columns")
+            referenced_table = fk.get("referenced_table")
+            referenced_columns = fk.get("referenced_columns")
+            columns_exist(table, columns, f"foreign key on {table}")
+            columns_exist(
+                referenced_table,
+                referenced_columns,
+                f"foreign key on {table}",
+            )
+            if (
+                isinstance(columns, list)
+                and isinstance(referenced_columns, list)
+                and len(columns) != len(referenced_columns)
+            ):
+                issues.append(f"foreign key on {table} has unequal column counts")
+
+    return issues
 
 
 def apply_llm_output(
