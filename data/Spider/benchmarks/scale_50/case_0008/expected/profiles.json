@@ -1,0 +1,4280 @@
+{
+  "database": "cre_Docs_and_Epenses",
+  "tables": {
+    "ref_document_types": {
+      "table": {
+        "name": "ref_document_types",
+        "column_count": 3,
+        "summary": "A reference table defining standard document types with their codes, names, and quality descriptions.",
+        "entity": "Document Type",
+        "role": "lookup_table",
+        "aliases": [
+          "doc_types",
+          "document_categories",
+          "ref_documents"
+        ]
+      },
+      "columns": {
+        "document_type_code": {
+          "name": "document_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique alphanumeric identifier for a specific document type.",
+          "semantic_type": "code",
+          "business_concept": "Document Type Code",
+          "aliases": [
+            "doc_code",
+            "type_code",
+            "document_id"
+          ]
+        },
+        "document_type_name": {
+          "name": "document_type_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The human-readable name of the document type.",
+          "semantic_type": "category",
+          "business_concept": "Document Type Name",
+          "aliases": [
+            "doc_name",
+            "type_name",
+            "document_label"
+          ]
+        },
+        "document_type_description": {
+          "name": "document_type_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A qualitative assessment or description associated with the document type, seemingly indicating quality or sentiment.",
+          "semantic_type": "description",
+          "business_concept": "Document Quality Rating",
+          "aliases": [
+            "doc_desc",
+            "type_description",
+            "quality_note"
+          ]
+        }
+      }
+    },
+    "statements": {
+      "table": {
+        "name": "statements",
+        "column_count": 2,
+        "summary": "A table containing unique identifiers and brief descriptions for various project statements.",
+        "entity": "Statement",
+        "role": "lookup_table",
+        "aliases": [
+          "projects",
+          "statement_list",
+          "project_details"
+        ]
+      },
+      "columns": {
+        "statement_id": {
+          "name": "statement_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each statement record.",
+          "semantic_type": "identifier",
+          "business_concept": "Unique Statement ID",
+          "aliases": [
+            "id",
+            "stmt_id",
+            "project_id",
+            "statement_number"
+          ]
+        },
+        "statement_details": {
+          "name": "statement_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A short text description indicating the type or status of the project statement.",
+          "semantic_type": "description",
+          "business_concept": "Project Type / Status",
+          "aliases": [
+            "description",
+            "type",
+            "status",
+            "category",
+            "project_name"
+          ]
+        }
+      }
+    },
+    "ref_budget_codes": {
+      "table": {
+        "name": "ref_budget_codes",
+        "column_count": 2,
+        "summary": "A reference table defining standard budget types with their corresponding codes and descriptions.",
+        "entity": "Budget Type",
+        "role": "lookup_table",
+        "aliases": [
+          "budget_types",
+          "budget_code_ref",
+          "budget_category_master"
+        ]
+      },
+      "columns": {
+        "budget_type_code": {
+          "name": "budget_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique alphanumeric identifier representing a specific budget type.",
+          "semantic_type": "code",
+          "business_concept": "Budget Type Identifier",
+          "aliases": [
+            "budget_code",
+            "type_code",
+            "budget_ref"
+          ]
+        },
+        "budget_type_description": {
+          "name": "budget_type_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A human-readable text description explaining the meaning of the budget type code.",
+          "semantic_type": "description",
+          "business_concept": "Budget Type Description",
+          "aliases": [
+            "budget_desc",
+            "type_description",
+            "budget_name"
+          ]
+        }
+      }
+    },
+    "accounts": {
+      "table": {
+        "name": "accounts",
+        "column_count": 3,
+        "summary": "A table linking account identifiers to specific statement records and their associated monetary values.",
+        "entity": "Account Statement",
+        "role": "transaction_table",
+        "aliases": [
+          "account_statements",
+          "stmt_details",
+          "account_balances"
+        ]
+      },
+      "columns": {
+        "account_id": {
+          "name": "account_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the account associated with the statement.",
+          "semantic_type": "identifier",
+          "business_concept": "Account ID",
+          "aliases": [
+            "acct_id",
+            "account_number",
+            "id"
+          ]
+        },
+        "statement_id": {
+          "name": "statement_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the specific statement record.",
+          "semantic_type": "identifier",
+          "business_concept": "Statement ID",
+          "aliases": [
+            "stmt_id",
+            "statement_number",
+            "id"
+          ]
+        },
+        "account_details": {
+          "name": "account_details",
+          "dtype": "string",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The monetary value or balance associated with the account statement.",
+          "semantic_type": "money",
+          "business_concept": "Account Balance",
+          "aliases": [
+            "balance",
+            "amount",
+            "value",
+            "total"
+          ]
+        }
+      }
+    },
+    "documents_with_expenses": {
+      "table": {
+        "name": "documents_with_expenses",
+        "column_count": 3,
+        "summary": "A table linking specific documents to their associated budget types and descriptive categories.",
+        "entity": "Document",
+        "role": "transaction_table",
+        "aliases": [
+          "doc_expenses",
+          "document_budget_mapping",
+          "doc_details"
+        ]
+      },
+      "columns": {
+        "document_id": {
+          "name": "document_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for a specific document record.",
+          "semantic_type": "identifier",
+          "business_concept": "Document ID",
+          "aliases": [
+            "doc_id",
+            "id",
+            "document_number"
+          ]
+        },
+        "budget_type_code": {
+          "name": "budget_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short alphanumeric code representing the type of budget associated with the document.",
+          "semantic_type": "code",
+          "business_concept": "Budget Type",
+          "aliases": [
+            "budget_code",
+            "bt_code",
+            "budget_category"
+          ]
+        },
+        "document_details": {
+          "name": "document_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A textual description or classification of the document, currently showing 'government' in samples.",
+          "semantic_type": "category",
+          "business_concept": "Document Category",
+          "aliases": [
+            "doc_type",
+            "detail_code",
+            "classification"
+          ]
+        }
+      }
+    },
+    "documents": {
+      "table": {
+        "name": "documents",
+        "column_count": 7,
+        "summary": "A master table storing metadata and classification details for various documents, including their type, associated project, creation date, and descriptive names.",
+        "entity": "Document",
+        "role": "entity_table",
+        "aliases": [
+          "doc_table",
+          "documents_master",
+          "doc_metadata"
+        ]
+      },
+      "columns": {
+        "document_id": {
+          "name": "document_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each document record.",
+          "semantic_type": "identifier",
+          "business_concept": "Document ID",
+          "aliases": [
+            "doc_id",
+            "id",
+            "primary_key"
+          ]
+        },
+        "document_type_code": {
+          "name": "document_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short alphanumeric code representing the category or nature of the document (e.g., CV, BK).",
+          "semantic_type": "code",
+          "business_concept": "Document Type",
+          "aliases": [
+            "doc_type",
+            "type_code",
+            "category_code"
+          ]
+        },
+        "project_id": {
+          "name": "project_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the document to a specific project.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Project ID",
+          "aliases": [
+            "proj_id",
+            "project_code",
+            "parent_project"
+          ]
+        },
+        "document_date": {
+          "name": "document_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the document was created, updated, or processed.",
+          "semantic_type": "timestamp",
+          "business_concept": "Document Date",
+          "aliases": [
+            "created_at",
+            "doc_date",
+            "timestamp"
+          ]
+        },
+        "document_name": {
+          "name": "document_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A human-readable title or short name for the document.",
+          "semantic_type": "description",
+          "business_concept": "Document Name",
+          "aliases": [
+            "title",
+            "doc_title",
+            "name"
+          ]
+        },
+        "document_description": {
+          "name": "document_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A detailed textual description of the document content or purpose.",
+          "semantic_type": "description",
+          "business_concept": "Document Description",
+          "aliases": [
+            "desc",
+            "details",
+            "summary"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Additional miscellaneous information or notes about the document.",
+          "semantic_type": "description",
+          "business_concept": "Other Details",
+          "aliases": [
+            "notes",
+            "extra_info",
+            "remarks"
+          ]
+        }
+      }
+    },
+    "projects": {
+      "table": {
+        "name": "projects",
+        "column_count": 2,
+        "summary": "Stores metadata and high-level descriptions for various projects.",
+        "entity": "Project",
+        "role": "entity_table",
+        "aliases": [
+          "proj",
+          "project_info",
+          "project_master"
+        ]
+      },
+      "columns": {
+        "project_id": {
+          "name": "project_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each project record.",
+          "semantic_type": "identifier",
+          "business_concept": "Project ID",
+          "aliases": [
+            "id",
+            "proj_id",
+            "project_code"
+          ]
+        },
+        "project_details": {
+          "name": "project_details",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A textual description or title summarizing the nature of the project.",
+          "semantic_type": "description",
+          "business_concept": "Project Description",
+          "aliases": [
+            "desc",
+            "title",
+            "summary",
+            "project_name",
+            "details"
+          ]
+        }
+      }
+    },
+    "d_program_share__program": {
+      "table": {
+        "name": "d_program_share__program",
+        "column_count": 5,
+        "summary": "A catalog of television programs including their names, origins, launch years, and ownership details.",
+        "entity": "television_program",
+        "role": "entity_table",
+        "aliases": [
+          "tv_programs",
+          "shows",
+          "programs_catalog",
+          "broadcast_programs"
+        ]
+      },
+      "columns": {
+        "program_id": {
+          "name": "program_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each television program record.",
+          "semantic_type": "identifier",
+          "business_concept": "Program ID",
+          "aliases": [
+            "id",
+            "program_code",
+            "pk"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The title or name of the television program.",
+          "semantic_type": "category",
+          "business_concept": "Program Title",
+          "aliases": [
+            "title",
+            "show_name",
+            "program_name",
+            "name"
+          ]
+        },
+        "origin": {
+          "name": "origin",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The region or province where the program originates.",
+          "semantic_type": "country",
+          "business_concept": "Program Origin",
+          "aliases": [
+            "region",
+            "province",
+            "source_region",
+            "origin_area"
+          ]
+        },
+        "launch": {
+          "name": "launch",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The year the program was first launched or broadcast.",
+          "semantic_type": "date",
+          "business_concept": "Launch Year",
+          "aliases": [
+            "start_year",
+            "launch_year",
+            "first_broadcast",
+            "year"
+          ]
+        },
+        "owner": {
+          "name": "owner",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The broadcasting organization or media group that owns the program.",
+          "semantic_type": "organization_name",
+          "business_concept": "Media Owner",
+          "aliases": [
+            "owner_org",
+            "broadcaster",
+            "media_group",
+            "parent_company"
+          ]
+        }
+      }
+    },
+    "d_sports_competition__player": {
+      "table": {
+        "name": "d_sports_competition__player",
+        "column_count": 8,
+        "summary": "A table containing roster and performance statistics for rugby players, including their names, positions, club affiliations, and match metrics.",
+        "entity": "Rugby Player",
+        "role": "entity_table",
+        "aliases": [
+          "players",
+          "roster",
+          "team_players",
+          "rugby_players"
+        ]
+      },
+      "columns": {
+        "player_id": {
+          "name": "player_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each player record.",
+          "semantic_type": "identifier",
+          "business_concept": "Player ID",
+          "aliases": [
+            "id",
+            "pid",
+            "player_number"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the player.",
+          "semantic_type": "person_name",
+          "business_concept": "Player Name",
+          "aliases": [
+            "full_name",
+            "first_name",
+            "last_name",
+            "player_name"
+          ]
+        },
+        "position": {
+          "name": "position",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The specific playing position of the player within the team.",
+          "semantic_type": "category",
+          "business_concept": "Player Position",
+          "aliases": [
+            "pos",
+            "role",
+            "formation_position"
+          ]
+        },
+        "club_id": {
+          "name": "club_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A foreign key referencing the club or team the player is associated with.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Club ID",
+          "aliases": [
+            "team_id",
+            "club_code",
+            "organization_id"
+          ]
+        },
+        "apps": {
+          "name": "apps",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The number of matches the player has appeared in.",
+          "semantic_type": "quantity",
+          "business_concept": "Matches Played",
+          "aliases": [
+            "matches",
+            "games",
+            "appearances",
+            "caps"
+          ]
+        },
+        "tries": {
+          "name": "tries",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The number of tries (a type of scoring play) scored by the player.",
+          "semantic_type": "quantity",
+          "business_concept": "Tries Scored",
+          "aliases": [
+            "try_count",
+            "scoring_tries"
+          ]
+        },
+        "goals": {
+          "name": "goals",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The number of goals scored by the player, often represented as a ratio or count.",
+          "semantic_type": "quantity",
+          "business_concept": "Goals Scored",
+          "aliases": [
+            "goal_count",
+            "conversions",
+            "penalties"
+          ]
+        },
+        "points": {
+          "name": "points",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total points accumulated by the player based on their scoring activities.",
+          "semantic_type": "money",
+          "business_concept": "Total Points",
+          "aliases": [
+            "pts",
+            "score",
+            "total_score"
+          ]
+        }
+      }
+    },
+    "d_solvency_ii__finances": {
+      "table": {
+        "name": "d_solvency_ii__finances",
+        "column_count": 2,
+        "summary": "A table containing financial records with unique identifiers and qualitative status details.",
+        "entity": "Financial Record",
+        "role": "entity_table",
+        "aliases": [
+          "finance",
+          "financials",
+          "fin"
+        ]
+      },
+      "columns": {
+        "finance_id": {
+          "name": "finance_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each financial record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "finance_id",
+            "fk"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Categorical description of the financial record's status or quality.",
+          "semantic_type": "status",
+          "business_concept": "Financial Status",
+          "aliases": [
+            "status",
+            "quality",
+            "rating",
+            "details"
+          ]
+        }
+      }
+    },
+    "d_music_1__artist": {
+      "table": {
+        "name": "d_music_1__artist",
+        "column_count": 4,
+        "summary": "A reference table containing demographic and stylistic information about various artists.",
+        "entity": "artist",
+        "role": "entity_table",
+        "aliases": [
+          "artists",
+          "musician_info",
+          "performer_details"
+        ]
+      },
+      "columns": {
+        "artist_name": {
+          "name": "artist_name",
+          "dtype": "varchar2(50)",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The full name or primary identifier of the artist.",
+          "semantic_type": "person_name",
+          "business_concept": "Artist Identity",
+          "aliases": [
+            "name",
+            "full_name",
+            "artist_id",
+            "performer_name"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "varchar2(20)",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country of origin or primary residence of the artist.",
+          "semantic_type": "country",
+          "business_concept": "Nationality/Origin",
+          "aliases": [
+            "nation",
+            "origin_country",
+            "home_country",
+            "nationality"
+          ]
+        },
+        "gender": {
+          "name": "gender",
+          "dtype": "varchar2(20)",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The gender classification of the artist.",
+          "semantic_type": "category",
+          "business_concept": "Demographic Attribute",
+          "aliases": [
+            "sex",
+            "gender_code",
+            "biological_sex"
+          ]
+        },
+        "preferred_genre": {
+          "name": "preferred_genre",
+          "dtype": "varchar2(50)",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The primary musical genre associated with the artist.",
+          "semantic_type": "category",
+          "business_concept": "Musical Style",
+          "aliases": [
+            "genre",
+            "music_genre",
+            "style",
+            "category"
+          ]
+        }
+      }
+    },
+    "d_college_1__department": {
+      "table": {
+        "name": "d_college_1__department",
+        "column_count": 6,
+        "summary": "A table containing metadata and contact information for various academic departments, including their codes, names, associated schools, and office locations.",
+        "entity": "Department",
+        "role": "lookup_table",
+        "aliases": [
+          "dept",
+          "departments",
+          "academic_departments",
+          "org_units"
+        ]
+      },
+      "columns": {
+        "dept_code": {
+          "name": "dept_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A unique alphanumeric identifier for a specific department.",
+          "semantic_type": "code",
+          "business_concept": "Department Identifier",
+          "aliases": [
+            "dept_id",
+            "department_code",
+            "dept_key",
+            "d_code"
+          ]
+        },
+        "dept_name": {
+          "name": "dept_name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The full textual name of the department.",
+          "semantic_type": "organization_name",
+          "business_concept": "Department Name",
+          "aliases": [
+            "dept_title",
+            "department_name",
+            "name",
+            "d_name"
+          ]
+        },
+        "school_code": {
+          "name": "school_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A code representing the school or college to which the department belongs.",
+          "semantic_type": "code",
+          "business_concept": "School Identifier",
+          "aliases": [
+            "school_id",
+            "college_code",
+            "parent_unit_code",
+            "s_code"
+          ]
+        },
+        "emp_num": {
+          "name": "emp_num",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "An employee number, likely representing the primary contact or head of the department.",
+          "semantic_type": "identifier",
+          "business_concept": "Employee ID",
+          "aliases": [
+            "employee_id",
+            "staff_id",
+            "contact_id",
+            "emp_id"
+          ]
+        },
+        "dept_address": {
+          "name": "dept_address",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The physical location of the department, including room number and mail box.",
+          "semantic_type": "address",
+          "business_concept": "Office Location",
+          "aliases": [
+            "office_address",
+            "location",
+            "room",
+            "d_address"
+          ]
+        },
+        "dept_extension": {
+          "name": "dept_extension",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A numeric extension code for the department's phone line.",
+          "semantic_type": "code",
+          "business_concept": "Phone Extension",
+          "aliases": [
+            "phone_ext",
+            "ext",
+            "extension",
+            "d_ext"
+          ]
+        }
+      }
+    },
+    "d_flight_2__airlines": {
+      "table": {
+        "name": "d_flight_2__airlines",
+        "column_count": 4,
+        "summary": "A reference table containing master data for commercial airlines, including their full names, standard abbreviations, and country of origin.",
+        "entity": "Airline",
+        "role": "lookup_table",
+        "aliases": [
+          "airlines_master",
+          "carrier_lookup",
+          "airline_reference"
+        ]
+      },
+      "columns": {
+        "uid": {
+          "name": "uid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique internal identifier for each airline record.",
+          "semantic_type": "identifier",
+          "business_concept": "Airline ID",
+          "aliases": [
+            "airline_id",
+            "id",
+            "carrier_id"
+          ]
+        },
+        "airline": {
+          "name": "airline",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full legal or common name of the airline company.",
+          "semantic_type": "organization_name",
+          "business_concept": "Airline Name",
+          "aliases": [
+            "full_name",
+            "carrier_name",
+            "company_name"
+          ]
+        },
+        "abbreviation": {
+          "name": "abbreviation",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The standard IATA or ICAO two- or three-letter code used to identify the airline.",
+          "semantic_type": "code",
+          "business_concept": "Airline Code",
+          "aliases": [
+            "iata_code",
+            "icao_code",
+            "carrier_code",
+            "short_code"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country where the airline is headquartered or registered, represented by a short code.",
+          "semantic_type": "country",
+          "business_concept": "Country of Origin",
+          "aliases": [
+            "country_code",
+            "iso_country",
+            "headquarters_country"
+          ]
+        }
+      }
+    },
+    "d_cre_Doc_Control_Systems__addresses": {
+      "table": {
+        "name": "d_cre_Doc_Control_Systems__addresses",
+        "column_count": 2,
+        "summary": "Stores unique address identifiers and their corresponding country codes.",
+        "entity": "Address",
+        "role": "lookup_table",
+        "aliases": [
+          "addr",
+          "address_info",
+          "country_addresses"
+        ]
+      },
+      "columns": {
+        "address_id": {
+          "name": "address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each address record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "addr_id",
+            "address_key"
+          ]
+        },
+        "address_details": {
+          "name": "address_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The ISO country code representing the country associated with the address.",
+          "semantic_type": "code",
+          "business_concept": "Country Code",
+          "aliases": [
+            "country_code",
+            "cc",
+            "iso_code",
+            "nation"
+          ]
+        }
+      }
+    },
+    "d_formula_1__circuits": {
+      "table": {
+        "name": "d_formula_1__circuits",
+        "column_count": 9,
+        "summary": "A reference table containing metadata, location details, and identifiers for Formula 1 racing circuits.",
+        "entity": "racing_circuit",
+        "role": "lookup_table",
+        "aliases": [
+          "f1_circuits",
+          "race_tracks",
+          "gp_circuits",
+          "circuit_reference"
+        ]
+      },
+      "columns": {
+        "circuitid": {
+          "name": "circuitid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each racing circuit.",
+          "semantic_type": "identifier",
+          "business_concept": "Circuit ID",
+          "aliases": [
+            "id",
+            "circuit_key",
+            "track_id"
+          ]
+        },
+        "circuitref": {
+          "name": "circuitref",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "A short, abbreviated name or code for the circuit.",
+          "semantic_type": "code",
+          "business_concept": "Circuit Reference",
+          "aliases": [
+            "ref",
+            "short_name",
+            "abbr"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full official name of the racing circuit.",
+          "semantic_type": "organization_name",
+          "business_concept": "Circuit Name",
+          "aliases": [
+            "full_name",
+            "title",
+            "official_name"
+          ]
+        },
+        "location": {
+          "name": "location",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The city where the circuit is situated.",
+          "semantic_type": "city",
+          "business_concept": "City",
+          "aliases": [
+            "city",
+            "municipality",
+            "town"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The country where the circuit is located.",
+          "semantic_type": "country",
+          "business_concept": "Country",
+          "aliases": [
+            "nation",
+            "land",
+            "sovereign_state"
+          ]
+        },
+        "lat": {
+          "name": "lat",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Latitude coordinate of the circuit's location.",
+          "semantic_type": "unknown",
+          "business_concept": "Latitude",
+          "aliases": [
+            "latitude",
+            "lat_coord",
+            "y_coord"
+          ]
+        },
+        "lng": {
+          "name": "lng",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "Longitude coordinate of the circuit's location.",
+          "semantic_type": "unknown",
+          "business_concept": "Longitude",
+          "aliases": [
+            "longitude",
+            "lng_coord",
+            "x_coord"
+          ]
+        },
+        "alt": {
+          "name": "alt",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Elevation of the circuit above sea level.",
+          "semantic_type": "unknown",
+          "business_concept": "Elevation",
+          "aliases": [
+            "altitude",
+            "elevation",
+            "height",
+            "meters_above_sea"
+          ]
+        },
+        "url": {
+          "name": "url",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Web link to the circuit's Wikipedia page.",
+          "semantic_type": "unknown",
+          "business_concept": "External Reference",
+          "aliases": [
+            "wiki_url",
+            "link",
+            "homepage",
+            "source_url"
+          ]
+        }
+      }
+    },
+    "d_flight_4__routes": {
+      "table": {
+        "name": "d_flight_4__routes",
+        "column_count": 8,
+        "summary": "A table defining flight routes, specifying the origin and destination airports, the operating airline, and associated route identifiers.",
+        "entity": "flight_route",
+        "role": "lookup_table",
+        "aliases": [
+          "flights",
+          "routes",
+          "flight_paths",
+          "airline_routes"
+        ]
+      },
+      "columns": {
+        "rid": {
+          "name": "rid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific route record.",
+          "semantic_type": "identifier",
+          "business_concept": "Route ID",
+          "aliases": [
+            "route_id",
+            "id",
+            "rid"
+          ]
+        },
+        "dst_apid": {
+          "name": "dst_apid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Numeric code representing the destination airport.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Destination Airport ID",
+          "aliases": [
+            "dest_apid",
+            "destination_id",
+            "d_apid"
+          ]
+        },
+        "dst_ap": {
+          "name": "dst_ap",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "IATA or ICAO code representing the destination airport.",
+          "semantic_type": "code",
+          "business_concept": "Destination Airport Code",
+          "aliases": [
+            "dest_ap",
+            "destination_code",
+            "d_ap",
+            "arrival_airport"
+          ]
+        },
+        "src_apid": {
+          "name": "src_apid",
+          "dtype": "bigint",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Numeric code representing the source airport.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Source Airport ID",
+          "aliases": [
+            "src_apid",
+            "origin_id",
+            "s_apid"
+          ]
+        },
+        "src_ap": {
+          "name": "src_ap",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "IATA or ICAO code representing the source airport.",
+          "semantic_type": "code",
+          "business_concept": "Source Airport Code",
+          "aliases": [
+            "src_ap",
+            "origin_code",
+            "s_ap",
+            "departure_airport"
+          ]
+        },
+        "alid": {
+          "name": "alid",
+          "dtype": "bigint",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Numeric identifier for the specific flight leg or schedule within the route.",
+          "semantic_type": "identifier",
+          "business_concept": "Leg ID",
+          "aliases": [
+            "leg_id",
+            "flight_id",
+            "al_id"
+          ]
+        },
+        "airline": {
+          "name": "airline",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "IATA code of the airline operating the flight.",
+          "semantic_type": "code",
+          "business_concept": "Operating Airline Code",
+          "aliases": [
+            "airline_code",
+            "carrier",
+            "airline_id",
+            "operating_carrier"
+          ]
+        },
+        "codeshare": {
+          "name": "codeshare",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Indicates if the flight is a codeshare agreement (empty string likely means no codeshare).",
+          "semantic_type": "boolean",
+          "business_concept": "Codeshare Status",
+          "aliases": [
+            "is_codeshare",
+            "cs_flag",
+            "shared"
+          ]
+        }
+      }
+    },
+    "d_customers_and_invoices__product_categories": {
+      "table": {
+        "name": "d_customers_and_invoices__product_categories",
+        "column_count": 3,
+        "summary": "A lookup table defining product categories, their descriptions, and associated VAT ratings.",
+        "entity": "Product Category",
+        "role": "lookup_table",
+        "aliases": [
+          "product_category_master",
+          "category_definitions",
+          "prod_cat_lookup"
+        ]
+      },
+      "columns": {
+        "production_type_code": {
+          "name": "production_type_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A unique alphanumeric code representing the type of product category.",
+          "semantic_type": "code",
+          "business_concept": "Category Identifier",
+          "aliases": [
+            "prod_type_code",
+            "category_code",
+            "type_code"
+          ]
+        },
+        "product_type_description": {
+          "name": "product_type_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A human-readable text description of the product category.",
+          "semantic_type": "description",
+          "business_concept": "Category Description",
+          "aliases": [
+            "prod_type_desc",
+            "category_name",
+            "type_description"
+          ]
+        },
+        "vat_rating": {
+          "name": "vat_rating",
+          "dtype": "decimal",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The Value Added Tax (VAT) percentage applicable to products in this category.",
+          "semantic_type": "money",
+          "business_concept": "Tax Rate",
+          "aliases": [
+            "vat_rate",
+            "tax_percentage",
+            "vat_percent"
+          ]
+        }
+      }
+    },
+    "d_driving_school__customers": {
+      "table": {
+        "name": "d_driving_school__customers",
+        "column_count": 11,
+        "summary": "A master table containing demographic, contact, and financial status information for individual customers.",
+        "entity": "Customer",
+        "role": "entity_table",
+        "aliases": [
+          "cust",
+          "clients",
+          "accounts"
+        ]
+      },
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each customer record.",
+          "semantic_type": "identifier",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "id",
+            "customer_number"
+          ]
+        },
+        "customer_address_id": {
+          "name": "customer_address_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key linking the customer to their primary address record.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Primary Address ID",
+          "aliases": [
+            "addr_id",
+            "address_ref",
+            "home_address_id"
+          ]
+        },
+        "customer_status_code": {
+          "name": "customer_status_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Categorical indicator of the customer's current standing or quality.",
+          "semantic_type": "status",
+          "business_concept": "Customer Status",
+          "aliases": [
+            "status",
+            "cust_status",
+            "quality_flag"
+          ]
+        },
+        "date_became_customer": {
+          "name": "date_became_customer",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the customer first registered or made a purchase.",
+          "semantic_type": "timestamp",
+          "business_concept": "Registration Date",
+          "aliases": [
+            "signup_date",
+            "created_at",
+            "join_date",
+            "first_purchase_date"
+          ]
+        },
+        "date_of_birth": {
+          "name": "date_of_birth",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The birth date of the customer.",
+          "semantic_type": "date",
+          "business_concept": "Date of Birth",
+          "aliases": [
+            "dob",
+            "birth_date",
+            "born"
+          ]
+        },
+        "first_name": {
+          "name": "first_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The given name of the customer.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "fname",
+            "fn",
+            "given_name"
+          ]
+        },
+        "last_name": {
+          "name": "last_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The family name of the customer.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "lname",
+            "ln",
+            "surname"
+          ]
+        },
+        "amount_outstanding": {
+          "name": "amount_outstanding",
+          "dtype": "double",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total monetary value of unpaid invoices or debts for the customer.",
+          "semantic_type": "money",
+          "business_concept": "Outstanding Balance",
+          "aliases": [
+            "balance",
+            "outstanding",
+            "debt",
+            "amount_due"
+          ]
+        },
+        "email_address": {
+          "name": "email_address",
+          "dtype": "string",
+          "value_patterns": [
+            "email_like"
+          ],
+          "meaning": "The primary email contact address for the customer.",
+          "semantic_type": "email",
+          "business_concept": "Email Address",
+          "aliases": [
+            "email",
+            "e_mail",
+            "contact_email"
+          ]
+        },
+        "phone_number": {
+          "name": "phone_number",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The primary telephone number associated with the customer.",
+          "semantic_type": "phone",
+          "business_concept": "Phone Number",
+          "aliases": [
+            "phone",
+            "tel",
+            "main_phone",
+            "home_phone"
+          ]
+        },
+        "cell_mobile_phone_number": {
+          "name": "cell_mobile_phone_number",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The mobile or cellular phone number associated with the customer.",
+          "semantic_type": "phone",
+          "business_concept": "Mobile Phone Number",
+          "aliases": [
+            "mobile",
+            "cell",
+            "phone_mobile",
+            "cell_phone"
+          ]
+        }
+      }
+    },
+    "d_baseball_1__team_franchise": {
+      "table": {
+        "name": "d_baseball_1__team_franchise",
+        "column_count": 4,
+        "summary": "A reference table containing information about sports franchises, including their identifiers, full names, active status, and National Association affiliations.",
+        "entity": "Sports Franchise",
+        "role": "lookup_table",
+        "aliases": [
+          "franchises",
+          "teams",
+          "sport_teams",
+          "mlb_franchises"
+        ]
+      },
+      "columns": {
+        "franchise_id": {
+          "name": "franchise_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique short code identifier for a specific sports franchise.",
+          "semantic_type": "identifier",
+          "business_concept": "Franchise Identifier",
+          "aliases": [
+            "franchise_code",
+            "team_code",
+            "short_code",
+            "id"
+          ]
+        },
+        "franchise_name": {
+          "name": "franchise_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full official name of the sports franchise.",
+          "semantic_type": "organization_name",
+          "business_concept": "Franchise Name",
+          "aliases": [
+            "team_name",
+            "full_name",
+            "official_name"
+          ]
+        },
+        "active": {
+          "name": "active",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A flag indicating whether the franchise is currently active.",
+          "semantic_type": "boolean",
+          "business_concept": "Active Status",
+          "aliases": [
+            "is_active",
+            "status",
+            "active_flag",
+            "current"
+          ]
+        },
+        "na_assoc": {
+          "name": "na_assoc",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The code representing the franchise's association with a National Association (e.g., PNA, BNA).",
+          "semantic_type": "code",
+          "business_concept": "National Association Affiliation",
+          "aliases": [
+            "na_code",
+            "association_code",
+            "league_code",
+            "affiliation"
+          ]
+        }
+      }
+    },
+    "d_debate__people": {
+      "table": {
+        "name": "d_debate__people",
+        "column_count": 5,
+        "summary": "A dataset containing demographic and political affiliation information for individuals, likely representing members of a legislative body or similar organization.",
+        "entity": "Person",
+        "role": "entity_table",
+        "aliases": [
+          "legislators",
+          "members",
+          "congress",
+          "representatives"
+        ]
+      },
+      "columns": {
+        "people_id": {
+          "name": "people_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each individual record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "pk",
+            "person_id",
+            "legislator_id"
+          ]
+        },
+        "district": {
+          "name": "district",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The specific geographic district or constituency the individual represents.",
+          "semantic_type": "category",
+          "business_concept": "District",
+          "aliases": [
+            "constituency",
+            "district_name",
+            "region"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full legal name of the individual.",
+          "semantic_type": "person_name",
+          "business_concept": "Full Name",
+          "aliases": [
+            "full_name",
+            "first_name",
+            "last_name",
+            "name_first_last"
+          ]
+        },
+        "party": {
+          "name": "party",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The political party affiliation of the individual.",
+          "semantic_type": "category",
+          "business_concept": "Political Party",
+          "aliases": [
+            "party_affiliation",
+            "pol_party",
+            "party_name"
+          ]
+        },
+        "age": {
+          "name": "age",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The current age of the individual in years.",
+          "semantic_type": "quantity",
+          "business_concept": "Age",
+          "aliases": [
+            "years_old",
+            "age_years"
+          ]
+        }
+      }
+    },
+    "d_phone_1__chip_model": {
+      "table": {
+        "name": "d_phone_1__chip_model",
+        "column_count": 7,
+        "summary": "A catalog of mobile phone chip models detailing their specifications, release dates, and hardware capabilities.",
+        "entity": "Chip Model",
+        "role": "lookup_table",
+        "aliases": [
+          "chip_catalog",
+          "processor_specs",
+          "mobile_chip_inventory",
+          "soc_models"
+        ]
+      },
+      "columns": {
+        "model_name": {
+          "name": "model_name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The specific name or designation of the chip model, often including tier or variant information.",
+          "semantic_type": "identifier",
+          "business_concept": "Product Name",
+          "aliases": [
+            "model",
+            "chip_name",
+            "part_number",
+            "sku"
+          ]
+        },
+        "launch_year": {
+          "name": "launch_year",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The year the chip model was released to the market.",
+          "semantic_type": "date",
+          "business_concept": "Release Date",
+          "aliases": [
+            "release_year",
+            "year_introduced",
+            "launch_date"
+          ]
+        },
+        "ram_mib": {
+          "name": "ram_mib",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The amount of Random Access Memory supported by the chip, measured in Megabytes.",
+          "semantic_type": "quantity",
+          "business_concept": "Memory Capacity",
+          "aliases": [
+            "ram",
+            "memory",
+            "ram_size",
+            "l2_cache"
+          ]
+        },
+        "rom_mib": {
+          "name": "rom_mib",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The amount of Read-Only Memory (storage) supported by the chip, measured in Megabytes.",
+          "semantic_type": "quantity",
+          "business_concept": "Storage Capacity",
+          "aliases": [
+            "rom",
+            "storage",
+            "flash_memory",
+            "rom_size"
+          ]
+        },
+        "slots": {
+          "name": "slots",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The types and quantities of memory card slots supported by the device using this chip.",
+          "semantic_type": "description",
+          "business_concept": "Expansion Slots",
+          "aliases": [
+            "card_slots",
+            "memory_slots",
+            "expansion"
+          ]
+        },
+        "wifi": {
+          "name": "wifi",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The wireless networking standard supported by the chip.",
+          "semantic_type": "code",
+          "business_concept": "Wireless Connectivity",
+          "aliases": [
+            "wireless",
+            "network_type",
+            "wifi_standard"
+          ]
+        },
+        "bluetooth": {
+          "name": "bluetooth",
+          "dtype": "text",
+          "value_patterns": [
+            "boolean_like",
+            "short_code_like"
+          ],
+          "meaning": "Indicates whether the chip supports Bluetooth connectivity.",
+          "semantic_type": "boolean",
+          "business_concept": "Bluetooth Support",
+          "aliases": [
+            "bt",
+            "bluetooth_support",
+            "wireless_bluetooth"
+          ]
+        }
+      }
+    },
+    "d_car_1__car_makers": {
+      "table": {
+        "name": "d_car_1__car_makers",
+        "column_count": 4,
+        "summary": "A reference table containing information about automobile manufacturers, including their internal IDs, short codes, full names, and country codes.",
+        "entity": "Car Maker",
+        "role": "lookup_table",
+        "aliases": [
+          "automakers",
+          "car_manufacturers",
+          "vehicle_makers",
+          "auto_companies"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique internal identifier for each car maker record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "maker_id",
+            "auto_id",
+            "company_id"
+          ]
+        },
+        "maker": {
+          "name": "maker",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Short code or abbreviation representing the car manufacturer.",
+          "semantic_type": "code",
+          "business_concept": "Manufacturer Code",
+          "aliases": [
+            "abbr",
+            "short_name",
+            "ticker",
+            "code"
+          ]
+        },
+        "fullname": {
+          "name": "fullname",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The complete legal or official name of the car manufacturer.",
+          "semantic_type": "organization_name",
+          "business_concept": "Company Name",
+          "aliases": [
+            "name",
+            "official_name",
+            "full_name",
+            "company_name"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Numeric code representing the country of origin for the car maker.",
+          "semantic_type": "code",
+          "business_concept": "Country Code",
+          "aliases": [
+            "country_code",
+            "origin_code",
+            "nation_code"
+          ]
+        }
+      }
+    },
+    "d_department_management__department": {
+      "table": {
+        "name": "d_department_management__department",
+        "column_count": 6,
+        "summary": "A reference table containing metadata and statistics for various government departments, including their names, founding years, rankings, and resource allocations.",
+        "entity": "Government Department",
+        "role": "lookup_table",
+        "aliases": [
+          "dept",
+          "gov_dept",
+          "agency",
+          "ministry"
+        ]
+      },
+      "columns": {
+        "department_id": {
+          "name": "department_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each department record.",
+          "semantic_type": "identifier",
+          "business_concept": "Department ID",
+          "aliases": [
+            "dept_id",
+            "id",
+            "department_code"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The official name of the government department.",
+          "semantic_type": "organization_name",
+          "business_concept": "Department Name",
+          "aliases": [
+            "dept_name",
+            "title",
+            "agency_name"
+          ]
+        },
+        "creation": {
+          "name": "creation",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The year in which the department was established.",
+          "semantic_type": "date",
+          "business_concept": "Year of Establishment",
+          "aliases": [
+            "founded",
+            "established",
+            "created",
+            "year_created"
+          ]
+        },
+        "ranking": {
+          "name": "ranking",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A numeric rank assigned to the department, likely based on size, budget, or importance.",
+          "semantic_type": "code",
+          "business_concept": "Department Rank",
+          "aliases": [
+            "rank",
+            "priority",
+            "order"
+          ]
+        },
+        "budget_in_billions": {
+          "name": "budget_in_billions",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The annual budget allocated to the department, expressed in billions of currency units.",
+          "semantic_type": "money",
+          "business_concept": "Annual Budget",
+          "aliases": [
+            "budget",
+            "funding",
+            "allocation",
+            "spending"
+          ]
+        },
+        "num_employees": {
+          "name": "num_employees",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The total count of personnel employed by the department.",
+          "semantic_type": "quantity",
+          "business_concept": "Headcount",
+          "aliases": [
+            "employees",
+            "staff_count",
+            "personnel",
+            "workforce"
+          ]
+        }
+      }
+    },
+    "d_assets_maintenance__maintenance_engineers": {
+      "table": {
+        "name": "d_assets_maintenance__maintenance_engineers",
+        "column_count": 5,
+        "summary": "A table containing demographic and identification information for maintenance engineers, including their unique ID, associated company, and name details.",
+        "entity": "Maintenance Engineer",
+        "role": "entity_table",
+        "aliases": [
+          "eng_team",
+          "staff_maintenance",
+          "tech_personnel"
+        ]
+      },
+      "columns": {
+        "engineer_id": {
+          "name": "engineer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each maintenance engineer record.",
+          "semantic_type": "identifier",
+          "business_concept": "Employee ID",
+          "aliases": [
+            "emp_id",
+            "eng_no",
+            "id"
+          ]
+        },
+        "company_id": {
+          "name": "company_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier linking the engineer to their employing organization.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Organization ID",
+          "aliases": [
+            "org_id",
+            "comp_id",
+            "company_code"
+          ]
+        },
+        "first_name": {
+          "name": "first_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The given name of the maintenance engineer.",
+          "semantic_type": "person_name",
+          "business_concept": "First Name",
+          "aliases": [
+            "fname",
+            "fn",
+            "given_name"
+          ]
+        },
+        "last_name": {
+          "name": "last_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The family name of the maintenance engineer.",
+          "semantic_type": "person_name",
+          "business_concept": "Last Name",
+          "aliases": [
+            "lname",
+            "ln",
+            "surname"
+          ]
+        },
+        "other_details": {
+          "name": "other_details",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Additional descriptive information about the engineer, such as skill level or status.",
+          "semantic_type": "description",
+          "business_concept": "Engineer Notes",
+          "aliases": [
+            "notes",
+            "info",
+            "skills"
+          ]
+        }
+      }
+    },
+    "d_document_management__images": {
+      "table": {
+        "name": "d_document_management__images",
+        "column_count": 4,
+        "summary": "A table storing metadata and access links for a collection of images, likely associated with a content management system or media library.",
+        "entity": "image",
+        "role": "entity_table",
+        "aliases": [
+          "media",
+          "pictures",
+          "assets",
+          "photo_metadata"
+        ]
+      },
+      "columns": {
+        "image_id": {
+          "name": "image_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique numeric identifier for each image record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Image ID",
+          "aliases": [
+            "id",
+            "img_id",
+            "image_key"
+          ]
+        },
+        "image_alt_text": {
+          "name": "image_alt_text",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Alternative text description for the image, currently containing sample values that appear to be person names, suggesting a data quality issue or specific use case for naming images after people.",
+          "semantic_type": "description",
+          "business_concept": "Image Alt Text",
+          "aliases": [
+            "alt",
+            "alt_text",
+            "description",
+            "caption"
+          ]
+        },
+        "image_name": {
+          "name": "image_name",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A short label or name for the image, with samples indicating a pattern of categorization (e.g., 'top1', 'chapter1') or naming after individuals.",
+          "semantic_type": "code",
+          "business_concept": "Image Name",
+          "aliases": [
+            "name",
+            "title",
+            "label",
+            "short_name"
+          ]
+        },
+        "image_url": {
+          "name": "image_url",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The web address where the image file is hosted or can be retrieved.",
+          "semantic_type": "unknown",
+          "business_concept": "Image URL",
+          "aliases": [
+            "url",
+            "link",
+            "source",
+            "path",
+            "href"
+          ]
+        }
+      }
+    },
+    "d_baseball_1__batting": {
+      "table": {
+        "name": "d_baseball_1__batting",
+        "column_count": 22,
+        "summary": "Historical Major League Baseball batting statistics for individual players across specific seasons, teams, and stints.",
+        "entity": "player_season_batting_record",
+        "role": "transaction_table",
+        "aliases": [
+          "mlb_batting",
+          "player_batting_stats",
+          "baseball_batting",
+          "batting_records"
+        ]
+      },
+      "columns": {
+        "player_id": {
+          "name": "player_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific player within the database.",
+          "semantic_type": "identifier",
+          "business_concept": "Player ID",
+          "aliases": [
+            "pid",
+            "player_code",
+            "key"
+          ]
+        },
+        "year": {
+          "name": "year",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The calendar year in which the batting statistics were recorded.",
+          "semantic_type": "date",
+          "business_concept": "Season Year",
+          "aliases": [
+            "yr",
+            "season",
+            "year_id"
+          ]
+        },
+        "stint": {
+          "name": "stint",
+          "dtype": "integer",
+          "value_patterns": [
+            "boolean_like",
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Indicates the specific period or contract a player had with a team during a season (e.g., 1 for primary stint, 2 for second stint).",
+          "semantic_type": "unknown",
+          "business_concept": "Stint Number",
+          "aliases": [
+            "stint_id",
+            "period"
+          ]
+        },
+        "team_id": {
+          "name": "team_id",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the team the player was associated with during the recorded season.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Team ID",
+          "aliases": [
+            "tid",
+            "team_code",
+            "franchise"
+          ]
+        },
+        "league_id": {
+          "name": "league_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Identifier for the league (e.g., MLB, NPB) in which the statistics were recorded. Often empty in this specific dataset context.",
+          "semantic_type": "code",
+          "business_concept": "League ID",
+          "aliases": [
+            "lid",
+            "league_code"
+          ]
+        },
+        "g": {
+          "name": "g",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of games the player appeared in during the season.",
+          "semantic_type": "quantity",
+          "business_concept": "Games Played",
+          "aliases": [
+            "gp",
+            "games",
+            "g_total"
+          ]
+        },
+        "ab": {
+          "name": "ab",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of official at-bats.",
+          "semantic_type": "quantity",
+          "business_concept": "At Bats",
+          "aliases": [
+            "at_bats",
+            "ab_total"
+          ]
+        },
+        "r": {
+          "name": "r",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of runs scored by the player.",
+          "semantic_type": "quantity",
+          "business_concept": "Runs Scored",
+          "aliases": [
+            "runs",
+            "r_total"
+          ]
+        },
+        "h": {
+          "name": "h",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of hits achieved.",
+          "semantic_type": "quantity",
+          "business_concept": "Hits",
+          "aliases": [
+            "hits",
+            "h_total"
+          ]
+        },
+        "double": {
+          "name": "double",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of doubles hit.",
+          "semantic_type": "quantity",
+          "business_concept": "Doubles",
+          "aliases": [
+            "2b",
+            "doubles_total"
+          ]
+        },
+        "triple": {
+          "name": "triple",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of triples hit.",
+          "semantic_type": "quantity",
+          "business_concept": "Triples",
+          "aliases": [
+            "3b",
+            "triples_total"
+          ]
+        },
+        "hr": {
+          "name": "hr",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of home runs hit.",
+          "semantic_type": "quantity",
+          "business_concept": "Home Runs",
+          "aliases": [
+            "homeruns",
+            "hrt",
+            "hr_total"
+          ]
+        },
+        "rbi": {
+          "name": "rbi",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of runs batted in.",
+          "semantic_type": "quantity",
+          "business_concept": "Runs Batted In",
+          "aliases": [
+            "rbis",
+            "rbi_total"
+          ]
+        },
+        "sb": {
+          "name": "sb",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of successful stolen bases.",
+          "semantic_type": "quantity",
+          "business_concept": "Stolen Bases",
+          "aliases": [
+            "stolen_bases",
+            "sb_total"
+          ]
+        },
+        "cs": {
+          "name": "cs",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of caught stealing attempts.",
+          "semantic_type": "quantity",
+          "business_concept": "Caught Stealing",
+          "aliases": [
+            "caught_stealing",
+            "cs_total"
+          ]
+        },
+        "bb": {
+          "name": "bb",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of bases on balls (walks) received.",
+          "semantic_type": "quantity",
+          "business_concept": "Walks",
+          "aliases": [
+            "bases_on_balls",
+            "walks",
+            "bb_total"
+          ]
+        },
+        "so": {
+          "name": "so",
+          "dtype": "numeric",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Total number of strikeouts.",
+          "semantic_type": "quantity",
+          "business_concept": "Strikeouts",
+          "aliases": [
+            "strikeouts",
+            "so_total"
+          ]
+        },
+        "ibb": {
+          "name": "ibb",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of intentional walks received.",
+          "semantic_type": "quantity",
+          "business_concept": "Intentional Walks",
+          "aliases": [
+            "intentional_walks",
+            "ibb_total"
+          ]
+        },
+        "hbp": {
+          "name": "hbp",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of times hit by a pitch.",
+          "semantic_type": "quantity",
+          "business_concept": "Hit By Pitch",
+          "aliases": [
+            "hbp_total",
+            "hit_by_pitch"
+          ]
+        },
+        "sh": {
+          "name": "sh",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of sacrifice hits.",
+          "semantic_type": "quantity",
+          "business_concept": "Sacrifice Hits",
+          "aliases": [
+            "sacrifice_hits",
+            "sh_total"
+          ]
+        },
+        "sf": {
+          "name": "sf",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of sacrifice flies.",
+          "semantic_type": "quantity",
+          "business_concept": "Sacrifice Flies",
+          "aliases": [
+            "sacrifice_flies",
+            "sf_total"
+          ]
+        },
+        "g_idp": {
+          "name": "g_idp",
+          "dtype": "numeric",
+          "value_patterns": [],
+          "meaning": "Total number of games where the player recorded an infield putout.",
+          "semantic_type": "quantity",
+          "business_concept": "Games with Infield Putouts",
+          "aliases": [
+            "g_idp_total",
+            "games_idp"
+          ]
+        }
+      }
+    },
+    "d_student_assessment__candidate_assessments": {
+      "table": {
+        "name": "d_student_assessment__candidate_assessments",
+        "column_count": 4,
+        "summary": "Records the results of candidate assessments, including the candidate identifier, qualification type, assessment date, and pass/fail outcome.",
+        "entity": "Assessment Record",
+        "role": "transaction_table",
+        "aliases": [
+          "candidate_assessments",
+          "assessment_results",
+          "exam_outcomes",
+          "qualification_records"
+        ]
+      },
+      "columns": {
+        "candidate_id": {
+          "name": "candidate_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the candidate who took the assessment.",
+          "semantic_type": "identifier",
+          "business_concept": "Candidate ID",
+          "aliases": [
+            "candidate_id",
+            "id",
+            "app_id",
+            "user_id"
+          ]
+        },
+        "qualification": {
+          "name": "qualification",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The specific qualification or exam type for which the assessment was conducted.",
+          "semantic_type": "category",
+          "business_concept": "Qualification Type",
+          "aliases": [
+            "qualification",
+            "exam_type",
+            "cert_type",
+            "subject"
+          ]
+        },
+        "assessment_date": {
+          "name": "assessment_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The date and time when the assessment took place.",
+          "semantic_type": "timestamp",
+          "business_concept": "Assessment Date",
+          "aliases": [
+            "assessment_date",
+            "exam_date",
+            "test_date",
+            "date_taken"
+          ]
+        },
+        "asessment_outcome_code": {
+          "name": "asessment_outcome_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The result of the assessment, indicating whether the candidate passed or failed.",
+          "semantic_type": "status",
+          "business_concept": "Assessment Outcome",
+          "aliases": [
+            "asessment_outcome_code",
+            "outcome",
+            "result",
+            "status",
+            "pass_fail"
+          ]
+        }
+      }
+    },
+    "d_dog_kennels__treatment_types": {
+      "table": {
+        "name": "d_dog_kennels__treatment_types",
+        "column_count": 2,
+        "summary": "A reference table defining standard categories of medical or veterinary treatments with unique codes and human-readable descriptions.",
+        "entity": "Treatment Type",
+        "role": "lookup_table",
+        "aliases": [
+          "treatment_categories",
+          "procedure_types",
+          "service_codes",
+          "medical_procedures"
+        ]
+      },
+      "columns": {
+        "treatment_type_code": {
+          "name": "treatment_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique alphanumeric identifier used to reference a specific type of treatment.",
+          "semantic_type": "code",
+          "business_concept": "Treatment Code",
+          "aliases": [
+            "treatment_id",
+            "procedure_code",
+            "svc_code",
+            "treatment_key"
+          ]
+        },
+        "treatment_type_description": {
+          "name": "treatment_type_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A textual explanation of the treatment type associated with the code.",
+          "semantic_type": "description",
+          "business_concept": "Treatment Description",
+          "aliases": [
+            "treatment_name",
+            "procedure_name",
+            "service_desc",
+            "treatment_label"
+          ]
+        }
+      }
+    },
+    "d_railway__manager": {
+      "table": {
+        "name": "d_railway__manager",
+        "column_count": 6,
+        "summary": "A table containing demographic and career statistics for professional golfers, including their names, nationalities, career start years, ages, and competitive levels.",
+        "entity": "Golf Player",
+        "role": "entity_table",
+        "aliases": [
+          "golfers",
+          "players",
+          "manager_golfers",
+          "pro_golfers"
+        ]
+      },
+      "columns": {
+        "manager_id": {
+          "name": "manager_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each record in the table, likely representing a specific player or manager entry.",
+          "semantic_type": "identifier",
+          "business_concept": "Unique ID",
+          "aliases": [
+            "id",
+            "player_id",
+            "pk",
+            "key"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the individual associated with the record.",
+          "semantic_type": "person_name",
+          "business_concept": "Full Name",
+          "aliases": [
+            "first_name",
+            "last_name",
+            "full_name",
+            "player_name"
+          ]
+        },
+        "country": {
+          "name": "country",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The nation of origin or primary representation for the individual.",
+          "semantic_type": "country",
+          "business_concept": "Nationality",
+          "aliases": [
+            "nationality",
+            "nation",
+            "origin",
+            "home_country"
+          ]
+        },
+        "working_year_starts": {
+          "name": "working_year_starts",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The year the individual began their professional career or the specific period being analyzed.",
+          "semantic_type": "date",
+          "business_concept": "Career Start Year",
+          "aliases": [
+            "start_year",
+            "career_start",
+            "year_started",
+            "pro_year"
+          ]
+        },
+        "age": {
+          "name": "age",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The current age of the individual at the time of the record.",
+          "semantic_type": "quantity",
+          "business_concept": "Age",
+          "aliases": [
+            "years_old",
+            "current_age",
+            "age_in_years"
+          ]
+        },
+        "level": {
+          "name": "level",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A numeric indicator representing the competitive tier, ranking, or classification of the individual.",
+          "semantic_type": "category",
+          "business_concept": "Competitive Level",
+          "aliases": [
+            "rank",
+            "tier",
+            "class",
+            "rating",
+            "division"
+          ]
+        }
+      }
+    },
+    "d_flight_1__certificate": {
+      "table": {
+        "name": "d_flight_1__certificate",
+        "column_count": 2,
+        "summary": "A table storing certificate records linked to specific entities and aid types.",
+        "entity": "Certificate",
+        "role": "entity_table",
+        "aliases": [
+          "cert",
+          "certificates",
+          "crt"
+        ]
+      },
+      "columns": {
+        "eid": {
+          "name": "eid",
+          "dtype": "number(9,0)",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific certificate record.",
+          "semantic_type": "identifier",
+          "business_concept": "Certificate ID",
+          "aliases": [
+            "cert_id",
+            "certificate_id",
+            "id"
+          ]
+        },
+        "aid": {
+          "name": "aid",
+          "dtype": "number(9,0)",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Identifier representing the type or category of the aid associated with the certificate.",
+          "semantic_type": "code",
+          "business_concept": "Aid Type Code",
+          "aliases": [
+            "aid_code",
+            "aid_type",
+            "aid_category"
+          ]
+        }
+      }
+    },
+    "d_course_teach__teacher": {
+      "table": {
+        "name": "d_course_teach__teacher",
+        "column_count": 4,
+        "summary": "A table containing demographic and personal information for teachers, including their ID, name, age, and hometown.",
+        "entity": "Teacher",
+        "role": "entity_table",
+        "aliases": [
+          "teachers",
+          "faculty",
+          "staff"
+        ]
+      },
+      "columns": {
+        "teacher_id": {
+          "name": "teacher_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each teacher record.",
+          "semantic_type": "identifier",
+          "business_concept": "Teacher ID",
+          "aliases": [
+            "id",
+            "teacher_code",
+            "emp_id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the teacher.",
+          "semantic_type": "person_name",
+          "business_concept": "Teacher Name",
+          "aliases": [
+            "full_name",
+            "first_name",
+            "last_name",
+            "name"
+          ]
+        },
+        "age": {
+          "name": "age",
+          "dtype": "text",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The current age of the teacher in years.",
+          "semantic_type": "quantity",
+          "business_concept": "Teacher Age",
+          "aliases": [
+            "years_old",
+            "age_in_years"
+          ]
+        },
+        "hometown": {
+          "name": "hometown",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The town or district where the teacher is from.",
+          "semantic_type": "city",
+          "business_concept": "Teacher Hometown",
+          "aliases": [
+            "origin",
+            "birthplace",
+            "district",
+            "location"
+          ]
+        }
+      }
+    },
+    "d_company_employee__people": {
+      "table": {
+        "name": "d_company_employee__people",
+        "column_count": 5,
+        "summary": "A table containing demographic and educational background information for individuals, likely athletes or public figures.",
+        "entity": "person",
+        "role": "entity_table",
+        "aliases": [
+          "people",
+          "personnel",
+          "individuals",
+          "players"
+        ]
+      },
+      "columns": {
+        "people_id": {
+          "name": "people_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "primary_key",
+          "aliases": [
+            "id",
+            "pk",
+            "person_id",
+            "employee_id"
+          ]
+        },
+        "age": {
+          "name": "age",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The current age of the person in years.",
+          "semantic_type": "quantity",
+          "business_concept": "age",
+          "aliases": [
+            "years_old",
+            "age_in_years",
+            "birth_year_offset"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the person.",
+          "semantic_type": "person_name",
+          "business_concept": "full_name",
+          "aliases": [
+            "first_name",
+            "last_name",
+            "full_name",
+            "name_str"
+          ]
+        },
+        "nationality": {
+          "name": "nationality",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The country of citizenship or origin for the person.",
+          "semantic_type": "country",
+          "business_concept": "nationality",
+          "aliases": [
+            "country",
+            "citizenship",
+            "origin",
+            "nationality_code"
+          ]
+        },
+        "graduation_college": {
+          "name": "graduation_college",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the college or university the person graduated from.",
+          "semantic_type": "organization_name",
+          "business_concept": "alma_mater",
+          "aliases": [
+            "college",
+            "university",
+            "school",
+            "alma_mater",
+            "degree_institution"
+          ]
+        }
+      }
+    },
+    "d_insurance_and_eClaims__policies": {
+      "table": {
+        "name": "d_insurance_and_eClaims__policies",
+        "column_count": 5,
+        "summary": "A table storing records of insurance or coverage policies, linking them to specific customers and defining their active periods and types.",
+        "entity": "Policy",
+        "role": "entity_table",
+        "aliases": [
+          "policies",
+          "policy_records",
+          "coverage_policies"
+        ]
+      },
+      "columns": {
+        "policy_id": {
+          "name": "policy_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each policy record.",
+          "semantic_type": "identifier",
+          "business_concept": "Policy ID",
+          "aliases": [
+            "policy_number",
+            "pol_id",
+            "id"
+          ]
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier linking the policy to a specific customer.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Customer ID",
+          "aliases": [
+            "cust_id",
+            "client_id",
+            "policyholder_id"
+          ]
+        },
+        "policy_type_code": {
+          "name": "policy_type_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A categorical code indicating the type of policy (e.g., Deputy, Jurisdiction, Uniformed).",
+          "semantic_type": "code",
+          "business_concept": "Policy Type",
+          "aliases": [
+            "policy_type",
+            "type_code",
+            "coverage_type"
+          ]
+        },
+        "start_date": {
+          "name": "start_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the policy coverage begins.",
+          "semantic_type": "timestamp",
+          "business_concept": "Policy Start Date",
+          "aliases": [
+            "effective_date",
+            "start",
+            "policy_start"
+          ]
+        },
+        "end_date": {
+          "name": "end_date",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The timestamp when the policy coverage expires or ends.",
+          "semantic_type": "timestamp",
+          "business_concept": "Policy End Date",
+          "aliases": [
+            "expiration_date",
+            "end",
+            "policy_end"
+          ]
+        }
+      }
+    },
+    "d_debate__debate": {
+      "table": {
+        "name": "d_debate__debate",
+        "column_count": 4,
+        "summary": "Records of debate events including their unique identifier, date, location, and audience size.",
+        "entity": "Debate Event",
+        "role": "entity_table",
+        "aliases": [
+          "debate_events",
+          "debates",
+          "event_log"
+        ]
+      },
+      "columns": {
+        "debate_id": {
+          "name": "debate_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific debate event.",
+          "semantic_type": "identifier",
+          "business_concept": "Event ID",
+          "aliases": [
+            "id",
+            "debate_key",
+            "event_id"
+          ]
+        },
+        "date": {
+          "name": "date",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The calendar date on which the debate took place.",
+          "semantic_type": "date",
+          "business_concept": "Event Date",
+          "aliases": [
+            "event_date",
+            "date_held",
+            "hold_date"
+          ]
+        },
+        "venue": {
+          "name": "venue",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The physical location where the debate was held, including city and country.",
+          "semantic_type": "address",
+          "business_concept": "Event Location",
+          "aliases": [
+            "location",
+            "city",
+            "site",
+            "host_city"
+          ]
+        },
+        "num_of_audience": {
+          "name": "num_of_audience",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The count of people attending the debate.",
+          "semantic_type": "quantity",
+          "business_concept": "Audience Size",
+          "aliases": [
+            "audience_count",
+            "attendance",
+            "attendees",
+            "capacity"
+          ]
+        }
+      }
+    },
+    "d_company_1__dept_locations": {
+      "table": {
+        "name": "d_company_1__dept_locations",
+        "column_count": 2,
+        "summary": "Maps department numbers to their physical office locations.",
+        "entity": "Department Location",
+        "role": "lookup_table",
+        "aliases": [
+          "dept_locations",
+          "department_locations",
+          "dept_loc"
+        ]
+      },
+      "columns": {
+        "dnumber": {
+          "name": "dnumber",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a department.",
+          "semantic_type": "identifier",
+          "business_concept": "Department ID",
+          "aliases": [
+            "dept_id",
+            "department_number",
+            "d_num"
+          ]
+        },
+        "dlocation": {
+          "name": "dlocation",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The city or specific site where the department is located.",
+          "semantic_type": "city",
+          "business_concept": "Office Location",
+          "aliases": [
+            "dept_location",
+            "office_city",
+            "site",
+            "location"
+          ]
+        }
+      }
+    },
+    "d_academic__cite": {
+      "table": {
+        "name": "d_academic__cite",
+        "column_count": 2,
+        "summary": "A relationship table defining citation links between entities.",
+        "entity": "citation",
+        "role": "relationship_table",
+        "aliases": [
+          "citations",
+          "links",
+          "references"
+        ]
+      },
+      "columns": {
+        "cited": {
+          "name": "cited",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The ID of the entity being cited or referenced.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "referenced_entity_id",
+          "aliases": [
+            "target_id",
+            "reference_id",
+            "source_id"
+          ]
+        },
+        "citing": {
+          "name": "citing",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "The ID of the entity that performs the citation or reference.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "citing_entity_id",
+          "aliases": [
+            "source_id",
+            "reference_id",
+            "target_id"
+          ]
+        }
+      }
+    },
+    "d_musical__actor": {
+      "table": {
+        "name": "d_musical__actor",
+        "column_count": 6,
+        "summary": "A table containing information about actors, including their names, associated musicals, characters played, tenure duration, and age.",
+        "entity": "Actor",
+        "role": "entity_table",
+        "aliases": [
+          "actors",
+          "cast_members",
+          "performers"
+        ]
+      },
+      "columns": {
+        "actor_id": {
+          "name": "actor_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for each actor record in the table.",
+          "semantic_type": "identifier",
+          "business_concept": "Actor ID",
+          "aliases": [
+            "id",
+            "actor_key",
+            "primary_key"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name of the actor.",
+          "semantic_type": "person_name",
+          "business_concept": "Actor Name",
+          "aliases": [
+            "full_name",
+            "actor_name",
+            "real_name"
+          ]
+        },
+        "musical_id": {
+          "name": "musical_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A foreign key linking the actor to a specific musical production.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Musical Production ID",
+          "aliases": [
+            "musical_key",
+            "show_id",
+            "production_id"
+          ]
+        },
+        "character": {
+          "name": "character",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the character played by the actor in the associated musical.",
+          "semantic_type": "person_name",
+          "business_concept": "Character Name",
+          "aliases": [
+            "role",
+            "character_name",
+            "part"
+          ]
+        },
+        "duration": {
+          "name": "duration",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The time period during which the actor played the character, often indicating start and end years.",
+          "semantic_type": "date",
+          "business_concept": "Tenure Period",
+          "aliases": [
+            "years",
+            "period",
+            "tenure",
+            "dates"
+          ]
+        },
+        "age": {
+          "name": "age",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The age of the actor at the time of the record or during their tenure.",
+          "semantic_type": "quantity",
+          "business_concept": "Actor Age",
+          "aliases": [
+            "years_old",
+            "age_at_casting"
+          ]
+        }
+      }
+    },
+    "d_yelp__user": {
+      "table": {
+        "name": "d_yelp__user",
+        "column_count": 3,
+        "summary": "Stores basic user profile information including unique identifiers and names.",
+        "entity": "User",
+        "role": "entity_table",
+        "aliases": [
+          "users",
+          "user_profile",
+          "member"
+        ]
+      },
+      "columns": {
+        "uid": {
+          "name": "uid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique internal identifier for a user record.",
+          "semantic_type": "identifier",
+          "business_concept": "User ID",
+          "aliases": [
+            "id",
+            "user_id",
+            "primary_key"
+          ]
+        },
+        "user_id": {
+          "name": "user_id",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Alternative or external identifier for a user, potentially redundant or linked to another system.",
+          "semantic_type": "identifier",
+          "business_concept": "User ID",
+          "aliases": [
+            "uid",
+            "id",
+            "external_id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The full name or display name of the user.",
+          "semantic_type": "person_name",
+          "business_concept": "User Name",
+          "aliases": [
+            "full_name",
+            "display_name",
+            "first_name",
+            "last_name"
+          ]
+        }
+      }
+    },
+    "d_inn_1__rooms": {
+      "table": {
+        "name": "d_inn_1__rooms",
+        "column_count": 7,
+        "summary": "A catalog of available rooms with details on capacity, pricing, and amenities.",
+        "entity": "Room",
+        "role": "entity_table",
+        "aliases": [
+          "room_catalog",
+          "accommodation",
+          "inventory_rooms"
+        ]
+      },
+      "columns": {
+        "roomid": {
+          "name": "roomid",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific room.",
+          "semantic_type": "identifier",
+          "business_concept": "Room ID",
+          "aliases": [
+            "room_code",
+            "room_key",
+            "id"
+          ]
+        },
+        "roomname": {
+          "name": "roomname",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Descriptive name or theme associated with the room.",
+          "semantic_type": "description",
+          "business_concept": "Room Name",
+          "aliases": [
+            "room_title",
+            "room_description",
+            "name"
+          ]
+        },
+        "beds": {
+          "name": "beds",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Number of beds available in the room.",
+          "semantic_type": "quantity",
+          "business_concept": "Bed Count",
+          "aliases": [
+            "bed_count",
+            "num_beds",
+            "beds_available"
+          ]
+        },
+        "bedtype": {
+          "name": "bedtype",
+          "dtype": "text",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "Type of bed provided in the room.",
+          "semantic_type": "category",
+          "business_concept": "Bed Type",
+          "aliases": [
+            "bed_category",
+            "bed_size",
+            "bed_class"
+          ]
+        },
+        "maxoccupancy": {
+          "name": "maxoccupancy",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Maximum number of people allowed to stay in the room.",
+          "semantic_type": "quantity",
+          "business_concept": "Max Occupancy",
+          "aliases": [
+            "capacity",
+            "max_guests",
+            "occupancy_limit"
+          ]
+        },
+        "baseprice": {
+          "name": "baseprice",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Standard nightly rate for the room.",
+          "semantic_type": "money",
+          "business_concept": "Room Rate",
+          "aliases": [
+            "price",
+            "rate",
+            "cost_per_night",
+            "base_rate"
+          ]
+        },
+        "decor": {
+          "name": "decor",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "Interior design style of the room.",
+          "semantic_type": "category",
+          "business_concept": "Room Style",
+          "aliases": [
+            "style",
+            "theme",
+            "interior_style",
+            "decoration"
+          ]
+        }
+      }
+    },
+    "d_network_1__friend": {
+      "table": {
+        "name": "d_network_1__friend",
+        "column_count": 2,
+        "summary": "A table defining pairwise relationships between students, likely representing a social network or friendship graph within an educational context.",
+        "entity": "friendship",
+        "role": "relationship_table",
+        "aliases": [
+          "friends",
+          "friendship",
+          "social_links",
+          "student_connections"
+        ]
+      },
+      "columns": {
+        "student_id": {
+          "name": "student_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The unique identifier for the student initiating or being referenced in the friendship record.",
+          "semantic_type": "identifier",
+          "business_concept": "Student ID",
+          "aliases": [
+            "id",
+            "user_id",
+            "student_number",
+            "uid"
+          ]
+        },
+        "friend_id": {
+          "name": "friend_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The unique identifier for the friend associated with the student in this record.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Friend ID",
+          "aliases": [
+            "friend_uid",
+            "friend_number",
+            "target_id",
+            "peer_id"
+          ]
+        }
+      }
+    },
+    "d_local_govt_and_lot__timed_locations_of_things": {
+      "table": {
+        "name": "d_local_govt_and_lot__timed_locations_of_things",
+        "column_count": 3,
+        "summary": "Records the specific geographic locations where distinct entities (things) were present at various points in time.",
+        "entity": "Location Event",
+        "role": "transaction_table",
+        "aliases": [
+          "thing_location_history",
+          "entity_presence_log",
+          "location_tracking_log",
+          "thing_movement_records"
+        ]
+      },
+      "columns": {
+        "thing_id": {
+          "name": "thing_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A unique identifier for the entity or object being tracked.",
+          "semantic_type": "identifier",
+          "business_concept": "Entity ID",
+          "aliases": [
+            "entity_id",
+            "object_id",
+            "item_id",
+            "thing_ref"
+          ]
+        },
+        "date_and_time": {
+          "name": "date_and_time",
+          "dtype": "datetime",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "The precise moment when the entity was recorded at the specified location.",
+          "semantic_type": "timestamp",
+          "business_concept": "Event Time",
+          "aliases": [
+            "event_time",
+            "timestamp",
+            "recorded_at",
+            "datetime"
+          ]
+        },
+        "location_code": {
+          "name": "location_code",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A descriptive string code representing the geographic location or place name where the entity was found.",
+          "semantic_type": "address",
+          "business_concept": "Location Name",
+          "aliases": [
+            "place_name",
+            "site_code",
+            "location_name",
+            "geo_code"
+          ]
+        }
+      }
+    },
+    "d_chinook_1__playlist": {
+      "table": {
+        "name": "d_chinook_1__playlist",
+        "column_count": 2,
+        "summary": "Stores user-created collections of media items organized by theme or category.",
+        "entity": "Playlist",
+        "role": "entity_table",
+        "aliases": [
+          "playlists",
+          "music_playlists",
+          "media_collections",
+          "user_playlists"
+        ]
+      },
+      "columns": {
+        "playlistid": {
+          "name": "playlistid",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific playlist record.",
+          "semantic_type": "identifier",
+          "business_concept": "Playlist ID",
+          "aliases": [
+            "id",
+            "playlist_id",
+            "pk",
+            "primary_key"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Descriptive title given to the playlist by the user.",
+          "semantic_type": "category",
+          "business_concept": "Playlist Name",
+          "aliases": [
+            "title",
+            "playlist_name",
+            "label",
+            "name"
+          ]
+        }
+      }
+    },
+    "d_local_govt_mdm__electoral_register": {
+      "table": {
+        "name": "d_local_govt_mdm__electoral_register",
+        "column_count": 2,
+        "summary": "A table linking electoral registration records to a cross-reference system, likely containing unique identifiers for both the register and an external or internal mapping system.",
+        "entity": "electoral_register",
+        "role": "lookup_table",
+        "aliases": [
+          "voter_register",
+          "electoral_list",
+          "registration_index"
+        ]
+      },
+      "columns": {
+        "electoral_register_id": {
+          "name": "electoral_register_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The unique primary identifier for a specific entry in the electoral register.",
+          "semantic_type": "identifier",
+          "business_concept": "electoral_registration_id",
+          "aliases": [
+            "reg_id",
+            "electoral_id",
+            "register_pk"
+          ]
+        },
+        "cmi_cross_ref_id": {
+          "name": "cmi_cross_ref_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "A foreign key or reference ID linking the electoral record to a CMI (likely a specific departmental or external system) cross-reference table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "cmi_reference_id",
+          "aliases": [
+            "cmi_id",
+            "cross_ref_id",
+            "external_ref"
+          ]
+        }
+      }
+    },
+    "d_cre_Doc_Template_Mgt__ref_template_types": {
+      "table": {
+        "name": "d_cre_Doc_Template_Mgt__ref_template_types",
+        "column_count": 2,
+        "summary": "A reference table defining standard codes and descriptions for various document or content template types.",
+        "entity": "Template Type",
+        "role": "lookup_table",
+        "aliases": [
+          "ref_template_types",
+          "template_type_ref",
+          "doc_type_codes",
+          "content_type_lookup"
+        ]
+      },
+      "columns": {
+        "template_type_code": {
+          "name": "template_type_code",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "A unique, short alphanumeric identifier representing a specific template type.",
+          "semantic_type": "code",
+          "business_concept": "Template Type Code",
+          "aliases": [
+            "template_code",
+            "type_code",
+            "doc_code",
+            "tt_code"
+          ]
+        },
+        "template_type_description": {
+          "name": "template_type_description",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "A human-readable text description explaining the purpose or nature of the template type.",
+          "semantic_type": "description",
+          "business_concept": "Template Type Description",
+          "aliases": [
+            "template_desc",
+            "type_description",
+            "doc_description",
+            "tt_description"
+          ]
+        }
+      }
+    },
+    "d_sakila_1__address": {
+      "table": {
+        "name": "d_sakila_1__address",
+        "column_count": 8,
+        "summary": "Stores detailed location information including street addresses, districts, cities, and contact details.",
+        "entity": "Address",
+        "role": "entity_table",
+        "aliases": [
+          "addr",
+          "addresses",
+          "locations",
+          "contact_info"
+        ]
+      },
+      "columns": {
+        "address_id": {
+          "name": "address_id",
+          "dtype": "smallint unsigned",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each address record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "id",
+            "addr_id",
+            "address_key"
+          ]
+        },
+        "address": {
+          "name": "address",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "The primary street address line.",
+          "semantic_type": "address",
+          "business_concept": "Street Address",
+          "aliases": [
+            "street",
+            "line1",
+            "addr_line1"
+          ]
+        },
+        "address2": {
+          "name": "address2",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Secondary address line, often used for apartment numbers or suite details.",
+          "semantic_type": "address",
+          "business_concept": "Address Line 2",
+          "aliases": [
+            "addr_line2",
+            "suite",
+            "apt",
+            "unit"
+          ]
+        },
+        "district": {
+          "name": "district",
+          "dtype": "string",
+          "value_patterns": [
+            "short_code_like"
+          ],
+          "meaning": "The administrative region, state, or province where the address is located.",
+          "semantic_type": "code",
+          "business_concept": "Region/State/Province",
+          "aliases": [
+            "state",
+            "province",
+            "region",
+            "district_code"
+          ]
+        },
+        "city_id": {
+          "name": "city_id",
+          "dtype": "smallint unsigned",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Foreign key reference to the city table.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "City Reference",
+          "aliases": [
+            "city_ref",
+            "city_key",
+            "fk_city"
+          ]
+        },
+        "postal_code": {
+          "name": "postal_code",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The postal or zip code for the address.",
+          "semantic_type": "code",
+          "business_concept": "Postal Code",
+          "aliases": [
+            "zip",
+            "zip_code",
+            "postcode",
+            "postal"
+          ]
+        },
+        "phone": {
+          "name": "phone",
+          "dtype": "string",
+          "value_patterns": [
+            "integer_like"
+          ],
+          "meaning": "Contact telephone number associated with the address.",
+          "semantic_type": "phone",
+          "business_concept": "Contact Phone",
+          "aliases": [
+            "telephone",
+            "tel",
+            "contact_phone",
+            "phone_number"
+          ]
+        },
+        "last_update": {
+          "name": "last_update",
+          "dtype": "timestamp",
+          "value_patterns": [
+            "timestamp_like"
+          ],
+          "meaning": "Timestamp indicating when the address record was last modified.",
+          "semantic_type": "timestamp",
+          "business_concept": "Last Modified Date",
+          "aliases": [
+            "update_time",
+            "modified",
+            "last_mod"
+          ]
+        }
+      }
+    },
+    "d_solvency_ii__assets_in_events": {
+      "table": {
+        "name": "d_solvency_ii__assets_in_events",
+        "column_count": 2,
+        "summary": "A relationship table linking specific assets to specific events.",
+        "entity": "Asset-Event Association",
+        "role": "relationship_table",
+        "aliases": [
+          "asset_event_mapping",
+          "events_assets",
+          "asset_event_links"
+        ]
+      },
+      "columns": {
+        "asset_id": {
+          "name": "asset_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for an asset record.",
+          "semantic_type": "identifier",
+          "business_concept": "Asset ID",
+          "aliases": [
+            "asset_uid",
+            "asset_key",
+            "asset_ref"
+          ]
+        },
+        "event_id": {
+          "name": "event_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for an event record.",
+          "semantic_type": "identifier",
+          "business_concept": "Event ID",
+          "aliases": [
+            "event_uid",
+            "event_key",
+            "event_ref"
+          ]
+        }
+      }
+    },
+    "d_academic__domain_conference": {
+      "table": {
+        "name": "d_academic__domain_conference",
+        "column_count": 2,
+        "summary": "A relationship table linking domain entities to conference entities.",
+        "entity": "Domain-Conference Association",
+        "role": "relationship_table",
+        "aliases": [
+          "domain_conference",
+          "dc",
+          "domain_conf"
+        ]
+      },
+      "columns": {
+        "cid": {
+          "name": "cid",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a domain entity within the system.",
+          "semantic_type": "identifier",
+          "business_concept": "Domain ID",
+          "aliases": [
+            "domain_id",
+            "cid",
+            "domain_code"
+          ]
+        },
+        "did": {
+          "name": "did",
+          "dtype": "integer",
+          "value_patterns": [],
+          "meaning": "Unique identifier for a conference entity within the system.",
+          "semantic_type": "identifier",
+          "business_concept": "Conference ID",
+          "aliases": [
+            "conference_id",
+            "did",
+            "conf_id"
+          ]
+        }
+      }
+    },
+    "d_book_2__book": {
+      "table": {
+        "name": "d_book_2__book",
+        "column_count": 4,
+        "summary": "A catalog of books containing their unique identifiers, titles, issue counts, and authors.",
+        "entity": "Book",
+        "role": "entity_table",
+        "aliases": [
+          "books",
+          "book_catalog",
+          "titles"
+        ]
+      },
+      "columns": {
+        "book_id": {
+          "name": "book_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each book record.",
+          "semantic_type": "identifier",
+          "business_concept": "Book ID",
+          "aliases": [
+            "id",
+            "bookid",
+            "bk_id"
+          ]
+        },
+        "title": {
+          "name": "title",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name or title of the book.",
+          "semantic_type": "description",
+          "business_concept": "Book Title",
+          "aliases": [
+            "name",
+            "book_title",
+            "title_name"
+          ]
+        },
+        "issues": {
+          "name": "issues",
+          "dtype": "float",
+          "value_patterns": [
+            "number_like"
+          ],
+          "meaning": "The number of issues or parts the book/series consists of.",
+          "semantic_type": "quantity",
+          "business_concept": "Issue Count",
+          "aliases": [
+            "issue_count",
+            "num_issues",
+            "parts"
+          ]
+        },
+        "writer": {
+          "name": "writer",
+          "dtype": "text",
+          "value_patterns": [],
+          "meaning": "The name of the author or writer of the book.",
+          "semantic_type": "person_name",
+          "business_concept": "Author Name",
+          "aliases": [
+            "author",
+            "writer_name",
+            "creator"
+          ]
+        }
+      }
+    },
+    "d_course_teach__course_arrange": {
+      "table": {
+        "name": "d_course_teach__course_arrange",
+        "column_count": 3,
+        "summary": "Stores the arrangement or assignment of teachers to specific courses, including the grade level associated with the course.",
+        "entity": "Course Arrangement",
+        "role": "relationship_table",
+        "aliases": [
+          "course_assignment",
+          "teacher_course_mapping",
+          "class_schedule",
+          "course_teacher"
+        ]
+      },
+      "columns": {
+        "course_id": {
+          "name": "course_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for a specific course.",
+          "semantic_type": "identifier",
+          "business_concept": "Course ID",
+          "aliases": [
+            "course_code",
+            "cid",
+            "course_key"
+          ]
+        },
+        "teacher_id": {
+          "name": "teacher_id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for the teacher assigned to the course.",
+          "semantic_type": "foreign_key_candidate",
+          "business_concept": "Teacher ID",
+          "aliases": [
+            "teacher_code",
+            "tid",
+            "instructor_id"
+          ]
+        },
+        "grade": {
+          "name": "grade",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "The academic grade or level at which the course is taught.",
+          "semantic_type": "category",
+          "business_concept": "Grade Level",
+          "aliases": [
+            "grade_level",
+            "class_grade",
+            "level"
+          ]
+        }
+      }
+    },
+    "d_store_1__media_types": {
+      "table": {
+        "name": "d_store_1__media_types",
+        "column_count": 2,
+        "summary": "A reference table defining various media file types, likely used for categorizing digital assets in a media library or content management system.",
+        "entity": "Media Type",
+        "role": "lookup_table",
+        "aliases": [
+          "media_type_definitions",
+          "file_types",
+          "content_types",
+          "supported_formats"
+        ]
+      },
+      "columns": {
+        "id": {
+          "name": "id",
+          "dtype": "integer",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each media type record.",
+          "semantic_type": "identifier",
+          "business_concept": "Primary Key",
+          "aliases": [
+            "media_type_id",
+            "type_id",
+            "format_id"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "string",
+          "value_patterns": [],
+          "meaning": "Human-readable description of the media format, including codec details and licensing status.",
+          "semantic_type": "category",
+          "business_concept": "Media Format Name",
+          "aliases": [
+            "type_name",
+            "format_name",
+            "description",
+            "label"
+          ]
+        }
+      }
+    },
+    "d_flight_1__employee": {
+      "table": {
+        "name": "d_flight_1__employee",
+        "column_count": 3,
+        "summary": "Stores core information about employees including their unique identifier, full name, and salary.",
+        "entity": "Employee",
+        "role": "entity_table",
+        "aliases": [
+          "emp",
+          "staff",
+          "personnel",
+          "employees"
+        ]
+      },
+      "columns": {
+        "eid": {
+          "name": "eid",
+          "dtype": "number(9,0)",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Unique identifier for each employee record.",
+          "semantic_type": "identifier",
+          "business_concept": "Employee ID",
+          "aliases": [
+            "emp_id",
+            "employee_id",
+            "id",
+            "emp_no"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "dtype": "varchar2(30)",
+          "value_patterns": [],
+          "meaning": "Full name of the employee.",
+          "semantic_type": "person_name",
+          "business_concept": "Employee Name",
+          "aliases": [
+            "full_name",
+            "first_name",
+            "last_name",
+            "employee_name"
+          ]
+        },
+        "salary": {
+          "name": "salary",
+          "dtype": "number(10,2)",
+          "value_patterns": [
+            "integer_like",
+            "short_code_like"
+          ],
+          "meaning": "Annual compensation amount for the employee.",
+          "semantic_type": "money",
+          "business_concept": "Salary",
+          "aliases": [
+            "pay",
+            "compensation",
+            "annual_salary",
+            "base_salary"
+          ]
+        }
+      }
+    }
+  }
+}

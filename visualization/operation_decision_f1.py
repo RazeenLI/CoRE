@@ -70,9 +70,6 @@ plt.rcParams["xtick.labelsize"] = 7
 plt.rcParams["ytick.labelsize"] = 7
 plt.rcParams["legend.fontsize"] = 6.5
 
-hatches = ["//", "\\\\", "xx", "..", "++"]
-
-
 # -----------------------------
 # figure
 # -----------------------------
@@ -108,9 +105,8 @@ for col, (ax, ds) in enumerate(zip(axes, DATASETS)):
             width=bar_w,
             label=method if col == 0 else None,
             color=METHOD_COLORS[method],
-            hatch=hatches[i % len(hatches)],
             edgecolor="black",
-            linewidth=0.35,
+            linewidth=0.18,
         )
 
     ax.set_ylim(0, 1.0)
