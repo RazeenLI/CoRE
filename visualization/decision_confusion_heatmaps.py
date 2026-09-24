@@ -43,7 +43,7 @@ labels = [label[0] for _, label in OPERATIONS]
 # -----------------------------
 # colormap
 # -----------------------------
-PAIRED_RED_TEAL = ["#8C4047", "#F4F2ED", "#246065"]
+PAIRED_RED_TEAL = ["#93343C", "#F4F2ED", "#1A646B"]
 
 CMAP = LinearSegmentedColormap.from_list(
     "db_paired_red_teal",
@@ -182,29 +182,16 @@ for col, (ax, (dataset, cm)) in enumerate(
                 color=text_color,
             )
 
-    # -------------------------
-    # cell boundaries
-    # -------------------------
-    ax.set_xticks(
-        np.arange(-0.5, 3, 1),
-        minor=True,
-    )
+    # Draw only the internal cell boundaries. The axes spines provide the
+    # outer border, avoiding doubled lines and rasterization mismatch.
+    ax.set_xlim(-0.5, 2.5)
+    ax.set_ylim(2.5, -0.5)
+    for boundary in (0.5, 1.5):
+        ax.axvline(boundary, color="#B8B7B0", linewidth=0.4, antialiased=False)
+        ax.axhline(boundary, color="#B8B7B0", linewidth=0.4, antialiased=False)
 
-    ax.set_yticks(
-        np.arange(-0.5, 3, 1),
-        minor=True,
-    )
-
-    ax.grid(
-        which="minor",
-        linewidth=0.45,
-    )
-
-    ax.tick_params(
-        which="minor",
-        bottom=False,
-        left=False,
-    )
+    for spine in ax.spines.values():
+        spine.set_linewidth(0.4)
 
     ax.tick_params(
         axis="both",
@@ -254,11 +241,13 @@ cbar = fig.colorbar(
     cax=cbar_ax,
     orientation="horizontal",
 )
+cbar.outline.set_linewidth(0.4)
 
 cbar.ax.tick_params(
     labelsize=6,
     pad=1.5,
     length=2,
+    width=0.4,
 )
 
 cbar.ax.text(

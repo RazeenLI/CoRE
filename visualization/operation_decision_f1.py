@@ -33,11 +33,19 @@ METHODS = [
 ]
 
 METHOD_COLORS = {
-    "CoRE":        "#3A73AB",
+    "CoRE":        "#3B73AB",
     "OneShot":     "#D87C2C",
-    "Magneto-LLM": "#3E935C",
+    "Magneto-LLM": "#3F925C",
     "COMA-LLM":    "#7F68AC",
-    "Starmie-LLM": "#B45F5F",
+    "Starmie-LLM": "#C14E57",
+}
+
+METHOD_EDGE_COLORS = {
+    "CoRE":        "#365E87",
+    "OneShot":     "#AF692C",
+    "Magneto-LLM": "#36724B",
+    "COMA-LLM":    "#6C5794",
+    "Starmie-LLM": "#A4414A",
 }
 
 # Full operation names for loading data
@@ -105,14 +113,17 @@ for col, (ax, ds) in enumerate(zip(axes, DATASETS)):
             width=bar_w,
             label=method if col == 0 else None,
             color=METHOD_COLORS[method],
-            edgecolor="black",
-            linewidth=0.18,
+            edgecolor=METHOD_EDGE_COLORS[method],
+            linewidth=0.4,
         )
 
     ax.set_ylim(0, 1.0)
     ax.set_yticks(np.linspace(0, 1.0, 6))
     ax.grid(axis="y", linewidth=0.35, alpha=0.5)
     ax.set_axisbelow(True)
+
+    for spine in ax.spines.values():
+        spine.set_linewidth(0.4)
 
     ax.set_title(DATASET_LABELS[ds], pad=2)
 
@@ -124,6 +135,7 @@ for col, (ax, ds) in enumerate(zip(axes, DATASETS)):
 
     ax.set_xticks(x)
     ax.set_xticklabels(operation_ticks)
+    ax.tick_params(axis="both", width=0.4)
 
     if col > 0:
         ax.tick_params(axis="y", labelleft=False)

@@ -38,10 +38,17 @@ x = np.arange(len(datasets))
 # Blue/Orange/Green/Purple categorical hues used for the first four methods
 # in the operation-F1 figure, reused here for the four pipeline stages.
 STAGE_COLORS = {
-    "Profile":  "#3A73AB",  # Blue
+    "Profile":  "#3B73AB",  # Blue
     "Select":   "#D87C2C",  # Orange
-    "Evolve":   "#3E935C",  # Green
+    "Evolve":   "#3F925C",  # Green
     "Validate": "#7F68AC",  # Purple
+}
+
+STAGE_EDGE_COLORS = {
+    "Profile":  "#365E87",
+    "Select":   "#AF692C",
+    "Evolve":   "#36724B",
+    "Validate": "#6C5794",
 }
 
 
@@ -87,8 +94,8 @@ for stage_values, stage in zip((profile, select, evolve, validate), stages):
         left=left,
         label=stage,
         color=STAGE_COLORS[stage],
-        edgecolor="black",
-        linewidth=0.3
+        edgecolor=STAGE_EDGE_COLORS[stage],
+        linewidth=0.4
     )
 
     # In-segment value labels
@@ -144,9 +151,13 @@ ax.set_axisbelow(True)
 ax.spines["top"].set_visible(False)
 ax.spines["right"].set_visible(False)
 
+for spine in ax.spines.values():
+    spine.set_linewidth(0.4)
+
 ax.tick_params(
     axis="both",
     length=2.5,
+    width=0.4,
     pad=2
 )
 

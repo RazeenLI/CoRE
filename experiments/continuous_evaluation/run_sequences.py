@@ -12,11 +12,36 @@ from model.agents.profiler_agent import ProfilerAgent
 from model.agents.selector_agent import CandidateSelectorAgent
 from model.core.llm_client import HFLLMClient
 from model.core.orchestrator import Orchestrator
+from model.core.state import TaskStatus
 from model.pipeline import create_agents, load_config
 from model.utils.io import load_rdb, load_table, save_json, save_rdb
 
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+def completed_step_output(step_output: Path) -> bool:
+    """Return whether a saved step is safe to reuse in a rollout."""
+    proposal_path = step_output / "proposal.json"
+    state_path = step_output / "task_state.json"
+    database_path = step_output / "database"
+    schema_path = database_path / "schema.json"
+    if not all(path.exists() for path in (proposal_path, state_path, schema_path)):
+        return False
+
+    try:
+        state = json.loads(state_path.read_text(encoding="utf-8"))
+        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return False
+    if state.get("status") != TaskStatus.SUCCEEDED:
+        return False
+
+    tables_dir = database_path / "tables"
+    return all(
+        (tables_dir / f"{table}.csv").exists()
+        for table in schema.get("tables", {})
+    )
 
 
 def single_table_schema(schema: dict[str, Any], table: str) -> dict[str, Any]:
@@ -144,15 +169,19 @@ def run_sequence(
     metadata = json.loads((sequence_dir / "sequence.json").read_text(encoding="utf-8"))
     rollout_state = load_rdb(sequence_dir / "initial", sample_num=3)
     refresh_empty_profiles(rollout_state, agents["profiler"])
+    reuse_completed = skip_completed
 
     for step in metadata["steps"]:
         index = int(step["step"])
         step_dir = sequence_dir / "steps" / f"step_{index:02d}"
         step_output = output_dir / f"step_{index:02d}"
-        if skip_completed and (step_output / "proposal.json").exists():
-            if mode == "rollout" and (step_output / "database" / "schema.json").exists():
+        if reuse_completed and completed_step_output(step_output):
+            if mode == "rollout":
                 rollout_state = load_rdb(step_output / "database", sample_num=3)
             continue
+        # Once a step must be rerun, every later rollout state in this sequence
+        # depends on it and must be regenerated as well.
+        reuse_completed = False
         existing = (
             load_rdb(step_dir / "oracle_existing", sample_num=3)
             if mode == "oracle" else rollout_state
@@ -173,8 +202,14 @@ def run_sequence(
             incoming_table=incoming,
         )
         updated = state.existing_rdb
-        normalize_extend_values(updated, existing, incoming, proposal)
-        refresh_affected_profiles(updated, proposal, agents["profiler"])
+        if state.status == TaskStatus.SUCCEEDED:
+            normalize_extend_values(updated, existing, incoming, proposal)
+            refresh_affected_profiles(updated, proposal, agents["profiler"])
+        else:
+            # A rejected/exhausted proposal is not applied. Preserve the
+            # pre-step database so rollout continues from the last approved
+            # state.
+            updated = existing
         save_json(state.to_dict(), step_output / "task_state.json")
         save_json(proposal, step_output / "proposal.json")
         save_rdb(updated, step_output, folder_name="database")

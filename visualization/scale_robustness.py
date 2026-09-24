@@ -38,11 +38,11 @@ data = load_scale_robustness_table(DATASETS, METHODS)
 
 # Keep method colors consistent with the operation-F1 figure.
 METHOD_COLORS = {
-    "CoRE":        "#3A73AB",
+    "CoRE":        "#3B73AB",
     "OneShot":     "#D87C2C",
-    "Magneto-LLM": "#3E935C",
+    "Magneto-LLM": "#3F925C",
     "COMA-LLM":    "#7F68AC",
-    "Starmie-LLM": "#B45F5F",
+    "Starmie-LLM": "#C14E57",
 }
 
 markers = {
@@ -126,9 +126,13 @@ for ax, (dataset, metric, title) in zip(axes.flat, panels):
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 
+    for spine in ax.spines.values():
+        spine.set_linewidth(0.4)
+
     ax.tick_params(
         axis="both",
         length=2.2,
+        width=0.4,
         pad=0
     )
     ax.tick_params(axis="x", pad=1.5)
