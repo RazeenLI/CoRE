@@ -33,19 +33,19 @@ METHODS = [
 ]
 
 METHOD_COLORS = {
-    "CoRE":        "#3B73AB",
-    "OneShot":     "#D87C2C",
-    "Magneto-LLM": "#3F925C",
-    "COMA-LLM":    "#7F68AC",
-    "Starmie-LLM": "#C14E57",
+    "CoRE":        "#5C71BC",
+    "OneShot":     "#AB4977",
+    "Magneto-LLM": "#3F8D81",
+    "COMA-LLM":    "#C79C23",
+    "Starmie-LLM": "#7F68AC",
 }
 
 METHOD_EDGE_COLORS = {
-    "CoRE":        "#365E87",
-    "OneShot":     "#AF692C",
-    "Magneto-LLM": "#36724B",
-    "COMA-LLM":    "#6C5794",
-    "Starmie-LLM": "#A4414A",
+    "CoRE":        "#4C5FA4",
+    "OneShot":     "#8A4264",
+    "Magneto-LLM": "#376D64",
+    "COMA-LLM":    "#9C7C26",
+    "Starmie-LLM": "#6C5794",
 }
 
 # Full operation names for loading data

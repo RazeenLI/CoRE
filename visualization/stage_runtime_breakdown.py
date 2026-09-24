@@ -34,21 +34,20 @@ total = profile + select + evolve + validate
 
 x = np.arange(len(datasets))
 
-# Stage colors, from the academic color palette's "AI/ML" profile -- same
-# Blue/Orange/Green/Purple categorical hues used for the first four methods
-# in the operation-F1 figure, reused here for the four pipeline stages.
+# Stage colors from the template's AI / ML profile.
+# Later-order hues distinguish the stages from the usual blue/orange defaults.
 STAGE_COLORS = {
-    "Profile":  "#3B73AB",  # Blue
-    "Select":   "#D87C2C",  # Orange
-    "Evolve":   "#3F925C",  # Green
-    "Validate": "#7F68AC",  # Purple
+    "Profile":  "#5C71BC",  # Indigo
+    "Select":   "#289AA4",  # Cyan
+    "Evolve":   "#C5598D",  # Pink
+    "Validate": "#3F8D81",  # Teal
 }
 
 STAGE_EDGE_COLORS = {
-    "Profile":  "#365E87",
-    "Select":   "#AF692C",
-    "Evolve":   "#36724B",
-    "Validate": "#6C5794",
+    "Profile":  "#4C5FA4",
+    "Select":   "#26767D",
+    "Evolve":   "#AE4779",
+    "Validate": "#376D64",
 }
 
 

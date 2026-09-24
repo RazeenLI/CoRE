@@ -22,8 +22,8 @@ MODE_LABELS = {
 
 # Academic AI/ML palette used across the paper figures.
 MODE_COLORS = {
-    "oracle": "#3B73AB",
-    "rollout": "#D87C2C",
+    "oracle": "#5C71BC",
+    "rollout": "#AB4977",
 }
 MODE_MARKERS = {"oracle": "o", "rollout": "s"}
 MODE_LINESTYLES = {"oracle": "-", "rollout": "--"}
@@ -55,7 +55,7 @@ plt.rcParams["xtick.labelsize"] = 6.1
 plt.rcParams["ytick.labelsize"] = 6.1
 plt.rcParams["legend.fontsize"] = 5.8
 
-fig, axes = plt.subplots(2, 2, figsize=(3.35, 2.0), sharex=True)
+fig, axes = plt.subplots(2, 2, figsize=(3.35, 1.85), sharex=True)
 
 for column, dataset in enumerate(DATASETS):
     axes[0, column].set_title(DATASET_LABELS[dataset], pad=2)

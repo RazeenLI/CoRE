@@ -17,17 +17,17 @@ ANNOTATION_ROOT = EXPERIMENT_ROOT / "annotations"
 
 # Academic AI/ML palette used by the other paper figures.
 COLORS = {
-    "Reference only": "#3B73AB",
-    "CoRE only": "#D87C2C",
-    "Both": "#3F925C",
-    "No majority": "#7F68AC",
+    "Reference only": "#3F8D81",
+    "CoRE only": "#5C71BC",
+    "Both": "#C5598D",
+    "No majority": "#678598",
 }
 
 EDGE_COLORS = {
-    "Reference only": "#365E87",
-    "CoRE only": "#AF692C",
-    "Both": "#36724B",
-    "No majority": "#7F68AC",
+    "Reference only": "#376D64",
+    "CoRE only": "#4C5FA4",
+    "Both": "#AE4779",
+    "No majority": "#596F7D",
 }
 
 

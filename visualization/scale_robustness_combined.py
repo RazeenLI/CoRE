@@ -35,11 +35,11 @@ METHOD_LABELS = [label for _, label in METHODS]
 
 # Academic AI/ML palette used across the paper figures.
 METHOD_COLORS = {
-    "CoRE": "#3B73AB",
-    "OneShot": "#D87C2C",
-    "Magneto-LLM": "#3F925C",
-    "COMA-LLM": "#7F68AC",
-    "Starmie-LLM": "#C14E57",
+    "CoRE": "#5C71BC",
+    "OneShot": "#AB4977",
+    "Magneto-LLM": "#3F8D81",
+    "COMA-LLM": "#C79C23",
+    "Starmie-LLM": "#7F68AC",
 }
 METHOD_MARKERS = {
     "CoRE": "o",
@@ -49,9 +49,9 @@ METHOD_MARKERS = {
     "Starmie-LLM": "v",
 }
 
-DMF1_COLOR = "#3B73AB"
-PROPF1_COLOR = "#D87C2C"
-LATENCY_COLOR = "#7F68AC"
+DMF1_COLOR = "#5C71BC"
+PROPF1_COLOR = "#3F8D81"
+LATENCY_COLOR = "#C5598D"
 
 
 def controlled_data(dataset: str) -> dict[str, list[float]]:

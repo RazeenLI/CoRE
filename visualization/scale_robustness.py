@@ -38,11 +38,11 @@ data = load_scale_robustness_table(DATASETS, METHODS)
 
 # Keep method colors consistent with the operation-F1 figure.
 METHOD_COLORS = {
-    "CoRE":        "#3B73AB",
-    "OneShot":     "#D87C2C",
-    "Magneto-LLM": "#3F925C",
-    "COMA-LLM":    "#7F68AC",
-    "Starmie-LLM": "#C14E57",
+    "CoRE":        "#5C71BC",
+    "OneShot":     "#AB4977",
+    "Magneto-LLM": "#3F8D81",
+    "COMA-LLM":    "#C79C23",
+    "Starmie-LLM": "#7F68AC",
 }
 
 markers = {
