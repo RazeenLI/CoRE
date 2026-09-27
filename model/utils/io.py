@@ -190,8 +190,8 @@ def save_rdb(
         save_path / "constraints.json",
     )
 
-    # 按 schema 遍历，而不是按 sample_values 遍历。
-    # 这样即使某个新表没有 sample rows，也会生成 CSV。
+    # Iterate over the schema rather than sample_values so that a CSV is
+    # created even when a new table has no sample rows.
     for table_name, table_schema in schema["tables"].items():
         csv_path = tables_dir / f"{table_name}.csv"
 

@@ -1,27 +1,7 @@
-"""
-有以下一些问题
-1. proposal_type 我认为这个的意义不大，没什么作用。或者你能解释一下你为什么要这个？
-2. source 有意义，但是没什么作用。可以保留给validator作为返回哪个agent的参考。
-3. decision_type，operation和proposal_type这两个算是输入的而不是输出的吧？matcher是一种type evolutor会给顶一个decision_type
-4. 
-# Planned actions
-"table_actions": list[dict[str, Any]],
-"column_actions": list[dict[str, Any]],
-"schema_actions": list[dict[str, Any]],
-"constraint_actions": list[dict[str, Any]],
-"relationship_actions": list[dict[str, Any]],
-"data_actions": list[dict[str, Any]], 
-这一部分我觉得你的写法太繁复了
-而且不应该是这样的分开的，table的操作和column的操作是有关系的，应该是一个table_actions里面包含了table和column的操作，
-schema_actions就是你所说的这个table操作，这两个应该是一样的
-constraint_actions和relationship_actions是一样的，都是constraint的操作
-data_actions是数据的操作，这个是单独的，和schema无关
-5. 你这个proposal的结构太复杂了，我觉得不需要这么复杂，应该是一个简单的proposal，里面包含了table和column的操作，constraint的操作，和数据的操作，这样就够了
-甚至数据的操作都是基于column的操作，应该是一个column_actions里面包含了数据的操作更合适
-6. key_strategy这个就是constraint的操作，应该是一个constraint_actions里面包含了这个key_strategy的操作更合适
-7. issues 这个如果是rule-based，就是很清晰的接收信息处理信息怎么会出现issues呢？
-8. status也是不是这个result应该有的，这个是系统层级的信息，不应该存在于这个result中
+"""Build a compact integration proposal from matcher or evolutor output.
 
+Table and column operations remain related, key strategies are represented as
+constraint actions, and workflow-level status is kept outside the proposal.
 """
 from typing import Any
 

@@ -1,5 +1,9 @@
 # Dataset preparation
 
+Source licenses, attribution, and redistribution status are tracked in
+[`DATA_LICENSES.md`](../DATA_LICENSES.md). Review that file before publishing or
+redistributing source-derived data.
+
 This directory turns a complete relational database dump into benchmark cases for schema evolution:
 
 ```text
@@ -71,7 +75,6 @@ data/
 │               ├── proposal.json
 │               └── tables/<table>.csv
 ├── TPCDS/
-│   ├── <download-id>-TPC-DS-Tool.zip
 │   ├── raw/
 │   │   ├── DSGen-software-code-4.0.0/
 │   │   │   ├── tools/tpcds.sql       # 24 business tables + dbgen_version
@@ -128,7 +131,11 @@ The table counts above describe the original complete schemas, not the 3–5, 6�
 
 [TPC-DS](https://www.tpc.org/tpcds/) models a retail decision-support system. Its schema contains 24 tables: 7 fact tables and 17 dimension tables. Unlike TPC-H's 8-table schema, TPC-DS can support the shared benchmark case sizes of 3–5, 6–9, and 10–15 tables without redefining the large category.
 
-The official TPC-DS Tools v4.0.0 archive was downloaded from the [TPC specification page](https://www.tpc.org/tpc_documents_current_versions/current_specifications5.asp) and unpacked under `data/TPCDS/raw/`. It contains:
+Download the official TPC-DS Tools v4.0.0 archive directly from the
+[TPC specification page](https://www.tpc.org/tpc_documents_current_versions/current_specifications5.asp)
+after reviewing the TPC EULA and Fair Use policies. The archive is not
+redistributed in this repository. Unpack it locally under `data/TPCDS/raw/`; it
+contains:
 
 - `tools/tpcds.sql`: ANSI SQL definitions for the 24 business tables plus the auxiliary `dbgen_version` table.
 - `tools/tpcds_ri.sql`: 109 `ALTER TABLE ... FOREIGN KEY` statements; the file also relies on primary keys declared by `tpcds.sql`.
@@ -207,7 +214,7 @@ the two components are model-decoupled. Use the repository's main experiment
 environment:
 
 ```bash
-conda activate /data1/runzel/TimeSeriesImputation/.conda
+source .venv/bin/activate
 CUDA_VISIBLE_DEVICES=0,1 \
 python data/profile_parsed_tables.py \
   --parsed data/TPCDS/parsed \

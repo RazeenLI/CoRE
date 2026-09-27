@@ -1,111 +1,64 @@
-# Experimental model variants
+# Experimental variants
 
-Experiment-specific code stays under `experiments/`; no experiment imports
-another experiment or baseline. Components that are intentionally unchanged
-are imported from the frozen Standard implementation, while each experimental
-difference is implemented locally.
+Experiment-specific code stays under `experiments/`. Unchanged components are
+imported from the standard implementation, while each controlled difference is
+implemented locally.
 
-## Pending baselines
+## Registered pipeline variants
 
-- **Aurum:** port its per-case profiling and discovery graph to the current
-  runtime. Profiling and index construction must be included in end-to-end
-  latency.
-- **Starmie experiment:** train the implemented adapter's frozen checkpoint on
-  external VizNet data, record the checkpoint hash and pretraining cost, and
-  run all benchmark cases. Per-case encoding and matching are included in
-  end-to-end latency; one-time pretraining is reported separately.
-
-## `grain_profiler`
+### `grain_profiler`
 
 ```text
 Grain Profiler -> MPNet Candidate Selector -> Evolutor -> Validator -> Decision
 ```
 
-The workflow matches Standard. Only the profile representation changes:
-incoming and existing profiles retain concise row-grain evidence and remove
-duplicated descriptions, aliases, schema fields, and value-pattern fields.
+The profile retains concise row-grain evidence and removes duplicated semantic
+and value-pattern fields.
 
 ```bash
 MODEL=grain_profiler DATASIZE=large ./run_cases.sh
 ```
 
-## `embedding_evaluation`
-
-This is a retrieval-only experiment rather than a pipeline model. It compares
-SentenceTransformer encoders using target-table and exact-column Hit@K/MRR and
-does not call Qwen. See `embedding_evaluation/README.md` for the command.
-
-## `no_values`
-
-This experiment evaluates deployments in which database and incoming-table
-cell values cannot be disclosed to the LLM. It follows the Standard pipeline
-but removes all example rows and literal sample values from the incoming-table
-and existing-RDB contexts. Schema names, constraints, and non-literal aggregate
-profile statistics remain available; profile fields containing raw values must
-also be removed.
-
-Compare this variant with Standard using decision, proposal, constraint, and
-validity metrics, together with prompt tokens and elapsed time. The comparison
-measures how much the framework depends on value-level evidence and whether it
-remains usable under this privacy restriction.
-
-See `no_values/README.md` for the implementation and run command.
-
-## `constraint_filter`
+### `constraint_filter`
 
 ```text
-Full Profiler -> MPNet Candidate Selector -> Constraint Filter
-              -> Evolutor -> Validator -> Decision
+Profiler -> Candidate Selector -> Constraint Filter -> Evolutor -> Validator
 ```
 
-This is a single-variable Standard variant. Only the Evolutor's constraint
-context changes: table-scoped constraints retain Top-k tables, and foreign keys
-are retained only when both endpoints are in Top-k. The full TaskState and
-proposal application remain unchanged.
+Only the Evolutor's constraint context changes. Table-scoped constraints are
+limited to selected tables, and foreign keys are retained only when both
+endpoints are selected.
 
 ```bash
 MODEL=constraint_filter DATASIZE=medium ./run_cases.sh
 ```
 
-## `no_matcher`
+### `validator_prompt`
 
-```text
-Profiler -> Evolutor (relationship + operation) -> Validator -> Decision
-```
-
-The Evolutor receives all existing tables. Validator revisions always return
-to the Evolutor, including an `insert_table` revision that the shared Standard
-validator labels as `matcher`.
+Uses a controlled Validator prompt variant while retaining the rest of the
+standard pipeline.
 
 ```bash
-MODEL=no_matcher DATASIZE=large ./run_cases.sh
+MODEL=validator_prompt DATASIZE=large ./run_cases.sh
 ```
 
-## `selector`
+### `no_values`
 
-```text
-Profiler -> MPNet Candidate Selector -> Evolutor -> Validator -> Decision
-```
-
-The selector uses `all-mpnet-base-v2` and makes no LLM call. It keeps a
-high-recall set of tables and one best retrieved column per source-column and
-candidate-table pair. The Evolutor makes the final relationship and operation
-decision; selector scores are evidence, not decisions. The full selector result
-is retained in `task_state.json`, while the Evolutor prompt receives only
-`selected_tables` and compact `column_candidates` to avoid duplicate context.
-
-Configuration defaults:
-
-```yaml
-selector:
-  embedding_model: sentence-transformers/all-mpnet-base-v2
-  column_top_k: 15
-  table_top_k: 5
-```
+Removes raw rows and literal sample values from LLM contexts while retaining
+schema names, constraints, and non-literal profile statistics.
 
 ```bash
-MODEL=selector DATASIZE=large ./run_cases.sh
+MODEL=no_values DATASIZE=large ./run_cases.sh
 ```
 
-Write each variant to its own `save/Chinook/<model>/<size>` directory and do
-not overwrite Standard while comparing accuracy, validity, and elapsed time.
+## Analysis-only experiments
+
+- `embedding_evaluation`: candidate retrieval Hit@K and MRR without an LLM
+  decision.
+- `alternative_validity`: blinded annotation of reasonable operation choices.
+- `continuous_evaluation`: ordered multi-step database evolution.
+- `relation_scale`: controlled relation-count scalability.
+
+See [the experiment guide](../docs/experiments.md) and each experiment's local
+README. The former `selector` experiment is now the standard pipeline, and the
+former `no_matcher` name is represented by the `no_selector` baseline.

@@ -1,8 +1,4 @@
-"""
-示例占位
-
-TODO: 根据 agent 开发 完成 result 的结构和格式
-"""
+"""Result schemas used by the LLM matcher baseline."""
 
 from typing import Literal, TypedDict
 
@@ -62,4 +58,3 @@ class MatcherResult(TypedDict, total=False):
     # Must be sorted by confidence descending.
     # The best match is table_matches[0] if the list is not empty.
     table_matches: list[TableMatch]
-

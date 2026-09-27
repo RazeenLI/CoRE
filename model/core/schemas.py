@@ -1,8 +1,4 @@
-"""
-示例占位
-
-TODO: 根据 agent 开发 完成 result 的结构和格式
-"""
+"""Shared result schemas for pipeline agents and proposal construction."""
 
 from typing import Literal, TypedDict
 
@@ -125,35 +121,27 @@ class EvolutionDecision(TypedDict, total=False):
 
     decision_type:
         The main evolution type.
-        主 evolution 类型。
 
     target_table:
         The table that this evolution points to.
 
-        统一含义：
         - if decision_type == "extend_table":
             target_table is the existing table to modify.
-            target_table 是要修改的已有表。
 
         - if decision_type starts with "create_":
             target_table is the new table to create.
-            target_table 是要创建的新表。
 
     related_tables:
         Existing tables related to target_table.
 
-        相关已有表：
         - for create_association_table:
             related_tables are the entity tables connected by the association table.
-            related_tables 是 association table 连接的实体表。
 
         - for create_child_table:
             related_tables are usually the parent table(s).
-            related_tables 通常是 child table 的 parent table。
 
         - for extend_table / create_entity_table:
             this can usually be empty.
-            对 extend_table / create_entity_table 来说通常可以为空。
 
     """
 
@@ -182,20 +170,14 @@ class ColumnPlacement(TypedDict, total=False):
     - if target_table exists and target_column exists:
         map source_column to existing target_table.target_column
 
-        如果 target_table 存在，且 target_column 存在：
-        把 source_column 映射到已有的 target_table.target_column
 
     - if target_table exists but target_column does not exist:
         add target_column to target_table
 
-        如果 target_table 存在，但 target_column 不存在：
-        给 target_table 添加 target_column
 
     - if target_table does not exist:
         create target_table and add target_column to the new table
 
-        如果 target_table 不存在：
-        创建 target_table，并在新表里添加 target_column
     """
 
     source_column: str

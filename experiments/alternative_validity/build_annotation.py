@@ -13,6 +13,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
+ARTIFACT_DIR = ROOT / "artifacts" / "annotation"
 DATASETS = ("Chinook", "MONDIAL", "TPCDS", "Spider")
 TARGET_CASES = 100
 TARGET_PER_DATASET = 25
@@ -373,6 +374,7 @@ document.getElementById("exportTop").onclick=()=>exportData();
 
 
 def main() -> None:
+    ARTIFACT_DIR.mkdir(parents=True, exist_ok=True)
     candidates = collect_disagreements()
     selected = select_cases(candidates)
     public_cases = []
@@ -399,14 +401,14 @@ def main() -> None:
         "selection": "operation disagreements, confusion-stratified",
         "cases": manifest_cases,
     }
-    (HERE / "selected_cases.json").write_text(
+    (ARTIFACT_DIR / "selected_cases.json").write_text(
         json.dumps(manifest, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
     rendered = HTML_TEMPLATE.replace(
         "__MANIFEST_ID__", json_for_html(manifest_id)
     ).replace("__CASES__", json_for_html(public_cases))
-    (HERE / "annotation.html").write_text(rendered, encoding="utf-8")
+    (ARTIFACT_DIR / "annotation.html").write_text(rendered, encoding="utf-8")
 
     counts: dict[str, int] = defaultdict(int)
     for case in manifest_cases:
@@ -414,7 +416,7 @@ def main() -> None:
     print(f"manifest_id: {manifest_id}")
     print(f"cases:       {len(manifest_cases)}")
     print(f"datasets:    {dict(counts)}")
-    print(f"html:        {HERE / 'annotation.html'}")
+    print(f"html:        {ARTIFACT_DIR / 'annotation.html'}")
 
 
 if __name__ == "__main__":

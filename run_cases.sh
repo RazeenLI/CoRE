@@ -23,7 +23,7 @@ AGENT_CONFIG="${AGENT_CONFIG:-configs/qwen3.5_9B.yaml}"
 LOG_ROOT="logs"
 
 
-# 每轮失败任务重新执行前的等待时间，单位：秒
+# Wait time in seconds before retrying failed tasks in each round.
 RETRY_INTERVAL_SECONDS="${RETRY_INTERVAL_SECONDS:-60}"
 
 GPU_IDS="${GPU_IDS:-0,1,3,4}"

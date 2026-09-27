@@ -1,6 +1,4 @@
-"""
-State: Shared Pipeline State Objects
-State：共享 Pipeline 状态对象
+"""State: shared pipeline state objects.
 
 This module defines the internal state objects used by the pipeline.
 
@@ -9,15 +7,7 @@ TaskState
    Each TaskState stores the input table, the existing RDB snapshot used for
    this task, agent outputs, routing decisions, and lightweight execution trace.
 
-本模块定义 pipeline 内部使用的状态对象。
-
-TaskState
-   表示一个 incoming table task 的工作区。
-   每个 TaskState 保存该 task 的输入表、当时使用的 existing RDB 快照、
-   agent 输出、routing 决策和轻量执行记录。
-
 Important:
-重要说明：
 
 - TaskState is for one incoming table only.
 - Agent outputs are stored as histories because some agents, especially matcher
@@ -26,13 +16,6 @@ Important:
   decision making, or RDB update logic.
 - Pipeline controller is responsible for reading agent results and deciding routing.
 - State only stores data and records lightweight execution history.
-
-- TaskState 只对应一个 incoming table。
-- agent outputs 使用 history list 保存，因为 matcher 和 evolutor 等 agent 可能会执行多次。
-- state 对象不实现 profiling、matching、evolution、validation、decision making
-  或 RDB update 逻辑。
-- pipeline controller 负责读取 agent result 并决定 routing。
-- state 只负责保存数据和记录轻量执行历史。
 
 """
 

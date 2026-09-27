@@ -9,7 +9,8 @@ from pathlib import Path
 from typing import Any
 
 
-HERE = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[2]
+ARTIFACT_DIR = ROOT / "artifacts" / "annotation"
 OPERATIONS = ("insert_table", "extend_table", "create_table")
 
 
@@ -49,8 +50,10 @@ def category(selected: set[str], reference: str, prediction: str) -> str:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--responses", type=Path, required=True)
-    parser.add_argument("--manifest", type=Path, default=HERE / "selected_cases.json")
-    parser.add_argument("--output", type=Path, default=HERE / "analysis")
+    parser.add_argument(
+        "--manifest", type=Path, default=ARTIFACT_DIR / "selected_cases.json"
+    )
+    parser.add_argument("--output", type=Path, default=ARTIFACT_DIR / "analysis")
     return parser.parse_args()
 
 

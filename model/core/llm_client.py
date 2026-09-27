@@ -1,28 +1,17 @@
-"""
-HFLLMClient: Lightweight Hugging Face LLM Wrapper
-HFLLMClient：轻量级 Hugging Face 大语言模型封装器
+"""HFLLMClient: lightweight Hugging Face LLM wrapper.
 
 This module provides a minimal client for loading and calling local Hugging Face
 causal language models, such as Qwen ("Qwen/Qwen3-8B") or Llama ("meta-llama/Llama-3.1-8B-Instruct"). It only handles model loading,
 chat-template formatting, and text generation.
 
-本模块提供一个最小化的 Hugging Face 本地大语言模型调用接口，例如 Qwen 或 Llama。
-它只负责模型加载、chat template 格式化和文本生成。
-
 Important:
-重要说明：
 
 - The LLM client should be created only once per experiment/run.
 - Each agent should share the same client instance instead of loading the model again.
 - Agent-specific logic, prompt construction, JSON parsing, schema validation, and routing
   should be implemented outside this class.
 
-- 每次实验 / 运行中，LLM client 只应该创建一次。
-- 所有 agent 应该共享同一个 client 实例，而不是每个 agent 重新加载模型。
-- agent 的 prompt 构造、JSON 解析、schema 校验和流程路由逻辑不应该放在这个类里。
-
 Example:
-示例：
 
     from core.llm_client import HFLLMClient
     from agents.profiler_agent import ProfilerAgent

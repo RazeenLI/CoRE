@@ -11,8 +11,8 @@ dataset, augmentation, serialization, and model modules with the current AIRDB
 PyTorch environment; it does not require Apex or MLflow:
 
 ```bash
-git clone https://github.com/megagonlabs/starmie.git /data1/runzel/starmie
-bash baselines/starmie/download_viznet.sh /data1/runzel/starmie_data
+git clone https://github.com/megagonlabs/starmie.git /absolute/path/to/starmie
+bash baselines/starmie/download_viznet.sh /absolute/path/to/starmie_data
 ```
 
 The downloader uses the VizNet archive published by the SATO/Starmie authors.
@@ -22,7 +22,7 @@ does not need to be flattened manually.
 ```bash
 CUDA_VISIBLE_DEVICES=0 python -m baselines.starmie.train \
   --upstream-path /absolute/path/to/starmie \
-  --data-path /data1/runzel/starmie_data/viznet_tables \
+  --data-path /absolute/path/to/starmie_data/viznet_tables \
   --output /absolute/path/to/starmie_viznet.pt \
   --batch-size 64 \
   --learning-rate 5e-5 \

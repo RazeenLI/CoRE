@@ -1,321 +1,188 @@
-# AIRDB Maintenance
+# CoRE
 
-AI-assisted relational database maintenance for integrating one incoming table into an existing relational database.
+CoRE is a research framework for AI-assisted relational database maintenance.
+Given an existing relational database and one incoming table, it predicts
+whether to insert rows into an existing table, extend an existing table, or
+create a new table, then produces and evaluates a structured integration
+proposal.
 
-## 1. Available models
+This repository contains the implementation, baselines, benchmark cases, and
+evaluation code used for the project. The benchmark data is intentionally kept
+in the repository to support artifact review and reproducibility.
 
-All models use the same case input, output layout, runner, and evaluation code.
+## Method overview
 
-| `MODEL` | Type | Pipeline |
+The standard pipeline uses the same case representation and output format as
+the baselines:
+
+```text
+Incoming table + existing RDB
+            |
+         Profiler
+            |
+MPNet candidate selector
+            |
+         Evolutor
+            |
+         Validator
+            |
+Structured proposal + updated RDB
+```
+
+Every case contains one existing RDB and exactly one incoming table. Outputs
+include the final proposal, task trace, and database state after applying the
+proposal.
+
+## Installation
+
+CoRE requires Python 3.11 or later. Create an isolated environment and install
+the project from the repository root:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e .
+```
+
+Install every optional baseline, visualization, and test dependency with:
+
+```bash
+python -m pip install -e ".[all]"
+```
+
+LLM pipelines require enough CPU/GPU memory for the model selected in the
+agent configuration. Private or gated Hugging Face models also require prior
+authentication with `hf auth login`.
+
+See [Installation](docs/installation.md) for dependency groups and hardware
+notes.
+
+## Quick start
+
+Run the standard pipeline on one included Chinook case:
+
+```bash
+python -u main.py \
+  --model standard \
+  --output save/Chinook/standard/large/case_0001 \
+  --agent-config configs/qwen3.5_9B.yaml \
+  --data-config data/Chinook/benchmarks/large/case_0001/config.yaml
+```
+
+To select visible GPUs explicitly:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python -u main.py \
+  --model standard \
+  --output save/Chinook/standard/large/case_0001 \
+  --agent-config configs/qwen3.5_9B.yaml \
+  --data-config data/Chinook/benchmarks/large/case_0001/config.yaml
+```
+
+Run every case in one benchmark split:
+
+```bash
+GPU_IDS=0 MODEL=standard DATASET=Chinook DATASIZE=large ./run_cases.sh
+```
+
+See [Running experiments](docs/running.md) for batch execution, retry behavior,
+configuration, and output layout.
+
+## Available pipelines
+
+All names below are valid values for `python main.py --model ...` and for the
+`MODEL` variable used by `run_cases.sh`.
+
+| Model | Category | Description |
 |---|---|---|
-| `standard` | Proposed method | Profiler → MPNet Candidate Selector → Evolutor → Validator → Decision |
-| `grain_profiler` | Profiler experiment | Grain Profiler → MPNet Candidate Selector → Evolutor → Validator → Decision |
-| `constraint_filter` | Constraint experiment | Standard with constraints filtered to the Top-k table subgraph |
-| `no_values` | Privacy experiment | Standard without raw sample values in model inputs |
-| `llm_matcher` | LLM baseline | Profiler → Qwen Matcher → Evolutor when needed → Validator → Decision |
-| `no_profiler` | Profiler ablation | MPNet Candidate Selector → Evolutor → Validator → Decision |
-| `no_selector` | Selector ablation | Profiler → Evolutor with the full RDB → Validator → Decision |
-| `oneshot` | LLM baseline | One-shot Evolutor → Decision |
-| `magneto` | Retrieval + LLM baseline | MPNet retrieval → Qwen reranking → rule decision |
-| `santos` | Dataset-discovery baseline | Synthesized KB → relationship-aware matching → rule decision |
-| `embdi` | Graph-embedding baseline | Graph → random walks → Skip-gram → rule decision |
-| `starmie` | Contextual table baseline | Frozen external encoder → bipartite matching → rule decision |
-| `jl` | Rule baseline | Jaccard–Levenshtein matching → rule decision |
-| `coma` | Rule baseline | COMA matching → rule decision |
+| `standard` | Proposed method | Profiler, MPNet selector, Evolutor, Validator |
+| `grain_profiler` | Experiment | Compact row-grain profiling variant |
+| `constraint_filter` | Experiment | Top-k table-subgraph constraint context |
+| `validator_prompt` | Experiment | Validator prompt variant |
+| `no_values` | Privacy experiment | Removes raw sample values from LLM inputs |
+| `no_profiler` | Ablation | Standard without the Profiler |
+| `no_selector` | Ablation | Standard without the Candidate Selector |
+| `no_validator` | Ablation | Standard without the Validator |
+| `llm_matcher` | LLM baseline | LLM matcher followed by evolution when needed |
+| `oneshot` | LLM baseline | One-shot proposal generation |
+| `magneto` | Matching baseline | MPNet retrieval, Qwen reranking, fixed adapter |
+| `magneto_llm` | Adapter baseline | Magneto evidence passed to the Evolutor |
+| `coma_llm` | Adapter baseline | COMA evidence passed to the Evolutor |
+| `starmie_llm` | Adapter baseline | Starmie evidence passed to the Evolutor |
+| `santos` | Discovery baseline | Synthesized-KB relationship-aware matching |
+| `embdi` | Discovery baseline | Graph embedding and schema matching |
+| `starmie` | Table baseline | External contextual table encoder checkpoint |
+| `jl` | Rule baseline | Jaccard-Levenshtein matching |
+| `coma` | Rule baseline | COMA hybrid matching |
 
-The current `standard` promotes the former Selector experiment. `llm_matcher` preserves the former Matcher-based Standard. `no_profiler` and `no_selector` are single-component ablations of the current Standard.
+Implementation and attribution details are in
+[Baselines](docs/baselines.md) and [Experiments](docs/experiments.md).
 
-## 2. Environment
+## Benchmark
 
-```bash
-cd /data1/runzel/AIRDB_maintenance
-conda activate /data1/runzel/TimeSeriesImputation/.conda
-python --version
-```
-
-The current environment uses Python 3.11 and the default agent configuration:
-
-```text
-configs/qwen3.5_9B.yaml
-```
-
-The Qwen configuration uses deterministic decoding (`do_sample=False`; temperature is represented by greedy decoding).
-
-For a private or gated Hugging Face model, authenticate first:
-
-```bash
-hf auth login
-hf auth whoami
-```
-
-### Additional dependencies
-
-Magneto and Selector use `sentence-transformers/all-mpnet-base-v2`:
-
-```bash
-python -m pip install -r baselines/magneto/requirements.txt
-```
-
-JL and COMA use Valentine:
-
-```bash
-python -m pip install -r baselines/traditional/requirements.txt
-```
-
-The first Magneto or Selector run downloads MPNet from Hugging Face and caches it. JL and COMA do not load Qwen or an embedding model.
-
-## 3. Input format
-
-Each case must contain one existing RDB and exactly one incoming table:
+The repository includes generated benchmark cases based on Chinook, MONDIAL,
+TPC-DS, and Spider, plus continuous-evolution sequences. Each benchmark split
+uses the following layout:
 
 ```text
-data/<dataset>/benchmarks/<size>/<case>/config.yaml
+data/<dataset>/benchmarks/<size>/case_XXXX/
+├── config.yaml
+├── existing/
+├── incoming/
+└── expected/
 ```
 
-Example:
+The benchmark files are committed deliberately for artifact availability.
+Source provenance, construction steps, and redistribution status are described
+in [Dataset preparation](data/README.md) and
+[Dataset licenses](DATA_LICENSES.md).
 
-```yaml
-existing_rdb:
-  path: data/Chinook/benchmarks/large/case_0001/existing
-  sample_num: 3
-steps:
-  - task_id: step_001
-    path: data/Chinook/benchmarks/large/case_0001/incoming
-    sample_num: 3
-```
+## Evaluation
 
-## 4. Run one case directly
-
-General command:
-
-```bash
-CUDA_VISIBLE_DEVICES=0,1,2,4 \
-python -u main.py \
-  --model <model> \
-  --output save/Chinook/<model>/large/case_0001 \
-  --agent-config configs/qwen3.5_9B.yaml \
-  --data-config data/Chinook/benchmarks/large/case_0001/config.yaml
-```
-
-Replace `<model>` with one of:
-
-```text
-standard  grain_profiler  constraint_filter  no_values  llm_matcher  no_profiler  no_selector  oneshot  magneto  santos  embdi  starmie  jl  coma
-```
-
-Example for No Selector:
-
-```bash
-CUDA_VISIBLE_DEVICES=0,1,2,4 \
-python -u main.py \
-  --model no_selector \
-  --output save/Chinook/no_selector/large/case_0001 \
-  --agent-config configs/qwen3.5_9B.yaml \
-  --data-config data/Chinook/benchmarks/large/case_0001/config.yaml
-```
-
-Example for the LLM Matcher baseline:
-
-```bash
-CUDA_VISIBLE_DEVICES=0,1,2,4 \
-python -u main.py \
-  --model llm_matcher \
-  --output save/Chinook/llm_matcher/large/case_0001 \
-  --agent-config configs/qwen3.5_9B.yaml \
-  --data-config data/Chinook/benchmarks/large/case_0001/config.yaml
-```
-
-## 5. Batch runner
-
-`run_cases.sh` discovers cases under:
-
-```text
-data/$DATASET/benchmarks/$DATASIZE/
-```
-
-and writes results to:
-
-```text
-save/$DATASET/$MODEL/$DATASIZE/
-```
-
-Run every case for one model and size:
-
-```bash
-GPU_IDS=0,1,2,4 MODEL=standard DATASET=Chinook DATASIZE=large \
-./run_cases.sh
-```
-
-Run selected cases only:
-
-```bash
-GPU_IDS=0,1,2,4 MODEL=standard DATASIZE=large \
-./run_cases.sh case_0001 case_0003 case_0010
-```
-
-### LLM models and ablations
-
-```bash
-GPU_IDS=0,1,2,4 MODEL=standard DATASIZE=large ./run_cases.sh
-GPU_IDS=0,1,2,4 MODEL=grain_profiler DATASIZE=large ./run_cases.sh
-GPU_IDS=0,1,2,4 MODEL=constraint_filter DATASIZE=medium ./run_cases.sh
-GPU_IDS=0,1,2,4 MODEL=no_values DATASIZE=large ./run_cases.sh
-GPU_IDS=0,1,2,4 MODEL=llm_matcher DATASIZE=large ./run_cases.sh
-GPU_IDS=0,1,2,4 MODEL=no_profiler DATASIZE=large ./run_cases.sh
-GPU_IDS=0,1,2,4 MODEL=no_selector DATASIZE=large ./run_cases.sh
-GPU_IDS=0,1,2,4 MODEL=oneshot DATASIZE=large ./run_cases.sh
-GPU_IDS=0,1,2,4 MODEL=magneto DATASIZE=large ./run_cases.sh
-```
-
-### Rule baselines
-
-JL and COMA do not require GPU inference. `GPU_IDS` may be omitted:
-
-```bash
-MODEL=jl DATASIZE=large ./run_cases.sh
-MODEL=coma DATASIZE=large ./run_cases.sh
-```
-
-### Background execution
-
-Use a distinct log for every model:
-
-```bash
-GPU_IDS=0,1,2,4 MODEL=standard DATASIZE=large \
-nohup ./run_cases.sh > logs/nohup_standard_large.log 2>&1 &
-
-GPU_IDS=0,1,2,4 MODEL=no_selector DATASIZE=large \
-nohup ./run_cases.sh > logs/nohup_no_selector_large.log 2>&1 &
-
-GPU_IDS=0,1,2,4 MODEL=no_profiler DATASIZE=large \
-nohup ./run_cases.sh > logs/nohup_no_profiler_large.log 2>&1 &
-```
-
-Monitor progress:
-
-```bash
-tail -f logs/nohup_standard_large.log
-tail -f logs/nohup_no_selector_large.log
-tail -f logs/nohup_no_profiler_large.log
-```
-
-### Retry failed cases
-
-Pass only the failed case names; completed cases do not need to run again:
-
-```bash
-GPU_IDS=0,1,2,4 MODEL=standard DATASIZE=large \
-nohup ./run_cases.sh case_0029 case_0034 \
-  > logs/nohup_standard_large_retry.log 2>&1 &
-```
-
-### Runner variables
-
-| Variable | Default | Meaning |
-|---|---|---|
-| `MODEL` | `standard` | Any model listed in Section 1 |
-| `DATASET` | `Chinook` | Dataset name |
-| `DATASIZE` | `medium` | `small`, `medium`, or `large` |
-| `GPU_IDS` | `0,1,3,4` | Value exported as `CUDA_VISIBLE_DEVICES` |
-| `PYTHON_BIN` | `python` | Python executable |
-| `MAX_ATTEMPTS` | `3` | Maximum attempts for a failed process |
-| `RETRY_INTERVAL_SECONDS` | `60` | Delay between retry rounds |
-
-## 6. Model-specific configuration
-
-The shared configuration is in `configs/qwen3.5_9B.yaml`.
-
-```yaml
-magneto:
-  embedding_model: sentence-transformers/all-mpnet-base-v2
-  retrieval_top_k: 20
-
-standard:
-  embedding_model: sentence-transformers/all-mpnet-base-v2
-  column_top_k: 20
-  table_top_k: 5
-
-no_profiler:
-  embedding_model: sentence-transformers/all-mpnet-base-v2
-  column_top_k: 20
-  table_top_k: 5
-
-traditional:
-  column_match_confidence: 0.70
-  insert_table_confidence: 0.70
-  extend_table_confidence: 0.35
-```
-
-- Magneto retrieves Top-20 target columns and asks Qwen to return at most Top-10 reliable matches per incoming column.
-- Standard and No-Profiler retrieve Top-20 columns, rank tables, and give the Top-5 tables to the Evolutor. The Selector does not make the final match or operation decision.
-- JL/COMA thresholds must be tuned only on development data.
-
-## 7. Output
-
-All models use the same output layout:
-
-```text
-save/Chinook/<model>/<size>/<case>/
-├── task_state.json
-├── proposal.json
-└── database/
-    ├── schema.json
-    ├── profiles.json
-    ├── constraints.json
-    └── tables/
-        └── <table_name>.csv
-```
-
-- `task_state.json`: step results, routing, validation history, and trace.
-- `proposal.json`: final structured integration proposal.
-- `database/`: RDB after applying the proposal.
-- `status: "succeeded"`: pipeline completed.
-- `status: "failed"`: pipeline ran but ended in a workflow failure.
-
-Python exceptions, model-loading failures, malformed LLM output, and CUDA OOM return a non-zero process code and are retried by `run_cases.sh`. Attempt logs are stored under `logs/<case>/`; each batch also produces `logs/batch_<timestamp>.log`.
-
-## 8. Evaluation
-
-Every model is evaluated from its `proposal.json` and generated `database/` with the same metrics:
+Case-level evaluation compares the predicted proposal and updated database with
+the expected state. Batch aggregation reports coverage, decision metrics,
+column placement, proposal facts, constraints, validity, preservation, and
+latency.
 
 ```bash
 python -m evaluation.evaluator
 python -m evaluation.aggregate_result
 ```
 
-Set the benchmark, result, and output paths in `evaluation/evaluator.py` before running. For example:
+The current scripts use explicit configuration constants at the top of each
+module. See [Evaluation](docs/evaluation.md) before running them.
 
-```python
-evaluate_benchmark(
-    benchmark_dir="data/Chinook/benchmarks/large",
-    result_dir="save/Chinook/standard/large",
-    output_csv_path="outputs/Chinook/standard/large.csv",
-    sample_num=0,
-)
-```
+## Repository guide
 
-See [Evaluation usage](evaluation/README.md) for case-level metrics and aggregation.
+- `model/`: standard pipeline, agents, shared runtime, and proposal handling.
+- `baselines/`: ablations and comparison systems.
+- `experiments/`: controlled experimental variants and analysis code.
+- `data/`: benchmark cases and dataset preparation tools.
+- `evaluation/`: case-level metrics and aggregation.
+- `visualization/`: paper and analysis visualizations.
+- `tests/`: unit tests that avoid loading full LLM checkpoints.
+- `configs/`: model and pipeline configuration files.
 
-## 9. Main entry points
+Additional documentation:
 
-- `main.py`: model registry and CLI entry.
-- `run_cases.sh`: batch discovery, execution, logging, and retries.
-- `model/pipeline.py`: Selector-based Standard pipeline.
-- `baselines/llm_matcher/pipeline.py`: former Matcher-based Standard baseline.
-- `baselines/no_profiler/pipeline.py`: Standard without the Profiler.
-- `baselines/no_selector/pipeline.py`: Standard without the Candidate Selector.
-- `baselines/oneshot/pipeline.py`: One-shot baseline.
-- `baselines/magneto/pipeline.py`: Magneto baseline.
-- `baselines/santos/pipeline.py`: adapted SANTOS synthesized-KB baseline.
-- `baselines/embdi/pipeline.py`: adapted EmbDI graph-embedding baseline.
-- `baselines/starmie/pipeline.py`: adapter for an externally trained official Starmie checkpoint.
-- `baselines/jl/pipeline.py`: JL baseline.
-- `baselines/coma/pipeline.py`: COMA baseline.
-- `evaluation/evaluator.py`: case-level evaluation.
-- `evaluation/aggregate_result.py`: aggregate metrics.
+- [Installation](docs/installation.md)
+- [Running experiments](docs/running.md)
+- [Evaluation](docs/evaluation.md)
+- [Datasets](docs/datasets.md)
+- [Baselines](docs/baselines.md)
+- [Experiments](docs/experiments.md)
+- [Development](docs/development.md)
 
-Additional details:
+## Citation
 
-- [Magneto](baselines/magneto/README.md)
-- [JL and COMA](baselines/traditional/README.md)
-- [Evaluation](evaluation/README.md)
+The paper citation will be added after publication. Until then, use the
+software metadata in [CITATION.cff](CITATION.cff).
+
+## License
+
+Project code is released under the [MIT License](LICENSE). Dataset and
+third-party component licenses are separate; consult
+[DATA_LICENSES.md](DATA_LICENSES.md),
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), and the baseline
+documentation before redistributing derived artifacts.

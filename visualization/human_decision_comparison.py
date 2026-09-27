@@ -12,8 +12,8 @@ from matplotlib.patches import Patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPERIMENT_ROOT = ROOT / "experiments" / "alternative_validity"
-ANNOTATION_ROOT = EXPERIMENT_ROOT / "annotations"
+ANNOTATION_ROOT = ROOT / "artifacts" / "annotation"
+RESPONSE_ROOT = ANNOTATION_ROOT / "responses"
 
 # Academic AI/ML palette used by the other paper figures.
 COLORS = {
@@ -33,11 +33,11 @@ EDGE_COLORS = {
 
 def load_counts() -> tuple[Counter[str], int]:
     manifest = json.loads(
-        (EXPERIMENT_ROOT / "selected_cases.json").read_text(encoding="utf-8")
+        (ANNOTATION_ROOT / "selected_cases.json").read_text(encoding="utf-8")
     )
     cases = {case["case_token"]: case for case in manifest["cases"]}
     annotations = []
-    for path in sorted(ANNOTATION_ROOT.glob("*.json")):
+    for path in sorted(RESPONSE_ROOT.glob("*.json")):
         payload = json.loads(path.read_text(encoding="utf-8"))
         if payload.get("manifest_id") != manifest["manifest_id"]:
             raise ValueError(f"Manifest mismatch: {path}")
@@ -46,7 +46,7 @@ def load_counts() -> tuple[Counter[str], int]:
             for row in payload.get("responses", [])
         })
     if not annotations:
-        raise ValueError(f"No annotation files found under {ANNOTATION_ROOT}")
+        raise ValueError(f"No annotation files found under {RESPONSE_ROOT}")
 
     threshold = math.floor(len(annotations) / 2) + 1
     counts: Counter[str] = Counter()

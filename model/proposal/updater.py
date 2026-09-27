@@ -111,8 +111,8 @@ def update_sample_values(
                 [],
             )
 
-            # Sample values 不是完整数据库，
-            # 当前先追加 incoming 的转换结果。
+            # Sample values do not represent the complete database.
+            # For now, append the transformed incoming rows.
             updated_values[table_name].extend(
                 transformed_rows
             )
@@ -151,14 +151,14 @@ def _transform_incoming_rows(
                     )
 
             elif action == "split":
-                # 当前没有 transformation specification，
-                # 暂时不能可靠生成 split values。
+                # A transformation specification is not currently available,
+                # so split values cannot yet be generated reliably.
                 for target_column in target_columns:
                     target_row[target_column] = None
 
             elif action == "merge":
-                # 当前没有 merge expression，
-                # 暂时不能可靠生成 merge value。
+                # A merge expression is not currently available,
+                # so the merged value cannot yet be generated reliably.
                 if target_columns:
                     target_row[target_columns[0]] = None
 
