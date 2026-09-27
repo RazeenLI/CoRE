@@ -15,19 +15,7 @@ in the repository to support artifact review and reproducibility.
 The standard pipeline uses the same case representation and output format as
 the baselines:
 
-```text
-Incoming table + existing RDB
-            |
-         Profiler
-            |
-MPNet candidate selector
-            |
-         Evolutor
-            |
-         Validator
-            |
-Structured proposal + updated RDB
-```
+![CoRE framework](docs/assets/CoRE_framework.svg)
 
 Every case contains one existing RDB and exactly one incoming table. Outputs
 include the final proposal, task trace, and database state after applying the
