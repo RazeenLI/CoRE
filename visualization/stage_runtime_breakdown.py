@@ -1,28 +1,50 @@
 """Per-stage runtime breakdown (Profile/Select/Evolve/Validate)
 for CoRE, stacked bars across all four datasets.
 
-Data is loaded live from outputs/<Dataset>/standard/{small,medium,large}.csv
-via data_loader.load_stage_timing_table -- mean of each stage's
-timing_steps_*_total_seconds column over all cases. Verified to reproduce
-the reference numbers exactly (e.g. TPC-DS -> [59.1, 6.2, 78.1, 8.0]).
+Data is loaded live from
+save_new/<Dataset>/standard/{small,medium,large}/<case>/task_state.json
+as the mean total time for each stage over all cases.
 Run this file directly to regenerate the PDF.
 """
 
+import json
 import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
-
-from data_loader import STAGE_TIMING_COLUMNS, load_stage_timing_table
 
 # ============================================================
 # Data: mean per-stage latency (seconds), pulled from real evaluation outputs
 # ============================================================
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+SAVE_ROOT = REPO_ROOT / "save_new"
 DATASETS = ["Chinook", "MONDIAL", "TPCDS", "Spider"]
 DATASET_LABELS = {"Chinook": "Chinook", "MONDIAL": "MONDIAL", "TPCDS": "TPC-DS", "Spider": "Spider"}
 METHOD = "standard"
+STAGES = [
+    ("profiling", "Profile"),
+    ("matching", "Select"),
+    ("evolving", "Evolve"),
+    ("validating", "Validate"),
+]
 
-stages = [label for _, label in STAGE_TIMING_COLUMNS]
+
+def load_stage_timing_table(datasets: list[str], method: str) -> dict[str, list[float]]:
+    data = {}
+    for dataset in datasets:
+        totals = {key: [] for key, _ in STAGES}
+        paths = sorted((SAVE_ROOT / dataset / method).glob("*/*/task_state.json"))
+        if not paths:
+            raise FileNotFoundError(f"No task states found for {dataset}/{method}")
+        for path in paths:
+            timing = json.loads(path.read_text(encoding="utf-8")).get("timing", {})
+            steps = timing.get("steps", {})
+            for key, _ in STAGES:
+                totals[key].append(float(steps.get(key, {}).get("total_seconds", 0.0)))
+        data[dataset] = [sum(totals[key]) / len(totals[key]) for key, _ in STAGES]
+    return data
+
+stages = [label for _, label in STAGES]
 datasets = [DATASET_LABELS[ds] for ds in DATASETS]
 
 timing = load_stage_timing_table(DATASETS, METHOD)
@@ -82,7 +104,8 @@ fig, ax = plt.subplots(figsize=(3.35, 0.9))
 
 bar_width = 0.66
 
-MIN_LABEL_WIDTH = 8.0  # skip in-segment labels too narrow to hold text (e.g. Select)
+MIN_LABEL_WIDTH = 8.0
+SELECT_LABEL_WIDTH = 4.0
 
 left = np.zeros(len(datasets))
 for stage_values, stage in zip((profile, select, evolve, validate), stages):
@@ -99,7 +122,8 @@ for stage_values, stage in zip((profile, select, evolve, validate), stages):
 
     # In-segment value labels
     for i, value in enumerate(stage_values):
-        if value < MIN_LABEL_WIDTH:
+        min_width = SELECT_LABEL_WIDTH if stage == "Select" else MIN_LABEL_WIDTH
+        if value < min_width:
             continue
         ax.text(
             left[i] + value / 2,
@@ -119,7 +143,7 @@ for stage_values, stage in zip((profile, select, evolve, validate), stages):
 
 for i, value in enumerate(total):
     ax.text(
-        value + 3.0,
+        value + 0.7,
         x[i],
         f"{value:.1f}",
         ha="left",
@@ -135,9 +159,9 @@ ax.set_yticks(x)
 ax.set_yticklabels(datasets)
 ax.invert_yaxis()  # first dataset at the top
 
-ax.set_xlim(0, 170)
+ax.set_xlim(0, 50)
 
-ax.set_xticks([0, 50, 100, 150])
+ax.set_xticks([0, 10, 20, 30, 40, 50])
 
 ax.grid(
     axis="x",
