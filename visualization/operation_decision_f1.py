@@ -82,7 +82,7 @@ plt.rcParams["legend.fontsize"] = 6.5
 # figure
 # -----------------------------
 fig_w = 3.35
-fig_h = 1.55
+fig_h = 1.30
 
 fig, axes = plt.subplots(
     nrows=1,

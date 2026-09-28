@@ -135,6 +135,8 @@ for ax, (dataset, metric) in zip(natural_axes.flat, natural_panels):
 
 natural_axes[0, 0].set_ylabel("DMF1", labelpad=1.5)
 natural_axes[1, 0].set_ylabel("PropF1", labelpad=1.5)
+for ax in natural_axes[:, 1]:
+    ax.tick_params(axis="y", left=False, labelleft=False)
 
 controlled_x = np.arange(len(CONTROLLED_LEVELS))
 latency_axes = []
@@ -245,7 +247,7 @@ fig.subplots_adjust(
     right=0.965,
     top=0.91,
     bottom=0.13,
-    wspace=0.18,
+    wspace=0.10,
     hspace=0.48,
 )
 
