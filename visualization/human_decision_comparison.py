@@ -71,7 +71,7 @@ def load_counts() -> tuple[Counter[str], int]:
 
 
 counts, case_count = load_counts()
-categories = ["Reference only", "CoRE only", "Both", "No majority"]
+categories = ["Reference only", "Both", "CoRE only", "No majority"]
 
 plt.rcParams["pdf.fonttype"] = 42
 plt.rcParams["ps.fonttype"] = 42
@@ -123,7 +123,7 @@ fig.legend(
     handles=handles,
     ncol=4,
     loc="upper center",
-    bbox_to_anchor=(0.5, 0.74),
+    bbox_to_anchor=(0.5, 0.78),
     frameon=False,
     columnspacing=0.55,
     handlelength=0.85,

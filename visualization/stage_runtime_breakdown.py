@@ -54,7 +54,10 @@ profile, select, evolve, validate = stage_values
 
 total = profile + select + evolve + validate
 
-x = np.arange(len(datasets))
+original_bar_width = 0.66
+bar_width = 1.04
+bar_gap = 0.38
+x = np.arange(len(datasets)) * (bar_width + bar_gap)
 
 # Stage colors from the template's AI / ML profile.
 # Later-order hues distinguish the stages from the usual blue/orange defaults.
@@ -95,14 +98,12 @@ plt.rcParams["xtick.labelsize"] = 6.5
 plt.rcParams["ytick.labelsize"] = 6.5
 plt.rcParams["legend.fontsize"] = 6.5
 
-# Single-column width with a compact height
-fig, ax = plt.subplots(figsize=(3.35, 0.9))
+# Single-column width with slightly more vertical room.
+fig, ax = plt.subplots(figsize=(3.35, 1.08))
 
 # ============================================================
 # Stacked bars
 # ============================================================
-
-bar_width = 0.66
 
 MIN_LABEL_WIDTH = 8.0
 SELECT_LABEL_WIDTH = 4.0

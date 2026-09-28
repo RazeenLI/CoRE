@@ -87,7 +87,7 @@ plt.rcParams["xtick.labelsize"] = 6.1
 plt.rcParams["ytick.labelsize"] = 6.1
 plt.rcParams["legend.fontsize"] = 5.8
 
-fig = plt.figure(figsize=(3.35, 3.0))
+fig = plt.figure(figsize=(3.35, 3.12))
 grid = fig.add_gridspec(3, 2, height_ratios=(1.0, 1.0, 1.12))
 
 natural_axes = np.array([
