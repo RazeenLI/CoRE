@@ -9,7 +9,6 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
-from matplotlib.transforms import Bbox
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -80,7 +79,7 @@ plt.rcParams["font.family"] = "serif"
 plt.rcParams["font.size"] = 6.5
 plt.rcParams["legend.fontsize"] = 6.0
 
-fig, ax = plt.subplots(figsize=(3.35, 1.15))
+fig, ax = plt.subplots(figsize=(3.35, 1.35))
 
 values = [counts[category] for category in categories]
 labels = categories
@@ -90,8 +89,8 @@ wedges, label_texts, value_texts = ax.pie(
     colors=[COLORS[category] for category in categories],
     startangle=90,
     counterclock=False,
-    radius=0.78,
-    labeldistance=1.08,
+    radius=0.88,
+    labeldistance=1.00,
     autopct=lambda pct: f"{int(round(pct * case_count / 100.0))}",
     pctdistance=0.68,
     textprops={"fontsize": 6.5},
@@ -103,20 +102,20 @@ for value_text in value_texts:
     value_text.set_fontsize(6.8)
 
 ax.set_aspect("equal")
-ax.set_ylim(-0.86, 0.86)
+ax.set_ylim(-0.94, 0.94)
 fig.subplots_adjust(left=0.002, right=0.998, top=0.998, bottom=0.002)
 
 out_dir = Path(__file__).resolve().parent / "figures"
 out_dir.mkdir(parents=True, exist_ok=True)
 for suffix, kwargs in (("pdf", {}), ("png", {"dpi": 300})):
     plt.savefig(
-        out_dir / f"human_decision_comparison.{suffix}",
+        out_dir / f"human_decision_comparison_pie_preview.{suffix}",
         format=suffix,
-        bbox_inches=Bbox.from_bounds(0, 0.055, 3.35, 1.095),
-        pad_inches=0,
+        bbox_inches="tight",
+        pad_inches=0.002,
         **kwargs,
     )
 plt.close(fig)
 
 print(f"counts: {dict(counts)}")
-print("saved to: human_decision_comparison.pdf")
+print("saved to: human_decision_comparison_pie_preview.pdf")
