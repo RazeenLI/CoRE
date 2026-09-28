@@ -323,13 +323,10 @@ def _apply_profiles_update_aliases_only(
     - merge table aliases without duplication
     - merge column aliases without duplication
 
-    TODO:
-    - decide whether table.summary should be updated
-    - decide whether table.entity / table.role should be updated
-    - decide whether column.meaning should be updated
-    - decide whether column.semantic_type should be updated
-    - decide whether column.business_concept should be updated
-    - decide whether value_patterns should be merged or recomputed
+    Semantic profile fields such as summaries, roles, meanings, semantic types,
+    business concepts, and value patterns are preserved for existing tables and
+    columns. New table or column profiles are copied only when the update plan
+    explicitly provides them.
     """
     if profiles is None:
         return None
@@ -351,9 +348,7 @@ def _apply_profiles_update_aliases_only(
 
     for table_name, after_table_profile in after_profile_tables.items():
         if table_name not in target_profile_tables:
-            # TODO:
-            # New table profile creation policy is not finalized.
-            # For now, copy the after profile only if the update plan explicitly provides it.
+            # Copy a new table profile only when the update plan provides it.
             target_profile_tables[table_name] = deepcopy(after_table_profile)
             continue
 
@@ -430,9 +425,7 @@ def _merge_column_aliases_only(
             continue
 
         if column_name not in target_columns:
-            # TODO:
-            # New column profile creation policy is not finalized.
-            # For now, copy the after column profile only if the update plan explicitly provides it.
+            # Copy a new column profile only when the update plan provides it.
             target_columns[column_name] = deepcopy(source_column_profile)
             continue
 
